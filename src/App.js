@@ -1,4 +1,4 @@
-import Navbar from "./views/containers/Navbar";
+import Navbar from "./views/containers/Header/Navbar";
 
 function App() {
   return (

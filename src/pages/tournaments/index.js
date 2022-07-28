@@ -3,14 +3,13 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import { CardActionArea } from '@mui/material';
-import Navbar from "./../../views/containers/Header/Navbar";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import logo1 from "./../../images/premier-league-background-1.jpg";
 import logo2 from "./../../images/premier-league-background-2.jpg";
 
-const Fixture = () => {
+const Tournaments = () => {
 
   const api = "http://localhost:5000/api"
 
@@ -18,7 +17,7 @@ const Fixture = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await axios.get(`${api}/fixture`);
+      const res = await axios.get(`${api}/tournaments`);
       setTournaments(res.data);
     };
     fetchData();
@@ -28,11 +27,10 @@ const Fixture = () => {
 
   return (
     <>
-      <Navbar />
       <div className="cardContainer">
         {tournaments.map((tournament, index) =>
           <Card key={tournament._id} sx={{ maxWidth: 250, display: "flex", margin: "2rem auto" }}>
-            <Link to={`/fixture/${tournament._id}`}>
+            <Link to={`/tournaments/${tournament._id}/fixture`}>
               <CardActionArea>
                 <CardMedia
                   component="img"
@@ -55,4 +53,4 @@ const Fixture = () => {
   );
 }
 
-export default Fixture; 
+export default Tournaments; 

@@ -2,29 +2,43 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./index.css";
-import App from "./App";
-import reportWebVitals from "./reportWebVitals";
+import Navbar from "./views/containers/Header/Navbar";
 import StandingsTable from "./pages/standings/components/StandingsTable";
 import Matches from "./pages/matches";
-import Fixture from "./pages/fixture";
+import Tournaments from "./pages/tournaments";
 import FixtureId from "./pages/fixture-id";
+import Statistics from "./pages/statistics";
+import { TournamentProvider } from "./context/TournamentContext";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
 
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<App />} />
-        <Route path="/standings" element={<StandingsTable />} />
-        <Route path="/matches" element={<Matches />} />
-        <Route path="/fixture" element={<Fixture />} />
-        <Route path="/fixture/:tournamentId" element={<FixtureId />} />
-        <Route path="*" element={
-          <main style={{ padding: "1rem" }}>
-            <p>There's nothing here!</p>
-          </main>
-        }
-        />
-      </Routes>
+      <Navbar />
+      <TournamentProvider>
+        <Routes>
+          <Route path="/" element={<App />} />
+          <Route path="/standings" element={<StandingsTable />} />
+          <Route path="/tournaments">
+            <Route index element={<Tournaments />} />
+            <Route path=":id" element={
+              <main style={{ padding: "1rem" }}>
+                <p>Aquí habrá info de un torneo en particular</p>
+              </main>
+            } />
+            <Route path=":id/fixture" element={<FixtureId />} />
+          </Route>
+          <Route path="/matches" element={<Matches />} />
+          <Route path="/statistics" element={<Statistics />} />
+          <Route path="*" element={
+            <main style={{ padding: "1rem" }}>
+              <p>There's nothing here!</p>
+            </main>
+          }
+          />
+        </Routes>
+      </TournamentProvider>
     </BrowserRouter>
   </React.StrictMode>,
   document.getElementById("root")

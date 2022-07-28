@@ -9,8 +9,6 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import Navbar from './../../../../views/containers/Header/Navbar';
-import { fontWeight } from '@mui/system';
 
 const StandingsTable = () => {
 
@@ -37,7 +35,6 @@ const StandingsTable = () => {
 
     return (
       <>
-        <Navbar />
         {tournaments.sort((a, b) => a.name > b.name ? 1 : -1).map(tournament =>
           <TableContainer component={Paper} key={tournament.name}>
             <div className='title'>{tournament.name}</div>

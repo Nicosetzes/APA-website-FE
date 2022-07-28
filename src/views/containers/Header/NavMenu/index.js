@@ -9,6 +9,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import SportsSoccerIcon from "@mui/icons-material/SportsSoccer";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import BarChartIcon from '@mui/icons-material/BarChart';
 
 const NavMenu = ({ handleClose, isOpen, anchorEl }) => {
   return (
@@ -44,8 +45,17 @@ const NavMenu = ({ handleClose, isOpen, anchorEl }) => {
           <ListItemIcon>
             <CalendarMonthIcon fontSize="small" />
           </ListItemIcon>
-          <Link to="/fixture">
-            <ListItemText>Fixture</ListItemText>
+          <Link to="/tournaments">
+            <ListItemText>Torneos</ListItemText>
+          </Link>
+        </MenuItem>
+        <Divider />
+        <MenuItem onClick={handleClose}>
+          <ListItemIcon>
+            <BarChartIcon fontSize="small" />
+          </ListItemIcon>
+          <Link to="/statistics">
+            <ListItemText>Estadística</ListItemText>
           </Link>
         </MenuItem>
       </MenuList>

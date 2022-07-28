@@ -5,7 +5,6 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Table from '@mui/material/Table'
 import Paper from '@mui/material/Paper';
-import Navbar from "./../../views/containers/Header/Navbar";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -28,7 +27,6 @@ const Matches = () => {
 
   return (
     <>
-      <Navbar />
       <div className="app">
         <input
           className="search"

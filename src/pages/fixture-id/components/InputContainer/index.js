@@ -22,9 +22,11 @@ const InputContainer = ({ isFinished, matchId }) => {
 			html: `¿Está seguro que desea eliminar este partido?`,
 			icon: 'warning',
 			showCancelButton: true,
-			confirmButtonColor: '#3085d6',
-			cancelButtonColor: '#d33',
-			confirmButtonText: 'Eliminar'
+			reverseButtons: true,
+			confirmButtonColor: '#d33',
+			cancelButtonColor: '#3085d6',
+			confirmButtonText: 'Eliminar',
+			cancelButtonText: 'Volver'
 		}).then((result) => {
 			if (result.isConfirmed) {
 				// Swal.fire(

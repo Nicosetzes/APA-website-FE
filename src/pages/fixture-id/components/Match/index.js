@@ -1,6 +1,4 @@
 import {
-  Link,
-  useParams,
   useNavigate,
   createSearchParams,
 } from "react-router-dom";
@@ -16,25 +14,21 @@ const Match = ({ match, handleSubmit }) => {
     return { team: param };
   };
 
-  const goToSpecificFixture = (params, id) => {
+  const goToSpecificFixture = (params) => {
     if (isNaN(Number(params))) {
       // El query es de player;
       navigate({
-        pathname: `/tournaments/${id}/fixture`,
+        pathname: ``,
         search: `?${createSearchParams(playerParams(params))}`,
       });
     } else {
       // El query es de team (numérico, es el id);
       navigate({
-        pathname: `/tournaments/${id}/fixture`,
+        pathname: ``,
         search: `?${createSearchParams(teamParams(params))}`,
       });
     }
   };
-
-  console.log("Me renderizo");
-
-  const { id } = useParams();
 
   return (
     <form
@@ -62,19 +56,20 @@ const Match = ({ match, handleSubmit }) => {
         <img
           src={match.teamLogoP1}
           alt={match.teamP1}
+          className="match-info__logo"
           onClick={() =>
-            goToSpecificFixture(match.teamIdP1, "62e0b0a53d86565327b95a82")
+            goToSpecificFixture(match.teamIdP1)
           }
         />
-        {/* </Link> */}
-        <Link to="" className="player-link">
-          <input
-            name="playerP1"
-            className="match-info__player"
-            value={match.playerP1}
-            readOnly
-          />
-        </Link>
+        <input
+          name="playerP1"
+          className="match-info__player"
+          value={match.playerP1}
+          readOnly
+          onClick={() =>
+            goToSpecificFixture(match.playerP1)
+          }
+        />
       </div>
       <div className="match-score">
         <div className="match__container">
@@ -105,20 +100,18 @@ const Match = ({ match, handleSubmit }) => {
         >
           {match.teamP2}
         </textarea>
-        <Link
-          to={`/tournaments/${id}/fixture?q=${match.teamIdP2}`}
-          className="logo-link"
-        >
-          <img src={match.teamLogoP2} alt={match.teamP2} />
-        </Link>
-        <Link to="" className="player-link">
-          <input
-            name="playerP2"
-            className="match-info__player"
-            value={match.playerP2}
-            readOnly
-          />
-        </Link>
+        <img src={match.teamLogoP2} alt={match.teamP2} className="match-info__logo" onClick={() =>
+          goToSpecificFixture(match.teamIdP2)
+        } />
+        <input
+          name="playerP2"
+          className="match-info__player"
+          value={match.playerP2}
+          readOnly
+          onClick={() =>
+            goToSpecificFixture(match.playerP2)
+          }
+        />
       </div>
     </form>
   );

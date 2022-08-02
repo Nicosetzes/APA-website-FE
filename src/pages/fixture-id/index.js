@@ -16,45 +16,18 @@ const FixtureId = () => {
   let team = searchParams.get("team");
   let player = searchParams.get("player");
 
-  console.log(team);
-  console.log(player);
-
   const tournament = useTournament();
-
-  // const navigate = useNavigate();
-  // const playerParams = (param) => {
-  //   return { player: param };
-  // };
-  // const teamParams = (param) => {
-  //   return { team: param };
-  // };
-
-  // const goToSpecificFixture = (params) => {
-  //   if (isNaN(Number(params))) {
-  //     // El query es de player;
-  //     navigate({
-  //       pathname: "/posts",
-  //       search: `?${createSearchParams(playerParams(params))}`,
-  //     });
-  //   } else {
-  //     // El query es de team (numérico, es el id);
-  //     navigate({
-  //       pathname: "/posts",
-  //       search: `?${createSearchParams(teamParams(params))}`,
-  //     });
-  //   }
-  // };
 
   useEffect(() => {
     const fetchData = async () => {
       console.log("Hago el fetch de data");
       if (team) {
-        const res = await axios.get(`${api}/tournaments/${id}/fixture?${team}`);
+        const res = await axios.get(`${api}/tournaments/${id}/fixture?team=${team}`);
         tournament.updateTournament(res.data);
       }
       if (player) {
         const res = await axios.get(
-          `${api}/tournaments/${id}/fixture?${player}`
+          `${api}/tournaments/${id}/fixture?player=${player}`
         );
         tournament.updateTournament(res.data);
       }
@@ -64,7 +37,7 @@ const FixtureId = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [team, player]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -109,6 +82,24 @@ const FixtureId = () => {
 
     if (!matchId) {
       // It's a POST request //
+      Swal.fire({
+        title: "Partido cargado con éxito",
+        html: `Aguarde unos instantes...`,
+        color: "#000",
+        background: "rgb(240 240 245)",
+        icon: "success",
+        timer: 3000,
+        timerProgressBar: true,
+        showCancelButton: false,
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        showClass: {
+          popup: "animate__animated animate__fadeInDown",
+        },
+        hideClass: {
+          popup: "animate__animated animate__fadeOutUp",
+        },
+      });
       axios
         .post(`${api}/tournaments/${id}/upload-game/`, data)
         .then((response) => {
@@ -120,6 +111,24 @@ const FixtureId = () => {
 
     if (matchId) {
       // It's a PUT request //
+      Swal.fire({
+        title: "Partido editado con éxito",
+        html: `Aguarde unos instantes...`,
+        color: "#000",
+        background: "rgb(240 240 245)",
+        icon: "warning",
+        timer: 3000,
+        timerProgressBar: true,
+        showCancelButton: false,
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        showClass: {
+          popup: "animate__animated animate__fadeInDown",
+        },
+        hideClass: {
+          popup: "animate__animated animate__fadeOutUp",
+        },
+      });
       axios
         .put(`${api}/tournaments/${id}/update-game/${matchId}`, data)
         .then((response) => {
@@ -132,7 +141,6 @@ const FixtureId = () => {
 
   return (
     <>
-      {/* <button onClick={() => goToSpecificFixture("hola")}>Click</button> */}
       {tournament.tournament && (
         <FixtureContainer
           tournament={tournament.tournament}

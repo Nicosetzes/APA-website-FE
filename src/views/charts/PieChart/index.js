@@ -1,4 +1,4 @@
-import { Pie } from "react-chartjs-3";
+import { Pie } from "react-chartjs-2";
 
 const PieChart = () => {
 	const data = {

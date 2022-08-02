@@ -22,16 +22,7 @@ export const StyledFixtureContainer = styled.div`
       flex-direction: column;
       text-decoration: none;
 
-      .logo-link {
-        margin: 0.25rem 0;
-      }
-
-      .player-link {
-        color: #ce0404;
-        cursor: pointer;
-        display: flex;
-
-        .match-info__player {
+      .match-info__player {
           border: 0;
           cursor: pointer;
           display: flex;
@@ -46,7 +37,10 @@ export const StyledFixtureContainer = styled.div`
             outline: 0;
           }
         }
-      }
+
+        .match-info__logo {
+          margin-bottom: 1rem
+        }
 
       .match-info__team {
         border: 0;

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate, createSearchParams } from "react-router-dom";
 import axios from "axios";
 import { StyledTable } from "./styled";
 import { Oval } from "react-loader-spinner";
@@ -14,7 +14,31 @@ import Paper from "@mui/material/Paper";
 const StandingsTable = () => {
   const [tournaments, setTournaments] = useState("");
 
-  const api = `https://apa-website-be.herokuapp.com/api`;
+  const api = "http://localhost:5000/api"
+
+  const navigate = useNavigate();
+  const playerParams = (param) => {
+    return { player: param };
+  };
+  const teamParams = (param) => {
+    return { team: param };
+  };
+
+  const goToSpecificFixture = (id, params) => {
+    if (isNaN(Number(params))) {
+      // El query es de player;
+      navigate({
+        pathname: `/tournaments/${id}/fixture`,
+        search: `?${createSearchParams(playerParams(params))}`,
+      });
+    } else {
+      // El query es de team (numérico, es el id);
+      navigate({
+        pathname: `/tournaments/${id}/fixture`,
+        search: `?${createSearchParams(teamParams(params))}`,
+      });
+    }
+  };
 
   useEffect(() => {
     getTournaments();
@@ -24,8 +48,7 @@ const StandingsTable = () => {
     axios
       .get(`${api}/standings`)
       .then((response) => {
-        const allTournaments = response.data;
-        setTournaments(allTournaments);
+        setTournaments(response.data);
       })
       .catch((err) => {
         console.log(`Error: ${err}`);
@@ -121,14 +144,16 @@ const StandingsTable = () => {
                         {teamIndex + 1}
                       </TableCell>
                       <TableCell component="th" scope="row">
-                        <div className="teamAndLogoWrapper">
-                          <Link to="/">
-                            <img src={team.logo} alt={team.name} />
-                          </Link>
-                          <Link to="/">{team.team}</Link>
+                        <div className="teamAndLogoWrapper" onClick={() =>
+                          goToSpecificFixture(tournament.tournamentId, team.id)
+                        }>
+                          <img src={team.logo} alt={team.name} />
+                          {team.team}
                         </div>
                       </TableCell>
-                      <TableCell component="th" scope="row">
+                      <TableCell component="th" scope="row" onClick={() =>
+                        goToSpecificFixture(tournament.tournamentId, team.player)
+                      }>
                         {team.player}
                       </TableCell>
                       <TableCell component="th" scope="row">
@@ -172,8 +197,8 @@ const StandingsTable = () => {
           radius="9"
           color="green"
           ariaLabel="three-dots-loading"
-          wrapperStyle
-          wrapperClass
+          $wrapperStyle
+          $wrapperClass
         />
       </div>
     );

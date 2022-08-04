@@ -14,7 +14,7 @@ const MatchView = ({ match }) => {
   } = match;
 
   return (
-    <StyledMatchView className={scoreP1 === scoreP2 ? "draw" : "regular"}>
+    <StyledMatchView data-aos="flip-left" data-aos-duration="1000">
       <div className="card__match-score">
         <div className="card__match-score-teams">
           <span>{teamP1}</span>

@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { motion } from "framer-motion";
+import AOS from "aos";
+import "aos/dist/aos.css";
+import { StyledStatistics } from "./styled";
 import BarChart from "./../../charts/BarChart";
 import DoughnutChart from "./../../charts/DoughnutChart";
 import MatchView from "./components/MatchView";
@@ -14,6 +17,11 @@ const Statistics = () => {
   const [stats, setStats] = useState();
 
   useEffect(() => {
+    AOS.init();
+    AOS.refresh();
+  }, []);
+
+  useEffect(() => {
     const fetchData = async () => {
       console.log("Hago el fetch de data");
       const res = await axios.get(`${api}/statistics/`);
@@ -23,11 +31,10 @@ const Statistics = () => {
   }, []);
 
   if (stats) {
-    const { playerStats, recentMatches } = stats;
+    const { playerStats, recentMatches, accolades } = stats;
+    const { mostWins, mostDraws, mostLosses } = accolades;
 
     console.log(stats);
-
-    console.log(recentMatches);
 
     const dataForDoughnutChart = {
       labels: playerStats.map((data) => data.player),
@@ -146,43 +153,86 @@ const Statistics = () => {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
-        <div>Statistics</div>
-        <div
-          className="chart__container"
-          style={{
-            width: "100%",
-            display: "flex",
-            flexWrap: "wrap",
-            justifyContent: "space-evenly",
-          }}
-        >
-          <div style={{ width: "400px", height: "300px", display: "flex" }}>
-            <BarChart
-              data={dataForBarChart}
-              options={optionsForBarChart}
-              className="hola"
-            />
+        <StyledStatistics>
+          <div>Statistics</div>
+          <div
+            className="chart__container"
+            style={{
+              width: "100%",
+              display: "flex",
+              flexWrap: "wrap",
+              justifyContent: "space-evenly",
+            }}
+          >
+            <div
+              style={{ width: "400px", height: "300px", display: "flex" }}
+              data-aos="fade-in"
+              data-aos-duration="1000"
+            >
+              <BarChart
+                data={dataForBarChart}
+                options={optionsForBarChart}
+                className="hola"
+              />
+            </div>
+            <div
+              style={{ width: "400px", height: "300px", margin: "1rem 0" }}
+              data-aos="fade-in"
+              data-aos-duration="1000"
+            >
+              <DoughnutChart
+                data={dataForDoughnutChart}
+                options={optionsForDoughnutChart}
+              />
+            </div>
           </div>
-          <div style={{ width: "400px", height: "300px", margin: "1rem 0" }}>
-            <DoughnutChart
-              data={dataForDoughnutChart}
-              options={optionsForDoughnutChart}
-            />
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              justifyContent: "center",
+            }}
+          >
+            {recentMatches.map((match, index) => (
+              <MatchView key={index} match={match} />
+            ))}
           </div>
-        </div>
-        <div
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            justifyContent: "center",
-          }}
-        >
-          {recentMatches.map((match, index) => (
-            <MatchView key={index} match={match} />
-          ))}
-        </div>
-        {/* <PieChart /> */}
-        {/* <LineChart data={dataForLineChart} options={optionsForLineChart} /> */}
+          <div className="accolades">
+            <div
+              className="accolades-item"
+              data-aos="fade-right"
+              data-aos-duration="1000"
+            >
+              <div className="accolades-item-title">
+                Mayor cantidad de victorias
+              </div>
+              <div className="accolades-item-player">{mostWins.player}</div>
+              <div className="accolades-item-number">{mostWins.wins}</div>
+            </div>
+            <div
+              className="accolades-item"
+              data-aos="fade-right"
+              data-aos-duration="1000"
+            >
+              <div className="accolades-item-title">
+                Mayor cantidad de empates
+              </div>
+              <div className="accolades-item-player">{mostDraws.player}</div>
+              <div className="accolades-item-number">{mostDraws.draws}</div>
+            </div>
+            <div
+              className="accolades-item"
+              data-aos="fade-right"
+              data-aos-duration="1000"
+            >
+              <div className="accolades-item-title">
+                Mayor cantidad de derrotas
+              </div>
+              <div className="accolades-item-player">{mostLosses.player}</div>
+              <div className="accolades-item-number">{mostLosses.losses}</div>
+            </div>
+          </div>
+        </StyledStatistics>
       </motion.div>
     );
   } else {

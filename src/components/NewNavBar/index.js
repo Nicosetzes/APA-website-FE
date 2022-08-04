@@ -1,9 +1,9 @@
-import { NavLink } from "react-router-dom"
+import { NavLink } from "react-router-dom";
 
 const NewNavBar = () => {
-	return (
-		<>
-			<Nav>
+  return (
+    <>
+      {/* <Nav>
 				<NavLink to="/">
 					<h1>Logo</h1>
 				</NavLink>
@@ -25,9 +25,9 @@ const NewNavBar = () => {
 				<NavBtn to="/">
 					Sign in
 				</NavBtn>
-			</Nav>
-		</>
-	);
-}
+			</Nav> */}
+    </>
+  );
+};
 
 export default NewNavBar;

@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useMediaQuery } from "react-responsive";
 import { useEffect, useState } from "react";
 import { useNavigate, createSearchParams } from "react-router-dom";
 import axios from "axios";
@@ -13,9 +14,18 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 
 const Standings = () => {
+  const isXL = useMediaQuery({ query: "(min-width: 1200px)" });
+  const isL = useMediaQuery({ query: "(min-width: 992px)" });
+  const isM = useMediaQuery({ query: "(min-width: 768px)" });
+  const isSm = useMediaQuery({ query: "(min-width: 500px)" });
+  const isXS = useMediaQuery({ query: "(min-width: 400px)" });
+  // const isTabletOrMobile = useMediaQuery({ query: "(max-width: 1224px)" });
+  // const isPortrait = useMediaQuery({ query: "(orientation: portrait)" });
+  // const isRetina = useMediaQuery({ query: "(min-resolution: 2dppx)" });
+
   const [tournaments, setTournaments] = useState("");
 
-  const api = "http://localhost:5000/api"
+  const api = "http://localhost:5000/api";
 
   const navigate = useNavigate();
   const playerParams = (param) => {
@@ -68,14 +78,17 @@ const Standings = () => {
           .map((tournament) => (
             <TableContainer component={Paper} key={tournament.name}>
               <div className="title">{tournament.name}</div>
-              <StyledTable sx={{ minWidth: 650 }} aria-label="simple table">
+              <StyledTable
+                sx={{ minWidth: 300, maxWidth: 1000, margin: "0.5rem auto" }}
+                aria-label="simple table"
+              >
                 <TableHead>
                   <TableRow>
                     <TableCell
                       sx={{ color: "#fff", fontWeight: 800 }}
                       align="center"
                     >
-                      Pos
+                      {isL ? "Posición" : "Pos."}
                     </TableCell>
                     <TableCell
                       sx={{ color: "#fff", fontWeight: 800 }}
@@ -87,7 +100,7 @@ const Standings = () => {
                       sx={{ color: "#fff", fontWeight: 800 }}
                       align="center"
                     >
-                      Jugador
+                      {isL ? "Jugador" : "Jug."}
                     </TableCell>
                     <TableCell
                       sx={{ color: "#fff", fontWeight: 800 }}
@@ -95,47 +108,59 @@ const Standings = () => {
                     >
                       PJ
                     </TableCell>
+                    {isXS && (
+                      <>
+                        <TableCell
+                          sx={{ color: "#fff", fontWeight: 800 }}
+                          align="center"
+                        >
+                          PG
+                        </TableCell>
+                      </>
+                    )}
+                    {isSm && (
+                      <>
+                        <TableCell
+                          sx={{ color: "#fff", fontWeight: 800 }}
+                          align="center"
+                        >
+                          PE
+                        </TableCell>
+                        <TableCell
+                          sx={{ color: "#fff", fontWeight: 800 }}
+                          align="center"
+                        >
+                          PP
+                        </TableCell>
+                      </>
+                    )}
+                    {isM && (
+                      <>
+                        <TableCell
+                          sx={{ color: "#fff", fontWeight: 800 }}
+                          align="center"
+                        >
+                          GF
+                        </TableCell>
+                        <TableCell
+                          sx={{ color: "#fff", fontWeight: 800 }}
+                          align="center"
+                        >
+                          GC
+                        </TableCell>
+                        <TableCell
+                          sx={{ color: "#fff", fontWeight: 800 }}
+                          align="center"
+                        >
+                          DIF
+                        </TableCell>
+                      </>
+                    )}
                     <TableCell
                       sx={{ color: "#fff", fontWeight: 800 }}
                       align="center"
                     >
-                      PG
-                    </TableCell>
-                    <TableCell
-                      sx={{ color: "#fff", fontWeight: 800 }}
-                      align="center"
-                    >
-                      PE
-                    </TableCell>
-                    <TableCell
-                      sx={{ color: "#fff", fontWeight: 800 }}
-                      align="center"
-                    >
-                      PP
-                    </TableCell>
-                    <TableCell
-                      sx={{ color: "#fff", fontWeight: 800 }}
-                      align="center"
-                    >
-                      GF
-                    </TableCell>
-                    <TableCell
-                      sx={{ color: "#fff", fontWeight: 800 }}
-                      align="center"
-                    >
-                      GC
-                    </TableCell>
-                    <TableCell
-                      sx={{ color: "#fff", fontWeight: 800 }}
-                      align="center"
-                    >
-                      DIF
-                    </TableCell>
-                    <TableCell
-                      sx={{ color: "#fff", fontWeight: 800 }}
-                      align="center"
-                    >
-                      Pts.
+                      {isL ? "Puntos" : "Pts."}
                     </TableCell>
                   </TableRow>
                 </TableHead>
@@ -149,39 +174,64 @@ const Standings = () => {
                         {teamIndex + 1}
                       </TableCell>
                       <TableCell component="th" scope="row">
-                        <div className="teamAndLogoWrapper" onClick={() =>
-                          goToSpecificFixture(tournament.tournamentId, team.id)
-                        }>
+                        <div
+                          className="teamAndLogoWrapper"
+                          onClick={() =>
+                            goToSpecificFixture(
+                              tournament.tournamentId,
+                              team.id
+                            )
+                          }
+                        >
                           <img src={team.logo} alt={team.name} />
-                          {team.team}
+                          {isM ? team.team : team.teamCode}
                         </div>
                       </TableCell>
-                      <TableCell component="th" scope="row" onClick={() =>
-                        goToSpecificFixture(tournament.tournamentId, team.player)
-                      }>
+                      <TableCell
+                        component="th"
+                        scope="row"
+                        onClick={() =>
+                          goToSpecificFixture(
+                            tournament.tournamentId,
+                            team.player
+                          )
+                        }
+                      >
                         {team.player}
                       </TableCell>
                       <TableCell component="th" scope="row">
                         {team.played}
                       </TableCell>
-                      <TableCell component="th" scope="row">
-                        {team.wins}
-                      </TableCell>
-                      <TableCell component="th" scope="row">
-                        {team.draws}
-                      </TableCell>
-                      <TableCell component="th" scope="row">
-                        {team.losses}
-                      </TableCell>
-                      <TableCell component="th" scope="row">
-                        {team.goalsFor}
-                      </TableCell>
-                      <TableCell component="th" scope="row">
-                        {team.goalsAgainst}
-                      </TableCell>
-                      <TableCell component="th" scope="row">
-                        {team.scoringDifference}
-                      </TableCell>
+                      {isXS && (
+                        <>
+                          <TableCell component="th" scope="row">
+                            {team.wins}
+                          </TableCell>
+                        </>
+                      )}
+                      {isSm && (
+                        <>
+                          <TableCell component="th" scope="row">
+                            {team.draws}
+                          </TableCell>
+                          <TableCell component="th" scope="row">
+                            {team.losses}
+                          </TableCell>
+                        </>
+                      )}
+                      {isM && (
+                        <>
+                          <TableCell component="th" scope="row">
+                            {team.goalsFor}
+                          </TableCell>
+                          <TableCell component="th" scope="row">
+                            {team.goalsAgainst}
+                          </TableCell>
+                          <TableCell component="th" scope="row">
+                            {team.scoringDifference}
+                          </TableCell>
+                        </>
+                      )}
                       <TableCell component="th" scope="row">
                         {team.points}
                       </TableCell>

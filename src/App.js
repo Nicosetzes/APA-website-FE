@@ -1,8 +1,4 @@
-import { useState } from "react"
-import BarChart from "./views/charts/BarChart";
-import DoughnutChart from "./views/charts/DoughnutChart";
-import PieChart from "./views/charts/PieChart";
-import LineChart from "./views/charts/LineChart";
+import Home from "./pages/home"
 
 function App() {
 
@@ -27,7 +23,7 @@ function App() {
 
   return (
     <>
-      <div>Home</div>
+      <Home />
       {/* <BarChart chartData={userData} chartOptions={options} />
       <DoughnutChart />
       <PieChart />

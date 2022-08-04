@@ -2,6 +2,7 @@ import * as React from "react";
 import { useEffect, useState } from "react";
 import { useNavigate, createSearchParams } from "react-router-dom";
 import axios from "axios";
+import { motion } from "framer-motion";
 import { StyledTable } from "./styled";
 import { Oval } from "react-loader-spinner";
 import TableBody from "@mui/material/TableBody";
@@ -11,7 +12,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 
-const StandingsTable = () => {
+const Standings = () => {
   const [tournaments, setTournaments] = useState("");
 
   const api = "http://localhost:5000/api"
@@ -57,7 +58,11 @@ const StandingsTable = () => {
 
   if (tournaments) {
     return (
-      <>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+      >
         {tournaments
           .sort((a, b) => (a.name > b.name ? 1 : -1))
           .map((tournament) => (
@@ -186,7 +191,7 @@ const StandingsTable = () => {
               </StyledTable>
             </TableContainer>
           ))}
-      </>
+      </motion.div>
     );
   } else {
     return (
@@ -205,4 +210,4 @@ const StandingsTable = () => {
   }
 };
 
-export default StandingsTable;
+export default Standings;

@@ -1,16 +1,36 @@
-import { StyledMatchView } from './styled';
+import { motion } from "framer-motion";
+import { StyledMatchView } from "./styled";
 
-const MatchView = ({ playerP1, playerP2, teamP1, teamP2, scoreP1, scoreP2, tournament, date }) => {
-	return (
-		<StyledMatchView className="card__match">
-			<div className="card__match-score">
-				<span>{teamP1}</span> <span>{scoreP1}</span> <span>-</span> <span>{scoreP2}</span> <span>{teamP2}</span>
-			</div>
-			<div className="card__match-info">
-				<span>{tournament}</span> <span>{date}</span>
-			</div>
-		</StyledMatchView>
-	);
-}
+const MatchView = ({ match }) => {
+  const {
+    playerP1,
+    playerP2,
+    teamP1,
+    teamP2,
+    scoreP1,
+    scoreP2,
+    tournament,
+    date,
+  } = match;
+
+  return (
+    <StyledMatchView className={scoreP1 === scoreP2 ? "draw" : "regular"}>
+      <div className="card__match-score">
+        <div className="card__match-score-teams">
+          <span>{teamP1}</span>
+          <span>{teamP2}</span>
+        </div>
+        <div className="card__match-score-result">
+          <span>{scoreP1}</span>
+          <span>{scoreP2}</span>
+        </div>
+      </div>
+      <div className="card__match-info">
+        <span className="card__match-info-tournament">{tournament}</span>{" "}
+        <span className="card__match-info-date">{date}</span>
+      </div>
+    </StyledMatchView>
+  );
+};
 
 export default MatchView;

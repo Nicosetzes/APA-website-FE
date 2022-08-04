@@ -1,9 +1,10 @@
 import * as React from "react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import Divider from "@mui/material/Divider";
 import Menu from "@mui/material/Menu";
 import MenuList from "@mui/material/MenuList";
 import MenuItem from "@mui/material/MenuItem";
+import HomeIcon from '@mui/icons-material/Home';
 import ListItemText from "@mui/material/ListItemText";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
@@ -25,38 +26,47 @@ const NavMenu = ({ handleClose, isOpen, anchorEl }) => {
       <MenuList>
         <MenuItem onClick={handleClose}>
           <ListItemIcon>
+            <HomeIcon fontSize="small" />
+          </ListItemIcon>
+          <NavLink to="/">
+            <ListItemText>Home</ListItemText>
+          </NavLink>
+        </MenuItem>
+        <Divider />
+        <MenuItem onClick={handleClose}>
+          <ListItemIcon>
             <EmojiEventsIcon fontSize="small" />
           </ListItemIcon>
-          <Link to="/standings">
+          <NavLink to="/standings">
             <ListItemText>Clasificación</ListItemText>
-          </Link>
+          </NavLink>
         </MenuItem>
         <Divider />
         <MenuItem onClick={handleClose}>
           <ListItemIcon>
             <SportsSoccerIcon fontSize="small" />
           </ListItemIcon>
-          <Link to="/matches">
+          <NavLink to="/matches">
             <ListItemText>Partidos</ListItemText>
-          </Link>
+          </NavLink>
         </MenuItem>
         <Divider />
         <MenuItem onClick={handleClose}>
           <ListItemIcon>
             <CalendarMonthIcon fontSize="small" />
           </ListItemIcon>
-          <Link to="/tournaments">
+          <NavLink to="/tournaments">
             <ListItemText>Torneos</ListItemText>
-          </Link>
+          </NavLink>
         </MenuItem>
         <Divider />
         <MenuItem onClick={handleClose}>
           <ListItemIcon>
             <BarChartIcon fontSize="small" />
           </ListItemIcon>
-          <Link to="/statistics">
+          <NavLink to="/statistics">
             <ListItemText>Estadística</ListItemText>
-          </Link>
+          </NavLink>
         </MenuItem>
       </MenuList>
     </Menu>

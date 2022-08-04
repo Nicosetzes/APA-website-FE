@@ -3,6 +3,7 @@ import { useParams, useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
 import { useTournament } from "./../../context/TournamentContext";
 import axios from "axios";
+import { motion } from "framer-motion";
 import Swal from "sweetalert2";
 import "animate.css";
 
@@ -140,14 +141,18 @@ const FixtureId = () => {
   };
 
   return (
-    <>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
       {tournament.tournament && (
         <FixtureContainer
           tournament={tournament.tournament}
           handleSubmit={handleSubmit}
         />
       )}
-    </>
+    </motion.div>
   );
 };
 

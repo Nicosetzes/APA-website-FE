@@ -7,6 +7,7 @@ import Table from '@mui/material/Table'
 import Paper from '@mui/material/Paper';
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { motion } from "framer-motion";
 
 const Matches = () => {
 
@@ -26,38 +27,40 @@ const Matches = () => {
   console.log(data);
 
   return (
-    <>
-      <div className="app">
-        <input
-          className="search"
-          placeholder="Buscar..."
-          onChange={(e) => setQuery(e.target.value.toLowerCase())}
-        />
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 400 }} aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell sx={{ color: "#000" }} align="center">Fecha</TableCell>
-                <TableCell sx={{ color: "#000" }} align="center">Torneo</TableCell>
-                <TableCell sx={{ color: "#000" }} align="center">Equipo 1</TableCell>
-                <TableCell sx={{ color: "#000" }} align="center">Equipo 2</TableCell>
-                <TableCell sx={{ color: "#000" }} align="center">Resultado</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {data.map(match =>
-                <TableRow key={match._id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                  <TableCell component="th" scope="row" align="center">{`${new Date(parseInt(match._id.substring(0, 8), 16) * 1000).toLocaleString()}`}</TableCell>
-                  <TableCell component="th" scope="row" align="center">{`${match.tournament.name}`}</TableCell>
-                  <TableCell component="th" scope="row" align="center">{`${match.teamP1} (${match.playerP1.toUpperCase()[0]}${match.playerP1.toUpperCase()[1]})`}</TableCell>
-                  <TableCell component="th" scope="row" align="center">{`${match.teamP2} (${match.playerP2.toUpperCase()[0]}${match.playerP2.toUpperCase()[1]})`}</TableCell>
-                  <TableCell component="th" scope="row" align="center">{`${match.scoreP1} - ${match.scoreP2}`}</TableCell>
-                </TableRow>)}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </div>
-    </>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <input
+        className="search"
+        placeholder="Buscar..."
+        onChange={(e) => setQuery(e.target.value.toLowerCase())}
+      />
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 400 }} aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              <TableCell sx={{ color: "#000" }} align="center">Fecha</TableCell>
+              <TableCell sx={{ color: "#000" }} align="center">Torneo</TableCell>
+              <TableCell sx={{ color: "#000" }} align="center">Equipo 1</TableCell>
+              <TableCell sx={{ color: "#000" }} align="center">Equipo 2</TableCell>
+              <TableCell sx={{ color: "#000" }} align="center">Resultado</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {data.map(match =>
+              <TableRow key={match._id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                <TableCell component="th" scope="row" align="center">{`${new Date(parseInt(match._id.substring(0, 8), 16) * 1000).toLocaleString()}`}</TableCell>
+                <TableCell component="th" scope="row" align="center">{`${match.tournament.name}`}</TableCell>
+                <TableCell component="th" scope="row" align="center">{`${match.teamP1} (${match.playerP1.toUpperCase()[0]}${match.playerP1.toUpperCase()[1]})`}</TableCell>
+                <TableCell component="th" scope="row" align="center">{`${match.teamP2} (${match.playerP2.toUpperCase()[0]}${match.playerP2.toUpperCase()[1]})`}</TableCell>
+                <TableCell component="th" scope="row" align="center">{`${match.scoreP1} - ${match.scoreP2}`}</TableCell>
+              </TableRow>)}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </motion.div>
   );
 }
 

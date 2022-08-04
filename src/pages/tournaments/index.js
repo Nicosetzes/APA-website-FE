@@ -6,6 +6,7 @@ import { CardActionArea } from '@mui/material';
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { motion } from "framer-motion";
 import logo1 from "./../../images/premier-league-background-1.jpg";
 import logo2 from "./../../images/premier-league-background-2.jpg";
 
@@ -26,7 +27,11 @@ const Tournaments = () => {
   console.log(tournaments);
 
   return (
-    <>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
       <div className="cardContainer">
         {tournaments.map((tournament, index) =>
           <Card key={tournament._id} sx={{ maxWidth: 250, display: "flex", margin: "2rem auto" }}>
@@ -49,7 +54,7 @@ const Tournaments = () => {
         )
         }
       </div>
-    </>
+    </motion.div>
   );
 }
 

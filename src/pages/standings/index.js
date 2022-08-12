@@ -1,29 +1,16 @@
 import * as React from "react";
-import { useMediaQuery } from "react-responsive";
 import { useEffect, useState } from "react";
 import { useNavigate, createSearchParams } from "react-router-dom";
 import axios from "axios";
 import { motion } from "framer-motion";
-import { StyledTable } from "./styled";
+import PlayerStatsTable from "./components/PlayerStatsTable";
 import { Oval } from "react-loader-spinner";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
+import StandingsTable from "./components/StandingsTable";
 
 const Standings = () => {
-  const isXL = useMediaQuery({ query: "(min-width: 1200px)" });
-  const isL = useMediaQuery({ query: "(min-width: 992px)" });
-  const isM = useMediaQuery({ query: "(min-width: 768px)" });
-  const isSm = useMediaQuery({ query: "(min-width: 500px)" });
-  const isXS = useMediaQuery({ query: "(min-width: 400px)" });
-  // const isTabletOrMobile = useMediaQuery({ query: "(max-width: 1224px)" });
-  // const isPortrait = useMediaQuery({ query: "(orientation: portrait)" });
-  // const isRetina = useMediaQuery({ query: "(min-resolution: 2dppx)" });
-
-  const [tournaments, setTournaments] = useState("");
+  const [tournamentsData, setTournamentsData] = useState("");
 
   const api = "http://localhost:5000/api";
 
@@ -52,193 +39,45 @@ const Standings = () => {
   };
 
   useEffect(() => {
-    getTournaments();
+    getTournamentsData();
   }, []);
 
-  const getTournaments = () => {
-    axios
-      .get(`${api}/standings`)
-      .then((response) => {
-        setTournaments(response.data);
-      })
-      .catch((err) => {
-        console.log(`Error: ${err}`);
-      });
+  const getTournamentsData = () => {
+    const standings = axios.get(`${api}/standings`);
+    const playerInfoFromTournament = axios.get(`${api}/standings/player-info`);
+
+    Promise.all([standings, playerInfoFromTournament]).then((values) => {
+      const data = values.map((response) => response.data);
+      setTournamentsData(data);
+    });
   };
 
-  if (tournaments) {
+  console.log(tournamentsData);
+
+  if (tournamentsData) {
+    const standings = tournamentsData[0]; // Index 0 because of the order in which I invoked the promises call in Promise.all //
+    const playerStats = tournamentsData[1];
+
     return (
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
-        {tournaments
+        {standings
           .sort((a, b) => (a.name > b.name ? 1 : -1))
           .map((tournament) => (
             <TableContainer component={Paper} key={tournament.name}>
               <div className="title">{tournament.name}</div>
-              <StyledTable
-                sx={{ minWidth: 300, maxWidth: 1000, margin: "0.5rem auto" }}
-                aria-label="simple table"
-              >
-                <TableHead>
-                  <TableRow>
-                    <TableCell
-                      sx={{ color: "#fff", fontWeight: 800 }}
-                      align="center"
-                    >
-                      {isL ? "Posición" : "Pos."}
-                    </TableCell>
-                    <TableCell
-                      sx={{ color: "#fff", fontWeight: 800 }}
-                      align="center"
-                    >
-                      Equipo
-                    </TableCell>
-                    <TableCell
-                      sx={{ color: "#fff", fontWeight: 800 }}
-                      align="center"
-                    >
-                      {isL ? "Jugador" : "Jug."}
-                    </TableCell>
-                    <TableCell
-                      sx={{ color: "#fff", fontWeight: 800 }}
-                      align="center"
-                    >
-                      PJ
-                    </TableCell>
-                    {isXS && (
-                      <>
-                        <TableCell
-                          sx={{ color: "#fff", fontWeight: 800 }}
-                          align="center"
-                        >
-                          PG
-                        </TableCell>
-                      </>
-                    )}
-                    {isSm && (
-                      <>
-                        <TableCell
-                          sx={{ color: "#fff", fontWeight: 800 }}
-                          align="center"
-                        >
-                          PE
-                        </TableCell>
-                        <TableCell
-                          sx={{ color: "#fff", fontWeight: 800 }}
-                          align="center"
-                        >
-                          PP
-                        </TableCell>
-                      </>
-                    )}
-                    {isM && (
-                      <>
-                        <TableCell
-                          sx={{ color: "#fff", fontWeight: 800 }}
-                          align="center"
-                        >
-                          GF
-                        </TableCell>
-                        <TableCell
-                          sx={{ color: "#fff", fontWeight: 800 }}
-                          align="center"
-                        >
-                          GC
-                        </TableCell>
-                        <TableCell
-                          sx={{ color: "#fff", fontWeight: 800 }}
-                          align="center"
-                        >
-                          DIF
-                        </TableCell>
-                      </>
-                    )}
-                    <TableCell
-                      sx={{ color: "#fff", fontWeight: 800 }}
-                      align="center"
-                    >
-                      {isL ? "Puntos" : "Pts."}
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {tournament.sortedStanding.map((team, teamIndex) => (
-                    <TableRow
-                      key={team.id}
-                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                    >
-                      <TableCell component="th" scope="row">
-                        {teamIndex + 1}
-                      </TableCell>
-                      <TableCell component="th" scope="row">
-                        <div
-                          className="teamAndLogoWrapper"
-                          onClick={() =>
-                            goToSpecificFixture(
-                              tournament.tournamentId,
-                              team.id
-                            )
-                          }
-                        >
-                          <img src={team.logo} alt={team.name} />
-                          {isM ? team.team : team.teamCode}
-                        </div>
-                      </TableCell>
-                      <TableCell
-                        component="th"
-                        scope="row"
-                        onClick={() =>
-                          goToSpecificFixture(
-                            tournament.tournamentId,
-                            team.player
-                          )
-                        }
-                      >
-                        {team.player}
-                      </TableCell>
-                      <TableCell component="th" scope="row">
-                        {team.played}
-                      </TableCell>
-                      {isXS && (
-                        <>
-                          <TableCell component="th" scope="row">
-                            {team.wins}
-                          </TableCell>
-                        </>
-                      )}
-                      {isSm && (
-                        <>
-                          <TableCell component="th" scope="row">
-                            {team.draws}
-                          </TableCell>
-                          <TableCell component="th" scope="row">
-                            {team.losses}
-                          </TableCell>
-                        </>
-                      )}
-                      {isM && (
-                        <>
-                          <TableCell component="th" scope="row">
-                            {team.goalsFor}
-                          </TableCell>
-                          <TableCell component="th" scope="row">
-                            {team.goalsAgainst}
-                          </TableCell>
-                          <TableCell component="th" scope="row">
-                            {team.scoringDifference}
-                          </TableCell>
-                        </>
-                      )}
-                      <TableCell component="th" scope="row">
-                        {team.points}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </StyledTable>
+              <StandingsTable
+                tournament={tournament}
+                onHandle={goToSpecificFixture}
+              />
+              <PlayerStatsTable
+                stats={playerStats
+                  .filter((stats) => stats.tournament === tournament.name)
+                  .sort((a, b) => (a.totalPoints > b.totalPoints ? -1 : 1))}
+              />
             </TableContainer>
           ))}
       </motion.div>

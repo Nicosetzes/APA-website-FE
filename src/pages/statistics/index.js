@@ -1,25 +1,34 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import { useMediaQuery } from "react-responsive";
 import { motion } from "framer-motion";
-import AOS from "aos";
-import "aos/dist/aos.css";
 import { StyledStatistics } from "./styled";
 import BarChart from "./../../charts/BarChart";
 import DoughnutChart from "./../../charts/DoughnutChart";
 import MatchView from "./components/MatchView";
-// import PieChart from "../../views/charts/PieChart";
-// import LineChart from "../../views/charts/LineChart";
 import { Oval } from "react-loader-spinner";
+import axios from "axios";
 
 const Statistics = () => {
+  // const isL = useMediaQuery({ query: "(min-width: 992px)" });
+  const isM = useMediaQuery({ query: "(min-width: 768px)" });
+  // const isSm = useMediaQuery({ query: "(min-width: 500px)" });
+  // const isXS = useMediaQuery({ query: "(min-width: 400px)" });
+
   const api = "http://localhost:5000/api";
 
   const [stats, setStats] = useState();
 
-  useEffect(() => {
-    AOS.init();
-    AOS.refresh();
-  }, []);
+  const slideUpVariant = {
+    hidden: { y: 50 },
+    visible: {
+      y: 0,
+      transition: {
+        type: "spring",
+        duration: 1,
+        bounce: 0.3,
+      },
+    },
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -29,6 +38,8 @@ const Statistics = () => {
     };
     fetchData();
   }, []);
+
+  console.log(stats);
 
   if (stats) {
     const { playerStats, recentMatches, accolades } = stats;
@@ -81,7 +92,7 @@ const Statistics = () => {
           text: "Cantidad de victorias",
           font: {
             weight: "bold",
-            size: "20px",
+            size: "17.5px",
           },
         },
         legend: {
@@ -137,7 +148,7 @@ const Statistics = () => {
           text: "% Efectividad",
           font: {
             weight: "bold",
-            size: "20px",
+            size: "17.5px",
           },
         },
         legend: {
@@ -154,7 +165,17 @@ const Statistics = () => {
         exit={{ opacity: 0 }}
       >
         <StyledStatistics>
-          <div>Statistics</div>
+          <div
+            style={{
+              fontSize: "1.5rem",
+              fontWeight: 700,
+              textDecoration: "underline",
+              margin: "1.5rem auto",
+              width: "fit-content",
+            }}
+          >
+            Estadísticas
+          </div>
           <div
             className="chart__container"
             style={{
@@ -165,7 +186,7 @@ const Statistics = () => {
             }}
           >
             <div
-              style={{ width: "400px", height: "300px", display: "flex" }}
+              style={{ width: "300px", height: "300px", display: "flex" }}
               data-aos="fade-in"
               data-aos-duration="1000"
             >
@@ -176,7 +197,7 @@ const Statistics = () => {
               />
             </div>
             <div
-              style={{ width: "400px", height: "300px", margin: "1rem 0" }}
+              style={{ width: "300px", height: "300px", margin: "1rem 0" }}
               data-aos="fade-in"
               data-aos-duration="1000"
             >
@@ -186,52 +207,53 @@ const Statistics = () => {
               />
             </div>
           </div>
-          <div
+          <motion.div
             style={{
-              display: "flex",
-              flexWrap: "wrap",
-              justifyContent: "center",
+              display: "grid",
+              gridTemplateRows: isM ? "auto" : "auto auto",
+              gridTemplateColumns: isM ? "auto auto auto auto" : "auto auto",
+              justifyContent: "space-evenly",
             }}
+            initial="hidden"
+            whileInView={"visible"}
+            viewport={{ once: false, amount: 0.125 }}
+            transition={{ staggerChildren: 0.1 }}
+            variants={slideUpVariant}
           >
             {recentMatches.map((match, index) => (
               <MatchView key={index} match={match} />
             ))}
-          </div>
-          <div className="accolades">
-            <div
-              className="accolades-item"
-              data-aos="fade-right"
-              data-aos-duration="1000"
-            >
+          </motion.div>
+          <motion.div
+            className="accolades"
+            initial="hidden"
+            whileInView={"visible"}
+            viewport={{ once: false, amount: 0.25 }}
+            transition={{ staggerChildren: 0.1 }}
+            variants={slideUpVariant}
+          >
+            <motion.div className="accolades-item" variants={slideUpVariant}>
               <div className="accolades-item-title">
                 Mayor cantidad de victorias
               </div>
               <div className="accolades-item-player">{mostWins.player}</div>
               <div className="accolades-item-number">{mostWins.wins}</div>
-            </div>
-            <div
-              className="accolades-item"
-              data-aos="fade-right"
-              data-aos-duration="1000"
-            >
+            </motion.div>
+            <motion.div className="accolades-item" variants={slideUpVariant}>
               <div className="accolades-item-title">
                 Mayor cantidad de empates
               </div>
               <div className="accolades-item-player">{mostDraws.player}</div>
               <div className="accolades-item-number">{mostDraws.draws}</div>
-            </div>
-            <div
-              className="accolades-item"
-              data-aos="fade-right"
-              data-aos-duration="1000"
-            >
+            </motion.div>
+            <motion.div className="accolades-item" variants={slideUpVariant}>
               <div className="accolades-item-title">
                 Mayor cantidad de derrotas
               </div>
               <div className="accolades-item-player">{mostLosses.player}</div>
               <div className="accolades-item-number">{mostLosses.losses}</div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </StyledStatistics>
       </motion.div>
     );

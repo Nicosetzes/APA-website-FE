@@ -5,7 +5,6 @@ import { useTournament } from "./../../context/TournamentContext";
 import axios from "axios";
 import { motion } from "framer-motion";
 import Swal from "sweetalert2";
-import "animate.css";
 
 const FixtureId = () => {
   const api = "http://localhost:5000/api";
@@ -23,7 +22,9 @@ const FixtureId = () => {
     const fetchData = async () => {
       console.log("Hago el fetch de data");
       if (team) {
-        const res = await axios.get(`${api}/tournaments/${id}/fixture?team=${team}`);
+        const res = await axios.get(
+          `${api}/tournaments/${id}/fixture?team=${team}`
+        );
         tournament.updateTournament(res.data);
       }
       if (player) {

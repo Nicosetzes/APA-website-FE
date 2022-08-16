@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+// import { useNavigate } from "react-router-dom";
+// import { useCookies } from "react-cookie";
 import axios from "axios";
 import TableContainer from "@mui/material/TableContainer";
 import MatchesTable from "./components/MatchesTable";
@@ -9,12 +11,44 @@ import { Oval } from "react-loader-spinner";
 const Matches = () => {
   const api = "http://localhost:5000/api";
 
+  // const [cookies, setCookie, removeCookie] = useCookies([]);
+
+  // console.log(cookies);
+
+  // const navigate = useNavigate();
+
+  // useEffect(() => {
+  //   const verifyUser = async () => {
+  //     if (!cookies.access_token) navigate("/api");
+  //     else {
+  //       const { data } = await axios.post(
+  //         `${api}/login`,
+  //         {},
+  //         { withCredentials: true }
+  //       );
+  //       if (!data.status) {
+  //         removeCookie("jwt");
+  //         navigate("/api");
+  //       } else console.log("Login exitoso, bienvenido"); // Luego será modificado con toastify
+  //     }
+  //   };
+  //   verifyUser();
+  // }, [cookies, navigate, removeCookie]);
+
+  // const logout = () => {
+  //   removeCookie("jwt");
+  //   navigate("/api");
+  // };
+
   const [query, setQuery] = useState("");
   const [data, setData] = useState();
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await axios.get(`${api}/matches?query=${query}`);
+      const res = await axios.get(`${api}/matches?query=${query}`, {
+        withCredentials: true,
+        credentials: "include",
+      });
       setData(res.data);
     };
     if (query.length === 0 || query.length > 2) fetchData();

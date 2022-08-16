@@ -4,18 +4,19 @@ import { BrowserRouter } from "react-router-dom";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 import { TournamentProvider } from "./context/TournamentContext";
+import { LoginProvider } from "./context/LoginContext";
 import Navbar from "./components/Navbar";
-import NewNavBar from "./components/NewNavBar";
 import AnimatedRoutes from "./routes/AnimatedRoutes";
 
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
-      <Navbar />
-      {/* <NewNavBar /> */}
-      <TournamentProvider>
-        <AnimatedRoutes />
-      </TournamentProvider>
+      <LoginProvider>
+        <Navbar />
+        <TournamentProvider>
+          <AnimatedRoutes />
+        </TournamentProvider>
+      </LoginProvider>
     </BrowserRouter>
   </React.StrictMode>,
   document.getElementById("root")

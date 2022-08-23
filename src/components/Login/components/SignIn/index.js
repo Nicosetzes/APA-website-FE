@@ -8,12 +8,10 @@ import { StyledLogin } from "./styled";
 const SignIn = ({ loginData, handleSubmit, handleChange }) => {
   return (
     <StyledLogin onSubmit={handleSubmit}>
-      <ToastContainer />
       <Box sx={{ display: "flex", alignItems: "center", margin: "0 0.25rem" }}>
         <AccountCircle sx={{ color: "action.active", mr: 1, my: 0.5 }} />
         <TextField
           name="email"
-          type="email"
           label="Email"
           margin="dense"
           variant="filled"

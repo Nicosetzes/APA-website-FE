@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 import { Link } from "react-router-dom";
 import MenuWrapper from "./../MenuWrapper";
 import { StyledNavbar } from "./styled";
@@ -14,7 +14,7 @@ const Navbar = () => {
   const login = useLogin();
   const { loginStatus, setLoginStatus } = login;
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const isUserAuthenticated = async () => {
       await axios
         .get(`${api}/isUserAuthenticated`, {
@@ -22,10 +22,10 @@ const Navbar = () => {
           credentials: "include",
         })
         .then((response) => {
-          const { auth, user } = response.data;
+          const { auth, message } = response.data;
           if (auth) {
             setLoginStatus(true);
-            toast.success(`Hola ${user.nickname}, bienvenid@`, {
+            toast.success(`${message}`, {
               position: "bottom-right",
               autoClose: 4000,
               hideProgressBar: false,
@@ -44,7 +44,6 @@ const Navbar = () => {
 
   return (
     <StyledNavbar>
-      <ToastContainer />
       <Link to="/">
         <img className="logo" src={logo} alt="logo" />
       </Link>

@@ -3,8 +3,8 @@ import { useState } from "react";
 import axios from "axios";
 import SignIn from "./components/SignIn";
 import SignOut from "./components/SignOut";
-import { toast } from "react-toastify";
 import { useLogin } from "../../context/LoginContext";
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const Login = () => {
@@ -26,38 +26,35 @@ const Login = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    await toast.promise(
-      axios.post(
-        `${api}/login`,
-        { ...loginData },
-        { withCredentials: true, credentials: "include" } // IMPORTANTE
-      ),
-      {
-        pending: {
-          render() {
-            return "Aguarde unos instantes...";
+    try {
+      await toast.promise(
+        axios.post(
+          `${api}/login`,
+          { ...loginData },
+          { withCredentials: true, credentials: "include" } // IMPORTANTE
+        ),
+        {
+          success: {
+            render({ data }) {
+              setLoginStatus(true);
+              const { message } = data.data;
+              return message;
+            },
+            icon: "🟢",
           },
-          icon: false,
-          position: "bottom-right",
-        },
-        success: {
-          render({ data }) {
-            setLoginStatus(true);
-            const { nickname } = data.data.result;
-            return `Bienvenid@ ${nickname}`;
+          error: {
+            render({ data }) {
+              setLoginStatus(false);
+              console.log(data);
+              const { message } = data.response.data;
+              return message;
+            },
           },
-          icon: "🟢",
-          position: "bottom-right",
-        },
-        error: {
-          render({ data }) {
-            setLoginStatus(false);
-            const { message } = data.response.data;
-            return `Error: ${message}`; // MODIFICAR;
-          },
-        },
-      }
-    );
+        }
+      );
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const logout = async () => {
@@ -79,9 +76,8 @@ const Login = () => {
           success: {
             render({ data }) {
               setLoginStatus(false);
-              console.log(data);
-              const { nickname } = data.data.user;
-              return `${nickname}, su sesión ha sido cerrada con éxito`;
+              const { message } = data.data;
+              return message;
             },
             icon: "🟢",
             position: "bottom-right",
@@ -89,8 +85,9 @@ const Login = () => {
           error: {
             render({ data }) {
               const { message } = data.response.data;
-              return `Error: ${message}`; // MODIFICAR;
+              return message;
             },
+            position: "bottom-right",
           },
         }
       );
@@ -99,13 +96,44 @@ const Login = () => {
 
   if (!loginStatus)
     return (
-      <SignIn
-        loginData={loginData}
-        handleSubmit={handleSubmit}
-        handleChange={handleChange}
-      />
+      <>
+        <ToastContainer
+          position="bottom-right"
+          autoClose={2500}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="dark"
+        />
+        <SignIn
+          loginData={loginData}
+          handleSubmit={handleSubmit}
+          handleChange={handleChange}
+        />
+      </>
     );
-  else return <SignOut logout={logout} />;
+  else
+    return (
+      <>
+        <ToastContainer
+          position="bottom-right"
+          autoClose={2500}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="dark"
+        />
+        <SignOut logout={logout} />
+      </>
+    );
 };
 
 export default Login;

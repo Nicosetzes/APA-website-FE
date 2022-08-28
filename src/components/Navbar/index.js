@@ -3,13 +3,14 @@ import { Link } from 'react-router-dom'
 import MenuWrapper from './../MenuWrapper'
 import { StyledNavbar } from './styled'
 import logo from './../../images/logo.webp'
+import { api } from './../../api'
 import { useLogin } from './../../context/LoginContext'
 // import Login from './../Login'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 
 const Navbar = () => {
-  const api = 'http://localhost:5000/api'
+  // const api = 'http://localhost:5000/api'
 
   const login = useLogin()
   const { loginStatus, setLoginStatus } = login

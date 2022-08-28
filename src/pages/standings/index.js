@@ -1,26 +1,27 @@
-import * as React from "react";
-import { useEffect, useState } from "react";
-import { useNavigate, createSearchParams } from "react-router-dom";
-import axios from "axios";
-import { motion } from "framer-motion";
-import PlayerStatsTable from "./components/PlayerStatsTable";
-import { Oval } from "react-loader-spinner";
-import TableContainer from "@mui/material/TableContainer";
-import Paper from "@mui/material/Paper";
-import StandingsTable from "./components/StandingsTable";
+import * as React from 'react'
+import { useEffect, useState } from 'react'
+import { useNavigate, createSearchParams } from 'react-router-dom'
+import axios from 'axios'
+import { motion } from 'framer-motion'
+import PlayerStatsTable from './components/PlayerStatsTable'
+import { api } from './../../api'
+import { Oval } from 'react-loader-spinner'
+import TableContainer from '@mui/material/TableContainer'
+import Paper from '@mui/material/Paper'
+import StandingsTable from './components/StandingsTable'
 
 const Standings = () => {
-  const [tournamentsData, setTournamentsData] = useState("");
+  const [tournamentsData, setTournamentsData] = useState('')
 
-  const api = "http://localhost:5000/api";
+  // const api = 'http://localhost:5000/api'
 
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   const playerParams = (param) => {
-    return { player: param };
-  };
+    return { player: param }
+  }
   const teamParams = (param) => {
-    return { team: param };
-  };
+    return { team: param }
+  }
 
   const goToSpecificFixture = (id, params) => {
     if (isNaN(Number(params))) {
@@ -28,35 +29,35 @@ const Standings = () => {
       navigate({
         pathname: `/tournaments/${id}/fixture`,
         search: `?${createSearchParams(playerParams(params))}`,
-      });
+      })
     } else {
       // El query es de team (numérico, es el id);
       navigate({
         pathname: `/tournaments/${id}/fixture`,
         search: `?${createSearchParams(teamParams(params))}`,
-      });
+      })
     }
-  };
+  }
 
   useEffect(() => {
-    getTournamentsData();
-  }, []);
+    getTournamentsData()
+  }, [])
 
   const getTournamentsData = () => {
-    const standings = axios.get(`${api}/standings`);
-    const playerInfoFromTournament = axios.get(`${api}/standings/player-info`);
+    const standings = axios.get(`${api}/standings`)
+    const playerInfoFromTournament = axios.get(`${api}/standings/player-info`)
 
     Promise.all([standings, playerInfoFromTournament]).then((values) => {
-      const data = values.map((response) => response.data);
-      setTournamentsData(data);
-    });
-  };
+      const data = values.map((response) => response.data)
+      setTournamentsData(data)
+    })
+  }
 
-  console.log(tournamentsData);
+  console.log(tournamentsData)
 
   if (tournamentsData) {
-    const standings = tournamentsData[0]; // Index 0 because of the order in which I invoked the promises call in Promise.all //
-    const playerStats = tournamentsData[1];
+    const standings = tournamentsData[0] // Index 0 because of the order in which I invoked the promises call in Promise.all //
+    const playerStats = tournamentsData[1]
 
     return (
       <motion.div
@@ -81,10 +82,10 @@ const Standings = () => {
             </TableContainer>
           ))}
       </motion.div>
-    );
+    )
   } else {
     return (
-      <div style={{ margin: "auto", width: "100px" }}>
+      <div style={{ margin: 'auto', width: '100px' }}>
         <Oval
           height="80"
           width="80"
@@ -95,8 +96,8 @@ const Standings = () => {
           $wrapperClass
         />
       </div>
-    );
+    )
   }
-};
+}
 
-export default Standings;
+export default Standings

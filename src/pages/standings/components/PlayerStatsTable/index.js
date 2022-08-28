@@ -1,46 +1,46 @@
-import { useMediaQuery } from "react-responsive";
-import { StyledTable } from "./styled";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
+import { useMediaQuery } from 'react-responsive'
+import { StyledTable } from './styled'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
 
 const PlayerStatsTable = ({ stats }) => {
-  const isL = useMediaQuery({ query: "(min-width: 992px)" });
+  const isL = useMediaQuery({ query: '(min-width: 992px)' })
   // const isM = useMediaQuery({ query: "(min-width: 768px)" });
   // const isSm = useMediaQuery({ query: "(min-width: 500px)" });
-  const isXS = useMediaQuery({ query: "(min-width: 400px)" });
+  const isXS = useMediaQuery({ query: '(min-width: 400px)' })
 
-  console.log(stats);
+  console.log(stats)
 
   return (
     <StyledTable
-      sx={{ minWidth: 300, maxWidth: 1000, margin: "0.5rem auto" }}
+      sx={{ minWidth: 300, maxWidth: 1000, margin: '0.5rem auto' }}
       aria-label="simple table"
     >
       <TableHead>
         <TableRow>
-          <TableCell sx={{ fontWeight: 800, color: "#fff" }} align="center">
-            {isL ? "Jugador" : "J."}
+          <TableCell sx={{ fontWeight: 800, color: '#fff' }} align="center">
+            {isL ? 'Jugador' : 'J.'}
           </TableCell>
-          <TableCell sx={{ fontWeight: 800, color: "#fff" }} align="center">
+          <TableCell sx={{ fontWeight: 800, color: '#fff' }} align="center">
             PJ
           </TableCell>
           {isXS && (
             <>
-              <TableCell sx={{ fontWeight: 800, color: "#fff" }} align="center">
+              <TableCell sx={{ fontWeight: 800, color: '#fff' }} align="center">
                 PG
               </TableCell>
-              <TableCell sx={{ fontWeight: 800, color: "#fff" }} align="center">
+              <TableCell sx={{ fontWeight: 800, color: '#fff' }} align="center">
                 PE
               </TableCell>
-              <TableCell sx={{ fontWeight: 800, color: "#fff" }} align="center">
+              <TableCell sx={{ fontWeight: 800, color: '#fff' }} align="center">
                 PP
               </TableCell>
             </>
           )}
-          <TableCell sx={{ fontWeight: 800, color: "#fff" }} align="center">
-            {isL ? "Puntos" : "Pts."}
+          <TableCell sx={{ fontWeight: 800, color: '#fff' }} align="center">
+            {isL ? 'Puntos' : 'Pts.'}
           </TableCell>
         </TableRow>
       </TableHead>
@@ -48,13 +48,13 @@ const PlayerStatsTable = ({ stats }) => {
         {stats.map((playerStats) => (
           <TableRow
             key={playerStats.player}
-            sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
           >
             <TableCell
               component="th"
               scope="row"
               align="center"
-              sx={{ fontWeight: 800, color: "#fff" }}
+              sx={{ fontWeight: 800, color: '#fff' }}
             >
               {playerStats.player}
             </TableCell>
@@ -62,7 +62,7 @@ const PlayerStatsTable = ({ stats }) => {
               component="th"
               scope="row"
               align="center"
-              sx={{ fontWeight: 800, color: "#fff" }}
+              sx={{ fontWeight: 800, color: '#fff' }}
             >
               {playerStats.totalMatches}
             </TableCell>
@@ -72,7 +72,7 @@ const PlayerStatsTable = ({ stats }) => {
                   component="th"
                   scope="row"
                   align="center"
-                  sx={{ fontWeight: 800, color: "#fff" }}
+                  sx={{ fontWeight: 800, color: '#fff' }}
                 >
                   {playerStats.totalWins}
                 </TableCell>
@@ -80,7 +80,7 @@ const PlayerStatsTable = ({ stats }) => {
                   component="th"
                   scope="row"
                   align="center"
-                  sx={{ fontWeight: 800, color: "#fff" }}
+                  sx={{ fontWeight: 800, color: '#fff' }}
                 >
                   {playerStats.totalDraws}
                 </TableCell>
@@ -88,7 +88,7 @@ const PlayerStatsTable = ({ stats }) => {
                   component="th"
                   scope="row"
                   align="center"
-                  sx={{ fontWeight: 800, color: "#fff" }}
+                  sx={{ fontWeight: 800, color: '#fff' }}
                 >
                   {playerStats.totalLosses}
                 </TableCell>
@@ -98,7 +98,7 @@ const PlayerStatsTable = ({ stats }) => {
               component="th"
               scope="row"
               align="center"
-              sx={{ fontWeight: 800, color: "#fff" }}
+              sx={{ fontWeight: 800, color: '#fff' }}
             >
               {playerStats.totalPoints}
             </TableCell>
@@ -106,7 +106,7 @@ const PlayerStatsTable = ({ stats }) => {
         ))}
       </TableBody>
     </StyledTable>
-  );
-};
+  )
+}
 
-export default PlayerStatsTable;
+export default PlayerStatsTable

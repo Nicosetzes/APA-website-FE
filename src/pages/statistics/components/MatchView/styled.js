@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components'
 
 export const StyledMatchView = styled.div`
   background-color: #003013;
@@ -64,4 +64,4 @@ export const StyledMatchView = styled.div`
       bottom: 0;
     }
   }
-`;
+`

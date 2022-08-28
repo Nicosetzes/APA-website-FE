@@ -1,4 +1,4 @@
-import { ToastContainer, Slide } from "react-toastify";
+import { ToastContainer, Slide } from 'react-toastify'
 
 const SignOut = ({ logout }) => {
   return (
@@ -19,7 +19,7 @@ const SignOut = ({ logout }) => {
       />
       <button onClick={() => logout()}>Cerrar sesión</button>
     </>
-  );
-};
+  )
+}
 
-export default SignOut;
+export default SignOut

@@ -1,11 +1,7 @@
 // import { StyledCardContainer } from "./styled";
 
 const CardContainer = () => {
-
-	return (
-		<>
-		</>
-	);
+  return <></>
 }
 
-export default CardContainer;
+export default CardContainer

@@ -1,16 +1,17 @@
-import * as React from "react";
-import { NavLink } from "react-router-dom";
-import Divider from "@mui/material/Divider";
-import Menu from "@mui/material/Menu";
-import MenuList from "@mui/material/MenuList";
-import MenuItem from "@mui/material/MenuItem";
-import HomeIcon from '@mui/icons-material/Home';
-import ListItemText from "@mui/material/ListItemText";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
-import SportsSoccerIcon from "@mui/icons-material/SportsSoccer";
-import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-import BarChartIcon from '@mui/icons-material/BarChart';
+import * as React from 'react'
+import { NavLink } from 'react-router-dom'
+import Divider from '@mui/material/Divider'
+import Menu from '@mui/material/Menu'
+import MenuList from '@mui/material/MenuList'
+import MenuItem from '@mui/material/MenuItem'
+import HomeIcon from '@mui/icons-material/Home'
+import ListItemText from '@mui/material/ListItemText'
+import ListItemIcon from '@mui/material/ListItemIcon'
+import AccountCircle from '@mui/icons-material/AccountCircle'
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents'
+import SportsSoccerIcon from '@mui/icons-material/SportsSoccer'
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
+import BarChartIcon from '@mui/icons-material/BarChart'
 
 const NavMenu = ({ handleClose, isOpen, anchorEl }) => {
   return (
@@ -20,7 +21,7 @@ const NavMenu = ({ handleClose, isOpen, anchorEl }) => {
       open={isOpen}
       onClose={handleClose}
       MenuListProps={{
-        "aria-labelledby": "basic-button",
+        'aria-labelledby': 'basic-button',
       }}
     >
       <MenuList>
@@ -30,6 +31,15 @@ const NavMenu = ({ handleClose, isOpen, anchorEl }) => {
           </ListItemIcon>
           <NavLink to="/">
             <ListItemText>Home</ListItemText>
+          </NavLink>
+        </MenuItem>
+        <Divider />
+        <MenuItem onClick={handleClose}>
+          <ListItemIcon>
+            <AccountCircle fontSize="small" />
+          </ListItemIcon>
+          <NavLink to="/login">
+            <ListItemText>Login</ListItemText>
           </NavLink>
         </MenuItem>
         <Divider />
@@ -70,7 +80,7 @@ const NavMenu = ({ handleClose, isOpen, anchorEl }) => {
         </MenuItem>
       </MenuList>
     </Menu>
-  );
-};
+  )
+}
 
-export default NavMenu;
+export default NavMenu

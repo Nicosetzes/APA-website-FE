@@ -1,5 +1,4 @@
-import styled from "styled-components";
-
+import styled from 'styled-components'
 export const StyledStatistics = styled.div`
   .accolades {
     display: flex;
@@ -43,4 +42,4 @@ export const StyledStatistics = styled.div`
       }
     }
   }
-`;
+`

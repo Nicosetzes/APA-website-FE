@@ -1,17 +1,15 @@
-import { createContext, useState, useContext } from "react";
+import { createContext, useState, useContext } from 'react'
 
-const TournamentContext = createContext();
+const TournamentContext = createContext()
 
-export const useTournament = () => useContext(TournamentContext);
+export const useTournament = () => useContext(TournamentContext)
 
 export const TournamentProvider = ({ children }) => {
-
-  const [tournament, setTournament] = useState();
+  const [tournament, setTournament] = useState()
 
   const updateTournament = (updated) => {
-    setTournament(updated);
+    setTournament(updated)
   }
-
 
   return (
     <TournamentContext.Provider
@@ -22,5 +20,5 @@ export const TournamentProvider = ({ children }) => {
     >
       {children}
     </TournamentContext.Provider>
-  );
-};
+  )
+}

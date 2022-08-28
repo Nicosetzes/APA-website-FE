@@ -1,5 +1,5 @@
-import styled from "styled-components";
-import Table from "@mui/material/Table";
+import styled from 'styled-components'
+import Table from '@mui/material/Table'
 
 export const StyledTable = styled(Table)`
   background-color: #212529;
@@ -32,7 +32,7 @@ export const StyledTable = styled(Table)`
     }
     .css-1ex1afd-MuiTableCell-root {
       color: #fff;
-      font-family: "Fira Sans", sans-serif;
+      font-family: 'Fira Sans', sans-serif;
       font-weight: 800;
       padding: 0.5rem 0;
       text-align: center;
@@ -56,4 +56,4 @@ export const StyledTable = styled(Table)`
       width: 25px;
     }
   }
-`;
+`

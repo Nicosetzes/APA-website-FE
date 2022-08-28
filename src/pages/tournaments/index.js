@@ -1,27 +1,28 @@
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
-import Typography from "@mui/material/Typography";
-import { CardActionArea } from "@mui/material";
-import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
-import axios from "axios";
-import { motion } from "framer-motion";
-import logo1 from "./../../images/premier-league-background-1.jpg";
-import logo2 from "./../../images/premier-league-background-2.jpg";
+import Card from '@mui/material/Card'
+import CardContent from '@mui/material/CardContent'
+import CardMedia from '@mui/material/CardMedia'
+import Typography from '@mui/material/Typography'
+import { api } from './../../api'
+import { CardActionArea } from '@mui/material'
+import { Link } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import axios from 'axios'
+import { motion } from 'framer-motion'
+import logo1 from './../../images/premier-league-background-1.jpg'
+import logo2 from './../../images/premier-league-background-2.jpg'
 
 const Tournaments = () => {
-  const api = "http://localhost:5000/api";
+  // const api = 'http://localhost:5000/api'
 
-  const [tournaments, setTournaments] = useState([]);
+  const [tournaments, setTournaments] = useState([])
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await axios.get(`${api}/tournaments`);
-      setTournaments(res.data);
-    };
-    fetchData();
-  }, []);
+      const res = await axios.get(`${api}/tournaments`)
+      setTournaments(res.data)
+    }
+    fetchData()
+  }, [])
 
   if (tournaments) {
     return (
@@ -34,7 +35,7 @@ const Tournaments = () => {
           {tournaments.map((tournament, index) => (
             <Card
               key={tournament._id}
-              sx={{ maxWidth: 250, display: "flex", margin: "2rem auto" }}
+              sx={{ maxWidth: 250, display: 'flex', margin: '2rem auto' }}
             >
               <Link to={`/tournaments/${tournament._id}/fixture`}>
                 <CardActionArea>
@@ -49,7 +50,7 @@ const Tournaments = () => {
                       gutterBottom
                       variant="h5"
                       component="div"
-                      sx={{ textAlign: "center" }}
+                      sx={{ textAlign: 'center' }}
                     >
                       {tournament.name}
                     </Typography>
@@ -60,8 +61,8 @@ const Tournaments = () => {
           ))}
         </div>
       </motion.div>
-    );
+    )
   }
-};
+}
 
-export default Tournaments;
+export default Tournaments

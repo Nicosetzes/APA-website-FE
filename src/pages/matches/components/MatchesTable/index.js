@@ -1,14 +1,14 @@
-import { useMediaQuery } from "react-responsive";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import { StyledTable } from "./styled";
+import { useMediaQuery } from 'react-responsive'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
+import { StyledTable } from './styled'
 
 const MatchesTable = ({ data }) => {
   //   const isL = useMediaQuery({ query: "(min-width: 992px)" });
-  const isM = useMediaQuery({ query: "(min-width: 768px)" });
-  const isSm = useMediaQuery({ query: "(min-width: 500px)" });
+  const isM = useMediaQuery({ query: '(min-width: 768px)' })
+  const isSm = useMediaQuery({ query: '(min-width: 500px)' })
   //   const isXS = useMediaQuery({ query: "(min-width: 400px)" });
 
   return (
@@ -17,25 +17,25 @@ const MatchesTable = ({ data }) => {
         <TableRow>
           {isSm && (
             <>
-              <TableCell sx={{ color: "#000" }} align="center">
+              <TableCell sx={{ color: '#000' }} align="center">
                 Fecha
               </TableCell>
             </>
           )}
           {isM && (
             <>
-              <TableCell sx={{ color: "#000" }} align="center">
+              <TableCell sx={{ color: '#000' }} align="center">
                 Torneo
               </TableCell>
             </>
           )}
-          <TableCell sx={{ color: "#000" }} align="center">
+          <TableCell sx={{ color: '#000' }} align="center">
             Equipo 1
           </TableCell>
-          <TableCell sx={{ color: "#000" }} align="center">
+          <TableCell sx={{ color: '#000' }} align="center">
             Equipo 2
           </TableCell>
-          <TableCell sx={{ color: "#000" }} align="center">
+          <TableCell sx={{ color: '#000' }} align="center">
             Resultado
           </TableCell>
         </TableRow>
@@ -44,7 +44,7 @@ const MatchesTable = ({ data }) => {
         {data.map((match) => (
           <TableRow
             key={match._id}
-            sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
           >
             {isSm && (
               <>
@@ -53,7 +53,7 @@ const MatchesTable = ({ data }) => {
                   scope="row"
                   align="center"
                 >{`${new Date(
-                  parseInt(match._id.substring(0, 8), 16) * 1000
+                  parseInt(match._id.substring(0, 8), 16) * 1000,
                 ).toLocaleString()}`}</TableCell>
               </>
             )}
@@ -85,7 +85,7 @@ const MatchesTable = ({ data }) => {
         ))}
       </TableBody>
     </StyledTable>
-  );
-};
+  )
+}
 
-export default MatchesTable;
+export default MatchesTable

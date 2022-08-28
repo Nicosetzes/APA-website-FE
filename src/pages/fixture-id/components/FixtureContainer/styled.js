@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components'
 
 export const StyledFixtureContainer = styled.div`
   display: flex;
@@ -23,24 +23,24 @@ export const StyledFixtureContainer = styled.div`
       text-decoration: none;
 
       .match-info__player {
-          border: 0;
-          cursor: pointer;
-          display: flex;
-          flex-wrap: wrap;
-          font-size: 0.875rem;
-          font-weight: 800;
-          justify-content: center;
-          text-align: center;
-          width: 50px;
+        border: 0;
+        cursor: pointer;
+        display: flex;
+        flex-wrap: wrap;
+        font-size: 0.875rem;
+        font-weight: 800;
+        justify-content: center;
+        text-align: center;
+        width: 50px;
 
-          &:focus {
-            outline: 0;
-          }
+        &:focus {
+          outline: 0;
         }
+      }
 
-        .match-info__logo {
-          margin-bottom: 1rem
-        }
+      .match-info__logo {
+        margin-bottom: 1rem;
+      }
 
       .match-info__team {
         border: 0;
@@ -145,4 +145,4 @@ export const StyledFixtureContainer = styled.div`
       }
     }
   }
-`;
+`

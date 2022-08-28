@@ -1,6 +1,4 @@
-import styled from "styled-components";
-import IconButton from "@mui/material/IconButton";
+import styled from 'styled-components'
+import IconButton from '@mui/material/IconButton'
 
-export const StyledHamburger = styled(IconButton)`
-
-`;
+export const StyledHamburger = styled(IconButton)``

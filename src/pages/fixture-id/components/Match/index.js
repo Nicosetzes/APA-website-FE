@@ -1,18 +1,15 @@
-import {
-  useNavigate,
-  createSearchParams,
-} from "react-router-dom";
-import InputContainer from "./../InputContainer";
-import { PropTypes } from "prop-types";
+import { useNavigate, createSearchParams } from 'react-router-dom'
+import InputContainer from './../InputContainer'
+import { PropTypes } from 'prop-types'
 
 const Match = ({ match, handleSubmit }) => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   const playerParams = (param) => {
-    return { player: param };
-  };
+    return { player: param }
+  }
   const teamParams = (param) => {
-    return { team: param };
-  };
+    return { team: param }
+  }
 
   const goToSpecificFixture = (params) => {
     if (isNaN(Number(params))) {
@@ -20,15 +17,15 @@ const Match = ({ match, handleSubmit }) => {
       navigate({
         pathname: ``,
         search: `?${createSearchParams(playerParams(params))}`,
-      });
+      })
     } else {
       // El query es de team (numérico, es el id);
       navigate({
         pathname: ``,
         search: `?${createSearchParams(teamParams(params))}`,
-      });
+      })
     }
-  };
+  }
 
   return (
     <form
@@ -39,7 +36,7 @@ const Match = ({ match, handleSubmit }) => {
       data-team2={match.teamP2}
       data-id={match.matchId}
       onSubmit={(e) => {
-        handleSubmit(e);
+        handleSubmit(e)
       }}
     >
       <div className="match-info">
@@ -57,18 +54,14 @@ const Match = ({ match, handleSubmit }) => {
           src={match.teamLogoP1}
           alt={match.teamP1}
           className="match-info__logo"
-          onClick={() =>
-            goToSpecificFixture(match.teamIdP1)
-          }
+          onClick={() => goToSpecificFixture(match.teamIdP1)}
         />
         <input
           name="playerP1"
           className="match-info__player"
           value={match.playerP1}
           readOnly
-          onClick={() =>
-            goToSpecificFixture(match.playerP1)
-          }
+          onClick={() => goToSpecificFixture(match.playerP1)}
         />
       </div>
       <div className="match-score">
@@ -100,26 +93,27 @@ const Match = ({ match, handleSubmit }) => {
         >
           {match.teamP2}
         </textarea>
-        <img src={match.teamLogoP2} alt={match.teamP2} className="match-info__logo" onClick={() =>
-          goToSpecificFixture(match.teamIdP2)
-        } />
+        <img
+          src={match.teamLogoP2}
+          alt={match.teamP2}
+          className="match-info__logo"
+          onClick={() => goToSpecificFixture(match.teamIdP2)}
+        />
         <input
           name="playerP2"
           className="match-info__player"
           value={match.playerP2}
           readOnly
-          onClick={() =>
-            goToSpecificFixture(match.playerP2)
-          }
+          onClick={() => goToSpecificFixture(match.playerP2)}
         />
       </div>
     </form>
-  );
-};
+  )
+}
 
 InputContainer.propTypes = {
   matchId: PropTypes.string,
   isFinished: PropTypes.bool,
-};
+}
 
-export default Match;
+export default Match

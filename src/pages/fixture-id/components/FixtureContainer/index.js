@@ -1,5 +1,5 @@
-import { StyledFixtureContainer } from "./styled";
-import Match from "./../Match";
+import { StyledFixtureContainer } from './styled'
+import Match from './../Match'
 
 const FixtureContainer = ({ tournament, handleSubmit }) => {
   return (
@@ -10,7 +10,7 @@ const FixtureContainer = ({ tournament, handleSubmit }) => {
         ))}
       </StyledFixtureContainer>
     </>
-  );
-};
+  )
+}
 
-export default FixtureContainer;
+export default FixtureContainer

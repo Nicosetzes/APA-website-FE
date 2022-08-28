@@ -1,84 +1,85 @@
-import { useState, useEffect } from "react";
-import { useMediaQuery } from "react-responsive";
-import { motion } from "framer-motion";
-import { StyledStatistics } from "./styled";
-import BarChart from "./../../charts/BarChart";
-import DoughnutChart from "./../../charts/DoughnutChart";
-import MatchView from "./components/MatchView";
-import { Oval } from "react-loader-spinner";
-import axios from "axios";
+import { useState, useEffect } from 'react'
+import { useMediaQuery } from 'react-responsive'
+import { motion } from 'framer-motion'
+import { StyledStatistics } from './styled'
+import { api } from './../../api'
+import BarChart from './../../charts/BarChart'
+import DoughnutChart from './../../charts/DoughnutChart'
+import MatchView from './components/MatchView'
+import { Oval } from 'react-loader-spinner'
+import axios from 'axios'
 
 const Statistics = () => {
   // const isL = useMediaQuery({ query: "(min-width: 992px)" });
-  const isM = useMediaQuery({ query: "(min-width: 768px)" });
+  const isM = useMediaQuery({ query: '(min-width: 768px)' })
   // const isSm = useMediaQuery({ query: "(min-width: 500px)" });
   // const isXS = useMediaQuery({ query: "(min-width: 400px)" });
 
-  const api = "http://localhost:5000/api";
+  // const api = 'http://localhost:5000/api'
 
-  const [stats, setStats] = useState();
+  const [stats, setStats] = useState()
 
   const slideUpVariant = {
     hidden: { y: 50 },
     visible: {
       y: 0,
       transition: {
-        type: "spring",
+        type: 'spring',
         duration: 1,
         bounce: 0.3,
       },
     },
-  };
+  }
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log("Hago el fetch de data");
-      const res = await axios.get(`${api}/statistics/`);
-      setStats(res.data);
-    };
-    fetchData();
-  }, []);
+      console.log('Hago el fetch de data')
+      const res = await axios.get(`${api}/statistics/`)
+      setStats(res.data)
+    }
+    fetchData()
+  }, [])
 
-  console.log(stats);
+  console.log(stats)
 
   if (stats) {
-    const { playerStats, recentMatches, accolades } = stats;
-    const { mostWins, mostDraws, mostLosses } = accolades;
+    const { playerStats, recentMatches, accolades } = stats
+    const { mostWins, mostDraws, mostLosses } = accolades
 
-    console.log(stats);
+    console.log(stats)
 
     const dataForDoughnutChart = {
       labels: playerStats.map((data) => data.player),
       datasets: [
         {
-          label: "Victorias totales",
+          label: 'Victorias totales',
           data: playerStats.map((data) => data.wins),
           backgroundColor: [
-            "#FF6384",
-            "#36A2EB",
-            "#FFCE56",
-            "#004a79",
-            "#3daf44",
+            '#FF6384',
+            '#36A2EB',
+            '#FFCE56',
+            '#004a79',
+            '#3daf44',
           ],
           borderColor: [
-            "rgba(255, 99, 132, 1)",
-            "rgba(54, 162, 235, 1)",
-            "rgba(255, 206, 86, 1)",
-            "rgba(75, 192, 192, 1)",
-            "rgba(153, 102, 255, 1)",
-            "rgba(255, 159, 64, 1)",
+            'rgba(255, 99, 132, 1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 1)',
+            'rgba(75, 192, 192, 1)',
+            'rgba(153, 102, 255, 1)',
+            'rgba(255, 159, 64, 1)',
           ],
           borderWidth: 1,
           hoverBackgroundColor: [
-            "#FF6384",
-            "#36A2EB",
-            "#FFCE56",
-            "#004a79",
-            "#3daf44",
+            '#FF6384',
+            '#36A2EB',
+            '#FFCE56',
+            '#004a79',
+            '#3daf44',
           ],
         },
       ],
-    };
+    }
 
     const optionsForDoughnutChart = {
       maintainAspectRatio: false,
@@ -87,47 +88,47 @@ const Statistics = () => {
       },
       plugins: {
         title: {
-          align: "center",
+          align: 'center',
           display: true,
-          text: "Cantidad de victorias",
+          text: 'Cantidad de victorias',
           font: {
-            weight: "bold",
-            size: "17.5px",
+            weight: 'bold',
+            size: '17.5px',
           },
         },
         legend: {
           display: true, //Is the legend shown?
-          position: "right", //Position of the legend.
+          position: 'right', //Position of the legend.
         },
       },
       // responsive: true,
-    };
+    }
 
     const dataForBarChart = {
       labels: playerStats.map((data) => data.player),
       datasets: [
         {
           data: playerStats.map((data) => data.effectiveness),
-          label: "Efectividad (%)",
+          label: 'Efectividad (%)',
           fill: true,
           backgroundColor: [
-            "#FF6384",
-            "#36A2EB",
-            "#FFCE56",
-            "#004a79",
-            "#3daf44",
+            '#FF6384',
+            '#36A2EB',
+            '#FFCE56',
+            '#004a79',
+            '#3daf44',
           ],
-          borderColor: ["#FF6384", "#36A2EB", "#FFCE56", "#004a79", "#3daf44"],
+          borderColor: ['#FF6384', '#36A2EB', '#FFCE56', '#004a79', '#3daf44'],
           hoverBackgroundColor: [
-            "#FF6384",
-            "#36A2EB",
-            "#FFCE56",
-            "#004a79",
-            "#3daf44",
+            '#FF6384',
+            '#36A2EB',
+            '#FFCE56',
+            '#004a79',
+            '#3daf44',
           ],
         },
       ],
-    };
+    }
 
     const optionsForBarChart = {
       maintainAspectRatio: false,
@@ -135,28 +136,28 @@ const Statistics = () => {
         y: {
           min: 0,
           max: 100,
-          position: "left",
+          position: 'left',
           title: {
             display: true,
-            text: "% Efectividad (pts obtenidos/totales)",
+            text: '% Efectividad (pts obtenidos/totales)',
           },
         },
       },
       plugins: {
         title: {
           display: true,
-          text: "% Efectividad",
+          text: '% Efectividad',
           font: {
-            weight: "bold",
-            size: "17.5px",
+            weight: 'bold',
+            size: '17.5px',
           },
         },
         legend: {
           display: false, //Is the legend shown?
-          position: "right", //Position of the legend.
+          position: 'right', //Position of the legend.
         },
       },
-    };
+    }
 
     return (
       <motion.div
@@ -167,11 +168,11 @@ const Statistics = () => {
         <StyledStatistics>
           <div
             style={{
-              fontSize: "1.5rem",
+              fontSize: '1.5rem',
               fontWeight: 700,
-              textDecoration: "underline",
-              margin: "1.5rem auto",
-              width: "fit-content",
+              textDecoration: 'underline',
+              margin: '1.5rem auto',
+              width: 'fit-content',
             }}
           >
             Estadísticas
@@ -179,14 +180,14 @@ const Statistics = () => {
           <div
             className="chart__container"
             style={{
-              width: "100%",
-              display: "flex",
-              flexWrap: "wrap",
-              justifyContent: "space-evenly",
+              width: '100%',
+              display: 'flex',
+              flexWrap: 'wrap',
+              justifyContent: 'space-evenly',
             }}
           >
             <div
-              style={{ width: "300px", height: "300px", display: "flex" }}
+              style={{ width: '300px', height: '300px', display: 'flex' }}
               data-aos="fade-in"
               data-aos-duration="1000"
             >
@@ -197,7 +198,7 @@ const Statistics = () => {
               />
             </div>
             <div
-              style={{ width: "300px", height: "300px", margin: "1rem 0" }}
+              style={{ width: '300px', height: '300px', margin: '1rem 0' }}
               data-aos="fade-in"
               data-aos-duration="1000"
             >
@@ -209,13 +210,13 @@ const Statistics = () => {
           </div>
           <motion.div
             style={{
-              display: "grid",
-              gridTemplateRows: isM ? "auto" : "auto auto",
-              gridTemplateColumns: isM ? "auto auto auto auto" : "auto auto",
-              justifyContent: "space-evenly",
+              display: 'grid',
+              gridTemplateRows: isM ? 'auto' : 'auto auto',
+              gridTemplateColumns: isM ? 'auto auto auto auto' : 'auto auto',
+              justifyContent: 'space-evenly',
             }}
             initial="hidden"
-            whileInView={"visible"}
+            whileInView={'visible'}
             viewport={{ once: false, amount: 0.125 }}
             transition={{ staggerChildren: 0.1 }}
             variants={slideUpVariant}
@@ -227,7 +228,7 @@ const Statistics = () => {
           <motion.div
             className="accolades"
             initial="hidden"
-            whileInView={"visible"}
+            whileInView={'visible'}
             viewport={{ once: false, amount: 0.25 }}
             transition={{ staggerChildren: 0.1 }}
             variants={slideUpVariant}
@@ -256,10 +257,10 @@ const Statistics = () => {
           </motion.div>
         </StyledStatistics>
       </motion.div>
-    );
+    )
   } else {
     return (
-      <div style={{ margin: "auto", width: "100px" }}>
+      <div style={{ margin: 'auto', width: '100px' }}>
         <Oval
           height="80"
           width="80"
@@ -270,8 +271,8 @@ const Statistics = () => {
           $wrapperClass
         />
       </div>
-    );
+    )
   }
-};
+}
 
-export default Statistics;
+export default Statistics

@@ -1,17 +1,7 @@
-import { motion } from "framer-motion";
-import { StyledMatchView } from "./styled";
+import { StyledMatchView } from './styled'
 
 const MatchView = ({ match }) => {
-  const {
-    playerP1,
-    playerP2,
-    teamP1,
-    teamP2,
-    scoreP1,
-    scoreP2,
-    tournament,
-    date,
-  } = match;
+  const { teamP1, teamP2, scoreP1, scoreP2, tournament, date } = match
 
   return (
     <StyledMatchView data-aos="flip-left" data-aos-duration="1000">
@@ -26,11 +16,11 @@ const MatchView = ({ match }) => {
         </div>
       </div>
       <div className="card__match-info">
-        <span className="card__match-info-tournament">{tournament}</span>{" "}
+        <span className="card__match-info-tournament">{tournament}</span>{' '}
         <span className="card__match-info-date">{date}</span>
       </div>
     </StyledMatchView>
-  );
-};
+  )
+}
 
-export default MatchView;
+export default MatchView

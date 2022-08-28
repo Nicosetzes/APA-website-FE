@@ -1,30 +1,31 @@
-import axios from "axios";
-import { useParams } from "react-router-dom";
-import { useTournament } from "./../../../../context/TournamentContext";
-import IconButton from "@mui/material/IconButton";
-import CheckIcon from "@mui/icons-material/Check";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import Swal from "sweetalert2";
+import axios from 'axios'
+import { useParams } from 'react-router-dom'
+import { useTournament } from './../../../../context/TournamentContext'
+import { api } from './../../../../api'
+import IconButton from '@mui/material/IconButton'
+import CheckIcon from '@mui/icons-material/Check'
+import EditIcon from '@mui/icons-material/Edit'
+import DeleteIcon from '@mui/icons-material/Delete'
+import Swal from 'sweetalert2'
 
 const InputContainer = ({ isFinished, matchId }) => {
-  const api = "http://localhost:5000/api";
+  // const api = 'http://localhost:5000/api'
 
-  const { id } = useParams();
+  const { id } = useParams()
 
-  const tournament = useTournament();
+  const tournament = useTournament()
 
   const deleteMatch = async () => {
     Swal.fire({
-      title: "Eliminar",
+      title: 'Eliminar',
       html: `¿Está seguro que desea eliminar este partido?`,
-      icon: "warning",
+      icon: 'warning',
       showCancelButton: true,
       reverseButtons: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Eliminar",
-      cancelButtonText: "Volver",
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Eliminar',
+      cancelButtonText: 'Volver',
     }).then((result) => {
       if (result.isConfirmed) {
         // Swal.fire(
@@ -36,13 +37,13 @@ const InputContainer = ({ isFinished, matchId }) => {
           .delete(`${api}/tournaments/${id}/delete-game/${matchId}`)
           .then((response) => {
             // let {isDeleted} = response.data; // Podría usarlo para alertar un error al modificar
-            let { updatedTournament } = response.data;
-            tournament.updateTournament(updatedTournament);
-            window.location.reload(); // REVISAR //
-          });
+            let { updatedTournament } = response.data
+            tournament.updateTournament(updatedTournament)
+            window.location.reload() // REVISAR //
+          })
       }
-    });
-  };
+    })
+  }
 
   if (!isFinished) {
     return (
@@ -51,7 +52,7 @@ const InputContainer = ({ isFinished, matchId }) => {
           <CheckIcon />
         </IconButton>
       </div>
-    );
+    )
   } else {
     return (
       <div className="input__container">
@@ -66,8 +67,8 @@ const InputContainer = ({ isFinished, matchId }) => {
           <DeleteIcon />
         </IconButton>
       </div>
-    );
+    )
   }
-};
+}
 
-export default InputContainer;
+export default InputContainer

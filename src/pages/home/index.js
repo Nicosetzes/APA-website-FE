@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion } from 'framer-motion'
 
 const Home = () => {
   return (
@@ -10,7 +10,7 @@ const Home = () => {
       <div>Home</div>
       <div>Other stuff</div>
     </motion.div>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home

@@ -9,7 +9,6 @@ import { Oval } from 'react-loader-spinner'
 import TableContainer from '@mui/material/TableContainer'
 import Paper from '@mui/material/Paper'
 import StandingsTable from './components/StandingsTable'
-import { StylesProvider } from '@mui/styles'
 
 const Standings = () => {
   const [tournamentsData, setTournamentsData] = useState('')
@@ -66,24 +65,22 @@ const Standings = () => {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
-        <StylesProvider injectFirst>
-          {standings
-            .sort((a, b) => (a.name > b.name ? 1 : -1))
-            .map((tournament) => (
-              <TableContainer component={Paper} key={tournament.name}>
-                <div className="title">{tournament.name}</div>
-                <StandingsTable
-                  tournament={tournament}
-                  onHandle={goToSpecificFixture}
-                />
-                <PlayerStatsTable
-                  stats={playerStats
-                    .filter((stats) => stats.tournament === tournament.name)
-                    .sort((a, b) => (a.totalPoints > b.totalPoints ? -1 : 1))}
-                />
-              </TableContainer>
-            ))}
-        </StylesProvider>
+        {standings
+          .sort((a, b) => (a.name > b.name ? 1 : -1))
+          .map((tournament) => (
+            <TableContainer component={Paper} key={tournament.name}>
+              <div className="title">{tournament.name}</div>
+              <StandingsTable
+                tournament={tournament}
+                onHandle={goToSpecificFixture}
+              />
+              <PlayerStatsTable
+                stats={playerStats
+                  .filter((stats) => stats.tournament === tournament.name)
+                  .sort((a, b) => (a.totalPoints > b.totalPoints ? -1 : 1))}
+              />
+            </TableContainer>
+          ))}
       </motion.div>
     )
   } else {

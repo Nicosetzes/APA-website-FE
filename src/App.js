@@ -1,7 +1,12 @@
 import Home from './pages/home'
+import { StylesProvider } from '@mui/styles'
 
 function App() {
-  return <Home />
+  return (
+    <StylesProvider injectFirst>
+      <Home />
+    </StylesProvider>
+  )
 }
 
 export default App

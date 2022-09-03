@@ -8,12 +8,13 @@ import DoughnutChart from './../../charts/DoughnutChart'
 import MatchView from './components/MatchView'
 import { Oval } from 'react-loader-spinner'
 import axios from 'axios'
+import StreakContainer from './components/StreakContainer'
 
 const Statistics = () => {
   // const isL = useMediaQuery({ query: "(min-width: 992px)" });
   const isM = useMediaQuery({ query: '(min-width: 768px)' })
   // const isSm = useMediaQuery({ query: "(min-width: 500px)" });
-  // const isXS = useMediaQuery({ query: "(min-width: 400px)" });
+  // const isXS = useMediaQuery({ query: '(min-width: 400px)' })
 
   // const api = 'http://localhost:5000/api'
 
@@ -31,19 +32,37 @@ const Statistics = () => {
     },
   }
 
+  const flipVariant = {
+    hidden: { rotateY: 180 },
+    visible: {
+      rotateY: 0,
+      transition: {
+        type: 'spring',
+        duration: 1.5,
+        bounce: 0.3,
+      },
+    },
+  }
+
   useEffect(() => {
-    const fetchData = async () => {
-      console.log('Hago el fetch de data')
-      const res = await axios.get(`${api}/statistics/`)
-      setStats(res.data)
-    }
     fetchData()
   }, [])
+
+  const fetchData = () => {
+    console.log('Hago el fetch de data')
+    const stats = axios.get(`${api}/statistics/`)
+    const streaks = axios.get(`${api}/streaks/`)
+    Promise.all([stats, streaks]).then((values) => {
+      const res = values.map((response) => response.data)
+      setStats(res)
+    })
+  }
 
   console.log(stats)
 
   if (stats) {
-    const { playerStats, recentMatches, accolades } = stats
+    const { playerStats, recentMatches, accolades } = stats[0]
+    const { playerStreaks } = stats[1]
     const { mostWins, mostDraws, mostLosses } = accolades
 
     console.log(stats)
@@ -208,6 +227,38 @@ const Statistics = () => {
               />
             </div>
           </div>
+          <div
+            style={{
+              fontSize: '1.5rem',
+              fontWeight: 700,
+              textAlign: 'center',
+            }}
+          >
+            Resultados recientes
+          </div>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateRows: 'auto auto auto auto auto',
+              gridTemplateColumns: 'auto',
+              justifyContent: 'space-evenly',
+              width: '100%',
+            }}
+          >
+            {playerStreaks.map((individualStreak, index) => (
+              <motion.div
+                key={index}
+                initial="hidden"
+                whileInView={'visible'}
+                viewport={{ once: false, amount: 0.125 }}
+                transition={{ staggerChildren: 0.1 }}
+                variants={flipVariant}
+              >
+                <StreakContainer individualStreak={individualStreak} />
+              </motion.div>
+            ))}
+          </div>
+
           <motion.div
             style={{
               display: 'grid',

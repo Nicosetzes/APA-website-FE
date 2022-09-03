@@ -12,16 +12,8 @@ export const StyledMatchView = styled.div`
   justify-content: center;
   margin: 0.25rem;
   padding: 1rem 0.75rem;
-  width: 150px;
+  width: 125px;
   position: relative;
-  /* transform: scale(1);
-  transition: transform ease-in-out 300ms; */
-  /* &:hover {
-    transform: scale(1.0125);
-  } */
-  /* &.draw {
-    background-color: #ffff97;
-  } */
   .card__match-score {
     display: flex;
     justify-content: flex-end;
@@ -54,7 +46,7 @@ export const StyledMatchView = styled.div`
       font-style: italic;
       position: absolute;
       right: 0;
-      transform: rotate(-90deg) translate(55%, -425%);
+      transform: rotate(-90deg) translate(55%, -130%);
     }
     .card__match-info-date {
       font-size: 0.875rem;

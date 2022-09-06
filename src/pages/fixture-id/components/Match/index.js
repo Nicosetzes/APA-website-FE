@@ -69,13 +69,13 @@ const Match = ({ match, handleSubmit }) => {
           <input
             name="scoreP1"
             className="match-score__goals"
-            defaultValue={match.scoreP1}
+            value={match.scoreP1 ?? ''} // IMPORTANT // TODO: Handle react warning about not adding and onChange handler
           />
           <span className="match-score__versus">vs</span>
           <input
             name="scoreP2"
             className="match-score__goals"
-            defaultValue={match.scoreP2}
+            value={match.scoreP2 ?? ''} // IMPORTANT // TODO: Handle react warning about not adding and onChange handler
           />
         </div>
         <InputContainer

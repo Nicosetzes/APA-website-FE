@@ -37,8 +37,7 @@ const FixtureId = () => {
             console.log(err)
             navigate('/login') // TODO: Check why sometimes the code from the previous page persists on the new one //
           })
-      }
-      if (player) {
+      } else if (player) {
         await axios
           .get(`${api}/tournaments/${id}/fixture?player=${player}`, {
             withCredentials: true,
@@ -51,8 +50,7 @@ const FixtureId = () => {
             console.log(err)
             navigate('/login')
           })
-      }
-      if (!team && !player) {
+      } else {
         await axios
           .get(`${api}/tournaments/${id}/fixture`, {
             withCredentials: true,

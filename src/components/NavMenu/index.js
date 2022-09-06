@@ -10,6 +10,7 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import AccountCircle from '@mui/icons-material/AccountCircle'
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents'
 import SportsSoccerIcon from '@mui/icons-material/SportsSoccer'
+import DataObjectIcon from '@mui/icons-material/DataObject'
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
 import BarChartIcon from '@mui/icons-material/BarChart'
 
@@ -49,6 +50,15 @@ const NavMenu = ({ handleClose, isOpen, anchorEl }) => {
           </ListItemIcon>
           <NavLink to="/standings">
             <ListItemText>Clasificación</ListItemText>
+          </NavLink>
+        </MenuItem>
+        <Divider />
+        <MenuItem onClick={handleClose}>
+          <ListItemIcon>
+            <DataObjectIcon fontSize="small" />
+          </ListItemIcon>
+          <NavLink to="/playoffs">
+            <ListItemText>Playoffs</ListItemText>
           </NavLink>
         </MenuItem>
         <Divider />

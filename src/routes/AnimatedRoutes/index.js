@@ -8,6 +8,7 @@ import Matches from './../../pages/matches'
 import Tournaments from './../../pages/tournaments'
 import FixtureId from './../../pages/fixture-id'
 import Statistics from './../../pages/statistics'
+import CreateTournament from '../../pages/create-tournament'
 
 export const AnimatedRoutes = () => {
   const location = useLocation()
@@ -31,6 +32,7 @@ export const AnimatedRoutes = () => {
           />
           <Route path=":id/fixture" element={<FixtureId />} />
         </Route>
+        <Route path="/create-tournament" element={<CreateTournament />} />
         <Route path="/matches" element={<Matches />} />
         <Route path="/statistics" element={<Statistics />} />
         <Route

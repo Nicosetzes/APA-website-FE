@@ -12,8 +12,6 @@ import logo1 from './../../images/premier-league-background-1.jpg'
 import logo2 from './../../images/premier-league-background-2.jpg'
 
 const Tournaments = () => {
-  // const api = 'http://localhost:5000/api'
-
   const [tournaments, setTournaments] = useState([])
 
   useEffect(() => {

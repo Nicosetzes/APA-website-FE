@@ -7,7 +7,7 @@ export const StyledPlayoffsContainer = styled.div`
   padding: 0.5rem;
   .playoff__container-left,
   .playoff__container-right {
-    width: 250px;
+    width: 175px;
     .match {
       background-color: #001a2a;
       display: flex;
@@ -33,6 +33,9 @@ export const StyledPlayoffsContainer = styled.div`
           margin: 0 0.5rem;
           width: 20px;
         }
+        .match-team-name {
+          font-size: 0.8rem;
+        }
       }
     }
   }
@@ -47,6 +50,7 @@ export const StyledPlayoffsContainer = styled.div`
       }
       .match-team-name {
         order: 1;
+        text-align: right;
       }
     }
   }

@@ -12,6 +12,7 @@ import EmojiEventsIcon from '@mui/icons-material/EmojiEvents'
 import SportsSoccerIcon from '@mui/icons-material/SportsSoccer'
 import DataObjectIcon from '@mui/icons-material/DataObject'
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
+import CreateIcon from '@mui/icons-material/Create'
 import BarChartIcon from '@mui/icons-material/BarChart'
 
 const NavMenu = ({ handleClose, isOpen, anchorEl }) => {
@@ -77,6 +78,15 @@ const NavMenu = ({ handleClose, isOpen, anchorEl }) => {
           </ListItemIcon>
           <NavLink to="/tournaments">
             <ListItemText>Torneos</ListItemText>
+          </NavLink>
+        </MenuItem>
+        <Divider />
+        <MenuItem onClick={handleClose}>
+          <ListItemIcon>
+            <CreateIcon fontSize="small" />
+          </ListItemIcon>
+          <NavLink to="/create-tournament">
+            <ListItemText>Crear torneo</ListItemText>
           </NavLink>
         </MenuItem>
         <Divider />

@@ -7,6 +7,7 @@ import { Oval } from 'react-loader-spinner'
 import TableContainer from '@mui/material/TableContainer'
 import Paper from '@mui/material/Paper'
 import PlayoffsTable from './components/PlayoffsTable'
+import PlayerStatsTable from './../../components/PlayerStatsTable'
 import PlayoffsBracket from './components/PlayoffsBracket'
 
 const Playoffs = () => {
@@ -14,9 +15,10 @@ const Playoffs = () => {
 
   const getPlayoffsData = () => {
     const table = axios.get(`${api}/playoffs/table`)
+    const playerInfo = axios.get(`${api}/playoffs/player-info`)
     const bracket = axios.get(`${api}/playoffs/bracket`)
 
-    Promise.all([table, bracket]).then((values) => {
+    Promise.all([table, playerInfo, bracket]).then((values) => {
       const data = values.map((response) => response.data)
       setPlayoffsData(data)
     })
@@ -28,10 +30,12 @@ const Playoffs = () => {
 
   if (playoffsData) {
     const playoffsTeamsForTable = playoffsData[0]
-    const sortedRankedTeams = playoffsData[1]
+    const playoffsPlayerInfo = playoffsData[1]
+    const sortedRankedTeams = playoffsData[2]
 
-    console.log(playoffsTeamsForTable)
-    console.log(sortedRankedTeams)
+    // console.log(playoffsTeamsForTable)
+    console.log(playoffsPlayerInfo)
+    // console.log(sortedRankedTeams)
 
     return (
       <motion.div
@@ -43,6 +47,11 @@ const Playoffs = () => {
           <div className="title">Tabla general</div>
           <PlayoffsTable allTeams={playoffsTeamsForTable} />
         </TableContainer>
+        <PlayerStatsTable
+          stats={playoffsPlayerInfo.sort((a, b) =>
+            a.totalPoints > b.totalPoints ? -1 : 1,
+          )}
+        />
         <PlayoffsBracket rankedTeams={sortedRankedTeams} />
       </motion.div>
     )

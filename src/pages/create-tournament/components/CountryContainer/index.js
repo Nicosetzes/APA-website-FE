@@ -4,9 +4,12 @@ import TeamContainer from './../TeamContainer'
 import { database } from './../../../../api'
 import axios from 'axios'
 
-const CountryContainer = ({ countries }) => {
+const CountryContainer = ({ countries, players }) => {
   const [leagues, setLeagues] = useState([])
   const [teams, setTeams] = useState([])
+
+  console.log(countries)
+  console.log(players)
 
   const firstDivisionTeams = countries.filter(
     (team) => team.division == 'first',
@@ -135,7 +138,9 @@ const CountryContainer = ({ countries }) => {
         </div>
         <input type="submit" className="form__submit" />
       </StyledForm>
-      {teams.length && <TeamContainer teams={processTeams(teams)} />}
+      {teams.length && (
+        <TeamContainer teams={processTeams(teams)} players={players} />
+      )}
     </>
   )
 }

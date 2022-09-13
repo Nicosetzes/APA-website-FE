@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { StyledCheckbox } from './styled'
 
-const Checkbox = ({ id, label, value, img, checked, ...props }) => {
+const Checkbox = ({ id, value, name, checked, img, label, ...props }) => {
   const defaultChecked = checked ? checked : false
   const [isChecked, setIsChecked] = useState(defaultChecked)
 
@@ -12,6 +12,8 @@ const Checkbox = ({ id, label, value, img, checked, ...props }) => {
       <input
         id={id}
         value={value}
+        name={name}
+        img={img}
         type="checkbox"
         checked={isChecked}
         onChange={() => setIsChecked((prev) => !prev)}

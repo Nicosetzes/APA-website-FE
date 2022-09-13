@@ -7,6 +7,28 @@ export const StyledForm = styled.form`
   .header {
     text-align: center;
   }
+  .container__title {
+    align-items: center;
+    border: black 1px solid;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin: 1rem;
+    padding: 0.75rem;
+    input {
+      margin: 1rem auto;
+      text-align: center;
+    }
+  }
+  .container__players {
+    align-items: center;
+    border: black 1px solid;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin: 2rem;
+    padding: 0.75rem;
+  }
   .container__teams {
     align-items: center;
     display: flex;
@@ -40,8 +62,5 @@ export const StyledForm = styled.form`
         margin: 0 0.75rem;
       }
     }
-  }
-  .form__submit {
-    width: 75px;
   }
 `

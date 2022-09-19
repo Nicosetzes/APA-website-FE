@@ -1,5 +1,7 @@
-import { StyledStreakBox } from './styled'
-import * as React from 'react'
+import { StyledScoreBox } from './styled'
+import DoneIcon from '@mui/icons-material/Done'
+import HorizontalRuleIcon from '@mui/icons-material/HorizontalRule'
+import CloseIcon from '@mui/icons-material/Close'
 import { styled } from '@mui/material/styles'
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip'
 
@@ -16,7 +18,7 @@ const HtmlTooltip = styled(({ className, ...props }) => (
   },
 }))
 
-const StreakBox = ({
+const ScoreBox = ({
   result,
   playerP1,
   teamP1,
@@ -25,9 +27,8 @@ const StreakBox = ({
   teamP2,
   scoreP2,
   date,
-  tournament,
 }) => {
-  if (result === 'w') {
+  if (result == 'w')
     return (
       <HtmlTooltip
         title={
@@ -45,14 +46,15 @@ const StreakBox = ({
             <div style={{ margin: '0.25rem 0', textAlign: 'right' }}>
               {date}
             </div>
-            <div style={{ textAlign: 'right' }}>{tournament}</div>
           </>
         }
       >
-        <StyledStreakBox color="green">V</StyledStreakBox>
+        <StyledScoreBox color="#2cad2c">
+          <DoneIcon sx={{ fontSize: '0.5rem' }} />
+        </StyledScoreBox>
       </HtmlTooltip>
     )
-  } else if (result === 'd') {
+  if (result == 'd')
     return (
       <HtmlTooltip
         title={
@@ -70,14 +72,15 @@ const StreakBox = ({
             <div style={{ margin: '0.25rem 0', textAlign: 'right' }}>
               {date}
             </div>
-            <div style={{ textAlign: 'right' }}>{tournament}</div>
           </>
         }
       >
-        <StyledStreakBox color="gold">E</StyledStreakBox>
+        <StyledScoreBox color="#8e8e8f">
+          <HorizontalRuleIcon sx={{ fontSize: '0.5rem' }} />
+        </StyledScoreBox>
       </HtmlTooltip>
     )
-  } else
+  if (result == 'l')
     return (
       <HtmlTooltip
         title={
@@ -95,13 +98,14 @@ const StreakBox = ({
             <div style={{ margin: '0.25rem 0', textAlign: 'right' }}>
               {date}
             </div>
-            <div style={{ textAlign: 'right' }}>{tournament}</div>
           </>
         }
       >
-        <StyledStreakBox color="red">D</StyledStreakBox>
+        <StyledScoreBox color="#af1111">
+          <CloseIcon sx={{ fontSize: '0.5rem' }} />
+        </StyledScoreBox>
       </HtmlTooltip>
     )
 }
 
-export default StreakBox
+export default ScoreBox

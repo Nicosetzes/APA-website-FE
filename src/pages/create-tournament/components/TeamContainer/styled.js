@@ -47,12 +47,11 @@ export const StyledForm = styled.form`
       justify-content: flex-start;
       max-width: 350px;
       padding: 0.5rem 0.25rem;
-      width: 50%;
       &:nth-child(odd) {
-        margin: 0.5rem auto 0.5rem 2rem;
+        margin: 0.5rem auto 0.5rem 1.5rem;
       }
       &:nth-child(even) {
-        margin: 0.5rem 2rem 0.5rem auto;
+        margin: 0.5rem 1.5rem 0.5rem auto;
       }
       img {
         margin: 0 0.75rem;

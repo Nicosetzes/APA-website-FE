@@ -30,8 +30,15 @@ const FixtureId = () => {
             withCredentials: true,
             credentials: 'include',
           })
-          .then((res) => {
-            tournament.updateTournament(res.data)
+          .then(({ data }) => {
+            // I'll rearrange this once this tournament is finished //
+            const { fixture } = data
+            const filteredFixture = fixture.filter(
+              (match) =>
+                match.teamIdP1 === Number(team) ||
+                match.teamIdP2 === Number(team),
+            )
+            tournament.updateTournament({ ...data, fixture: filteredFixture })
           })
           .catch((err) => {
             console.log(err)
@@ -43,8 +50,12 @@ const FixtureId = () => {
             withCredentials: true,
             credentials: 'include',
           })
-          .then((res) => {
-            tournament.updateTournament(res.data)
+          .then(({ data }) => {
+            const { fixture } = data
+            const filteredFixture = fixture.filter(
+              (match) => match.playerP1 === player || match.playerP2 === player,
+            )
+            tournament.updateTournament({ ...data, fixture: filteredFixture })
           })
           .catch((err) => {
             console.log(err)

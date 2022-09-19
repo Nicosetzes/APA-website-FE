@@ -44,10 +44,12 @@ const Matches = () => {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
+        <span>Realizar búsqueda de partidos</span>
         <input
           className="search"
-          placeholder="Buscar..."
+          placeholder="Equipo..."
           onChange={(e) => setQuery(e.target.value.toLowerCase())}
+          style={{ margin: '1rem' }}
         />
         <TableContainer component={Paper}>
           <MatchesTable data={data} />

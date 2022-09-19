@@ -8,5 +8,11 @@ export const StyledTable = styled(Table)`
   }
   .MuiTableBody-root {
     background-color: #0d3d3e;
+    .streak {
+      align-items: center;
+      display: flex;
+      justify-content: center;
+      margin: 0 0.5rem;
+    }
   }
 `

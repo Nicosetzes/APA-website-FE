@@ -53,6 +53,11 @@ export const StyledTable = styled(Table)`
               color: #fff;
               text-decoration: none;
             }
+            .streak {
+              align-items: center;
+              display: flex;
+              margin: 0 0.5rem;
+            }
           }
         }
       }

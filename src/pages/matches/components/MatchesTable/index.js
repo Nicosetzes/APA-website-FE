@@ -17,25 +17,25 @@ const MatchesTable = ({ data }) => {
         <TableRow>
           {isSm && (
             <>
-              <TableCell sx={{ color: '#000' }} align="center">
+              <TableCell sx={{ color: '#fff', fontWeight: 700 }} align="center">
                 Fecha
               </TableCell>
             </>
           )}
           {isM && (
             <>
-              <TableCell sx={{ color: '#000' }} align="center">
+              <TableCell sx={{ color: '#fff', fontWeight: 700 }} align="center">
                 Torneo
               </TableCell>
             </>
           )}
-          <TableCell sx={{ color: '#000' }} align="center">
+          <TableCell sx={{ color: '#fff', fontWeight: 700 }} align="center">
             Equipo 1
           </TableCell>
-          <TableCell sx={{ color: '#000' }} align="center">
+          <TableCell sx={{ color: '#fff', fontWeight: 700 }} align="center">
             Equipo 2
           </TableCell>
-          <TableCell sx={{ color: '#000' }} align="center">
+          <TableCell sx={{ color: '#fff', fontWeight: 700 }} align="center">
             Resultado
           </TableCell>
         </TableRow>
@@ -49,6 +49,7 @@ const MatchesTable = ({ data }) => {
             {isSm && (
               <>
                 <TableCell
+                  sx={{ color: '#fff' }}
                   component="th"
                   scope="row"
                   align="center"
@@ -60,23 +61,31 @@ const MatchesTable = ({ data }) => {
             {isM && (
               <>
                 <TableCell
+                  sx={{ color: '#fff' }}
                   component="th"
                   scope="row"
                   align="center"
                 >{`${match.tournament.name}`}</TableCell>
               </>
             )}
-            <TableCell component="th" scope="row" align="center">{`${
-              match.teamP1
-            } (${match.playerP1.toUpperCase()[0]}${
+            <TableCell
+              sx={{ color: '#fff' }}
+              component="th"
+              scope="row"
+              align="center"
+            >{`${match.teamP1} (${match.playerP1.toUpperCase()[0]}${
               match.playerP1.toUpperCase()[1]
             })`}</TableCell>
-            <TableCell component="th" scope="row" align="center">{`${
-              match.teamP2
-            } (${match.playerP2.toUpperCase()[0]}${
+            <TableCell
+              sx={{ color: '#fff' }}
+              component="th"
+              scope="row"
+              align="center"
+            >{`${match.teamP2} (${match.playerP2.toUpperCase()[0]}${
               match.playerP2.toUpperCase()[1]
             })`}</TableCell>
             <TableCell
+              sx={{ color: '#fff' }}
               component="th"
               scope="row"
               align="center"

@@ -4,16 +4,17 @@ import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
+import ScoreBox from './../ScoreBox'
 
 const PlayerStatsTable = ({ stats }) => {
   const isL = useMediaQuery({ query: '(min-width: 992px)' })
-  // const isM = useMediaQuery({ query: "(min-width: 768px)" });
+  const isM = useMediaQuery({ query: '(min-width: 768px)' })
   // const isSm = useMediaQuery({ query: "(min-width: 500px)" });
   const isXS = useMediaQuery({ query: '(min-width: 400px)' })
 
   return (
     <StyledTable
-      sx={{ minWidth: 300, maxWidth: 1000, margin: '0.5rem auto' }}
+      sx={{ minWidth: 300, maxWidth: 800, margin: '0.5rem auto' }}
       aria-label="simple table"
     >
       <TableHead>
@@ -40,6 +41,13 @@ const PlayerStatsTable = ({ stats }) => {
           <TableCell sx={{ fontWeight: 800, color: '#fff' }} align="center">
             {isL ? 'Puntos' : 'Pts.'}
           </TableCell>
+          {isM && (
+            <>
+              <TableCell sx={{ fontWeight: 800, color: '#fff' }} align="center">
+                Racha
+              </TableCell>
+            </>
+          )}
         </TableRow>
       </TableHead>
       <TableBody>
@@ -51,6 +59,7 @@ const PlayerStatsTable = ({ stats }) => {
             totalDraws,
             totalLosses,
             totalPoints,
+            streak,
           }) => (
             <TableRow
               key={player.id}
@@ -108,6 +117,44 @@ const PlayerStatsTable = ({ stats }) => {
               >
                 {totalPoints}
               </TableCell>
+              {isM && (
+                <TableCell
+                  component="th"
+                  scope="row"
+                  align="center"
+                  sx={{ fontWeight: 800, color: '#fff' }}
+                >
+                  <div className="streak">
+                    {streak.map(
+                      (
+                        {
+                          outcome,
+                          playerP1,
+                          teamP1,
+                          scoreP1,
+                          playerP2,
+                          teamP2,
+                          scoreP2,
+                          date,
+                        },
+                        index,
+                      ) => (
+                        <ScoreBox
+                          key={index}
+                          result={outcome}
+                          playerP1={playerP1}
+                          teamP1={teamP1}
+                          scoreP1={scoreP1}
+                          playerP2={playerP2}
+                          teamP2={teamP2}
+                          scoreP2={scoreP2}
+                          date={date}
+                        />
+                      ),
+                    )}
+                  </div>
+                </TableCell>
+              )}
             </TableRow>
           ),
         )}

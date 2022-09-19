@@ -4,6 +4,7 @@ import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
+import ScoreBox from './../../../../components/ScoreBox'
 
 const StandingsTable = ({ tournament, onHandle }) => {
   const isL = useMediaQuery({ query: '(min-width: 992px)' })
@@ -47,7 +48,7 @@ const StandingsTable = ({ tournament, onHandle }) => {
               </TableCell>
             </>
           )}
-          {isM && (
+          {isL && (
             <>
               <TableCell sx={{ color: '#fff', fontWeight: 800 }} align="center">
                 GF
@@ -55,6 +56,10 @@ const StandingsTable = ({ tournament, onHandle }) => {
               <TableCell sx={{ color: '#fff', fontWeight: 800 }} align="center">
                 GC
               </TableCell>
+            </>
+          )}
+          {isM && (
+            <>
               <TableCell sx={{ color: '#fff', fontWeight: 800 }} align="center">
                 DIF
               </TableCell>
@@ -81,6 +86,37 @@ const StandingsTable = ({ tournament, onHandle }) => {
               >
                 <img src={team.logo} alt={team.name} />
                 {isM ? team.team : team.teamCode}
+                {isM && (
+                  <div className="streak">
+                    {team.streak.map(
+                      (
+                        {
+                          outcome,
+                          playerP1,
+                          teamP1,
+                          scoreP1,
+                          playerP2,
+                          teamP2,
+                          scoreP2,
+                          date,
+                        },
+                        index,
+                      ) => (
+                        <ScoreBox
+                          key={index}
+                          result={outcome}
+                          playerP1={playerP1}
+                          teamP1={teamP1}
+                          scoreP1={scoreP1}
+                          playerP2={playerP2}
+                          teamP2={teamP2}
+                          scoreP2={scoreP2}
+                          date={date}
+                        />
+                      ),
+                    )}
+                  </div>
+                )}
               </div>
             </TableCell>
             <TableCell
@@ -110,7 +146,7 @@ const StandingsTable = ({ tournament, onHandle }) => {
                 </TableCell>
               </>
             )}
-            {isM && (
+            {isL && (
               <>
                 <TableCell component="th" scope="row">
                   {team.goalsFor}
@@ -118,6 +154,10 @@ const StandingsTable = ({ tournament, onHandle }) => {
                 <TableCell component="th" scope="row">
                   {team.goalsAgainst}
                 </TableCell>
+              </>
+            )}
+            {isM && (
+              <>
                 <TableCell component="th" scope="row">
                   {team.scoringDifference}
                 </TableCell>

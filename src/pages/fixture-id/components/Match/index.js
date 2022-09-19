@@ -38,6 +38,9 @@ const Match = ({ match, handleSubmit }) => {
       onSubmit={(e) => {
         handleSubmit(e)
       }}
+      style={{
+        outline: match.matchId ? '#2aa723 3px solid' : '#dc3545 3px solid',
+      }}
     >
       <div className="match-info">
         <textarea

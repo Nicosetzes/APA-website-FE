@@ -5,25 +5,6 @@ import CountryContainer from './components/CountryContainer'
 import { Oval } from 'react-loader-spinner'
 
 const CreateTournament = () => {
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const res = await axios.get(`${database}/leagues`)
-  //     setCountries(res.data)
-  //   }
-  //   fetchData()
-  // }, [])
-
-  // const [allPlayers, setAllPlayers] = useState()
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const res = await axios.get(`${api}/players`)
-  //     setAllPlayers(res.data)
-  //   }
-  //   console.log(allPlayers)
-  //   fetchData()
-  // }, [])
-
   const [tournamentData, setTournamentData] = useState()
 
   const getTournamentData = () => {

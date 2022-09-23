@@ -2,6 +2,7 @@
 import InputContainer from './../InputContainer'
 import { useTournament } from './../../../../context/TournamentContext'
 import { PropTypes } from 'prop-types'
+import { database } from './../../../../api'
 
 const Match = ({ match, handleSubmit }) => {
   const tournament = useTournament()
@@ -47,7 +48,7 @@ const Match = ({ match, handleSubmit }) => {
         </textarea>
         {/* <Route path={`/tournaments/62e0b0a53d86565327b95a82/fixture?team=${match.teamIdP1}`} element={<FixtureId />} /> className="logo-link"> */}
         <img
-          src={match.teamLogoP1}
+          src={`${database}/logos/${match.teamIdP1}`}
           alt={match.teamP1}
           className="match-info__logo"
           onClick={() => tournament.updateSelectedTeam(match.teamIdP1)}
@@ -89,7 +90,7 @@ const Match = ({ match, handleSubmit }) => {
           {match.teamP2}
         </textarea>
         <img
-          src={match.teamLogoP2}
+          src={`${database}/logos/${match.teamIdP2}`}
           alt={match.teamP2}
           className="match-info__logo"
           onClick={() => tournament.updateSelectedTeam(match.teamIdP2)}

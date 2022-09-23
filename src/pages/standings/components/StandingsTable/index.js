@@ -5,6 +5,7 @@ import TableCell from '@mui/material/TableCell'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import ScoreBox from './../../../../components/ScoreBox'
+import { database } from './../../../../api'
 
 const StandingsTable = ({ tournament, onHandle }) => {
   const isL = useMediaQuery({ query: '(min-width: 992px)' })
@@ -84,7 +85,7 @@ const StandingsTable = ({ tournament, onHandle }) => {
                 className="teamAndLogoWrapper"
                 onClick={() => onHandle(tournament.tournamentId, team.id)}
               >
-                <img src={team.logo} alt={team.name} />
+                <img src={`${database}/logos/${team.id}`} alt={team.name} />
                 {isM ? team.team : team.teamCode}
                 {isM && (
                   <div className="streak">

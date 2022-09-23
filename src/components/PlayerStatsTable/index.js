@@ -12,6 +12,8 @@ const PlayerStatsTable = ({ stats }) => {
   // const isSm = useMediaQuery({ query: "(min-width: 500px)" });
   const isXS = useMediaQuery({ query: '(min-width: 400px)' })
 
+  console.log(stats)
+
   return (
     <StyledTable
       sx={{ minWidth: 300, maxWidth: 800, margin: '0.5rem auto' }}
@@ -41,7 +43,7 @@ const PlayerStatsTable = ({ stats }) => {
           <TableCell sx={{ fontWeight: 800, color: '#fff' }} align="center">
             {isL ? 'Puntos' : 'Pts.'}
           </TableCell>
-          {isM && (
+          {isM && stats[0].streak && (
             <>
               <TableCell sx={{ fontWeight: 800, color: '#fff' }} align="center">
                 Racha
@@ -117,7 +119,7 @@ const PlayerStatsTable = ({ stats }) => {
               >
                 {totalPoints}
               </TableCell>
-              {isM && (
+              {isM && streak && (
                 <TableCell
                   component="th"
                   scope="row"

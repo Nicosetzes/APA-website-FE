@@ -10,6 +10,7 @@ import axios from 'axios'
 import { motion } from 'framer-motion'
 import logo1 from './../../images/premier-league-background-1.jpg'
 import logo2 from './../../images/premier-league-background-2.jpg'
+import { Oval } from 'react-loader-spinner'
 
 const Tournaments = () => {
   const [tournaments, setTournaments] = useState([])
@@ -59,6 +60,20 @@ const Tournaments = () => {
           ))}
         </div>
       </motion.div>
+    )
+  } else {
+    return (
+      <div style={{ margin: 'auto', width: '100px' }}>
+        <Oval
+          height="80"
+          width="80"
+          radius="9"
+          color="green"
+          ariaLabel="three-dots-loading"
+          $wrapperStyle
+          $wrapperClass
+        />
+      </div>
     )
   }
 }

@@ -201,7 +201,7 @@ const TeamContainer = ({ teams, players }) => {
               value={team.name}
               label={team.name}
               name={'team'}
-              img={`${database}/leagues/${league.id}/teams/${team.id}/logo`}
+              img={`${database}/logos/${team.id}`}
             />
           </div>
         ))}

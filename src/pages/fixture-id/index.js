@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom'
 import { useTournament } from './../../context/TournamentContext'
 import FixtureContainer from './components/FixtureContainer'
-import { api } from './../../api'
+import { api, database } from './../../api'
 import axios from 'axios'
 import { motion } from 'framer-motion'
 import Swal from 'sweetalert2'
@@ -354,7 +354,7 @@ const FixtureId = () => {
               >
                 Equipo seleccionado:{' '}
                 <img
-                  src={`https://media.api-sports.io/football/teams/${selectedTeam}.png`}
+                  src={`${database}/logos/${selectedTeam}`}
                   style={{ width: '25px', margin: '0 0.5rem 0 0.5rem' }}
                 />
                 <button

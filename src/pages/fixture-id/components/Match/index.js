@@ -1,31 +1,24 @@
-import { useNavigate, createSearchParams } from 'react-router-dom'
+// import { useNavigate, createSearchParams } from 'react-router-dom'
 import InputContainer from './../InputContainer'
+import { useTournament } from './../../../../context/TournamentContext'
 import { PropTypes } from 'prop-types'
 
 const Match = ({ match, handleSubmit }) => {
-  const navigate = useNavigate()
-  const playerParams = (param) => {
-    return { player: param }
-  }
-  const teamParams = (param) => {
-    return { team: param }
-  }
+  const tournament = useTournament()
 
-  const goToSpecificFixture = (params) => {
-    if (isNaN(Number(params))) {
-      // El query es de player;
-      navigate({
-        pathname: ``,
-        search: `?${createSearchParams(playerParams(params))}`,
-      })
-    } else {
-      // El query es de team (numérico, es el id);
-      navigate({
-        pathname: ``,
-        search: `?${createSearchParams(teamParams(params))}`,
-      })
-    }
-  }
+  // const navigate = useNavigate()
+
+  // const teamParams = (param) => {
+  //   return { team: param }
+  // }
+
+  // const goToSpecificFixture = (params) => {
+  //   // El query es de team (numérico, es el id);
+  //   navigate({
+  //     pathname: ``,
+  //     search: `?${createSearchParams(teamParams(params))}`,
+  //   })
+  // }
 
   return (
     <form
@@ -57,14 +50,13 @@ const Match = ({ match, handleSubmit }) => {
           src={match.teamLogoP1}
           alt={match.teamP1}
           className="match-info__logo"
-          onClick={() => goToSpecificFixture(match.teamIdP1)}
+          onClick={() => tournament.updateSelectedTeam(match.teamIdP1)}
         />
         <input
           name="playerP1"
           className="match-info__player"
           value={match.playerP1}
           readOnly
-          onClick={() => goToSpecificFixture(match.playerP1)}
         />
       </div>
       <div className="match-score">
@@ -100,14 +92,13 @@ const Match = ({ match, handleSubmit }) => {
           src={match.teamLogoP2}
           alt={match.teamP2}
           className="match-info__logo"
-          onClick={() => goToSpecificFixture(match.teamIdP2)}
+          onClick={() => tournament.updateSelectedTeam(match.teamIdP2)}
         />
         <input
           name="playerP2"
           className="match-info__player"
           value={match.playerP2}
           readOnly
-          onClick={() => goToSpecificFixture(match.playerP2)}
         />
       </div>
     </form>

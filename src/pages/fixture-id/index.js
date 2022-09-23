@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom'
 import { useTournament } from './../../context/TournamentContext'
 import FixtureContainer from './components/FixtureContainer'
@@ -6,78 +6,214 @@ import { api } from './../../api'
 import axios from 'axios'
 import { motion } from 'framer-motion'
 import Swal from 'sweetalert2'
+import FormGroup from '@mui/material/FormGroup'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import Switch from '@mui/material/Switch'
+import { Oval } from 'react-loader-spinner'
 
 const FixtureId = () => {
-  // const api = 'http://localhost:5000/api'
-
   const { id } = useParams()
 
   const navigate = useNavigate()
-
-  let [searchParams, setSearchParams] = useSearchParams()
-
-  let team = searchParams.get('team')
-  let player = searchParams.get('player')
 
   const tournament = useTournament()
 
   useEffect(() => {
     const fetchData = async () => {
       console.log('Hago el fetch de data')
-      if (team) {
-        await axios
-          .get(`${api}/tournaments/${id}/fixture?team=${team}`, {
-            withCredentials: true,
-            credentials: 'include',
-          })
-          .then(({ data }) => {
-            // I'll rearrange this once this tournament is finished //
-            const { fixture } = data
-            const filteredFixture = fixture.filter(
-              (match) =>
-                match.teamIdP1 === Number(team) ||
-                match.teamIdP2 === Number(team),
-            )
-            tournament.updateTournament({ ...data, fixture: filteredFixture })
-          })
-          .catch((err) => {
-            console.log(err)
-            navigate('/login') // TODO: Check why sometimes the code from the previous page persists on the new one //
-          })
-      } else if (player) {
-        await axios
-          .get(`${api}/tournaments/${id}/fixture?player=${player}`, {
-            withCredentials: true,
-            credentials: 'include',
-          })
-          .then(({ data }) => {
-            const { fixture } = data
-            const filteredFixture = fixture.filter(
-              (match) => match.playerP1 === player || match.playerP2 === player,
-            )
-            tournament.updateTournament({ ...data, fixture: filteredFixture })
-          })
-          .catch((err) => {
-            console.log(err)
-            navigate('/login')
-          })
-      } else {
-        await axios
-          .get(`${api}/tournaments/${id}/fixture`, {
-            withCredentials: true,
-            credentials: 'include',
-          })
-          .then((res) => {
-            tournament.updateTournament(res.data)
-          })
-          .catch((err) => {
-            console.log(err)
-            navigate('/login')
-          })
-      }
+      await axios
+        .get(`${api}/tournaments/${id}/fixture`, {
+          withCredentials: true,
+          credentials: 'include',
+        })
+        .then(({ data }) => {
+          tournament.updateTournament({ ...data })
+          tournament.updateOriginalTournament({ ...data })
+        })
+        .catch((err) => {
+          console.log(err)
+          navigate('/')
+        })
     }
     fetchData()
-  }, [team, player])
+  }, [])
+
+  const { selectedTeam } = tournament
+
+  const [switchState, setSwitchState] = useState({})
+
+  const handleSwitchChange = (event) => {
+    setSwitchState({
+      ...switchState,
+      [event.target.name]: event.target.checked,
+    })
+  }
+
+  useEffect(() => {
+    if (tournament.tournament) {
+      const arrayOfKeys = Object.keys(switchState)
+      const arrayOfValues = Object.values(switchState)
+      let activeSwitches = arrayOfValues
+        .map((state, index) => {
+          return {
+            index,
+            state,
+            player: arrayOfKeys[index],
+          }
+        })
+        .filter(({ state }) => state)
+
+      console.log(activeSwitches)
+
+      if (!activeSwitches.length && !selectedTeam) {
+        console.log('Jugadores: no / equipo: no')
+        tournament.updateTournament({ ...tournament.originalTournament })
+        console.log(tournament.tournament.fixture.length)
+      }
+
+      if (!activeSwitches.length && selectedTeam) {
+        console.log('Jugadores: no / equipo: sí')
+        const { fixture } = tournament.originalTournament
+        const filteredFixture = fixture.filter(
+          (match) =>
+            match.teamIdP1 == selectedTeam || match.teamIdP2 == selectedTeam,
+        )
+        console.log(filteredFixture)
+        tournament.updateTournament({
+          ...tournament.originalTournament,
+          fixture: filteredFixture,
+        })
+        console.log(filteredFixture.length)
+      }
+
+      if (activeSwitches.length === 1 && !selectedTeam) {
+        console.log('Jugadores: 1 / equipo: no')
+        const [{ player }] = activeSwitches
+        const { fixture } = tournament.originalTournament
+        const filteredFixture = fixture.filter(
+          (match) => match.playerP1 === player || match.playerP2 === player,
+        )
+        tournament.updateTournament({
+          ...tournament.originalTournament,
+          fixture: filteredFixture,
+        })
+        console.log(filteredFixture.length)
+      }
+
+      if (activeSwitches.length === 1 && selectedTeam) {
+        console.log('Jugadores: 1 / equipo: sí')
+        const [{ player }] = activeSwitches
+        const { fixture } = tournament.originalTournament
+        const filteredFixture = fixture.filter(
+          (match) =>
+            (match.teamIdP1 == selectedTeam ||
+              match.teamIdP2 == selectedTeam) &&
+            (match.playerP1 === player || match.playerP2 === player),
+        )
+        tournament.updateTournament({
+          ...tournament.originalTournament,
+          fixture: filteredFixture,
+        })
+        console.log(filteredFixture.length)
+      }
+
+      if (activeSwitches.length === 2 && !selectedTeam) {
+        console.log('Jugadores: 2 / equipo: no')
+        const [switchP1, switchP2] = activeSwitches
+        const { fixture } = tournament.originalTournament
+        const filteredFixture = fixture.filter(
+          (match) =>
+            (match.playerP1 === switchP1.player &&
+              match.playerP2 === switchP2.player) ||
+            (match.playerP1 === switchP2.player &&
+              match.playerP2 === switchP1.player),
+        )
+        tournament.updateTournament({
+          ...tournament.originalTournament,
+          fixture: filteredFixture,
+        })
+        console.log(filteredFixture.length)
+      }
+
+      if (activeSwitches.length === 2 && selectedTeam) {
+        console.log('Jugadores: 2 / equipo: sí')
+        const [switchP1, switchP2] = activeSwitches
+        const { fixture } = tournament.originalTournament
+        const filteredFixture = fixture.filter(
+          (match) =>
+            (match.teamIdP1 == selectedTeam ||
+              match.teamIdP2 == selectedTeam) &&
+            ((match.playerP1 === switchP1.player &&
+              match.playerP2 === switchP2.player) ||
+              (match.playerP1 === switchP2.player &&
+                match.playerP2 === switchP1.player)),
+        )
+        tournament.updateTournament({
+          ...tournament.originalTournament,
+          fixture: filteredFixture,
+        })
+        console.log(filteredFixture.length)
+      }
+
+      if (activeSwitches.length === 3 && !selectedTeam) {
+        console.log('Jugadores: 3 / equipo: no')
+        const [switchP1, switchP2, switchP3] = activeSwitches
+        const { fixture } = tournament.originalTournament
+        const filteredFixture = fixture.filter(
+          (match) =>
+            (match.playerP1 === switchP1.player &&
+              match.playerP2 === switchP2.player) ||
+            (match.playerP1 === switchP2.player &&
+              match.playerP2 === switchP1.player) ||
+            (match.playerP1 === switchP1.player &&
+              match.playerP2 === switchP3.player) ||
+            (match.playerP1 === switchP3.player &&
+              match.playerP2 === switchP1.player) ||
+            (match.playerP1 === switchP2.player &&
+              match.playerP2 === switchP3.player) ||
+            (match.playerP1 === switchP3.player &&
+              match.playerP2 === switchP2.player),
+        )
+        tournament.updateTournament({
+          ...tournament.originalTournament,
+          fixture: filteredFixture,
+        })
+        console.log(filteredFixture.length)
+      }
+
+      if (activeSwitches.length === 3 && selectedTeam) {
+        console.log('Jugadores: 3 / equipo: sí')
+        const [switchP1, switchP2, switchP3] = activeSwitches
+        const { fixture } = tournament.originalTournament
+        const filteredFixture = fixture.filter(
+          (match) =>
+            (match.teamIdP1 == selectedTeam ||
+              match.teamIdP2 == selectedTeam) &&
+            ((match.playerP1 === switchP1.player &&
+              match.playerP2 === switchP2.player) ||
+              (match.playerP1 === switchP2.player &&
+                match.playerP2 === switchP1.player) ||
+              (match.playerP1 === switchP1.player &&
+                match.playerP2 === switchP3.player) ||
+              (match.playerP1 === switchP3.player &&
+                match.playerP2 === switchP1.player) ||
+              (match.playerP1 === switchP2.player &&
+                match.playerP2 === switchP3.player) ||
+              (match.playerP1 === switchP3.player &&
+                match.playerP2 === switchP2.player)),
+        )
+        tournament.updateTournament({
+          ...tournament.originalTournament,
+          fixture: filteredFixture,
+        })
+        console.log(filteredFixture.length)
+      }
+    }
+  }, [switchState, selectedTeam])
+
+  const resetTeamFilter = () => {
+    tournament.updateSelectedTeam() // Elimino el equipo seleccionado (si hay) //
+  }
 
   const handleSubmit = async (event) => {
     event.preventDefault()
@@ -179,20 +315,86 @@ const FixtureId = () => {
     }
   }
 
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-    >
-      {tournament.tournament && (
-        <FixtureContainer
-          tournament={tournament.tournament}
-          handleSubmit={handleSubmit}
+  if (tournament.tournament) {
+    const { players } = tournament.tournament
+
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+      >
+        <FormGroup sx={{ alignItems: 'center' }}>
+          <div style={{ margin: '1.5rem' }}>Filtrar partidos</div>
+          <div>
+            {players.map(({ name, id }) => (
+              <FormControlLabel
+                key={id}
+                control={
+                  <Switch
+                    size="small"
+                    color="warning"
+                    checked={switchState.name}
+                    onChange={handleSwitchChange}
+                    name={name}
+                  />
+                }
+                label={name}
+              />
+            ))}
+          </div>
+          <div>
+            {selectedTeam && (
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  margin: '1rem auto 0 auto',
+                }}
+              >
+                Equipo seleccionado:{' '}
+                <img
+                  src={`https://media.api-sports.io/football/teams/${selectedTeam}.png`}
+                  style={{ width: '25px', margin: '0 0.5rem 0 0.5rem' }}
+                />
+                <button
+                  style={{
+                    padding: '0.25rem 0.75rem',
+                    border: '#004a79 1px solid',
+                    borderRadius: 10,
+                  }}
+                  onClick={() => resetTeamFilter()}
+                >
+                  Limpiar
+                </button>
+              </div>
+            )}
+          </div>
+        </FormGroup>
+
+        {tournament.tournament && (
+          <FixtureContainer
+            tournament={tournament.tournament}
+            handleSubmit={handleSubmit}
+          />
+        )}
+      </motion.div>
+    )
+  } else {
+    return (
+      <div style={{ margin: 'auto', width: '100px' }}>
+        <Oval
+          height="80"
+          width="80"
+          radius="9"
+          color="green"
+          ariaLabel="three-dots-loading"
+          $wrapperStyle
+          $wrapperClass
         />
-      )}
-    </motion.div>
-  )
+      </div>
+    )
+  }
 }
 
 export default FixtureId

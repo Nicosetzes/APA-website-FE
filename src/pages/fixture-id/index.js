@@ -276,13 +276,13 @@ const FixtureId = () => {
           popup: 'animate__animated animate__fadeOutUp',
         },
       })
-      axios
-        .post(`${api}/tournaments/${id}/upload-game/`, data)
-        .then((response) => {
-          // let {isUpdated} = response.data; // Podría usarlo para alertar un error al modificar
-          let { updatedTournament } = response.data
-          tournament.updateTournament(updatedTournament)
-        })
+      // axios
+      //   .post(`${api}/tournaments/${id}/upload-game/`, data)
+      //   .then((response) => {
+      //     // let {isUpdated} = response.data; // Podría usarlo para alertar un error al modificar
+      //     let { updatedTournament } = response.data
+      //     tournament.updateTournament(updatedTournament)
+      //   })
     }
 
     if (matchId) {

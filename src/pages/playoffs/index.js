@@ -34,7 +34,7 @@ const Playoffs = () => {
     const sortedRankedTeams = playoffsData[2]
 
     // console.log(playoffsTeamsForTable)
-    console.log(playoffsPlayerInfo)
+    // console.log(playoffsPlayerInfo)
     // console.log(sortedRankedTeams)
 
     return (

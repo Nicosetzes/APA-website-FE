@@ -68,22 +68,45 @@ const MatchesTable = ({ data }) => {
                 >{`${match.tournament.name}`}</TableCell>
               </>
             )}
-            <TableCell
-              sx={{ color: '#fff' }}
-              component="th"
-              scope="row"
-              align="center"
-            >{`${match.teamP1} (${match.playerP1.toUpperCase()[0]}${
-              match.playerP1.toUpperCase()[1]
-            })`}</TableCell>
-            <TableCell
-              sx={{ color: '#fff' }}
-              component="th"
-              scope="row"
-              align="center"
-            >{`${match.teamP2} (${match.playerP2.toUpperCase()[0]}${
-              match.playerP2.toUpperCase()[1]
-            })`}</TableCell>
+            {match.teamP1.name ? (
+              <TableCell
+                sx={{ color: '#fff' }}
+                component="th"
+                scope="row"
+                align="center"
+              >{`${match.teamP1.name} (${match.playerP1.name.toUpperCase()[0]}${
+                match.playerP1.name.toUpperCase()[1]
+              })`}</TableCell>
+            ) : (
+              <TableCell
+                sx={{ color: '#fff' }}
+                component="th"
+                scope="row"
+                align="center"
+              >{`${match.teamP1} (${match.playerP1.name.toUpperCase()[0]}${
+                match.playerP1.name.toUpperCase()[1]
+              })`}</TableCell>
+            )}
+            {match.teamP2.name ? (
+              <TableCell
+                sx={{ color: '#fff' }}
+                component="th"
+                scope="row"
+                align="center"
+              >{`${match.teamP2.name} (${match.playerP2.name.toUpperCase()[0]}${
+                match.playerP2.name.toUpperCase()[1]
+              })`}</TableCell>
+            ) : (
+              <TableCell
+                sx={{ color: '#fff' }}
+                component="th"
+                scope="row"
+                align="center"
+              >{`${match.teamP2} (${match.playerP2.name.toUpperCase()[0]}${
+                match.playerP2.name.toUpperCase()[1]
+              })`}</TableCell>
+            )}
+
             <TableCell
               sx={{ color: '#fff' }}
               component="th"

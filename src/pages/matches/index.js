@@ -27,10 +27,6 @@ const Matches = () => {
           console.log(res)
           setData(res.data)
         })
-        .catch((err) => {
-          console.log(err)
-          navigate('/login')
-        })
     }
     if (query.length === 0 || query.length > 2) fetchData()
   }, [query])

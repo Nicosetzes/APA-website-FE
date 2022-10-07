@@ -7,8 +7,8 @@ const MatchView = ({ match }) => {
     <StyledMatchView data-aos="flip-left" data-aos-duration="1000">
       <div className="card__match-score">
         <div className="card__match-score-teams">
-          <span>{teamP1}</span>
-          <span>{teamP2}</span>
+          <span>{teamP1.name ? teamP1.name : teamP1}</span>
+          <span>{teamP2.name ? teamP2.name : teamP2}</span>
         </div>
         <div className="card__match-score-result">
           <span>{scoreP1}</span>

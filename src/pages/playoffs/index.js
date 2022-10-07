@@ -16,9 +16,9 @@ const Playoffs = () => {
   const getPlayoffsData = () => {
     const table = axios.get(`${api}/playoffs/table`)
     const playerInfo = axios.get(`${api}/playoffs/player-info`)
-    const bracket = axios.get(`${api}/playoffs/bracket`)
+    // const bracket = axios.get(`${api}/playoffs/bracket`)
 
-    Promise.all([table, playerInfo, bracket]).then((values) => {
+    Promise.all([table, playerInfo]).then((values) => {
       const data = values.map((response) => response.data)
       setPlayoffsData(data)
     })
@@ -31,7 +31,7 @@ const Playoffs = () => {
   if (playoffsData) {
     const playoffsTeamsForTable = playoffsData[0]
     const playoffsPlayerInfo = playoffsData[1]
-    const sortedRankedTeams = playoffsData[2]
+    // const sortedRankedTeams = playoffsData[2]
 
     // console.log(playoffsTeamsForTable)
     // console.log(playoffsPlayerInfo)
@@ -52,7 +52,7 @@ const Playoffs = () => {
             a.totalPoints > b.totalPoints ? -1 : 1,
           )}
         />
-        <PlayoffsBracket rankedTeams={sortedRankedTeams} />
+        <PlayoffsBracket rankedTeams={playoffsTeamsForTable} />
       </motion.div>
     )
   } else {

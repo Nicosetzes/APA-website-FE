@@ -6,37 +6,6 @@ export const StyledTable = styled(Table)`
 
   .MuiTableBody-root {
     .MuiTableRow-root {
-      &:nth-child(1),
-      &:nth-child(2),
-      &:nth-child(3),
-      &:nth-child(4),
-      &:nth-child(5),
-      &:nth-child(6),
-      &:nth-child(7),
-      &:nth-child(8),
-      &:nth-child(9),
-      &:nth-child(10),
-      &:nth-child(11),
-      &:nth-child(12) {
-        background-color: #007058;
-        &:hover {
-          background-color: #237c69;
-        }
-      }
-      &:nth-child(13),
-      &:nth-child(14) {
-        background-color: #a1920a;
-        &:hover {
-          background-color: #b8ae58;
-        }
-      }
-      &:nth-child(15),
-      &:nth-child(16) {
-        background-color: #75330c;
-        &:hover {
-          background-color: #8f5e42;
-        }
-      }
       .MuiTableCell-root {
         color: #fff;
         font-family: 'Fira Sans', sans-serif;

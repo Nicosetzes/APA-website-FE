@@ -34,13 +34,12 @@ const StreakBox = ({
           <>
             <div style={{ fontSize: '0.75rem', fontWeight: 700 }}>
               <span>
-                {teamP1} ({playerP1[0].toUpperCase()}
-                {playerP1[1].toUpperCase()})
+                {teamP1.name ? teamP1.name : teamP1} ({playerP1.name})
               </span>{' '}
               <span>{scoreP1}</span>
               {'-'}
-              <span>{scoreP2}</span> ({playerP2[0].toUpperCase()}
-              {playerP2[1].toUpperCase()}) <span>{teamP2}</span>
+              <span>{scoreP2}</span> ({playerP2.name}){' '}
+              <span>{teamP2.name ? teamP2.name : teamP2}</span>
             </div>
             <div style={{ margin: '0.25rem 0', textAlign: 'right' }}>
               {date}
@@ -59,13 +58,15 @@ const StreakBox = ({
           <>
             <div style={{ fontSize: '0.75rem', fontWeight: 700 }}>
               <span>
-                {teamP1} ({playerP1[0].toUpperCase()}
-                {playerP1[1].toUpperCase()})
+                {teamP1.name ? teamP1.name : teamP1} ({playerP1.name})
               </span>{' '}
               <span>{scoreP1}</span>
               {'-'}
-              <span>{scoreP2}</span> ({playerP2[0].toUpperCase()}
-              {playerP2[1].toUpperCase()}) <span>{teamP2}</span>
+              <span>{scoreP2}</span>
+              <span>
+                {' '}
+                ({playerP2.name}) {teamP2.name ? teamP2.name : teamP2}
+              </span>
             </div>
             <div style={{ margin: '0.25rem 0', textAlign: 'right' }}>
               {date}
@@ -84,13 +85,12 @@ const StreakBox = ({
           <>
             <div style={{ fontSize: '0.75rem', fontWeight: 700 }}>
               <span>
-                {teamP1} ({playerP1[0].toUpperCase()}
-                {playerP1[1].toUpperCase()})
+                {teamP1.name ? teamP1.name : teamP1} ({playerP1.name})
               </span>{' '}
               <span>{scoreP1}</span>
               {'-'}
-              <span>{scoreP2}</span> ({playerP2[0].toUpperCase()}
-              {playerP2[1].toUpperCase()}) <span>{teamP2}</span>
+              <span>{scoreP2}</span> ({playerP2.name}){' '}
+              <span>{teamP2.name ? teamP2.name : teamP2}</span>
             </div>
             <div style={{ margin: '0.25rem 0', textAlign: 'right' }}>
               {date}

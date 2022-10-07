@@ -4,6 +4,7 @@ import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
+import { database } from './../../../../api'
 
 const PlayoffsTable = ({ allTeams }) => {
   const isL = useMediaQuery({ query: '(min-width: 992px)' })
@@ -76,12 +77,12 @@ const PlayoffsTable = ({ allTeams }) => {
             </TableCell>
             <TableCell component="th" scope="row">
               <div className="teamAndLogoWrapper">
-                <img src={team.logo} alt={team.name} />
+                <img src={`${database}/logos/${team.id}`} alt={team.name} />
                 {isM ? team.team : team.teamCode}
               </div>
             </TableCell>
             <TableCell component="th" scope="row">
-              {team.player}
+              {team.player.name}
             </TableCell>
             <TableCell component="th" scope="row">
               {team.played}

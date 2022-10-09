@@ -41,8 +41,7 @@ const TeamContainer = ({ teams, players }) => {
       })
       .map(({ id, value, attributes }) => {
         return {
-          id: id.split('|')[1],
-          leagueId: id.split('|')[0],
+          id,
           name: value,
           img: attributes.img.value,
         }
@@ -144,11 +143,12 @@ const TeamContainer = ({ teams, players }) => {
 
         const { name } = tournamentName
 
-        const teams = selectedTeams.map(({ id, leagueId, name }) => {
+        const teams = selectedTeams.map(({ id, name }) => {
           return {
-            id,
-            leagueId,
-            name,
+            team: {
+              id,
+              name,
+            },
           }
         })
 
@@ -194,10 +194,10 @@ const TeamContainer = ({ teams, players }) => {
       </div>
       <div className="header">Equipos</div>
       <div className="container__teams">
-        {teams.map(({ team, league }) => (
+        {teams.map(({ team }) => (
           <div key={team.id}>
             <Checkbox
-              id={`${league.id}|${team.id}`}
+              id={team.id}
               value={team.name}
               label={team.name}
               name={'team'}

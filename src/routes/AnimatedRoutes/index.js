@@ -6,9 +6,11 @@ import Standings from './../../pages/standings'
 import Playoffs from '../../pages/playoffs'
 import Matches from './../../pages/matches'
 import Tournaments from './../../pages/tournaments'
+import TournamentId from './../../pages/tournament-id'
 import FixtureId from './../../pages/fixture-id'
 import Statistics from './../../pages/statistics'
 import CreateTournament from '../../pages/create-tournament'
+import CreateGame from '../../pages/create-game'
 
 export const AnimatedRoutes = () => {
   const location = useLocation()
@@ -22,14 +24,8 @@ export const AnimatedRoutes = () => {
         <Route path="/playoffs" element={<Playoffs />} />
         <Route path="/tournaments">
           <Route index element={<Tournaments />} />
-          <Route
-            path=":id"
-            element={
-              <main style={{ padding: '1rem' }}>
-                <p>Aquí habrá info de un torneo en particular</p>
-              </main>
-            }
-          />
+          <Route path=":id" element={<TournamentId />} />
+          <Route path=":id/create-game" element={<CreateGame />} />
           <Route path=":id/fixture" element={<FixtureId />} />
         </Route>
         <Route path="/create-tournament" element={<CreateTournament />} />

@@ -10,15 +10,15 @@ export const StyledStreakBox = styled.div`
   margin: 0.5rem;
   padding: 0.75rem;
   position: relative;
-  &:first-child {
+  &:last-child {
     border: #781010 2px solid;
     &::before {
       color: #000;
       content: 'Más reciente';
       font-size: 0.75rem;
       position: absolute;
-      right: 0.25rem;
-      bottom: 3.5rem;
+      left: 0.25rem;
+      top: 3.25rem;
     }
   }
 `

@@ -11,7 +11,7 @@ export const StyledPlayoffsContainer = styled.div`
   .playoff__container-right {
     display: flex;
     flex-wrap: nowrap;
-    height: 500px;
+    height: 580px;
     .playoff__first-round {
       display: flex;
       flex-direction: column;
@@ -22,19 +22,6 @@ export const StyledPlayoffsContainer = styled.div`
       display: flex;
       flex-direction: column;
       height: 100%;
-      .match {
-        margin: auto 0 auto 0;
-        /* position: relative;
-        &::before {
-          content: '';
-          display: inline-block;
-          width: 200px;
-          height: 200px;
-          background-image: url('/bracket.png');
-          background-size: 200px;
-          position: absolute;
-        } */
-      }
     }
     .playoff__third-round {
       justify-content: center;
@@ -74,6 +61,7 @@ export const StyledPlayoffsContainer = styled.div`
   .brackets {
     display: flex;
     flex-direction: column;
+    height: 100%;
     &.two {
       img {
         height: 145px;
@@ -95,37 +83,6 @@ export const StyledPlayoffsContainer = styled.div`
         margin: auto 0;
         /* transform: rotate(180deg); */
         width: 25px;
-      }
-    }
-  }
-  .match {
-    background-color: #001a2a;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    margin: 1rem auto;
-    width: 175px;
-    .match-team {
-      align-items: center;
-      color: #fff;
-      display: flex;
-      height: 30px;
-      margin: 0.5rem;
-      .match-team-seed {
-        background-color: #001a2a;
-        border: beige 2px solid;
-        color: #fff;
-        font-size: 1.25rem;
-        font-weight: 700;
-        text-align: center;
-        width: 15%;
-      }
-      .match-team-logo {
-        margin: 0 0.5rem;
-        width: 20px;
-      }
-      .match-team-name {
-        font-size: 0.8rem;
       }
     }
   }

@@ -1,189 +1,293 @@
-import Divider from '@mui/material/Divider'
+// import { useState, useEffect } from 'react'
+import PlayoffsMatch from '../PlayoffsMatch'
 import { StyledPlayoffsContainer } from './styled'
-import { database } from './../../../../api'
 import bracket from './../../../../images/bracket.png'
+// import axios from 'axios'
+// import { api } from './../../../../api'
 
-const PlayoffsBracket = ({ rankedTeams }) => {
-  console.log(rankedTeams)
+const PlayoffsBracket = ({ teams, updatedWins, matches }) => {
   return (
     <StyledPlayoffsContainer>
       <div className="playoff__container-left">
         <div className="playoff__first-round">
-          <div className="match">
-            <div className="match-team">
-              <span className="match-team-seed">1</span>
-              <img
-                className="match-team-logo"
-                src={`${database}/logos/${rankedTeams[0].id}`}
-              />
-              <span className="match-team-name">
-                {rankedTeams[0].team} (
-                {rankedTeams[0].player.name[0].toUpperCase()}
-                {rankedTeams[0].player.name[1].toUpperCase()})
-              </span>
-            </div>
-            <Divider />
-            <div className="match-team">
-              <span className="match-team-seed">16</span>
-              <img
-                className="match-team-logo"
-                src={`${database}/logos/${rankedTeams[15].id}`}
-              />
-              <span className="match-team-name">
-                {rankedTeams[15].team} (
-                {rankedTeams[15].player.name[0].toUpperCase()}
-                {rankedTeams[15].player.name[1].toUpperCase()})
-              </span>
-            </div>
-          </div>
-          <div className="match">
-            <div className="match-team">
-              <span className="match-team-seed">8</span>
-              <img
-                className="match-team-logo"
-                src={`${database}/logos/${rankedTeams[7].id}`}
-              />
-              <span className="match-team-name">
-                {rankedTeams[7].team} (
-                {rankedTeams[7].player.name[0].toUpperCase()}
-                {rankedTeams[7].player.name[1].toUpperCase()})
-              </span>
-            </div>
-            <div className="match-team">
-              <span className="match-team-seed">9</span>
-              <img
-                className="match-team-logo"
-                src={`${database}/logos/${rankedTeams[8].id}`}
-              />
-              <span className="match-team-name">
-                {rankedTeams[8].team} (
-                {rankedTeams[8].player.name[0].toUpperCase()}
-                {rankedTeams[8].player.name[1].toUpperCase()})
-              </span>
-            </div>
-          </div>
-          <div className="match">
-            <div className="match-team">
-              <span className="match-team-seed">5</span>
-              <img
-                className="match-team-logo"
-                src={`${database}/logos/${rankedTeams[4].id}`}
-              />
-              <span className="match-team-name">
-                {rankedTeams[4].team} (
-                {rankedTeams[4].player.name[0].toUpperCase()}
-                {rankedTeams[4].player.name[1].toUpperCase()})
-              </span>
-            </div>
-            <div className="match-team">
-              <span className="match-team-seed">12</span>
-              <img
-                className="match-team-logo"
-                src={`${database}/logos/${rankedTeams[11].id}`}
-              />
-              <span className="match-team-name">
-                {rankedTeams[11].team} (
-                {rankedTeams[11].player.name[0].toUpperCase()}
-                {rankedTeams[11].player.name[1].toUpperCase()})
-              </span>
-            </div>
-          </div>
-          <div className="match">
-            <div className="match-team">
-              <span className="match-team-seed">4</span>
-              <img
-                className="match-team-logo"
-                src={`${database}/logos/${rankedTeams[3].id}`}
-              />
-              <span className="match-team-name">
-                {rankedTeams[3].team} (
-                {rankedTeams[3].player.name[0].toUpperCase()}
-                {rankedTeams[3].player.name[1].toUpperCase()})
-              </span>
-            </div>
-            <div className="match-team">
-              <span className="match-team-seed">13</span>
-              <img
-                className="match-team-logo"
-                src={`${database}/logos/${rankedTeams[12].id}`}
-              />
-              <span className="match-team-name">
-                {rankedTeams[12].team} (
-                {rankedTeams[12].player.name[0].toUpperCase()}
-                {rankedTeams[12].player.name[1].toUpperCase()})
-              </span>
-            </div>
-          </div>
+          <PlayoffsMatch
+            topTeam={teams[0]}
+            bottomTeam={teams[15]}
+            matches={matches}
+          />
+          <PlayoffsMatch
+            topTeam={teams[7]}
+            bottomTeam={teams[8]}
+            matches={matches}
+          />
+          <PlayoffsMatch
+            topTeam={teams[4]}
+            bottomTeam={teams[11]}
+            matches={matches}
+          />
+          <PlayoffsMatch
+            topTeam={teams[3]}
+            bottomTeam={teams[12]}
+            matches={matches}
+          />
         </div>
         <div className="brackets two">
           <img src={bracket} />
           <img src={bracket} />
         </div>
         <div className="playoff__second-round">
-          <div className="match">
-            <div className="match-team">
-              {/* <span className="match-team-seed">1</span>
-              <img className="match-team-logo" src={rankedTeams[0].logo}></img>
-              <span className="match-team-name">
-                {rankedTeams[0].team} ({rankedTeams[0].player[0].toUpperCase()}
-                {rankedTeams[0].player[1].toUpperCase()})
-              </span> */}
-            </div>
-            <Divider />
-            <div className="match-team">
-              {/* <span className="match-team-seed">16</span>
-              <img className="match-team-logo" src={rankedTeams[15].logo}></img>
-              <span className="match-team-name">
-                {rankedTeams[15].team} (
-                {rankedTeams[15].player[0].toUpperCase()}
-                {rankedTeams[15].player[1].toUpperCase()})
-              </span> */}
-            </div>
+          <div
+            style={{
+              backgroundColor: '#001a2a',
+              display: 'flex',
+              height: '113px',
+              justifyContent: 'center',
+              margin: 'auto 0',
+              width: '375px',
+            }}
+          >
+            {/* Primer caso: el partido 1 está decidido, pero el 2 NO */}
+            {updatedWins.length > 0 &&
+              (updatedWins.filter(({ id }) => id == teams[0].id)[0].wins > 0 ||
+                updatedWins.filter(({ id }) => id == teams[15].id)[0].wins >
+                  0) &&
+              updatedWins.filter(({ id }) => id == teams[7].id)[0].wins == 0 &&
+              updatedWins.filter(({ id }) => id == teams[8].id)[0].wins ==
+                0 && (
+                <PlayoffsMatch
+                  topTeam={
+                    updatedWins.filter(({ id }) => id == teams[0].id)[0].wins >
+                    0
+                      ? teams[0]
+                      : teams[15]
+                  }
+                  bottomTeam={null}
+                  matches={matches}
+                />
+              )}
+            {/* Segundo caso: el partido 1 NO está decidido, pero el 2 SÍ */}
+            {updatedWins.length > 0 &&
+              updatedWins.filter(({ id }) => id == teams[0].id)[0].wins == 0 &&
+              updatedWins.filter(({ id }) => id == teams[15].id)[0].wins == 0 &&
+              (updatedWins.filter(({ id }) => id == teams[7].id)[0].wins > 0 ||
+                updatedWins.filter(({ id }) => id == teams[8].id)[0].wins >
+                  0) && (
+                <PlayoffsMatch
+                  topTeam={null}
+                  bottomTeam={
+                    updatedWins.filter(({ id }) => id == teams[7].id)[0].wins >
+                    0
+                      ? teams[7]
+                      : teams[8]
+                  }
+                  matches={matches}
+                />
+              )}
+            {/* Tercer caso: ambos partidos ya se jugaron */}
+            {updatedWins.length > 0 &&
+              (updatedWins.filter(({ id }) => id == teams[0].id)[0].wins > 0 ||
+                updatedWins.filter(({ id }) => id == teams[15].id)[0].wins >
+                  0) &&
+              (updatedWins.filter(({ id }) => id == teams[7].id)[0].wins > 0 ||
+                updatedWins.filter(({ id }) => id == teams[8].id)[0].wins >
+                  0) && (
+                <PlayoffsMatch
+                  topTeam={
+                    updatedWins.filter(({ id }) => id == teams[0].id)[0].wins >
+                    0
+                      ? teams[0]
+                      : teams[15]
+                  }
+                  bottomTeam={
+                    updatedWins.filter(({ id }) => id == teams[7].id)[0].wins >
+                    0
+                      ? teams[7]
+                      : teams[8]
+                  }
+                  matches={matches}
+                />
+              )}
           </div>
-          <div className="match">
-            <div className="match-team">
-              {/* <span className="match-team-seed">1</span>
-              <img className="match-team-logo" src={rankedTeams[0].logo}></img>
-              <span className="match-team-name">
-                {rankedTeams[0].team} ({rankedTeams[0].player[0].toUpperCase()}
-                {rankedTeams[0].player[1].toUpperCase()})
-              </span> */}
-            </div>
-            <Divider />
-            <div className="match-team">
-              {/* <span className="match-team-seed">16</span>
-              <img className="match-team-logo" src={rankedTeams[15].logo}></img>
-              <span className="match-team-name">
-                {rankedTeams[15].team} (
-                {rankedTeams[15].player[0].toUpperCase()}
-                {rankedTeams[15].player[1].toUpperCase()})
-              </span> */}
-            </div>
+          <div
+            style={{
+              backgroundColor: '#001a2a',
+              display: 'flex',
+              height: '113px',
+              justifyContent: 'center',
+              margin: 'auto 0',
+              width: '375px',
+            }}
+          >
+            {/* Primer caso: el partido 1 está decidido, pero el 2 NO */}
+            {updatedWins.length > 0 &&
+              (updatedWins.filter(({ id }) => id == teams[4].id)[0].wins > 0 ||
+                updatedWins.filter(({ id }) => id == teams[11].id)[0].wins >
+                  0) &&
+              updatedWins.filter(({ id }) => id == teams[3].id)[0].wins == 0 &&
+              updatedWins.filter(({ id }) => id == teams[12].id)[0].wins ==
+                0 && (
+                <PlayoffsMatch
+                  topTeam={
+                    updatedWins.filter(({ id }) => id == teams[4].id)[0].wins >
+                    0
+                      ? teams[4]
+                      : teams[11]
+                  }
+                  bottomTeam={null}
+                  matches={matches}
+                />
+              )}
+            {/* Segundo caso: el partido 1 NO está decidido, pero el 2 SÍ */}
+            {updatedWins.length > 0 &&
+              updatedWins.filter(({ id }) => id == teams[4].id)[0].wins == 0 &&
+              updatedWins.filter(({ id }) => id == teams[11].id)[0].wins == 0 &&
+              (updatedWins.filter(({ id }) => id == teams[3].id)[0].wins > 0 ||
+                updatedWins.filter(({ id }) => id == teams[12].id)[0].wins >
+                  0) && (
+                <PlayoffsMatch
+                  topTeam={null}
+                  bottomTeam={
+                    updatedWins.filter(({ id }) => id == teams[3].id)[0].wins >
+                    0
+                      ? teams[3]
+                      : teams[12]
+                  }
+                  matches={matches}
+                />
+              )}
+            {/* Tercer caso: ambos partidos ya se jugaron */}
+            {updatedWins.length > 0 &&
+              (updatedWins.filter(({ id }) => id == teams[4].id)[0].wins > 0 ||
+                updatedWins.filter(({ id }) => id == teams[11].id)[0].wins >
+                  0) &&
+              (updatedWins.filter(({ id }) => id == teams[3].id)[0].wins > 0 ||
+                updatedWins.filter(({ id }) => id == teams[12].id)[0].wins >
+                  0) && (
+                <PlayoffsMatch
+                  topTeam={
+                    updatedWins.filter(({ id }) => id == teams[4].id)[0].wins >
+                    0
+                      ? teams[4]
+                      : teams[11]
+                  }
+                  bottomTeam={
+                    updatedWins.filter(({ id }) => id == teams[3].id)[0].wins >
+                    0
+                      ? teams[3]
+                      : teams[12]
+                  }
+                  matches={matches}
+                />
+              )}
           </div>
         </div>
         <div className="brackets one">
           <img src={bracket} />
         </div>
         <div className="playoff__third-round">
-          <div className="match">
-            <div className="match-team">
-              {/* <span className="match-team-seed">1</span>
-              <img className="match-team-logo" src={rankedTeams[0].logo}></img>
-              <span className="match-team-name">
-                {rankedTeams[0].team} ({rankedTeams[0].player[0].toUpperCase()}
-                {rankedTeams[0].player[1].toUpperCase()})
-              </span> */}
-            </div>
-            <Divider />
-            <div className="match-team">
-              {/* <span className="match-team-seed">16</span>
-              <img className="match-team-logo" src={rankedTeams[15].logo}></img>
-              <span className="match-team-name">
-                {rankedTeams[15].team} (
-                {rankedTeams[15].player[0].toUpperCase()}
-                {rankedTeams[15].player[1].toUpperCase()})
-              </span> */}
-            </div>
+          <div
+            style={{
+              backgroundColor: '#001a2a',
+              display: 'flex',
+              height: '113px',
+              justifyContent: 'center',
+              margin: 'auto 0',
+              width: '375px',
+            }}
+          >
+            {/* Primer caso: el equipo de arriba está decidido, pero el de abajo NO */}
+            {updatedWins.length > 0 &&
+              (updatedWins.filter(({ id }) => id == teams[0].id)[0].wins > 1 ||
+                updatedWins.filter(({ id }) => id == teams[15].id)[0].wins >
+                  1 ||
+                updatedWins.filter(({ id }) => id == teams[7].id)[0].wins > 1 ||
+                updatedWins.filter(({ id }) => id == teams[8].id)[0].wins >
+                  1) &&
+              updatedWins.filter(({ id }) => id == teams[4].id)[0].wins <= 1 &&
+              updatedWins.filter(({ id }) => id == teams[11].id)[0].wins <= 1 &&
+              updatedWins.filter(({ id }) => id == teams[3].id)[0].wins <= 1 &&
+              updatedWins.filter(({ id }) => id == teams[12].id)[0].wins <=
+                1 && (
+                <PlayoffsMatch
+                  topTeam={updatedWins
+                    .filter(
+                      ({ id }) =>
+                        id == teams[0].id ||
+                        id == teams[15].id ||
+                        id == teams[7].id ||
+                        id == teams[8].id,
+                    )
+                    .sort((a, b) => (a.wins > b.wins ? -1 : 1))
+                    .at(0)}
+                  bottomTeam={null}
+                  matches={matches}
+                />
+              )}
+            {/* Segundo caso: el partido 1 NO está decidido, pero el 2 SÍ */}
+            {updatedWins.length > 0 &&
+              updatedWins.filter(({ id }) => id == teams[0].id)[0].wins <= 1 &&
+              updatedWins.filter(({ id }) => id == teams[15].id)[0].wins <= 1 &&
+              updatedWins.filter(({ id }) => id == teams[7].id)[0].wins <= 1 &&
+              updatedWins.filter(({ id }) => id == teams[8].id)[0].wins <= 1 &&
+              (updatedWins.filter(({ id }) => id == teams[4].id)[0].wins > 1 ||
+                updatedWins.filter(({ id }) => id == teams[11].id)[0].wins >
+                  1 ||
+                updatedWins.filter(({ id }) => id == teams[3].id)[0].wins > 1 ||
+                updatedWins.filter(({ id }) => id == teams[12].id)[0].wins >
+                  1) && (
+                <PlayoffsMatch
+                  topTeam={null}
+                  bottomTeam={updatedWins
+                    .filter(
+                      ({ id }) =>
+                        id == teams[4].id ||
+                        id == teams[11].id ||
+                        id == teams[3].id ||
+                        id == teams[12].id,
+                    )
+                    .sort((a, b) => (a.wins > b.wins ? -1 : 1))
+                    .at(0)}
+                  matches={matches}
+                />
+              )}
+            {/* Tercer caso: ambos partidos ya se jugaron */}
+            {updatedWins.length > 0 &&
+              (updatedWins.filter(({ id }) => id == teams[0].id)[0].wins > 1 ||
+                updatedWins.filter(({ id }) => id == teams[15].id)[0].wins >
+                  1 ||
+                updatedWins.filter(({ id }) => id == teams[7].id)[0].wins > 1 ||
+                updatedWins.filter(({ id }) => id == teams[8].id)[0].wins >
+                  1) &&
+              (updatedWins.filter(({ id }) => id == teams[4].id)[0].wins > 1 ||
+                updatedWins.filter(({ id }) => id == teams[11].id)[0].wins >
+                  1 ||
+                updatedWins.filter(({ id }) => id == teams[3].id)[0].wins > 1 ||
+                updatedWins.filter(({ id }) => id == teams[12].id)[0].wins >
+                  1) && (
+                <PlayoffsMatch
+                  topTeam={updatedWins
+                    .filter(
+                      ({ id }) =>
+                        id == teams[0].id ||
+                        id == teams[15].id ||
+                        id == teams[7].id ||
+                        id == teams[8].id,
+                    )
+                    .sort((a, b) => (a.wins > b.wins ? -1 : 1))
+                    .at(0)}
+                  bottomTeam={updatedWins
+                    .filter(
+                      ({ id }) =>
+                        id == teams[4].id ||
+                        id == teams[11].id ||
+                        id == teams[3].id ||
+                        id == teams[12].id,
+                    )
+                    .sort((a, b) => (a.wins > b.wins ? -1 : 1))
+                    .at(0)}
+                  matches={matches}
+                />
+              )}
           </div>
         </div>
       </div>
@@ -191,210 +295,433 @@ const PlayoffsBracket = ({ rankedTeams }) => {
         <div className="match">
           <div
             style={{
-              backgroundColor: '#001a2a',
-              color: '#fff',
-              fontWeight: 700,
-              padding: '0.5rem 0',
-              textAlign: 'center',
-              textDecoration: 'underline',
+              backgroundColor: '#343825',
+              display: 'flex',
+              height: '113px',
+              justifyContent: 'center',
+              margin: 'auto 0',
+              width: '375px',
             }}
           >
-            Final
-          </div>
-          <div className="match-team">
-            {/* <span className="match-team-seed">6</span>
-            <img className="match-team-logo" src={rankedTeams[5].logo}></img>
-            <span className="match-team-name">
-              {rankedTeams[5].team} ({rankedTeams[5].player[0].toUpperCase()}
-              {rankedTeams[5].player[1].toUpperCase()})
-            </span> */}
-          </div>
-          <div className="match-team">
-            {/* <span className="match-team-seed">11</span>
-            <img className="match-team-logo" src={rankedTeams[10].logo}></img>
-            <span className="match-team-name">
-              {rankedTeams[10].team} ({rankedTeams[10].player[0].toUpperCase()}
-              {rankedTeams[10].player[1].toUpperCase()})
-            </span> */}
+            <span style={{ color: '#fff', fontWeight: 700 }}>Final</span>
+            {/* Primer caso: el finalista 1 está decidido, pero el 2 NO */}
+            {updatedWins.length > 0 &&
+              (updatedWins.filter(({ id }) => id == teams[0].id)[0].wins > 2 ||
+                updatedWins.filter(({ id }) => id == teams[15].id)[0].wins >
+                  2 ||
+                updatedWins.filter(({ id }) => id == teams[7].id)[0].wins > 2 ||
+                updatedWins.filter(({ id }) => id == teams[8].id)[0].wins > 2 ||
+                updatedWins.filter(({ id }) => id == teams[4].id)[0].wins > 2 ||
+                updatedWins.filter(({ id }) => id == teams[11].id)[0].wins >
+                  2 ||
+                updatedWins.filter(({ id }) => id == teams[3].id)[0].wins > 2 ||
+                updatedWins.filter(({ id }) => id == teams[12].id)[0].wins >
+                  2) &&
+              updatedWins.filter(({ id }) => id == teams[5].id)[0].wins <= 2 &&
+              updatedWins.filter(({ id }) => id == teams[10].id)[0].wins <= 2 &&
+              updatedWins.filter(({ id }) => id == teams[2].id)[0].wins <= 2 &&
+              updatedWins.filter(({ id }) => id == teams[13].id)[0].wins <= 2 &&
+              updatedWins.filter(({ id }) => id == teams[6].id)[0].wins <= 2 &&
+              updatedWins.filter(({ id }) => id == teams[9].id)[0].wins <= 2 &&
+              updatedWins.filter(({ id }) => id == teams[1].id)[0].wins <= 2 &&
+              updatedWins.filter(({ id }) => id == teams[14].id)[0].wins <=
+                2 && (
+                <PlayoffsMatch
+                  topTeam={updatedWins
+                    .filter(
+                      ({ id }) =>
+                        id == teams[0].id ||
+                        id == teams[15].id ||
+                        id == teams[7].id ||
+                        id == teams[8].id ||
+                        id == teams[4].id ||
+                        id == teams[11].id ||
+                        id == teams[3].id ||
+                        id == teams[12].id,
+                    )
+                    .sort((a, b) => (a.wins > b.wins ? -1 : 1))
+                    .at(0)}
+                  bottomTeam={null}
+                  matches={matches}
+                />
+              )}
+            {/* Segundo caso: el partido 1 NO está decidido, pero el 2 SÍ */}
+            {updatedWins.length > 0 &&
+              updatedWins.filter(({ id }) => id == teams[0].id)[0].wins <= 2 &&
+              updatedWins.filter(({ id }) => id == teams[15].id)[0].wins <= 2 &&
+              updatedWins.filter(({ id }) => id == teams[7].id)[0].wins <= 2 &&
+              updatedWins.filter(({ id }) => id == teams[8].id)[0].wins <= 2 &&
+              updatedWins.filter(({ id }) => id == teams[4].id)[0].wins <= 2 &&
+              updatedWins.filter(({ id }) => id == teams[11].id)[0].wins <= 2 &&
+              updatedWins.filter(({ id }) => id == teams[3].id)[0].wins <= 2 &&
+              updatedWins.filter(({ id }) => id == teams[12].id)[0].wins <= 2 &&
+              (updatedWins.filter(({ id }) => id == teams[5].id)[0].wins > 2 ||
+                updatedWins.filter(({ id }) => id == teams[10].id)[0].wins >
+                  2 ||
+                updatedWins.filter(({ id }) => id == teams[2].id)[0].wins > 2 ||
+                updatedWins.filter(({ id }) => id == teams[13].id)[0].wins >
+                  2 ||
+                updatedWins.filter(({ id }) => id == teams[6].id)[0].wins > 2 ||
+                updatedWins.filter(({ id }) => id == teams[9].id)[0].wins > 2 ||
+                updatedWins.filter(({ id }) => id == teams[1].id)[0].wins > 2 ||
+                updatedWins.filter(({ id }) => id == teams[14].id)[0].wins >
+                  2) && (
+                <PlayoffsMatch
+                  topTeam={null}
+                  bottomTeam={updatedWins
+                    .filter(
+                      ({ id }) =>
+                        id == teams[5].id ||
+                        id == teams[10].id ||
+                        id == teams[2].id ||
+                        id == teams[13].id ||
+                        id == teams[6].id ||
+                        id == teams[9].id ||
+                        id == teams[1].id ||
+                        id == teams[14].id,
+                    )
+                    .sort((a, b) => (a.wins > b.wins ? -1 : 1))
+                    .at(0)}
+                  matches={matches}
+                />
+              )}
+            {/* Tercer caso: ambos partidos ya se jugaron */}
+            {updatedWins.length > 0 &&
+              (updatedWins.filter(({ id }) => id == teams[0].id)[0].wins > 2 ||
+                updatedWins.filter(({ id }) => id == teams[15].id)[0].wins >
+                  2 ||
+                updatedWins.filter(({ id }) => id == teams[7].id)[0].wins > 2 ||
+                updatedWins.filter(({ id }) => id == teams[8].id)[0].wins > 2 ||
+                updatedWins.filter(({ id }) => id == teams[4].id)[0].wins > 2 ||
+                updatedWins.filter(({ id }) => id == teams[11].id)[0].wins >
+                  2 ||
+                updatedWins.filter(({ id }) => id == teams[3].id)[0].wins > 2 ||
+                updatedWins.filter(({ id }) => id == teams[12].id)[0].wins >
+                  2) &&
+              (updatedWins.filter(({ id }) => id == teams[5].id)[0].wins > 2 ||
+                updatedWins.filter(({ id }) => id == teams[10].id)[0].wins >
+                  2 ||
+                updatedWins.filter(({ id }) => id == teams[2].id)[0].wins > 2 ||
+                updatedWins.filter(({ id }) => id == teams[13].id)[0].wins >
+                  2 ||
+                updatedWins.filter(({ id }) => id == teams[6].id)[0].wins > 2 ||
+                updatedWins.filter(({ id }) => id == teams[9].id)[0].wins > 2 ||
+                updatedWins.filter(({ id }) => id == teams[1].id)[0].wins > 2 ||
+                updatedWins.filter(({ id }) => id == teams[14].id)[0].wins >
+                  2) && (
+                <PlayoffsMatch
+                  topTeam={updatedWins
+                    .filter(
+                      ({ id }) =>
+                        id == teams[0].id ||
+                        id == teams[15].id ||
+                        id == teams[7].id ||
+                        id == teams[8].id ||
+                        id == teams[4].id ||
+                        id == teams[11].id ||
+                        id == teams[3].id ||
+                        id == teams[12].id,
+                    )
+                    .sort((a, b) => (a.wins > b.wins ? -1 : 1))
+                    .at(0)}
+                  bottomTeam={updatedWins
+                    .filter(
+                      ({ id }) =>
+                        id == teams[5].id ||
+                        id == teams[10].id ||
+                        id == teams[2].id ||
+                        id == teams[13].id ||
+                        id == teams[6].id ||
+                        id == teams[9].id ||
+                        id == teams[1].id ||
+                        id == teams[14].id,
+                    )
+                    .sort((a, b) => (a.wins > b.wins ? -1 : 1))
+                    .at(0)}
+                  matches={matches}
+                />
+              )}
           </div>
         </div>
       </div>
       <div className="playoff__container-right">
         <div className="playoff__first-round">
-          <div className="match">
-            <div className="match-team">
-              <span className="match-team-seed">6</span>
-              <img
-                className="match-team-logo"
-                src={`${database}/logos/${rankedTeams[5].id}`}
-              />
-              <span className="match-team-name">
-                {rankedTeams[5].team} (
-                {rankedTeams[5].player.name[0].toUpperCase()}
-                {rankedTeams[5].player.name[1].toUpperCase()})
-              </span>
-            </div>
-            <div className="match-team">
-              <span className="match-team-seed">11</span>
-              <img
-                className="match-team-logo"
-                src={`${database}/logos/${rankedTeams[10].id}`}
-              />
-              <span className="match-team-name">
-                {rankedTeams[10].team} (
-                {rankedTeams[10].player.name[0].toUpperCase()}
-                {rankedTeams[10].player.name[1].toUpperCase()})
-              </span>
-            </div>
-          </div>
-          <div className="match">
-            <div className="match-team">
-              <span className="match-team-seed">3</span>
-              <img
-                className="match-team-logo"
-                src={`${database}/logos/${rankedTeams[2].id}`}
-              />
-              <span className="match-team-name">
-                {rankedTeams[2].team} (
-                {rankedTeams[2].player.name[0].toUpperCase()}
-                {rankedTeams[2].player.name[1].toUpperCase()})
-              </span>
-            </div>
-            <div className="match-team">
-              <span className="match-team-seed">14</span>
-              <img
-                className="match-team-logo"
-                src={`${database}/logos/${rankedTeams[13].id}`}
-              />
-              <span className="match-team-name">
-                {rankedTeams[13].team} (
-                {rankedTeams[13].player.name[0].toUpperCase()}
-                {rankedTeams[13].player.name[1].toUpperCase()})
-              </span>
-            </div>
-          </div>
-          <div className="match">
-            <div className="match-team">
-              <span className="match-team-seed">7</span>
-              <img
-                className="match-team-logo"
-                src={`${database}/logos/${rankedTeams[6].id}`}
-              />
-              <span className="match-team-name">
-                {rankedTeams[6].team} (
-                {rankedTeams[6].player.name[0].toUpperCase()}
-                {rankedTeams[6].player.name[1].toUpperCase()})
-              </span>
-            </div>
-            <div className="match-team">
-              <span className="match-team-seed">10</span>
-              <img
-                className="match-team-logo"
-                src={`${database}/logos/${rankedTeams[9].id}`}
-              />
-              <span className="match-team-name">
-                {rankedTeams[9].team} (
-                {rankedTeams[9].player.name[0].toUpperCase()}
-                {rankedTeams[9].player.name[1].toUpperCase()})
-              </span>
-            </div>
-          </div>
-          <div className="match">
-            <div className="match-team">
-              <span className="match-team-seed">2</span>
-              <img
-                className="match-team-logo"
-                src={`${database}/logos/${rankedTeams[1].id}`}
-              />
-              <span className="match-team-name">
-                {rankedTeams[1].team} (
-                {rankedTeams[1].player.name[0].toUpperCase()}
-                {rankedTeams[1].player.name[1].toUpperCase()})
-              </span>
-            </div>
-            <div className="match-team">
-              <span className="match-team-seed">15</span>
-              <img
-                className="match-team-logo"
-                src={`${database}/logos/${rankedTeams[14].id}`}
-              />
-              <span className="match-team-name">
-                {rankedTeams[14].team} (
-                {rankedTeams[14].player.name[0].toUpperCase()}
-                {rankedTeams[14].player.name[1].toUpperCase()})
-              </span>
-            </div>
-          </div>
+          <PlayoffsMatch
+            topTeam={teams[5]}
+            bottomTeam={teams[10]}
+            matches={matches}
+          />
+          <PlayoffsMatch
+            topTeam={teams[2]}
+            bottomTeam={teams[13]}
+            matches={matches}
+          />
+          <PlayoffsMatch
+            topTeam={teams[6]}
+            bottomTeam={teams[9]}
+            matches={matches}
+          />
+          <PlayoffsMatch
+            topTeam={teams[1]}
+            bottomTeam={teams[14]}
+            matches={matches}
+          />
         </div>
         <div className="brackets two reverse">
           <img src={bracket} />
           <img src={bracket} />
         </div>
         <div className="playoff__second-round">
-          <div className="match">
-            <div className="match-team">
-              {/* <span className="match-team-seed">1</span>
-              <img className="match-team-logo" src={rankedTeams[0].logo}></img>
-              <span className="match-team-name">
-                {rankedTeams[0].team} ({rankedTeams[0].player[0].toUpperCase()}
-                {rankedTeams[0].player[1].toUpperCase()})
-              </span> */}
-            </div>
-            <Divider />
-            <div className="match-team">
-              {/* <span className="match-team-seed">16</span>
-              <img className="match-team-logo" src={rankedTeams[15].logo}></img>
-              <span className="match-team-name">
-                {rankedTeams[15].team} (
-                {rankedTeams[15].player[0].toUpperCase()}
-                {rankedTeams[15].player[1].toUpperCase()})
-              </span> */}
-            </div>
+          <div
+            style={{
+              backgroundColor: '#001a2a',
+              display: 'flex',
+              height: '113px',
+              justifyContent: 'center',
+              margin: 'auto 0',
+              width: '375px',
+            }}
+          >
+            {/* Primer caso: el partido 1 está decidido, pero el 2 NO */}
+            {updatedWins.length > 0 &&
+              (updatedWins.filter(({ id }) => id == teams[5].id)[0].wins > 0 ||
+                updatedWins.filter(({ id }) => id == teams[10].id)[0].wins >
+                  0) &&
+              updatedWins.filter(({ id }) => id == teams[2].id)[0].wins == 0 &&
+              updatedWins.filter(({ id }) => id == teams[13].id)[0].wins ==
+                0 && (
+                <PlayoffsMatch
+                  topTeam={
+                    updatedWins.filter(({ id }) => id == teams[5].id)[0].wins >
+                    0
+                      ? teams[5]
+                      : teams[10]
+                  }
+                  bottomTeam={null}
+                  matches={matches}
+                />
+              )}
+            {/* Segundo caso: el partido 1 NO está decidido, pero el 2 SÍ */}
+            {updatedWins.length > 0 &&
+              updatedWins.filter(({ id }) => id == teams[5].id)[0].wins == 0 &&
+              updatedWins.filter(({ id }) => id == teams[10].id)[0].wins == 0 &&
+              (updatedWins.filter(({ id }) => id == teams[2].id)[0].wins > 0 ||
+                updatedWins.filter(({ id }) => id == teams[13].id)[0].wins >
+                  0) && (
+                <PlayoffsMatch
+                  topTeam={null}
+                  bottomTeam={
+                    updatedWins.filter(({ id }) => id == teams[2].id)[0].wins >
+                    0
+                      ? teams[2]
+                      : teams[13]
+                  }
+                  matches={matches}
+                />
+              )}
+            {/* Tercer caso: ambos partidos ya se jugaron */}
+            {updatedWins.length > 0 &&
+              (updatedWins.filter(({ id }) => id == teams[5].id)[0].wins > 0 ||
+                updatedWins.filter(({ id }) => id == teams[10].id)[0].wins >
+                  0) &&
+              (updatedWins.filter(({ id }) => id == teams[2].id)[0].wins > 0 ||
+                updatedWins.filter(({ id }) => id == teams[13].id)[0].wins >
+                  0) && (
+                <PlayoffsMatch
+                  topTeam={
+                    updatedWins.filter(({ id }) => id == teams[5].id)[0].wins >
+                    0
+                      ? teams[5]
+                      : teams[10]
+                  }
+                  bottomTeam={
+                    updatedWins.filter(({ id }) => id == teams[2].id)[0].wins >
+                    0
+                      ? teams[2]
+                      : teams[13]
+                  }
+                  matches={matches}
+                />
+              )}
           </div>
-          <div className="match">
-            <div className="match-team">
-              {/* <span className="match-team-seed">1</span>
-              <img className="match-team-logo" src={rankedTeams[0].logo}></img>
-              <span className="match-team-name">
-                {rankedTeams[0].team} ({rankedTeams[0].player[0].toUpperCase()}
-                {rankedTeams[0].player[1].toUpperCase()})
-              </span> */}
-            </div>
-            <Divider />
-            <div className="match-team">
-              {/* <span className="match-team-seed">16</span>
-              <img className="match-team-logo" src={rankedTeams[15].logo}></img>
-              <span className="match-team-name">
-                {rankedTeams[15].team} (
-                {rankedTeams[15].player[0].toUpperCase()}
-                {rankedTeams[15].player[1].toUpperCase()})
-              </span> */}
-            </div>
+          <div
+            style={{
+              backgroundColor: '#001a2a',
+              display: 'flex',
+              height: '113px',
+              justifyContent: 'center',
+              margin: 'auto 0',
+              width: '375px',
+            }}
+          >
+            {/* Primer caso: el partido 1 está decidido, pero el 2 NO */}
+            {updatedWins.length > 0 &&
+              (updatedWins.filter(({ id }) => id == teams[6].id)[0].wins > 0 ||
+                updatedWins.filter(({ id }) => id == teams[9].id)[0].wins >
+                  0) &&
+              updatedWins.filter(({ id }) => id == teams[1].id)[0].wins == 0 &&
+              updatedWins.filter(({ id }) => id == teams[14].id)[0].wins ==
+                0 && (
+                <PlayoffsMatch
+                  topTeam={
+                    updatedWins.filter(({ id }) => id == teams[6].id)[0].wins >
+                    0
+                      ? teams[6]
+                      : teams[9]
+                  }
+                  bottomTeam={null}
+                  matches={matches}
+                />
+              )}
+            {/* Segundo caso: el partido 1 NO está decidido, pero el 2 SÍ */}
+            {updatedWins.length > 0 &&
+              updatedWins.filter(({ id }) => id == teams[6].id)[0].wins == 0 &&
+              updatedWins.filter(({ id }) => id == teams[9].id)[0].wins == 0 &&
+              (updatedWins.filter(({ id }) => id == teams[1].id)[0].wins > 0 ||
+                updatedWins.filter(({ id }) => id == teams[14].id)[0].wins >
+                  0) && (
+                <PlayoffsMatch
+                  topTeam={null}
+                  bottomTeam={
+                    updatedWins.filter(({ id }) => id == teams[1].id)[0].wins >
+                    0
+                      ? teams[1]
+                      : teams[14]
+                  }
+                  matches={matches}
+                />
+              )}
+            {/* Tercer caso: ambos partidos ya se jugaron */}
+            {updatedWins.length > 0 &&
+              (updatedWins.filter(({ id }) => id == teams[6].id)[0].wins > 0 ||
+                updatedWins.filter(({ id }) => id == teams[9].id)[0].wins >
+                  0) &&
+              (updatedWins.filter(({ id }) => id == teams[1].id)[0].wins > 0 ||
+                updatedWins.filter(({ id }) => id == teams[14].id)[0].wins >
+                  0) && (
+                <PlayoffsMatch
+                  topTeam={
+                    updatedWins.filter(({ id }) => id == teams[6].id)[0].wins >
+                    0
+                      ? teams[6]
+                      : teams[9]
+                  }
+                  bottomTeam={
+                    updatedWins.filter(({ id }) => id == teams[1].id)[0].wins >
+                    0
+                      ? teams[1]
+                      : teams[14]
+                  }
+                  matches={matches}
+                />
+              )}
           </div>
         </div>
         <div className="brackets one reverse">
           <img src={bracket} />
         </div>
         <div className="playoff__third-round">
-          <div className="match">
-            <div className="match-team">
-              {/* <span className="match-team-seed">1</span>
-              <img className="match-team-logo" src={rankedTeams[0].logo}></img>
-              <span className="match-team-name">
-                {rankedTeams[0].team} ({rankedTeams[0].player[0].toUpperCase()}
-                {rankedTeams[0].player[1].toUpperCase()})
-              </span> */}
-            </div>
-            <Divider />
-            <div className="match-team">
-              {/* <span className="match-team-seed">16</span>
-              <img className="match-team-logo" src={rankedTeams[15].logo}></img>
-              <span className="match-team-name">
-                {rankedTeams[15].team} (
-                {rankedTeams[15].player[0].toUpperCase()}
-                {rankedTeams[15].player[1].toUpperCase()})
-              </span> */}
-            </div>
+          <div
+            style={{
+              backgroundColor: '#001a2a',
+              display: 'flex',
+              height: '113px',
+              justifyContent: 'center',
+              margin: 'auto 0',
+              width: '325px',
+            }}
+          >
+            {/* Primer caso: el equipo de arriba está decidido, pero el de abajo NO */}
+            {updatedWins.length > 0 &&
+              (updatedWins.filter(({ id }) => id == teams[5].id)[0].wins > 1 ||
+                updatedWins.filter(({ id }) => id == teams[10].id)[0].wins >
+                  1 ||
+                updatedWins.filter(({ id }) => id == teams[2].id)[0].wins > 1 ||
+                updatedWins.filter(({ id }) => id == teams[13].id)[0].wins >
+                  1) &&
+              updatedWins.filter(({ id }) => id == teams[6].id)[0].wins <= 1 &&
+              updatedWins.filter(({ id }) => id == teams[9].id)[0].wins <= 1 &&
+              updatedWins.filter(({ id }) => id == teams[1].id)[0].wins <= 1 &&
+              updatedWins.filter(({ id }) => id == teams[14].id)[0].wins <=
+                1 && (
+                <PlayoffsMatch
+                  topTeam={updatedWins
+                    .filter(
+                      ({ id }) =>
+                        id == teams[5].id ||
+                        id == teams[10].id ||
+                        id == teams[2].id ||
+                        id == teams[13].id,
+                    )
+                    .sort((a, b) => (a.wins > b.wins ? -1 : 1))
+                    .at(0)}
+                  bottomTeam={null}
+                  matches={matches}
+                />
+              )}
+            {/* Segundo caso: el partido 1 NO está decidido, pero el 2 SÍ */}
+            {updatedWins.length > 0 &&
+              updatedWins.filter(({ id }) => id == teams[5].id)[0].wins <= 1 &&
+              updatedWins.filter(({ id }) => id == teams[10].id)[0].wins <= 1 &&
+              updatedWins.filter(({ id }) => id == teams[2].id)[0].wins <= 1 &&
+              updatedWins.filter(({ id }) => id == teams[13].id)[0].wins <= 1 &&
+              (updatedWins.filter(({ id }) => id == teams[6].id)[0].wins > 1 ||
+                updatedWins.filter(({ id }) => id == teams[9].id)[0].wins > 1 ||
+                updatedWins.filter(({ id }) => id == teams[1].id)[0].wins > 1 ||
+                updatedWins.filter(({ id }) => id == teams[14].id)[0].wins >
+                  1) && (
+                <PlayoffsMatch
+                  topTeam={null}
+                  bottomTeam={updatedWins
+                    .filter(
+                      ({ id }) =>
+                        id == teams[6].id ||
+                        id == teams[9].id ||
+                        id == teams[1].id ||
+                        id == teams[14].id,
+                    )
+                    .sort((a, b) => (a.wins > b.wins ? -1 : 1))
+                    .at(0)}
+                  matches={matches}
+                />
+              )}
+            {/* Tercer caso: ambos partidos ya se jugaron */}
+            {updatedWins.length > 0 &&
+              (updatedWins.filter(({ id }) => id == teams[5].id)[0].wins > 1 ||
+                updatedWins.filter(({ id }) => id == teams[10].id)[0].wins >
+                  1 ||
+                updatedWins.filter(({ id }) => id == teams[2].id)[0].wins > 1 ||
+                updatedWins.filter(({ id }) => id == teams[13].id)[0].wins >
+                  1) &&
+              (updatedWins.filter(({ id }) => id == teams[6].id)[0].wins > 1 ||
+                updatedWins.filter(({ id }) => id == teams[9].id)[0].wins > 1 ||
+                updatedWins.filter(({ id }) => id == teams[1].id)[0].wins > 1 ||
+                updatedWins.filter(({ id }) => id == teams[14].id)[0].wins >
+                  1) && (
+                <PlayoffsMatch
+                  topTeam={updatedWins
+                    .filter(
+                      ({ id }) =>
+                        id == teams[5].id ||
+                        id == teams[10].id ||
+                        id == teams[2].id ||
+                        id == teams[13].id,
+                    )
+                    .sort((a, b) => (a.wins > b.wins ? -1 : 1))
+                    .at(0)}
+                  bottomTeam={updatedWins
+                    .filter(
+                      ({ id }) =>
+                        id == teams[6].id ||
+                        id == teams[9].id ||
+                        id == teams[1].id ||
+                        id == teams[14].id,
+                    )
+                    .sort((a, b) => (a.wins > b.wins ? -1 : 1))
+                    .at(0)}
+                  matches={matches}
+                />
+              )}
           </div>
         </div>
       </div>

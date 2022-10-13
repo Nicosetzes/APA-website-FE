@@ -78,7 +78,11 @@ const PlayoffsTable = ({ allTeams }) => {
             <TableCell component="th" scope="row">
               <div className="teamAndLogoWrapper">
                 <img src={`${database}/logos/${team.id}`} alt={team.name} />
-                {isM ? team.team : team.teamCode}
+                {isM
+                  ? team.team
+                  : team.team[0].toUpperCase() +
+                    team.team[1].toUpperCase() +
+                    team.team[2].toUpperCase()}
               </div>
             </TableCell>
             <TableCell component="th" scope="row">

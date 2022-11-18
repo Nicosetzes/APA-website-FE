@@ -47,24 +47,6 @@ const NavMenu = ({ handleClose, isOpen, anchorEl }) => {
         <Divider />
         <MenuItem onClick={handleClose}>
           <ListItemIcon>
-            <EmojiEventsIcon fontSize="small" />
-          </ListItemIcon>
-          <NavLink to="/standings">
-            <ListItemText>Clasificación</ListItemText>
-          </NavLink>
-        </MenuItem>
-        <Divider />
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <DataObjectIcon fontSize="small" />
-          </ListItemIcon>
-          <NavLink to="/playoffs">
-            <ListItemText>Playoffs</ListItemText>
-          </NavLink>
-        </MenuItem>
-        <Divider />
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
             <SportsSoccerIcon fontSize="small" />
           </ListItemIcon>
           <NavLink to="/matches">
@@ -78,6 +60,15 @@ const NavMenu = ({ handleClose, isOpen, anchorEl }) => {
           </ListItemIcon>
           <NavLink to="/tournaments">
             <ListItemText>Torneos</ListItemText>
+          </NavLink>
+        </MenuItem>
+        <Divider />
+        <MenuItem onClick={handleClose}>
+          <ListItemIcon>
+            <EmojiEventsIcon fontSize="small" />
+          </ListItemIcon>
+          <NavLink to="/world-cup">
+            <ListItemText>Copa del Mundo</ListItemText>
           </NavLink>
         </MenuItem>
         <Divider />

@@ -112,7 +112,9 @@ const MatchesTable = ({ data }) => {
               component="th"
               scope="row"
               align="center"
-            >{`${match.scoreP1} - ${match.scoreP2}`}</TableCell>
+            >{`${match.scoreP1 ? match.scoreP1 : ''} - ${
+              match.scoreP2 ? match.scoreP2 : ''
+            }`}</TableCell>
           </TableRow>
         ))}
       </TableBody>

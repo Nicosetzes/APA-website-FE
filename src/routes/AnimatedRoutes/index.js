@@ -10,7 +10,11 @@ import TournamentId from './../../pages/tournament-id'
 import FixtureId from './../../pages/fixture-id'
 import Statistics from './../../pages/statistics'
 import CreateTournament from '../../pages/create-tournament'
-import CreateGame from '../../pages/create-game'
+import WorldCup from '../../pages/world-cup'
+import WorldCupAssignment from '../../pages/world-cup-assignment'
+import WorldCupStandings from '../../pages/world-cup-standings'
+import WorldCupMatches from '../../pages/world-cup-matches'
+// import CreateGame from '../../pages/create-game'
 
 export const AnimatedRoutes = () => {
   const location = useLocation()
@@ -20,15 +24,23 @@ export const AnimatedRoutes = () => {
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<App />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/standings" element={<Standings />} />
         <Route path="/playoffs" element={<Playoffs />} />
         <Route path="/tournaments">
           <Route index element={<Tournaments />} />
-          <Route path=":id" element={<TournamentId />} />
-          <Route path=":id/create-game" element={<CreateGame />} />
-          <Route path=":id/fixture" element={<FixtureId />} />
+          <Route path=":tournament" element={<TournamentId />} />
+          {/* <Route path=":tournament/create-game" element={<CreateGame />} /> */}
+          <Route path=":tournament/matches" element={<FixtureId />} />
+          <Route path=":tournament/standings" element={<Standings />} />
+          <Route path=":tournament/playoffs" element={<Playoffs />} />
         </Route>
         <Route path="/create-tournament" element={<CreateTournament />} />
+        <Route path="/world-cup" element={<WorldCup />} />
+        <Route
+          path="/world-cup/team-assignment"
+          element={<WorldCupAssignment />}
+        />
+        <Route path="/world-cup/standings" element={<WorldCupStandings />} />
+        <Route path="/world-cup/matches" element={<WorldCupMatches />} />
         <Route path="/matches" element={<Matches />} />
         <Route path="/statistics" element={<Statistics />} />
         <Route

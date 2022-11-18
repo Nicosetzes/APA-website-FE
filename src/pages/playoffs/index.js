@@ -14,10 +14,14 @@ const Playoffs = () => {
   const [playoffsData, setPlayoffsData] = useState()
 
   const getPlayoffsData = () => {
-    const table = axios.get(`${api}/playoffs/table`)
-    const playerInfo = axios.get(`${api}/playoffs/player-info`)
-    const bracket = axios.get(`${api}/playoffs/bracket`)
-    const updatedWins = axios.get(`${api}/playoffs/updated-wins`)
+    const table = axios.get(`${api}/tournaments/:tournament/playoffs/table`)
+    const playerInfo = axios.get(
+      `${api}/tournaments/:tournament/playoffs/player-info`,
+    )
+    const bracket = axios.get(`${api}/tournaments/:tournament/playoffs/bracket`)
+    const updatedWins = axios.get(
+      `${api}/tournaments/:tournament/playoffs/updated-wins`,
+    )
 
     Promise.all([table, playerInfo, bracket, updatedWins]).then((values) => {
       const data = values.map((response) => response.data)
@@ -36,7 +40,7 @@ const Playoffs = () => {
     const playoffsUpdatedWins = playoffsData[3].winsByTeam
     const playoffsMatches = playoffsData[3].playoffsMatches
 
-    // console.log(playoffsTeamsForTable)
+    console.log(playoffsTeamsForTable)
     // console.log(playoffsUpdatedWins)
     // console.log(playoffsMatches)
 

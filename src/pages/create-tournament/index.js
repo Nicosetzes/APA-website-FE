@@ -3,6 +3,8 @@ import { api, database } from './../../api'
 import axios from 'axios'
 import CountryContainer from './components/CountryContainer'
 import { Oval } from 'react-loader-spinner'
+import { margin } from '@mui/system'
+import { Link } from 'react-router-dom'
 
 const CreateTournament = () => {
   const [tournamentData, setTournamentData] = useState()
@@ -27,7 +29,26 @@ const CreateTournament = () => {
 
     return (
       <>
-        <div>Crear torneo</div>
+        <div
+          style={{
+            display: 'flex',
+            margin: '2rem auto',
+            justifyContent: 'center',
+          }}
+        >
+          <Link to={`world-cup`} style={{ fontSize: '1.25rem' }}>
+            Generar Copa del Mundo 2022
+          </Link>
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            margin: '2rem auto',
+            justifyContent: 'center',
+          }}
+        >
+          Crear torneo
+        </div>
         <CountryContainer countries={countries} players={players} />
       </>
     )

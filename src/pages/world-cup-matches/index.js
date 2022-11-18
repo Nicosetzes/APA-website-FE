@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
-import { useParams, useSearchParams, useNavigate } from 'react-router-dom'
+// import { useNavigate } from 'react-router-dom'
 import { useFixture } from '../../context/FixtureContext'
-import FixtureContainer from './components/FixtureContainer'
+import FixtureContainer from './../fixture-id/components/FixtureContainer'
 import { api, database } from './../../api'
 import axios from 'axios'
 import { motion } from 'framer-motion'
@@ -12,9 +12,9 @@ import Switch from '@mui/material/Switch'
 import { Oval } from 'react-loader-spinner'
 
 const FixtureId = () => {
-  const { tournament } = useParams()
+  const tournament = '6372f83c88e2408e9cadcc73' // Harcodeado, REVISAR //
 
-  const navigate = useNavigate()
+  //   const navigate = useNavigate()
 
   const fixture = useFixture()
 
@@ -99,6 +99,9 @@ const FixtureId = () => {
         console.log('Jugadores: 1 / equipo: no')
         const [{ player }] = activeSwitches
         const matches = fixture.originalFixture
+        console.log(matches)
+        console.log(player)
+        console.log(matches[0].playerP1)
         const filteredFixture = matches.filter(
           ({ playerP1, playerP2 }) =>
             playerP1.id == player || playerP2.id == player,

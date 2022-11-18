@@ -72,7 +72,7 @@ const StandingsTable = ({ tournament, onHandle }) => {
         </TableRow>
       </TableHead>
       <TableBody>
-        {tournament.sortedStanding.map((team, teamIndex) => (
+        {tournament.map((team, teamIndex) => (
           <TableRow
             key={team.id}
             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}

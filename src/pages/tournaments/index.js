@@ -36,7 +36,7 @@ const Tournaments = () => {
               key={tournament._id}
               sx={{ maxWidth: 250, display: 'flex', margin: '2rem auto' }}
             >
-              <Link to={`/tournaments/${tournament._id}/fixture`}>
+              <Link to={`/tournaments/${tournament._id}`}>
                 <CardActionArea>
                   <CardMedia
                     component="img"

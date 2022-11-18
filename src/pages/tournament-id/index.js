@@ -6,22 +6,23 @@ import { motion } from 'framer-motion'
 import { Oval } from 'react-loader-spinner'
 
 const TournamentId = () => {
-  const { id } = useParams()
+  const { tournament } = useParams()
 
   const navigate = useNavigate()
 
-  const [tournament, setTournament] = useState()
+  const [activeTournament, setActiveTournament] = useState()
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log('Hago el fetch de data')
+      console.log('Hago el fetch de dataaaa')
       await axios
-        .get(`${api}/tournaments/${id}`, {
+        .get(`${api}/tournaments/${tournament}`, {
           withCredentials: true,
           credentials: 'include',
         })
         .then(({ data }) => {
-          setTournament(data)
+          console.log(data)
+          setActiveTournament(data)
         })
         .catch((err) => {
           console.log(err)
@@ -31,8 +32,8 @@ const TournamentId = () => {
     fetchData()
   }, [])
 
-  if (tournament) {
-    const { name, players, teams } = tournament
+  if (activeTournament) {
+    const { name, players, teams } = activeTournament
 
     console.log(name)
     console.log(players)
@@ -55,15 +56,26 @@ const TournamentId = () => {
         </div>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <span>Equipos:</span>{' '}
-          {teams.map(({ name, id }) => (
+          {teams.map(({ team }) => (
             <img
-              key={id}
-              src={`${database}/logos/${id}`}
+              key={team.id}
+              src={`${database}/logos/${team.id}`}
               style={{ width: '30px' }}
             />
           ))}
         </div>
-        <Link to={`create-game`}>Cargar resultado</Link>
+        <div style={{ margin: '1rem 0' }}>
+          <Link to={`create-game`}>Cargar resultado</Link>
+        </div>
+        <div style={{ margin: '1rem 0' }}>
+          <Link to={`matches`}>Partidos</Link>
+        </div>
+        <div style={{ margin: '1rem 0' }}>
+          <Link to={`standings`}>Clasificación</Link>
+        </div>
+        <div style={{ margin: '1rem 0' }}>
+          <Link to={`playoffs`}>Playoffs</Link>
+        </div>
       </motion.div>
     )
   } else {

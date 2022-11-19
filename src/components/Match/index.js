@@ -14,7 +14,8 @@ const Match = ({ match }) => {
 
   const fixture = useFixture()
 
-  const { playerP1, playerP2, teamP1, teamP2, scoreP1, scoreP2, _id } = match
+  const { playerP1, playerP2, teamP1, teamP2, scoreP1, scoreP2, played, _id } =
+    match
   const [matchScore, setMatchScore] = useState({
     scoreP1: scoreP1,
     scoreP2: scoreP2,
@@ -63,8 +64,6 @@ const Match = ({ match }) => {
       scoreP2,
     }
 
-    console.log(data)
-
     Swal.fire({
       title: 'Resultado actualizado con éxito',
       html: `Aguarde unos instantes...`,
@@ -106,7 +105,7 @@ const Match = ({ match }) => {
           scoreP1: data.scoreP1,
           scoreP2: data.scoreP2,
         })
-
+        fixture.updateOriginalFixture(updatedFixture)
         fixture.updateFixture(updatedFixture)
       })
   }
@@ -159,11 +158,28 @@ const Match = ({ match }) => {
             )
 
             const updatedFixture = matches.map((match, index) => {
-              const returnedMatch = { ...match }
+              let returnedMatch = { ...match }
               if (index == indexOfDeletedMatch) {
-                returnedMatch.scoreP1 = null
-                returnedMatch.scoreP2 = null
-                returnedMatch.outcome = null
+                const {
+                  playerP1,
+                  playerP2,
+                  teamP1,
+                  teamP2,
+                  tournament,
+                  type,
+                  _id,
+                } = returnedMatch
+
+                returnedMatch = {
+                  playerP1,
+                  playerP2,
+                  teamP1,
+                  teamP2,
+                  tournament,
+                  type,
+                  _id,
+                  played: false,
+                }
               }
               return returnedMatch
             })
@@ -172,6 +188,7 @@ const Match = ({ match }) => {
 
             setMatchScore({ ...matchScore, scoreP1: '', scoreP2: '' })
 
+            fixture.updateOriginalFixture(updatedFixture)
             fixture.updateFixture(updatedFixture)
           })
       }
@@ -199,10 +216,7 @@ const Match = ({ match }) => {
         handleMatchSubmit(e)
       }}
       style={{
-        outline:
-          scoreP1 == null || scoreP2 === '' || scoreP1 == null || scoreP2 === ''
-            ? '#dc3545 3px solid'
-            : '#2aa723 3px solid',
+        outline: played ? '#2aa723 3px solid' : '#dc3545 3px solid',
       }}
     >
       <div className="match-info">
@@ -234,14 +248,14 @@ const Match = ({ match }) => {
           <input
             name="scoreP1"
             className="match-score__goals"
-            value={matchScore.scoreP1 ?? scoreP1} // IMPORTANT // TODO: Handle react warning about not adding and onChange handler
+            value={matchScore.scoreP1 ?? ''} // IMPORTANT // TODO: Handle react warning about not adding and onChange handler
             onChange={onHandleChange}
           />
           <span className="match-score__versus">vs</span>
           <input
             name="scoreP2"
             className="match-score__goals"
-            value={matchScore.scoreP2 ?? scoreP2} // IMPORTANT // TODO: Handle react warning about not adding and onChange handler
+            value={matchScore.scoreP2 ?? ''} // IMPORTANT // TODO: Handle react warning about not adding and onChange handler
             onChange={onHandleChange}
           />
         </div>

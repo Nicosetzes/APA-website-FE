@@ -12,6 +12,8 @@ const GroupStandings = ({ teams }) => {
   const isSm = useMediaQuery({ query: '(min-width: 500px)' })
   const isXS = useMediaQuery({ query: '(min-width: 400px)' })
 
+  console.log(teams)
+
   return (
     <StyledTable
       sx={{ minWidth: 300, maxWidth: 600, margin: '0.5rem auto' }}

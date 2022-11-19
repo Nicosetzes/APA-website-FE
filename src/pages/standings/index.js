@@ -1,6 +1,11 @@
 import * as React from 'react'
 import { useEffect, useState } from 'react'
-import { useNavigate, createSearchParams, useParams } from 'react-router-dom'
+import {
+  Link,
+  useNavigate,
+  createSearchParams,
+  useParams,
+} from 'react-router-dom'
 import axios from 'axios'
 import { motion } from 'framer-motion'
 import PlayerStatsTable from './../../components/PlayerStatsTable'
@@ -62,10 +67,8 @@ const Standings = () => {
   console.log(tournamentsData)
 
   if (tournamentsData) {
-    const { name, tournamentId, sortedStandings } = tournamentsData[0] // Index 0 because of the order in which I invoked the promises call in Promise.all //
+    const { name, sortedStandings } = tournamentsData[0] // Index 0 because of the order in which I invoked the promises call in Promise.all //
     const playerStats = tournamentsData[1]
-
-    console.log(playerStats)
 
     return (
       <motion.div
@@ -73,10 +76,31 @@ const Standings = () => {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
+        <div
+          style={{
+            fontSize: '1.5rem',
+            fontWeight: 700,
+            margin: '1rem 1rem 0 auto',
+            textAlign: 'center',
+          }}
+        >
+          {name}
+        </div>
+        <div style={{ display: 'flex' }}>
+          <Link
+            to={`/tournaments/${tournament}/matches`}
+            style={{
+              color: '#004a79',
+              fontSize: '1.5rem',
+              margin: '1rem 1rem 1rem auto',
+            }}
+          >
+            Fixture
+          </Link>
+        </div>
         <TableContainer component={Paper}>
-          <div className="title">{name}</div>
           <StandingsTable
-            tournament={sortedStandings}
+            standings={sortedStandings}
             onHandle={goToSpecificFixture}
           />
           <PlayerStatsTable stats={playerStats} />

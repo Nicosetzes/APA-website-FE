@@ -3,14 +3,13 @@ import { api, database } from './../../api'
 import axios from 'axios'
 import CountryContainer from './components/CountryContainer'
 import { Oval } from 'react-loader-spinner'
-import { margin } from '@mui/system'
 import { Link } from 'react-router-dom'
 
 const CreateTournament = () => {
   const [tournamentData, setTournamentData] = useState()
 
   const getTournamentData = () => {
-    const players = axios.get(`${api}/players`)
+    const players = axios.get(`${api}/users`)
     const leagues = axios.get(`${database}/leagues`)
 
     Promise.all([players, leagues]).then((values) => {

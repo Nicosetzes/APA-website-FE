@@ -7,11 +7,13 @@ import TableRow from '@mui/material/TableRow'
 import ScoreBox from './../../../../components/ScoreBox'
 import { database } from './../../../../api'
 
-const StandingsTable = ({ tournament, onHandle }) => {
+const StandingsTable = ({ standings, onHandle }) => {
   const isL = useMediaQuery({ query: '(min-width: 992px)' })
   const isM = useMediaQuery({ query: '(min-width: 768px)' })
   const isSm = useMediaQuery({ query: '(min-width: 500px)' })
   const isXS = useMediaQuery({ query: '(min-width: 400px)' })
+
+  console.log(standings)
 
   return (
     <StyledTable
@@ -72,103 +74,126 @@ const StandingsTable = ({ tournament, onHandle }) => {
         </TableRow>
       </TableHead>
       <TableBody>
-        {tournament.map((team, teamIndex) => (
-          <TableRow
-            key={team.id}
-            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-          >
-            <TableCell component="th" scope="row">
-              {teamIndex + 1}
-            </TableCell>
-            <TableCell component="th" scope="row">
-              <div
-                className="teamAndLogoWrapper"
-                onClick={() => onHandle(tournament.tournamentId, team.id)}
-              >
-                <img src={`${database}/logos/${team.id}`} alt={team.name} />
-                {isM ? team.team : team.teamCode}
-                {isM && (
-                  <div className="streak">
-                    {team.streak.map(
-                      (
-                        {
-                          outcome,
-                          playerP1,
-                          teamP1,
-                          scoreP1,
-                          playerP2,
-                          teamP2,
-                          scoreP2,
-                          date,
-                        },
-                        index,
-                      ) => (
-                        <ScoreBox
-                          key={index}
-                          result={outcome}
-                          playerP1={playerP1}
-                          teamP1={teamP1}
-                          scoreP1={scoreP1}
-                          playerP2={playerP2}
-                          teamP2={teamP2}
-                          scoreP2={scoreP2}
-                          date={date}
-                        />
-                      ),
-                    )}
-                  </div>
-                )}
-              </div>
-            </TableCell>
-            <TableCell
-              component="th"
-              scope="row"
-              onClick={() => onHandle(tournament.tournamentId, team.player)}
+        {standings.map(
+          (
+            {
+              team,
+              player,
+              played,
+              wins,
+              draws,
+              losses,
+              goalsFor,
+              goalsAgainst,
+              scoringDifference,
+              points,
+              streak,
+            },
+            index,
+          ) => (
+            <TableRow
+              key={team.id}
+              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
-              {team.player}
-            </TableCell>
-            <TableCell component="th" scope="row">
-              {team.played}
-            </TableCell>
-            {isXS && (
-              <>
-                <TableCell component="th" scope="row">
-                  {team.wins}
-                </TableCell>
-              </>
-            )}
-            {isSm && (
-              <>
-                <TableCell component="th" scope="row">
-                  {team.draws}
-                </TableCell>
-                <TableCell component="th" scope="row">
-                  {team.losses}
-                </TableCell>
-              </>
-            )}
-            {isL && (
-              <>
-                <TableCell component="th" scope="row">
-                  {team.goalsFor}
-                </TableCell>
-                <TableCell component="th" scope="row">
-                  {team.goalsAgainst}
-                </TableCell>
-              </>
-            )}
-            {isM && (
-              <>
-                <TableCell component="th" scope="row">
-                  {team.scoringDifference}
-                </TableCell>
-              </>
-            )}
-            <TableCell component="th" scope="row">
-              {team.points}
-            </TableCell>
-          </TableRow>
-        ))}
+              <TableCell component="th" scope="row">
+                {index + 1}
+              </TableCell>
+              <TableCell component="th" scope="row">
+                <div
+                  className="teamAndLogoWrapper"
+                  // onClick={() => onHandle(tournament.tournamentId, team.id)}
+                >
+                  <img src={`${database}/logos/${team.id}`} alt={team.name} />
+                  {isM
+                    ? team.name
+                    : (
+                        team.name[0] +
+                        team.name[1] +
+                        team.name[2]
+                      ).toUpperCase()}
+                  {isM && (
+                    <div className="streak">
+                      {streak.map(
+                        (
+                          {
+                            outcome,
+                            playerP1,
+                            teamP1,
+                            scoreP1,
+                            playerP2,
+                            teamP2,
+                            scoreP2,
+                            date,
+                          },
+                          index,
+                        ) => (
+                          <ScoreBox
+                            key={index}
+                            result={outcome}
+                            playerP1={playerP1}
+                            teamP1={teamP1}
+                            scoreP1={scoreP1}
+                            playerP2={playerP2}
+                            teamP2={teamP2}
+                            scoreP2={scoreP2}
+                            date={date}
+                          />
+                        ),
+                      )}
+                    </div>
+                  )}
+                </div>
+              </TableCell>
+              <TableCell
+                component="th"
+                scope="row"
+                // onClick={() => onHandle(tournament.tournamentId, team.player)}
+              >
+                {player.name}
+              </TableCell>
+              <TableCell component="th" scope="row">
+                {played}
+              </TableCell>
+              {isXS && (
+                <>
+                  <TableCell component="th" scope="row">
+                    {wins}
+                  </TableCell>
+                </>
+              )}
+              {isSm && (
+                <>
+                  <TableCell component="th" scope="row">
+                    {draws}
+                  </TableCell>
+                  <TableCell component="th" scope="row">
+                    {losses}
+                  </TableCell>
+                </>
+              )}
+              {isL && (
+                <>
+                  <TableCell component="th" scope="row">
+                    {goalsFor}
+                  </TableCell>
+                  <TableCell component="th" scope="row">
+                    {goalsAgainst}
+                  </TableCell>
+                </>
+              )}
+              {isM && (
+                <>
+                  <TableCell component="th" scope="row">
+                    {scoringDifference}
+                  </TableCell>
+                </>
+              )}
+              <TableCell component="th" scope="row">
+                {points}
+              </TableCell>
+            </TableRow>
+          ),
+        )}
       </TableBody>
     </StyledTable>
   )

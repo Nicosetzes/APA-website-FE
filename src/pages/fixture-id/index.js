@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useParams, useSearchParams, useNavigate } from 'react-router-dom'
+import { Link, useParams, useSearchParams, useNavigate } from 'react-router-dom'
 import { useFixture } from '../../context/FixtureContext'
 import FixtureContainer from './components/FixtureContainer'
 import { api, database } from './../../api'
@@ -41,6 +41,7 @@ const FixtureId = () => {
       console.log(data)
       fixture.updatePlayersFromTournament(data[0])
       console.log(data[0])
+      console.log(data[1])
       fixture.updateFixture(data[1])
       fixture.updateOriginalFixture(data[1])
     })
@@ -99,6 +100,8 @@ const FixtureId = () => {
         console.log('Jugadores: 1 / equipo: no')
         const [{ player }] = activeSwitches
         const matches = fixture.originalFixture
+        console.log(player)
+        console.log(matches[0].playerP2.id)
         const filteredFixture = matches.filter(
           ({ playerP1, playerP2 }) =>
             playerP1.id == player || playerP2.id == player,
@@ -265,13 +268,6 @@ const FixtureId = () => {
           popup: 'animate__animated animate__fadeOutUp',
         },
       })
-      // axios
-      //   .post(`${api}/tournaments/${id}/upload-game/`, data)
-      //   .then((response) => {
-      //     // let {isUpdated} = response.data; // Podría usarlo para alertar un error al modificar
-      //     let { updatedTournament } = response.data
-      //     tournament.updateFixture(updatedTournament)
-      //   })
     }
 
     if (matchId) {
@@ -312,6 +308,19 @@ const FixtureId = () => {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
+        <div style={{ display: 'flex' }}>
+          <Link
+            to={`/tournaments/${tournament}/standings`}
+            style={{
+              color: '#004a79',
+              fontSize: '1.5rem',
+              margin: '1rem 1rem 0 auto',
+            }}
+          >
+            Clasificación
+          </Link>
+        </div>
+
         <FormGroup sx={{ alignItems: 'center' }}>
           <div style={{ margin: '1.5rem' }}>Filtrar partidos</div>
           <div>

@@ -105,6 +105,7 @@ const Match = ({ match }) => {
           scoreP1: data.scoreP1,
           scoreP2: data.scoreP2,
         })
+        fixture.updateSelectedTeam() // Reseteo el filtro de equipo //
         fixture.updateOriginalFixture(updatedFixture)
         fixture.updateFixture(updatedFixture)
       })
@@ -188,6 +189,7 @@ const Match = ({ match }) => {
 
             setMatchScore({ ...matchScore, scoreP1: '', scoreP2: '' })
 
+            fixture.updateSelectedTeam() // Reseteo el filtro de equipo //
             fixture.updateOriginalFixture(updatedFixture)
             fixture.updateFixture(updatedFixture)
           })

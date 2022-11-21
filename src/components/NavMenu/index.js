@@ -89,6 +89,15 @@ const NavMenu = ({ handleClose, isOpen, anchorEl }) => {
             <ListItemText>Estadística</ListItemText>
           </NavLink>
         </MenuItem>
+        <Divider />
+        <MenuItem onClick={handleClose}>
+          <ListItemIcon>
+            <EmojiEventsIcon fontSize="small" />
+          </ListItemIcon>
+          <NavLink to="/hall-of-fame">
+            <ListItemText>Salón de la fama</ListItemText>
+          </NavLink>
+        </MenuItem>
       </MenuList>
     </Menu>
   )

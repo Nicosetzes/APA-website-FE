@@ -10,6 +10,7 @@ import TournamentId from './../../pages/tournament-id'
 import FixtureId from './../../pages/fixture-id'
 import Statistics from './../../pages/statistics'
 import CreateTournament from '../../pages/create-tournament'
+import HallOfFame from '../../pages/hall-of-fame'
 import WorldCup from '../../pages/world-cup'
 import WorldCupAssignment from '../../pages/world-cup-assignment'
 import WorldCupStandings from '../../pages/world-cup-standings'
@@ -43,6 +44,7 @@ export const AnimatedRoutes = () => {
         <Route path="/world-cup/matches" element={<WorldCupMatches />} />
         <Route path="/matches" element={<Matches />} />
         <Route path="/statistics" element={<Statistics />} />
+        <Route path="/hall-of-fame" element={<HallOfFame />} />
         <Route
           path="*"
           element={

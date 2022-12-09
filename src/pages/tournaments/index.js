@@ -10,6 +10,7 @@ import axios from 'axios'
 import { motion } from 'framer-motion'
 import logo1 from './../../images/premier-league-background-1.jpg'
 import logo2 from './../../images/premier-league-background-2.jpg'
+import worldCupLogo from './../../images/world-cup.png'
 import { Oval } from 'react-loader-spinner'
 
 const Tournaments = () => {
@@ -24,6 +25,7 @@ const Tournaments = () => {
   }, [])
 
   if (tournaments) {
+    console.log(tournaments)
     return (
       <motion.div
         initial={{ opacity: 0 }}
@@ -36,26 +38,49 @@ const Tournaments = () => {
               key={tournament._id}
               sx={{ maxWidth: 250, display: 'flex', margin: '2rem auto' }}
             >
-              <Link to={`/tournaments/${tournament._id}`}>
-                <CardActionArea>
-                  <CardMedia
-                    component="img"
-                    height="350"
-                    image={index === 0 ? logo1 : logo2}
-                    alt={`${tournament.name}`}
-                  />
-                  <CardContent>
-                    <Typography
-                      gutterBottom
-                      variant="h5"
-                      component="div"
-                      sx={{ textAlign: 'center' }}
-                    >
-                      {tournament.name}
-                    </Typography>
-                  </CardContent>
-                </CardActionArea>
-              </Link>
+              {tournament.worldCup ? (
+                <Link to={`/world-cup/`}>
+                  <CardActionArea>
+                    <CardMedia
+                      component="img"
+                      height="350"
+                      image={worldCupLogo}
+                      alt={`${tournament.name}`}
+                    />
+                    <CardContent>
+                      <Typography
+                        gutterBottom
+                        variant="h5"
+                        component="div"
+                        sx={{ textAlign: 'center' }}
+                      >
+                        {tournament.name}
+                      </Typography>
+                    </CardContent>
+                  </CardActionArea>
+                </Link>
+              ) : (
+                <Link to={`/tournaments/${tournament._id}`}>
+                  <CardActionArea>
+                    <CardMedia
+                      component="img"
+                      height="350"
+                      image={index === 0 ? logo1 : logo2}
+                      alt={`${tournament.name}`}
+                    />
+                    <CardContent>
+                      <Typography
+                        gutterBottom
+                        variant="h5"
+                        component="div"
+                        sx={{ textAlign: 'center' }}
+                      >
+                        {tournament.name}
+                      </Typography>
+                    </CardContent>
+                  </CardActionArea>
+                </Link>
+              )}
             </Card>
           ))}
         </div>

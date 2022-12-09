@@ -3,30 +3,34 @@ import { api, database } from './../../api'
 import axios from 'axios'
 import GroupStandings from './components/GroupStandings'
 import { Oval } from 'react-loader-spinner'
+import PlayerStatsTable from './../../components/PlayerStatsTable'
 
 const WorldCupStandings = () => {
   const tournament = '6372f83c88e2408e9cadcc73' // Harcodeado, REVISAR //
 
   const [tournamentData, setTournamentData] = useState()
 
+  const getWorldCupDataData = () => {
+    const standings = axios.get(`${api}/world-cup/${tournament}/standings`)
+    const playerInfoFromTournament = axios.get(
+      `${api}/tournaments/${tournament}/standings/player-info`,
+    )
+
+    Promise.all([standings, playerInfoFromTournament]).then((values) => {
+      const data = values.map((response) => response.data)
+      setTournamentData(data)
+    })
+  }
+
   useEffect(() => {
-    const fetchData = async () => {
-      console.log('Hago el fetch de data')
-      await axios
-        .get(`${api}/world-cup/${tournament}/standings`, {
-          withCredentials: true,
-          credentials: 'include',
-        })
-        .then(({ data }) => {
-          console.log(data)
-          setTournamentData(data)
-        })
-    }
-    fetchData()
+    getWorldCupDataData()
   }, [])
 
+  console.log(tournamentData)
+
   if (tournamentData) {
-    const teams = tournamentData.sortedStandings
+    const teams = tournamentData[0].sortedStandings
+    const playerStats = tournamentData[1]
     return (
       <>
         <div
@@ -155,6 +159,7 @@ const WorldCupStandings = () => {
             teams={teams.filter(({ team }) => team.group == 'H')}
           />
         </div>
+        <PlayerStatsTable stats={playerStats} />
       </>
     )
   } else {

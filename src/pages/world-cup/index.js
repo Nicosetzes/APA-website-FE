@@ -74,17 +74,39 @@ const WorldCup = () => {
               justifyContent: 'space-evenly',
             }}
           >
-            {/* <div style={{ margin: '1rem 0' }}>
-              <Link to={`team-assignment`}>Asignar equipos</Link>
-            </div> */}
-            {/* <div style={{ margin: '1rem 0' }}>
-              <Link to={`create-game`}>Cargar resultado</Link>
-            </div> */}
-            <div style={{ margin: '1rem 0' }}>
-              <Link to={`matches`}>Partidos</Link>
-            </div>
-            <div style={{ margin: '1rem 0' }}>
-              <Link to={`standings`}>Clasificación</Link>
+            <div
+              style={{
+                alignItems: 'center',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                margin: '1rem 0',
+                outline: 'black 2px solid',
+                padding: '1rem',
+              }}
+            >
+              <Link
+                to={`matches`}
+                style={{
+                  color: '#004a79',
+                  fontSize: '2rem',
+                  margin: '1.25rem',
+                  textDecoration: 'none',
+                }}
+              >
+                Partidos
+              </Link>
+              <Link
+                to={`standings`}
+                style={{
+                  color: '#004a79',
+                  fontSize: '2rem',
+                  margin: '1.25rem',
+                  textDecoration: 'none',
+                }}
+              >
+                Clasificación
+              </Link>
             </div>
             {/* <div style={{ margin: '1rem 0' }}>
               <Link to={`playoffs`}>Playoffs</Link>

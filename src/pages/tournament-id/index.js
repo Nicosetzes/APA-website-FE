@@ -46,36 +46,87 @@ const TournamentId = () => {
         exit={{ opacity: 0 }}
       >
         <div>
-          <span>Nombre del torneo:</span> <span>{name}</span>
-        </div>
-        <div>
-          <span>Jugadores:</span>{' '}
-          {players.map(({ name, id }) => (
-            <span key={id}>{name}</span>
-          ))}
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <span>Equipos:</span>{' '}
-          {teams.map(({ team }) => (
-            <img
-              key={team.id}
-              src={`${database}/logos/${team.id}`}
-              style={{ width: '30px' }}
-            />
-          ))}
+          <div
+            style={{
+              fontSize: '1.5rem',
+              fontWeight: 700,
+              margin: '1.5rem 0',
+              textAlign: 'center',
+            }}
+          >
+            <span>{name}</span>
+          </div>{' '}
         </div>
         {/* <div style={{ margin: '1rem 0' }}>
           <Link to={`create-game`}>Cargar resultado</Link>
         </div> */}
-        <div style={{ margin: '1rem 0' }}>
-          <Link to={`matches`}>Partidos</Link>
+        <div
+          style={{
+            alignItems: 'center',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            margin: '1rem auto',
+            outline: 'black 2px solid',
+            padding: '1rem',
+            width: '250px',
+          }}
+        >
+          <Link
+            to={`matches`}
+            style={{
+              color: '#004a79',
+              fontSize: '2rem',
+              margin: '1.25rem',
+              textDecoration: 'none',
+            }}
+          >
+            Partidos
+          </Link>
+          <Link
+            to={`standings`}
+            style={{
+              color: '#004a79',
+              fontSize: '2rem',
+              margin: '1.25rem',
+              textDecoration: 'none',
+            }}
+          >
+            Clasificación
+          </Link>
         </div>
-        <div style={{ margin: '1rem 0' }}>
-          <Link to={`standings`}>Clasificación</Link>
+        <div
+          style={{
+            alignItems: 'center',
+            display: 'flex',
+            flexDirection: 'column',
+            flexWrap: 'wrap',
+            margin: '3rem',
+          }}
+        >
+          <span>Equipos:</span>{' '}
+          <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+            {teams.map(({ team }) => (
+              <div
+                key={team.id}
+                style={{
+                  backgroundColor: 'grey',
+                  display: 'flex',
+                  height: '90px',
+                  justifyContent: 'center',
+                  margin: '1rem',
+                  padding: '0.5rem',
+                  width: '90px',
+                }}
+              >
+                <img
+                  src={`${database}/logos/${team.id}`}
+                  style={{ width: '100%' }}
+                />
+              </div>
+            ))}
+          </div>
         </div>
-        {/* <div style={{ margin: '1rem 0' }}>
-          <Link to={`playoffs`}>Playoffs</Link>
-        </div> */}
       </motion.div>
     )
   } else {

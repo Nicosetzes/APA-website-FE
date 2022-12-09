@@ -54,15 +54,7 @@ const PlayerStatsTable = ({ stats }) => {
       </TableHead>
       <TableBody>
         {stats.map(
-          ({
-            player,
-            totalMatches,
-            totalWins,
-            totalDraws,
-            totalLosses,
-            totalPoints,
-            streak,
-          }) => (
+          ({ player, played, wins, draws, losses, points, streak }) => (
             <TableRow
               key={player.id}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -81,7 +73,7 @@ const PlayerStatsTable = ({ stats }) => {
                 align="center"
                 sx={{ fontWeight: 800, color: '#fff' }}
               >
-                {totalMatches}
+                {played}
               </TableCell>
               {isXS && (
                 <>
@@ -91,7 +83,7 @@ const PlayerStatsTable = ({ stats }) => {
                     align="center"
                     sx={{ fontWeight: 800, color: '#fff' }}
                   >
-                    {totalWins}
+                    {wins}
                   </TableCell>
                   <TableCell
                     component="th"
@@ -99,7 +91,7 @@ const PlayerStatsTable = ({ stats }) => {
                     align="center"
                     sx={{ fontWeight: 800, color: '#fff' }}
                   >
-                    {totalDraws}
+                    {draws}
                   </TableCell>
                   <TableCell
                     component="th"
@@ -107,7 +99,7 @@ const PlayerStatsTable = ({ stats }) => {
                     align="center"
                     sx={{ fontWeight: 800, color: '#fff' }}
                   >
-                    {totalLosses}
+                    {losses}
                   </TableCell>
                 </>
               )}
@@ -117,7 +109,7 @@ const PlayerStatsTable = ({ stats }) => {
                 align="center"
                 sx={{ fontWeight: 800, color: '#fff' }}
               >
-                {totalPoints}
+                {points}
               </TableCell>
               {isM && streak && (
                 <TableCell

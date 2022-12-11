@@ -21,8 +21,17 @@ const Match = ({ match, handleSubmit }) => {
   //   })
   // }
 
-  const { playerP1, playerP2, teamP1, teamP2, scoreP1, scoreP2, outcome, id } =
-    match
+  const {
+    playerP1,
+    playerP2,
+    teamP1,
+    teamP2,
+    scoreP1,
+    scoreP2,
+    outcome,
+    id,
+    updatedAt,
+  } = match
 
   return (
     <form

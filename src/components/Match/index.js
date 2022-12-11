@@ -14,8 +14,17 @@ const Match = ({ match }) => {
 
   const fixture = useFixture()
 
-  const { playerP1, playerP2, teamP1, teamP2, scoreP1, scoreP2, played, _id } =
-    match
+  const {
+    playerP1,
+    playerP2,
+    teamP1,
+    teamP2,
+    scoreP1,
+    scoreP2,
+    played,
+    _id,
+    updatedAt,
+  } = match
   const [matchScore, setMatchScore] = useState({
     scoreP1: scoreP1,
     scoreP2: scoreP2,
@@ -179,6 +188,7 @@ const Match = ({ match }) => {
                   tournament,
                   type,
                   _id,
+                  updatedAt: new Date().toString(),
                   played: false,
                 }
               }
@@ -221,86 +231,93 @@ const Match = ({ match }) => {
         outline: played ? '#2aa723 3px solid' : '#dc3545 3px solid',
       }}
     >
-      <div className="match-info">
-        <textarea
-          name="teamP1"
-          wrap="soft"
-          className="match-info__team"
-          value={teamP1.name}
-          readOnly
-        >
-          {teamP1.name}
-        </textarea>
-        {/* <Route path={`/tournaments/62e0b0a53d86565327b95a82/fixture?team=${teamP1.id}`} element={<FixtureId />} /> className="logo-link"> */}
-        <img
-          src={`${database}/logos/${teamP1.id}`}
-          alt={match.teamP1}
-          className="match-info__logo"
-          onClick={() => fixture.updateSelectedTeam(teamP1.id)}
-        />
-        <input
-          name="playerP1"
-          className="match-info__player"
-          value={playerP1.name}
-          readOnly
-        />
-      </div>
-      <div className="match-score">
-        <div className="match__container">
-          <input
-            name="scoreP1"
-            className="match-score__goals"
-            value={matchScore.scoreP1 ?? ''} // IMPORTANT // TODO: Handle react warning about not adding and onChange handler
-            onChange={onHandleChange}
-          />
-          <span className="match-score__versus">vs</span>
-          <input
-            name="scoreP2"
-            className="match-score__goals"
-            value={matchScore.scoreP2 ?? ''} // IMPORTANT // TODO: Handle react warning about not adding and onChange handler
-            onChange={onHandleChange}
-          />
-        </div>
-        <div className="input__container">
-          <IconButton type="submit" aria-label="edit" color="success">
-            <EditIcon />
-          </IconButton>
-          <IconButton
-            onClick={() => handleMatchRemoval()}
-            aria-label="delete"
-            color="error"
+      <div className="match-view">
+        <div className="match-info">
+          <textarea
+            name="teamP1"
+            wrap="soft"
+            className="match-info__team"
+            value={teamP1.name}
+            readOnly
           >
-            <DeleteIcon />
-          </IconButton>
+            {teamP1.name}
+          </textarea>
+          {/* <Route path={`/tournaments/62e0b0a53d86565327b95a82/fixture?team=${teamP1.id}`} element={<FixtureId />} /> className="logo-link"> */}
+          <img
+            src={`${database}/logos/${teamP1.id}`}
+            alt={match.teamP1}
+            className="match-info__logo"
+            onClick={() => fixture.updateSelectedTeam(teamP1.id)}
+          />
+          <input
+            name="playerP1"
+            className="match-info__player"
+            value={playerP1.name}
+            readOnly
+          />
         </div>
-        {/* <InputContainer
+        <div className="match-score">
+          <div className="match__container">
+            <input
+              name="scoreP1"
+              className="match-score__goals"
+              value={matchScore.scoreP1 ?? ''} // IMPORTANT // TODO: Handle react warning about not adding and onChange handler
+              onChange={onHandleChange}
+            />
+            <span className="match-score__versus">vs</span>
+            <input
+              name="scoreP2"
+              className="match-score__goals"
+              value={matchScore.scoreP2 ?? ''} // IMPORTANT // TODO: Handle react warning about not adding and onChange handler
+              onChange={onHandleChange}
+            />
+          </div>
+          <div className="input__container">
+            <IconButton type="submit" aria-label="edit" color="success">
+              <EditIcon />
+            </IconButton>
+            <IconButton
+              onClick={() => handleMatchRemoval()}
+              aria-label="delete"
+              color="error"
+            >
+              <DeleteIcon />
+            </IconButton>
+          </div>
+          {/* <InputContainer
           id={_id}
           isFinished={match.scoreP1 !== undefined ? true : false}
         /> */}
+        </div>
+        <div className="match-info">
+          <textarea
+            name="teamP2"
+            wrap="soft"
+            className="match-info__team"
+            value={teamP2.name}
+            readOnly
+          >
+            {teamP2.name}
+          </textarea>
+          <img
+            src={`${database}/logos/${teamP2.id}`}
+            alt={teamP2.name}
+            className="match-info__logo"
+            onClick={() => fixture.updateSelectedTeam(teamP2.id)}
+          />
+          <input
+            name="playerP2"
+            className="match-info__player"
+            value={playerP2.name}
+            readOnly
+          />
+        </div>
       </div>
-      <div className="match-info">
-        <textarea
-          name="teamP2"
-          wrap="soft"
-          className="match-info__team"
-          value={teamP2.name}
-          readOnly
-        >
-          {teamP2.name}
-        </textarea>
-        <img
-          src={`${database}/logos/${teamP2.id}`}
-          alt={teamP2.name}
-          className="match-info__logo"
-          onClick={() => fixture.updateSelectedTeam(teamP2.id)}
-        />
-        <input
-          name="playerP2"
-          className="match-info__player"
-          value={playerP2.name}
-          readOnly
-        />
-      </div>
+      {updatedAt && (
+        <div className="match-date">
+          Actualizado el: {updatedAt && new Date(updatedAt).toLocaleString()}{' '}
+        </div>
+      )}
     </form>
   )
 }

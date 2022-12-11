@@ -62,12 +62,12 @@ const ScoreBox = ({
             <div style={{ fontSize: '0.75rem', fontWeight: 700 }}>
               <span>
                 {teamP1.name} ({playerP1.name[0]}
-                {playerP1.name[1]})
+                {playerP1.name[1].toUpperCase()})
               </span>{' '}
               <span>{scoreP1}</span>
               {'-'}
               <span>{scoreP2}</span> ({playerP2.name[0]}
-              {playerP2.name[1]}) <span>{teamP2.name}</span>
+              {playerP2.name[1].toUpperCase()}) <span>{teamP2.name}</span>
             </div>
             <div style={{ margin: '0.25rem 0', textAlign: 'right' }}>
               {date}

@@ -46,7 +46,7 @@ export const StyledMatchView = styled.div`
       font-style: italic;
       position: absolute;
       right: 0;
-      transform: rotate(-90deg) translate(55%, -130%);
+      transform: rotate(-90deg) translate(70%, -130%);
     }
     .card__match-info-date {
       font-size: 0.875rem;

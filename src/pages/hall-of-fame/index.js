@@ -2,20 +2,20 @@ import { useState, useEffect } from 'react'
 import Accolades from './components/Accolades'
 import Showcase from './components/Showcase'
 import PlayerStatsTable from './../../components/PlayerStatsTable'
+import FaceToFaceTable from './../../components/FaceToFaceTable'
 import { api } from './../../api'
 import axios from 'axios'
 import { Oval } from 'react-loader-spinner'
+import { Person2Outlined } from '@mui/icons-material'
 
 const Trophies = () => {
   const [historicalData, setHistoricalData] = useState()
 
   const getHistoricalData = () => {
     const standings = axios.get(`${api}/statistics/all-time/standings`)
-    // const playerInfoFromTournament = axios.get(
-    //   `${api}/tournaments/${tournament}/standings/player-info`,
-    // )
+    const faceToFace = axios.get(`${api}/statistics/all-time/face-to-face`)
 
-    Promise.all([standings]).then((values) => {
+    Promise.all([standings, faceToFace]).then((values) => {
       const data = values.map((response) => response.data)
       setHistoricalData(data)
     })
@@ -31,7 +31,12 @@ const Trophies = () => {
       <Showcase />
       <Accolades />
       {historicalData ? (
-        <PlayerStatsTable stats={historicalData[0]} />
+        <>
+          <PlayerStatsTable stats={historicalData[0]} />
+          {historicalData[1].map(({ p1, p2 }, index) => (
+            <FaceToFaceTable stats={[p1, p2]} key={index} />
+          ))}
+        </>
       ) : (
         <div style={{ margin: 'auto', width: '100px' }}>
           <Oval

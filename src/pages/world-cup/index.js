@@ -107,6 +107,17 @@ const WorldCup = () => {
               >
                 Clasificación
               </Link>
+              <Link
+                to={`playoffs`}
+                style={{
+                  color: '#004a79',
+                  fontSize: '2rem',
+                  margin: '1.25rem',
+                  textDecoration: 'none',
+                }}
+              >
+                Playoffs
+              </Link>
             </div>
             {/* <div style={{ margin: '1rem 0' }}>
               <Link to={`playoffs`}>Playoffs</Link>

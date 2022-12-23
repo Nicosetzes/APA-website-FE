@@ -6,7 +6,6 @@ import FaceToFaceTable from './../../components/FaceToFaceTable'
 import { api } from './../../api'
 import axios from 'axios'
 import { Oval } from 'react-loader-spinner'
-import { Person2Outlined } from '@mui/icons-material'
 
 const Trophies = () => {
   const [historicalData, setHistoricalData] = useState()
@@ -27,7 +26,7 @@ const Trophies = () => {
 
   return (
     <>
-      <div style={{ margin: '2rem', textAlign: 'center' }}>Trofeos</div>
+      {/* <div style={{ margin: '2rem', textAlign: 'center' }}>Trofeos</div> */}
       <Showcase />
       <Accolades />
       {historicalData ? (

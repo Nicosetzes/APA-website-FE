@@ -29,7 +29,7 @@ const WorldCupStandings = () => {
   console.log(tournamentData)
 
   if (tournamentData) {
-    const teams = tournamentData[0].sortedStandings
+    const teams = tournamentData[0]
     const playerStats = tournamentData[1]
     return (
       <>

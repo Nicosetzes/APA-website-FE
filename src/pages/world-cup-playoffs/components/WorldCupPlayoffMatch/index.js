@@ -1,6 +1,7 @@
 import { api, database } from './../../../../api'
 import { useState, useEffect } from 'react'
 import { StyledPlayoffsMatch } from './styled'
+import ScoreBox from '../../../../components/ScoreBox'
 import Divider from '@mui/material/Divider'
 import IconButton from '@mui/material/IconButton'
 import CheckIcon from '@mui/icons-material/Check'
@@ -173,6 +174,38 @@ const PlayoffsMatch = ({ topTeam, bottomTeam, matches }) => {
                 {topTeam.team.name} ({topTeam.player.name[0].toUpperCase()}
                 {topTeam.player.name[1].toUpperCase()})
               </div>
+              <div
+                className="streak"
+                style={{ margin: '0 0.5rem 0 0.5rem', width: '50px' }}
+              >
+                {topTeam.streak.map(
+                  (
+                    {
+                      outcome,
+                      playerP1,
+                      teamP1,
+                      scoreP1,
+                      playerP2,
+                      teamP2,
+                      scoreP2,
+                      date,
+                    },
+                    index,
+                  ) => (
+                    <ScoreBox
+                      key={index}
+                      result={outcome}
+                      playerP1={playerP1}
+                      teamP1={teamP1}
+                      scoreP1={scoreP1}
+                      playerP2={playerP2}
+                      teamP2={teamP2}
+                      scoreP2={scoreP2}
+                      date={date}
+                    />
+                  ),
+                )}
+              </div>
               <div>
                 {matchScoreFromDatabase && (
                   <span className="team-score">
@@ -189,6 +222,9 @@ const PlayoffsMatch = ({ topTeam, bottomTeam, matches }) => {
                       : matchScoreFromDatabase.penaltyScoreP2}
                     )
                   </span>
+                )}
+                {!matchScoreFromDatabase && (
+                  <span style={{ margin: '0 0.5rem 0 0.5rem' }}>-</span>
                 )}
                 <input
                   name="scoreP1"
@@ -219,6 +255,38 @@ const PlayoffsMatch = ({ topTeam, bottomTeam, matches }) => {
                 {bottomTeam.player.name[0].toUpperCase()}
                 {bottomTeam.player.name[1].toUpperCase()})
               </div>
+              <div
+                className="streak"
+                style={{ margin: '0 0.5rem 0 0.5rem', width: '50px' }}
+              >
+                {bottomTeam.streak.map(
+                  (
+                    {
+                      outcome,
+                      playerP1,
+                      teamP1,
+                      scoreP1,
+                      playerP2,
+                      teamP2,
+                      scoreP2,
+                      date,
+                    },
+                    index,
+                  ) => (
+                    <ScoreBox
+                      key={index}
+                      result={outcome}
+                      playerP1={playerP1}
+                      teamP1={teamP1}
+                      scoreP1={scoreP1}
+                      playerP2={playerP2}
+                      teamP2={teamP2}
+                      scoreP2={scoreP2}
+                      date={date}
+                    />
+                  ),
+                )}
+              </div>
               <div>
                 {matchScoreFromDatabase && (
                   <span className="team-score">
@@ -235,6 +303,9 @@ const PlayoffsMatch = ({ topTeam, bottomTeam, matches }) => {
                       : matchScoreFromDatabase.penaltyScoreP2}
                     )
                   </span>
+                )}
+                {!matchScoreFromDatabase && (
+                  <span style={{ margin: '0 0.5rem 0 0.5rem' }}>-</span>
                 )}
                 <input
                   name="scoreP2"

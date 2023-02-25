@@ -32,14 +32,7 @@ const ChampionshipBox = ({
             style={{ display: 'flex', flexDirection: 'column' }}
           >
             <div className="showcase__body-champion">
-              <img
-                src={championLogo}
-                alt={championTeam}
-                style={{
-                  width: national && '85px',
-                  height: national && '60px',
-                }}
-              />
+              <img src={championLogo} alt={championTeam} />
               <div className="showcase__body-info">
                 <div className="showcase__body-info-title">Campeón</div>
                 <div className="showcase__body-info-team">{championTeam}</div>
@@ -51,14 +44,7 @@ const ChampionshipBox = ({
               <div className="circle  circle-champion circle-top-left"></div>
             </div>
             <div className="showcase__body-finalist">
-              <img
-                src={finalistLogo}
-                alt={finalistTeam}
-                style={{
-                  width: national && '85px',
-                  height: national && '60px',
-                }}
-              />
+              <img src={finalistLogo} alt={finalistTeam} />
               <div className="showcase__body-info">
                 <div className="showcase__body-info-title">Subcampeón</div>
                 <div className="showcase__body-info-team">{finalistTeam}</div>

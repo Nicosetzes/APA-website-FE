@@ -1,24 +1,26 @@
 import { StyledShowcase } from './styled'
 import ChampionshipBox from '../ChampionshipBox'
-import banderaAlemania from './../../../../images/alemania-bandera.webp'
-import banderaArgentina from './../../../../images/argentina-bandera.webp'
-import banderaBelgica from './../../../../images/belgica-bandera.webp'
-import banderaFrancia from './../../../../images/francia-bandera.webp'
-import banderaPeru from './../../../../images/peru-bandera.webp'
-import banderaPortugal from './../../../../images/portugal-bandera.webp'
-import logoAtleticoMadrid from './../../../../images/atletico-madrid-escudo.webp'
-import logoBayern from './../../../../images/bayern-escudo.webp'
-import logoEstudiantes from './../../../../images/estudiantes-escudo.webp'
-import logoLanus from './../../../../images/lanus-escudo.webp'
-import logoLiverpool from './../../../../images/liverpool-escudo.webp'
-import logoLokomotiv from './../../../../images/lokomotiv-escudo.webp'
-import logoManchesterUnited from './../../../../images/manchester-united-escudo.webp'
-import logoRacingClub from './../../../../images/racing-club-escudo.webp'
-import logoRealMadrid from './../../../../images/real-madrid-escudo.webp'
-import logoRiverPlate from './../../../../images/river-plate-escudo.webp'
-import logoRosarioCentral from './../../../../images/rosario-central-escudo.webp'
-import logoSanLorenzo from './../../../../images/san-lorenzo-escudo.webp'
-import logoTottenhamHotspur from './../../../../images/tottenham-hotspur-escudo.webp'
+import banderaAlemania from './../../../../images/alemania-bandera.png'
+import banderaArgentina from './../../../../images/argentina-bandera.png'
+import banderaBelgica from './../../../../images/belgica-bandera.png'
+import banderaFrancia from './../../../../images/francia-bandera.png'
+import banderaPeru from './../../../../images/peru-bandera.png'
+import banderaPortugal from './../../../../images/portugal-bandera.png'
+import banderaBrazil from './../../../../images/brazil-bandera.png'
+import banderaPolonia from './../../../../images/polonia-bandera.png'
+import logoAtleticoMadrid from './../../../../images/atletico-madrid-escudo.png'
+import logoBayern from './../../../../images/bayern-escudo.png'
+import logoEstudiantes from './../../../../images/estudiantes-escudo.png'
+import logoLanus from './../../../../images/lanus-escudo.png'
+import logoLiverpool from './../../../../images/liverpool-escudo.png'
+import logoLokomotiv from './../../../../images/lokomotiv-escudo.png'
+import logoManchesterUnited from './../../../../images/manchester-united-escudo.png'
+import logoRacingClub from './../../../../images/racing-club-escudo.png'
+import logoRealMadrid from './../../../../images/real-madrid-escudo.png'
+import logoRiverPlate from './../../../../images/river-plate-escudo.png'
+import logoRosarioCentral from './../../../../images/rosario-central-escudo.png'
+import logoSanLorenzo from './../../../../images/san-lorenzo-escudo.png'
+import logoTottenhamHotspur from './../../../../images/tottenham-hotspur-escudo.png'
 import trophyChampions from './../../../../images/champions.png'
 import trophyCopaAmerica from './../../../../images/copa-america.png'
 import trophyCopaArgentina from './../../../../images/copa-argentina.png'
@@ -59,7 +61,6 @@ const Showcase = () => {
         finalistUser={'Santi'}
         finalistTeam={'Francia'}
         finalistLogo={banderaFrancia}
-        national={true}
         trophy={trophyWorldCup}
       />
       <ChampionshipBox
@@ -80,7 +81,6 @@ const Showcase = () => {
         finalistUser={'Santi'}
         finalistTeam={'Francia'}
         finalistLogo={banderaFrancia}
-        national={true}
         trophy={trophyWorldCup}
       />
       <ChampionshipBox
@@ -91,7 +91,6 @@ const Showcase = () => {
         finalistUser={'Leo'}
         finalistTeam={'Alemania'}
         finalistLogo={banderaAlemania}
-        national={true}
         trophy={trophyWorldCup}
       />
       <ChampionshipBox
@@ -132,7 +131,6 @@ const Showcase = () => {
         finalistUser={'Max'}
         finalistTeam={'Perú'}
         finalistLogo={banderaPeru}
-        national={true}
         trophy={trophyCopaAmerica}
       />
       <ChampionshipBox
@@ -164,6 +162,16 @@ const Showcase = () => {
         finalistTeam={'Manchester Utd.'}
         finalistLogo={logoManchesterUnited}
         trophy={trophyPremierLeague}
+      />
+      <ChampionshipBox
+        tournament={'Copa del Mundo 2022/23'}
+        championUser={'Leo'}
+        championTeam={'Polonia'}
+        championLogo={banderaPolonia}
+        finalistUser={'Max'}
+        finalistTeam={'Brazil'}
+        finalistLogo={banderaBrazil}
+        trophy={trophyWorldCup}
       />
     </StyledShowcase>
   )

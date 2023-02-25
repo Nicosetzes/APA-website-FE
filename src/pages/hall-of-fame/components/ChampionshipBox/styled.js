@@ -36,8 +36,8 @@ export const StyledChampionshipBox = styled.div`
       position: relative;
       width: 250px;
       img {
-        height: 75px;
-        width: 60px;
+        height: 85px;
+        width: 85px;
       }
       .showcase__body-info {
         display: flex;

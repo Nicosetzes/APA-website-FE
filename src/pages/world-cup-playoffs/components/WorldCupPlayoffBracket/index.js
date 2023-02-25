@@ -202,16 +202,16 @@ const PlayoffsBracket = ({
                 matches={matches}
               />
               <div className="playoff__finalist">
-                {sortedByWinsFirstQuadrant[0].winsInPlayoffs > 3 && (
+                {sortedByWinsFirstQuadrant[0].winsInPlayoffs == 3 && (
                   <FinalistCard finalist={sortedByWinsFirstQuadrant[0]} />
                 )}
-                {sortedByWinsSecondQuadrant[0].winsInPlayoffs > 3 && (
+                {sortedByWinsSecondQuadrant[0].winsInPlayoffs == 3 && (
                   <FinalistCard finalist={sortedByWinsSecondQuadrant[0]} />
                 )}
-                {sortedByWinsThirdQuadrant[0].winsInPlayoffs > 3 && (
+                {sortedByWinsThirdQuadrant[0].winsInPlayoffs == 3 && (
                   <FinalistCard finalist={sortedByWinsThirdQuadrant[0]} />
                 )}
-                {sortedByWinsFourthQuadrant[0].winsInPlayoffs > 3 && (
+                {sortedByWinsFourthQuadrant[0].winsInPlayoffs == 3 && (
                   <FinalistCard finalist={sortedByWinsFourthQuadrant[0]} />
                 )}
               </div>

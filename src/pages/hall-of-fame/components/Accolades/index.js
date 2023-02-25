@@ -14,6 +14,17 @@ const Accolades = () => {
     <>
       <StyledAccolades>
         <PlayerBox
+          player={'Leo'}
+          trophies={[
+            trophyWorldCup,
+            trophySuperligaArgentina,
+            trophyWorldCup,
+            trophyChampions,
+            trophySuperligaArgentina,
+            trophyWorldCup,
+          ]}
+        />
+        <PlayerBox
           player={'Max'}
           trophies={[
             trophySuperligaArgentina,
@@ -24,21 +35,11 @@ const Accolades = () => {
           ]}
         />
         <PlayerBox
-          player={'Leo'}
-          trophies={[
-            trophyWorldCup,
-            trophySuperligaArgentina,
-            trophyWorldCup,
-            trophyChampions,
-            trophySuperligaArgentina,
-          ]}
-        />
-        <PlayerBox player={'Santi'} trophies={[trophyCopaAmerica]} />
-        <PlayerBox player={'Lucho'} />
-        <PlayerBox
           player={'Nico'}
           trophies={[trophyRandomOne, trophyPremierLeague]}
         />
+        <PlayerBox player={'Santi'} trophies={[trophyCopaAmerica]} />
+        <PlayerBox player={'Lucho'} />
       </StyledAccolades>
     </>
   )

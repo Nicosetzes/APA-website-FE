@@ -4,8 +4,10 @@ import trophyWorldCup from './../../../../images/world-cup.png'
 
 const ChampionCard = ({ champion }) => {
   const { player, team, tournament } = champion
+  console.log(champion)
   return (
     <StyledChampionCard>
+      <div style={{ fontSize: '1.5rem', fontWeight: '700' }}>Campeón</div>
       <img src={trophyWorldCup} alt={team.name} />
       <div className="champion">
         <div className="champion-team">{team.name}</div>

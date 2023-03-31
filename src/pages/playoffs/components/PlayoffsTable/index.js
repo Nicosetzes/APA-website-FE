@@ -96,10 +96,10 @@ const PlayoffsTable = ({ allTeams }) => {
                 <div className="teamAndLogoWrapper">
                   <img src={`${database}/logos/${team.id}`} alt={team.name} />
                   {isM
-                    ? team.team
-                    : team.team[0].toUpperCase() +
-                      team.team[1].toUpperCase() +
-                      team.team[2].toUpperCase()}
+                    ? team.name
+                    : team.name[0].toUpperCase() +
+                      team.name[1].toUpperCase() +
+                      team.name[2].toUpperCase()}
                 </div>
               </TableCell>
               <TableCell component="th" scope="row">

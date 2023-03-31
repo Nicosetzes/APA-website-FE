@@ -69,65 +69,81 @@ const PlayoffsTable = ({ allTeams }) => {
         </TableRow>
       </TableHead>
       <TableBody>
-        {allTeams.map((team, teamIndex) => (
-          <TableRow
-            key={team.id}
-            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-          >
-            <TableCell component="th" scope="row">
-              {teamIndex + 1}
-            </TableCell>
-            <TableCell component="th" scope="row">
-              <div className="teamAndLogoWrapper">
-                <img src={`${database}/logos/${team.id}`} alt={team.name} />
-                {isM
-                  ? team.team
-                  : team.team[0].toUpperCase() +
-                    team.team[1].toUpperCase() +
-                    team.team[2].toUpperCase()}
-              </div>
-            </TableCell>
-            <TableCell component="th" scope="row">
-              {team.player.name}
-            </TableCell>
-            <TableCell component="th" scope="row">
-              {team.played}
-            </TableCell>
-            {isXS && (
-              <>
-                <TableCell component="th" scope="row">
-                  {team.wins}
-                </TableCell>
-              </>
-            )}
-            {isSm && (
-              <>
-                <TableCell component="th" scope="row">
-                  {team.draws}
-                </TableCell>
-                <TableCell component="th" scope="row">
-                  {team.losses}
-                </TableCell>
-              </>
-            )}
-            {isM && (
-              <>
-                <TableCell component="th" scope="row">
-                  {team.goalsFor}
-                </TableCell>
-                <TableCell component="th" scope="row">
-                  {team.goalsAgainst}
-                </TableCell>
-                <TableCell component="th" scope="row">
-                  {team.scoringDifference}
-                </TableCell>
-              </>
-            )}
-            <TableCell component="th" scope="row">
-              {team.points}
-            </TableCell>
-          </TableRow>
-        ))}
+        {allTeams.map(
+          (
+            {
+              team,
+              player,
+              played,
+              wins,
+              draws,
+              losses,
+              goalsFor,
+              goalsAgainst,
+              scoringDifference,
+              points,
+            },
+            index,
+          ) => (
+            <TableRow
+              key={team.id}
+              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            >
+              <TableCell component="th" scope="row">
+                {index + 1}
+              </TableCell>
+              <TableCell component="th" scope="row">
+                <div className="teamAndLogoWrapper">
+                  <img src={`${database}/logos/${team.id}`} alt={team.name} />
+                  {isM
+                    ? team.team
+                    : team.team[0].toUpperCase() +
+                      team.team[1].toUpperCase() +
+                      team.team[2].toUpperCase()}
+                </div>
+              </TableCell>
+              <TableCell component="th" scope="row">
+                {player.name}
+              </TableCell>
+              <TableCell component="th" scope="row">
+                {played}
+              </TableCell>
+              {isXS && (
+                <>
+                  <TableCell component="th" scope="row">
+                    {wins}
+                  </TableCell>
+                </>
+              )}
+              {isSm && (
+                <>
+                  <TableCell component="th" scope="row">
+                    {draws}
+                  </TableCell>
+                  <TableCell component="th" scope="row">
+                    {losses}
+                  </TableCell>
+                </>
+              )}
+              {isM && (
+                <>
+                  <TableCell component="th" scope="row">
+                    {goalsFor}
+                  </TableCell>
+                  <TableCell component="th" scope="row">
+                    {goalsAgainst}
+                  </TableCell>
+                  <TableCell component="th" scope="row">
+                    {scoringDifference}
+                  </TableCell>
+                </>
+              )}
+              <TableCell component="th" scope="row">
+                {points}
+              </TableCell>
+            </TableRow>
+          ),
+        )}
       </TableBody>
     </StyledTable>
   )

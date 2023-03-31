@@ -10,7 +10,7 @@ const TournamentId = () => {
 
   const navigate = useNavigate()
 
-  const [activeTournament, setActiveTournament] = useState()
+  const [currentTournament, setCurrentTournament] = useState()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -22,7 +22,7 @@ const TournamentId = () => {
         })
         .then(({ data }) => {
           console.log(data)
-          setActiveTournament(data)
+          setCurrentTournament(data)
         })
         .catch((err) => {
           console.log(err)
@@ -32,12 +32,13 @@ const TournamentId = () => {
     fetchData()
   }, [])
 
-  if (activeTournament) {
-    const { name, players, teams } = activeTournament
+  if (currentTournament) {
+    const { name, players, teams, type } = currentTournament
 
     console.log(name)
     console.log(players)
     console.log(teams)
+    console.log(type)
 
     return (
       <motion.div
@@ -83,17 +84,32 @@ const TournamentId = () => {
           >
             Partidos
           </Link>
-          <Link
-            to={`standings`}
-            style={{
-              color: '#004a79',
-              fontSize: '2rem',
-              margin: '1.25rem',
-              textDecoration: 'none',
-            }}
-          >
-            Clasificación
-          </Link>
+          {type == 'league' && (
+            <Link
+              to={`standings`}
+              style={{
+                color: '#004a79',
+                fontSize: '2rem',
+                margin: '1.25rem',
+                textDecoration: 'none',
+              }}
+            >
+              Clasificación
+            </Link>
+          )}
+          {type == 'playoffs' && (
+            <Link
+              to={`playoffs`}
+              style={{
+                color: '#004a79',
+                fontSize: '2rem',
+                margin: '1.25rem',
+                textDecoration: 'none',
+              }}
+            >
+              Playoffs
+            </Link>
+          )}
         </div>
         <div
           style={{

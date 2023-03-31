@@ -1,5 +1,11 @@
 import * as React from 'react'
 import { useEffect, useState } from 'react'
+import {
+  // Link,
+  // useNavigate,
+  // createSearchParams,
+  useParams,
+} from 'react-router-dom'
 import axios from 'axios'
 import { motion } from 'framer-motion'
 import { api } from './../../api'
@@ -11,16 +17,20 @@ import PlayerStatsTable from './../../components/PlayerStatsTable'
 import PlayoffsBracket from './components/PlayoffsBracket'
 
 const Playoffs = () => {
+  const { tournament } = useParams()
+
   const [playoffsData, setPlayoffsData] = useState()
 
   const getPlayoffsData = () => {
-    const table = axios.get(`${api}/tournaments/:tournament/playoffs/table`)
+    const table = axios.get(`${api}/tournaments/${tournament}/playoffs/table`)
     const playerInfo = axios.get(
-      `${api}/tournaments/:tournament/playoffs/player-info`,
+      `${api}/tournaments/${tournament}/playoffs/player-info`,
     )
-    const bracket = axios.get(`${api}/tournaments/:tournament/playoffs/bracket`)
+    const bracket = axios.get(
+      `${api}/tournaments/${tournament}/playoffs/bracket`,
+    )
     const updatedWins = axios.get(
-      `${api}/tournaments/:tournament/playoffs/updated-wins`,
+      `${api}/tournaments/${tournament}/playoffs/updated-wins`,
     )
 
     Promise.all([table, playerInfo, bracket, updatedWins]).then((values) => {
@@ -40,7 +50,8 @@ const Playoffs = () => {
     const playoffsUpdatedWins = playoffsData[3].winsByTeam
     const playoffsMatches = playoffsData[3].playoffsMatches
 
-    console.log(playoffsTeamsForTable)
+    // console.log(playoffsTeamsForTable)
+    // console.log(playoffsBracketInfo)
     // console.log(playoffsUpdatedWins)
     // console.log(playoffsMatches)
 

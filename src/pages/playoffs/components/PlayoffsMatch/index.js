@@ -17,8 +17,8 @@ const PlayoffsMatch = ({ topTeam, bottomTeam, matches }) => {
       const filteredMatches = matches
         .filter(
           ({ teamP1, teamP2 }) =>
-            (topTeam.id == teamP1.id && bottomTeam.id == teamP2.id) ||
-            (topTeam.id == teamP2.id && bottomTeam.id == teamP1.id),
+            (topTeam.team.id == teamP1.id && bottomTeam.team.id == teamP2.id) ||
+            (topTeam.team.id == teamP2.id && bottomTeam.team.id == teamP1.id),
         )
         .map(({ teamP1, teamP2, scoreP1, scoreP2 }) => {
           return {
@@ -132,12 +132,12 @@ const PlayoffsMatch = ({ topTeam, bottomTeam, matches }) => {
       className="match"
       data-topteam-playername={topTeam?.player.name}
       data-topteam-playerid={topTeam?.player.id}
-      data-topteam-teamname={topTeam?.name} // Cambiar a futuro //
-      data-topteam-teamid={topTeam?.id} // Cambiar a futuro //
+      data-topteam-teamname={topTeam?.team.name}
+      data-topteam-teamid={topTeam?.team.id}
       data-bottomteam-playername={bottomTeam?.player.name}
       data-bottomteam-playerid={bottomTeam?.player.id}
-      data-bottomteam-teamname={bottomTeam?.name} // Cambiar a futuro //
-      data-bottomteam-teamid={bottomTeam?.id} // Cambiar a futuro //
+      data-bottomteam-teamname={bottomTeam?.team.name}
+      data-bottomteam-teamid={bottomTeam?.team.id}
       data-tournamentname={topTeam?.tournament.name}
       data-tournamentid={topTeam?.tournament.id}
       onSubmit={(e) => {
@@ -152,17 +152,17 @@ const PlayoffsMatch = ({ topTeam, bottomTeam, matches }) => {
             </div>
             <img
               className="team-logo"
-              src={`${database}/logos/${topTeam.id}`}
+              src={`${database}/logos/${topTeam.team.id}`}
             />
             <div className="team-name">
               <div>
-                {topTeam.name} ({topTeam.player.name[0].toUpperCase()}
+                {topTeam.team.name} ({topTeam.player.name[0].toUpperCase()}
                 {topTeam.player.name[1].toUpperCase()})
               </div>
               <div>
                 {matchScoreFromDatabase && (
                   <span className="team-score">
-                    {matchScoreFromDatabase.teamP1.id == topTeam.id
+                    {matchScoreFromDatabase.teamP1.id == topTeam.team.id
                       ? matchScoreFromDatabase.scoreP1
                       : matchScoreFromDatabase.scoreP2}
                   </span>
@@ -189,17 +189,18 @@ const PlayoffsMatch = ({ topTeam, bottomTeam, matches }) => {
             <span className="team-seed">{bottomTeam.seed}</span>
             <img
               className="team-logo"
-              src={`${database}/logos/${bottomTeam.id}`}
+              src={`${database}/logos/${bottomTeam.team.id}`}
             />
             <div className="team-name">
               <div>
-                {bottomTeam.name} ({bottomTeam.player.name[0].toUpperCase()}
+                {bottomTeam.team.name} (
+                {bottomTeam.player.name[0].toUpperCase()}
                 {bottomTeam.player.name[1].toUpperCase()})
               </div>
               <div>
                 {matchScoreFromDatabase && (
                   <span className="team-score">
-                    {matchScoreFromDatabase.teamP1.id == bottomTeam.id
+                    {matchScoreFromDatabase.teamP1.id == bottomTeam.team.id
                       ? matchScoreFromDatabase.scoreP1
                       : matchScoreFromDatabase.scoreP2}
                   </span>

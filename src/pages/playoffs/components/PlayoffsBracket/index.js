@@ -6,6 +6,10 @@ import bracket from './../../../../images/bracket.png'
 // import { api } from './../../../../api'
 
 const PlayoffsBracket = ({ teams, updatedWins, matches }) => {
+  console.log(teams)
+  console.log(updatedWins)
+  console.log(matches)
+
   return (
     <StyledPlayoffsContainer>
       <div className="playoff__container-left">
@@ -48,16 +52,20 @@ const PlayoffsBracket = ({ teams, updatedWins, matches }) => {
           >
             {/* Primer caso: el partido 1 está decidido, pero el 2 NO */}
             {updatedWins.length > 0 &&
-              (updatedWins.filter(({ id }) => id == teams[0].id)[0].wins > 0 ||
-                updatedWins.filter(({ id }) => id == teams[15].id)[0].wins >
-                  0) &&
-              updatedWins.filter(({ id }) => id == teams[7].id)[0].wins == 0 &&
-              updatedWins.filter(({ id }) => id == teams[8].id)[0].wins ==
-                0 && (
+              (updatedWins.filter(({ team }) => team.id == teams[0].team.id)[0]
+                .wins > 0 ||
+                updatedWins.filter(
+                  ({ team }) => team.id == teams[15].team.id,
+                )[0].wins > 0) &&
+              updatedWins.filter(({ team }) => team.id == teams[7].team.id)[0]
+                .wins == 0 &&
+              updatedWins.filter(({ team }) => team.id == teams[8].team.id)[0]
+                .wins == 0 && (
                 <PlayoffsMatch
                   topTeam={
-                    updatedWins.filter(({ id }) => id == teams[0].id)[0].wins >
-                    0
+                    updatedWins.filter(
+                      ({ team }) => team.id == teams[0].team.id,
+                    )[0].wins > 0
                       ? teams[0]
                       : teams[15]
                   }
@@ -67,16 +75,20 @@ const PlayoffsBracket = ({ teams, updatedWins, matches }) => {
               )}
             {/* Segundo caso: el partido 1 NO está decidido, pero el 2 SÍ */}
             {updatedWins.length > 0 &&
-              updatedWins.filter(({ id }) => id == teams[0].id)[0].wins == 0 &&
-              updatedWins.filter(({ id }) => id == teams[15].id)[0].wins == 0 &&
-              (updatedWins.filter(({ id }) => id == teams[7].id)[0].wins > 0 ||
-                updatedWins.filter(({ id }) => id == teams[8].id)[0].wins >
-                  0) && (
+              updatedWins.filter(({ team }) => team.id == teams[0].team.id)[0]
+                .wins == 0 &&
+              updatedWins.filter(({ team }) => team.id == teams[15].team.id)[0]
+                .wins == 0 &&
+              (updatedWins.filter(({ team }) => team.id == teams[7].team.id)[0]
+                .wins > 0 ||
+                updatedWins.filter(({ team }) => team.id == teams[8].team.id)[0]
+                  .wins > 0) && (
                 <PlayoffsMatch
                   topTeam={null}
                   bottomTeam={
-                    updatedWins.filter(({ id }) => id == teams[7].id)[0].wins >
-                    0
+                    updatedWins.filter(
+                      ({ team }) => team.id == teams[7].team.id,
+                    )[0].wins > 0
                       ? teams[7]
                       : teams[8]
                   }
@@ -85,22 +97,27 @@ const PlayoffsBracket = ({ teams, updatedWins, matches }) => {
               )}
             {/* Tercer caso: ambos partidos ya se jugaron */}
             {updatedWins.length > 0 &&
-              (updatedWins.filter(({ id }) => id == teams[0].id)[0].wins > 0 ||
-                updatedWins.filter(({ id }) => id == teams[15].id)[0].wins >
-                  0) &&
-              (updatedWins.filter(({ id }) => id == teams[7].id)[0].wins > 0 ||
-                updatedWins.filter(({ id }) => id == teams[8].id)[0].wins >
-                  0) && (
+              (updatedWins.filter(({ team }) => team.id == teams[0].team.id)[0]
+                .wins > 0 ||
+                updatedWins.filter(
+                  ({ team }) => team.id == teams[15].team.id,
+                )[0].wins > 0) &&
+              (updatedWins.filter(({ team }) => team.id == teams[7].team.id)[0]
+                .wins > 0 ||
+                updatedWins.filter(({ team }) => team.id == teams[8].team.id)[0]
+                  .wins > 0) && (
                 <PlayoffsMatch
                   topTeam={
-                    updatedWins.filter(({ id }) => id == teams[0].id)[0].wins >
-                    0
+                    updatedWins.filter(
+                      ({ team }) => team.id == teams[0].team.id,
+                    )[0].wins > 0
                       ? teams[0]
                       : teams[15]
                   }
                   bottomTeam={
-                    updatedWins.filter(({ id }) => id == teams[7].id)[0].wins >
-                    0
+                    updatedWins.filter(
+                      ({ team }) => team.id == teams[7].team.id,
+                    )[0].wins > 0
                       ? teams[7]
                       : teams[8]
                   }
@@ -120,16 +137,20 @@ const PlayoffsBracket = ({ teams, updatedWins, matches }) => {
           >
             {/* Primer caso: el partido 1 está decidido, pero el 2 NO */}
             {updatedWins.length > 0 &&
-              (updatedWins.filter(({ id }) => id == teams[4].id)[0].wins > 0 ||
-                updatedWins.filter(({ id }) => id == teams[11].id)[0].wins >
-                  0) &&
-              updatedWins.filter(({ id }) => id == teams[3].id)[0].wins == 0 &&
-              updatedWins.filter(({ id }) => id == teams[12].id)[0].wins ==
-                0 && (
+              (updatedWins.filter(({ team }) => team.id == teams[4].team.id)[0]
+                .wins > 0 ||
+                updatedWins.filter(
+                  ({ team }) => team.id == teams[11].team.id,
+                )[0].wins > 0) &&
+              updatedWins.filter(({ team }) => team.id == teams[3].team.id)[0]
+                .wins == 0 &&
+              updatedWins.filter(({ team }) => team.id == teams[12].team.id)[0]
+                .wins == 0 && (
                 <PlayoffsMatch
                   topTeam={
-                    updatedWins.filter(({ id }) => id == teams[4].id)[0].wins >
-                    0
+                    updatedWins.filter(
+                      ({ team }) => team.id == teams[4].team.id,
+                    )[0].wins > 0
                       ? teams[4]
                       : teams[11]
                   }
@@ -139,16 +160,21 @@ const PlayoffsBracket = ({ teams, updatedWins, matches }) => {
               )}
             {/* Segundo caso: el partido 1 NO está decidido, pero el 2 SÍ */}
             {updatedWins.length > 0 &&
-              updatedWins.filter(({ id }) => id == teams[4].id)[0].wins == 0 &&
-              updatedWins.filter(({ id }) => id == teams[11].id)[0].wins == 0 &&
-              (updatedWins.filter(({ id }) => id == teams[3].id)[0].wins > 0 ||
-                updatedWins.filter(({ id }) => id == teams[12].id)[0].wins >
-                  0) && (
+              updatedWins.filter(({ team }) => team.id == teams[4].team.id)[0]
+                .wins == 0 &&
+              updatedWins.filter(({ team }) => team.id == teams[11].team.id)[0]
+                .wins == 0 &&
+              (updatedWins.filter(({ team }) => team.id == teams[3].team.id)[0]
+                .wins > 0 ||
+                updatedWins.filter(
+                  ({ team }) => team.id == teams[12].team.id,
+                )[0].wins > 0) && (
                 <PlayoffsMatch
                   topTeam={null}
                   bottomTeam={
-                    updatedWins.filter(({ id }) => id == teams[3].id)[0].wins >
-                    0
+                    updatedWins.filter(
+                      ({ team }) => team.id == teams[3].team.id,
+                    )[0].wins > 0
                       ? teams[3]
                       : teams[12]
                   }
@@ -157,22 +183,28 @@ const PlayoffsBracket = ({ teams, updatedWins, matches }) => {
               )}
             {/* Tercer caso: ambos partidos ya se jugaron */}
             {updatedWins.length > 0 &&
-              (updatedWins.filter(({ id }) => id == teams[4].id)[0].wins > 0 ||
-                updatedWins.filter(({ id }) => id == teams[11].id)[0].wins >
-                  0) &&
-              (updatedWins.filter(({ id }) => id == teams[3].id)[0].wins > 0 ||
-                updatedWins.filter(({ id }) => id == teams[12].id)[0].wins >
-                  0) && (
+              (updatedWins.filter(({ team }) => team.id == teams[4].team.id)[0]
+                .wins > 0 ||
+                updatedWins.filter(
+                  ({ team }) => team.id == teams[11].team.id,
+                )[0].wins > 0) &&
+              (updatedWins.filter(({ team }) => team.id == teams[3].team.id)[0]
+                .wins > 0 ||
+                updatedWins.filter(
+                  ({ team }) => team.id == teams[12].team.id,
+                )[0].wins > 0) && (
                 <PlayoffsMatch
                   topTeam={
-                    updatedWins.filter(({ id }) => id == teams[4].id)[0].wins >
-                    0
+                    updatedWins.filter(
+                      ({ team }) => team.id == teams[4].team.id,
+                    )[0].wins > 0
                       ? teams[4]
                       : teams[11]
                   }
                   bottomTeam={
-                    updatedWins.filter(({ id }) => id == teams[3].id)[0].wins >
-                    0
+                    updatedWins.filter(
+                      ({ team }) => team.id == teams[3].team.id,
+                    )[0].wins > 0
                       ? teams[3]
                       : teams[12]
                   }
@@ -197,25 +229,31 @@ const PlayoffsBracket = ({ teams, updatedWins, matches }) => {
           >
             {/* Primer caso: el equipo de arriba está decidido, pero el de abajo NO */}
             {updatedWins.length > 0 &&
-              (updatedWins.filter(({ id }) => id == teams[0].id)[0].wins > 1 ||
-                updatedWins.filter(({ id }) => id == teams[15].id)[0].wins >
-                  1 ||
-                updatedWins.filter(({ id }) => id == teams[7].id)[0].wins > 1 ||
-                updatedWins.filter(({ id }) => id == teams[8].id)[0].wins >
-                  1) &&
-              updatedWins.filter(({ id }) => id == teams[4].id)[0].wins <= 1 &&
-              updatedWins.filter(({ id }) => id == teams[11].id)[0].wins <= 1 &&
-              updatedWins.filter(({ id }) => id == teams[3].id)[0].wins <= 1 &&
-              updatedWins.filter(({ id }) => id == teams[12].id)[0].wins <=
-                1 && (
+              (updatedWins.filter(({ team }) => team.id == teams[0].team.id)[0]
+                .wins > 1 ||
+                updatedWins.filter(
+                  ({ team }) => team.id == teams[15].team.id,
+                )[0].wins > 1 ||
+                updatedWins.filter(({ team }) => team.id == teams[7].team.id)[0]
+                  .wins > 1 ||
+                updatedWins.filter(({ team }) => team.id == teams[8].team.id)[0]
+                  .wins > 1) &&
+              updatedWins.filter(({ team }) => team.id == teams[4].team.id)[0]
+                .wins <= 1 &&
+              updatedWins.filter(({ team }) => team.id == teams[11].team.id)[0]
+                .wins <= 1 &&
+              updatedWins.filter(({ team }) => team.id == teams[3].team.id)[0]
+                .wins <= 1 &&
+              updatedWins.filter(({ team }) => team.id == teams[12].team.id)[0]
+                .wins <= 1 && (
                 <PlayoffsMatch
                   topTeam={updatedWins
                     .filter(
-                      ({ id }) =>
-                        id == teams[0].id ||
-                        id == teams[15].id ||
-                        id == teams[7].id ||
-                        id == teams[8].id,
+                      ({ team }) =>
+                        team.id == teams[0].id ||
+                        team.id == teams[15].id ||
+                        team.id == teams[7].id ||
+                        team.id == teams[8].id,
                     )
                     .sort((a, b) => (a.wins > b.wins ? -1 : 1))
                     .at(0)}
@@ -225,25 +263,33 @@ const PlayoffsBracket = ({ teams, updatedWins, matches }) => {
               )}
             {/* Segundo caso: el partido 1 NO está decidido, pero el 2 SÍ */}
             {updatedWins.length > 0 &&
-              updatedWins.filter(({ id }) => id == teams[0].id)[0].wins <= 1 &&
-              updatedWins.filter(({ id }) => id == teams[15].id)[0].wins <= 1 &&
-              updatedWins.filter(({ id }) => id == teams[7].id)[0].wins <= 1 &&
-              updatedWins.filter(({ id }) => id == teams[8].id)[0].wins <= 1 &&
-              (updatedWins.filter(({ id }) => id == teams[4].id)[0].wins > 1 ||
-                updatedWins.filter(({ id }) => id == teams[11].id)[0].wins >
-                  1 ||
-                updatedWins.filter(({ id }) => id == teams[3].id)[0].wins > 1 ||
-                updatedWins.filter(({ id }) => id == teams[12].id)[0].wins >
-                  1) && (
+              updatedWins.filter(({ team }) => team.id == teams[0].team.id)[0]
+                .wins <= 1 &&
+              updatedWins.filter(({ team }) => team.id == teams[15].team.id)[0]
+                .wins <= 1 &&
+              updatedWins.filter(({ team }) => team.id == teams[7].team.id)[0]
+                .wins <= 1 &&
+              updatedWins.filter(({ team }) => team.id == teams[8].team.id)[0]
+                .wins <= 1 &&
+              (updatedWins.filter(({ team }) => team.id == teams[4].team.id)[0]
+                .wins > 1 ||
+                updatedWins.filter(
+                  ({ team }) => team.id == teams[11].team.id,
+                )[0].wins > 1 ||
+                updatedWins.filter(({ team }) => team.id == teams[3].team.id)[0]
+                  .wins > 1 ||
+                updatedWins.filter(
+                  ({ team }) => team.id == teams[12].team.id,
+                )[0].wins > 1) && (
                 <PlayoffsMatch
                   topTeam={null}
                   bottomTeam={updatedWins
                     .filter(
-                      ({ id }) =>
-                        id == teams[4].id ||
-                        id == teams[11].id ||
-                        id == teams[3].id ||
-                        id == teams[12].id,
+                      ({ team }) =>
+                        team.id == teams[4].team.id ||
+                        team.id == teams[11].team.id ||
+                        team.id == teams[3].team.id ||
+                        team.id == teams[12].team.id,
                     )
                     .sort((a, b) => (a.wins > b.wins ? -1 : 1))
                     .at(0)}
@@ -252,36 +298,43 @@ const PlayoffsBracket = ({ teams, updatedWins, matches }) => {
               )}
             {/* Tercer caso: ambos partidos ya se jugaron */}
             {updatedWins.length > 0 &&
-              (updatedWins.filter(({ id }) => id == teams[0].id)[0].wins > 1 ||
-                updatedWins.filter(({ id }) => id == teams[15].id)[0].wins >
-                  1 ||
-                updatedWins.filter(({ id }) => id == teams[7].id)[0].wins > 1 ||
-                updatedWins.filter(({ id }) => id == teams[8].id)[0].wins >
-                  1) &&
-              (updatedWins.filter(({ id }) => id == teams[4].id)[0].wins > 1 ||
-                updatedWins.filter(({ id }) => id == teams[11].id)[0].wins >
-                  1 ||
-                updatedWins.filter(({ id }) => id == teams[3].id)[0].wins > 1 ||
-                updatedWins.filter(({ id }) => id == teams[12].id)[0].wins >
-                  1) && (
+              (updatedWins.filter(({ team }) => team.id == teams[0].team.id)[0]
+                .wins > 1 ||
+                updatedWins.filter(
+                  ({ team }) => team.id == teams[15].team.id,
+                )[0].wins > 1 ||
+                updatedWins.filter(({ team }) => team.id == teams[7].team.id)[0]
+                  .wins > 1 ||
+                updatedWins.filter(({ team }) => team.id == teams[8].team.id)[0]
+                  .wins > 1) &&
+              (updatedWins.filter(({ team }) => team.id == teams[4].team.id)[0]
+                .wins > 1 ||
+                updatedWins.filter(
+                  ({ team }) => team.id == teams[11].team.id,
+                )[0].wins > 1 ||
+                updatedWins.filter(({ team }) => team.id == teams[3].team.id)[0]
+                  .wins > 1 ||
+                updatedWins.filter(
+                  ({ team }) => team.id == teams[12].team.id,
+                )[0].wins > 1) && (
                 <PlayoffsMatch
                   topTeam={updatedWins
                     .filter(
-                      ({ id }) =>
-                        id == teams[0].id ||
-                        id == teams[15].id ||
-                        id == teams[7].id ||
-                        id == teams[8].id,
+                      ({ team }) =>
+                        team.id == teams[0].team.id ||
+                        team.id == teams[15].team.id ||
+                        team.id == teams[7].team.id ||
+                        team.id == teams[8].team.id,
                     )
                     .sort((a, b) => (a.wins > b.wins ? -1 : 1))
                     .at(0)}
                   bottomTeam={updatedWins
                     .filter(
-                      ({ id }) =>
-                        id == teams[4].id ||
-                        id == teams[11].id ||
-                        id == teams[3].id ||
-                        id == teams[12].id,
+                      ({ team }) =>
+                        team.id == teams[4].team.id ||
+                        team.id == teams[11].team.id ||
+                        team.id == teams[3].team.id ||
+                        team.id == teams[12].team.id,
                     )
                     .sort((a, b) => (a.wins > b.wins ? -1 : 1))
                     .at(0)}
@@ -306,38 +359,53 @@ const PlayoffsBracket = ({ teams, updatedWins, matches }) => {
             <span style={{ color: '#fff', fontWeight: 700 }}>Final</span>
             {/* Primer caso: el finalista 1 está decidido, pero el 2 NO */}
             {updatedWins.length > 0 &&
-              (updatedWins.filter(({ id }) => id == teams[0].id)[0].wins > 2 ||
-                updatedWins.filter(({ id }) => id == teams[15].id)[0].wins >
-                  2 ||
-                updatedWins.filter(({ id }) => id == teams[7].id)[0].wins > 2 ||
-                updatedWins.filter(({ id }) => id == teams[8].id)[0].wins > 2 ||
-                updatedWins.filter(({ id }) => id == teams[4].id)[0].wins > 2 ||
-                updatedWins.filter(({ id }) => id == teams[11].id)[0].wins >
-                  2 ||
-                updatedWins.filter(({ id }) => id == teams[3].id)[0].wins > 2 ||
-                updatedWins.filter(({ id }) => id == teams[12].id)[0].wins >
-                  2) &&
-              updatedWins.filter(({ id }) => id == teams[5].id)[0].wins <= 2 &&
-              updatedWins.filter(({ id }) => id == teams[10].id)[0].wins <= 2 &&
-              updatedWins.filter(({ id }) => id == teams[2].id)[0].wins <= 2 &&
-              updatedWins.filter(({ id }) => id == teams[13].id)[0].wins <= 2 &&
-              updatedWins.filter(({ id }) => id == teams[6].id)[0].wins <= 2 &&
-              updatedWins.filter(({ id }) => id == teams[9].id)[0].wins <= 2 &&
-              updatedWins.filter(({ id }) => id == teams[1].id)[0].wins <= 2 &&
-              updatedWins.filter(({ id }) => id == teams[14].id)[0].wins <=
-                2 && (
+              (updatedWins.filter(({ team }) => team.id == teams[0].team.id)[0]
+                .wins > 2 ||
+                updatedWins.filter(
+                  ({ team }) => team.id == teams[15].team.id,
+                )[0].wins > 2 ||
+                updatedWins.filter(({ team }) => team.id == teams[7].team.id)[0]
+                  .wins > 2 ||
+                updatedWins.filter(({ team }) => team.id == teams[8].team.id)[0]
+                  .wins > 2 ||
+                updatedWins.filter(({ team }) => team.id == teams[4].team.id)[0]
+                  .wins > 2 ||
+                updatedWins.filter(
+                  ({ team }) => team.id == teams[11].team.id,
+                )[0].wins > 2 ||
+                updatedWins.filter(({ team }) => team.id == teams[3].team.id)[0]
+                  .wins > 2 ||
+                updatedWins.filter(
+                  ({ team }) => team.id == teams[12].team.id,
+                )[0].wins > 2) &&
+              updatedWins.filter(({ team }) => team.id == teams[5].team.id)[0]
+                .wins <= 2 &&
+              updatedWins.filter(({ team }) => team.id == teams[10].team.id)[0]
+                .wins <= 2 &&
+              updatedWins.filter(({ team }) => team.id == teams[2].team.id)[0]
+                .wins <= 2 &&
+              updatedWins.filter(({ team }) => team.id == teams[13].team.id)[0]
+                .wins <= 2 &&
+              updatedWins.filter(({ team }) => team.id == teams[6].team.id)[0]
+                .wins <= 2 &&
+              updatedWins.filter(({ team }) => team.id == teams[9].team.id)[0]
+                .wins <= 2 &&
+              updatedWins.filter(({ team }) => team.id == teams[1].team.id)[0]
+                .wins <= 2 &&
+              updatedWins.filter(({ team }) => team.id == teams[14].team.id)[0]
+                .wins <= 2 && (
                 <PlayoffsMatch
                   topTeam={updatedWins
                     .filter(
-                      ({ id }) =>
-                        id == teams[0].id ||
-                        id == teams[15].id ||
-                        id == teams[7].id ||
-                        id == teams[8].id ||
-                        id == teams[4].id ||
-                        id == teams[11].id ||
-                        id == teams[3].id ||
-                        id == teams[12].id,
+                      ({ team }) =>
+                        team.id == teams[0].team.id ||
+                        team.id == teams[15].team.id ||
+                        team.id == teams[7].team.id ||
+                        team.id == teams[8].team.id ||
+                        team.id == teams[4].team.id ||
+                        team.id == teams[11].team.id ||
+                        team.id == teams[3].team.id ||
+                        team.id == teams[12].team.id,
                     )
                     .sort((a, b) => (a.wins > b.wins ? -1 : 1))
                     .at(0)}
@@ -347,38 +415,54 @@ const PlayoffsBracket = ({ teams, updatedWins, matches }) => {
               )}
             {/* Segundo caso: el partido 1 NO está decidido, pero el 2 SÍ */}
             {updatedWins.length > 0 &&
-              updatedWins.filter(({ id }) => id == teams[0].id)[0].wins <= 2 &&
-              updatedWins.filter(({ id }) => id == teams[15].id)[0].wins <= 2 &&
-              updatedWins.filter(({ id }) => id == teams[7].id)[0].wins <= 2 &&
-              updatedWins.filter(({ id }) => id == teams[8].id)[0].wins <= 2 &&
-              updatedWins.filter(({ id }) => id == teams[4].id)[0].wins <= 2 &&
-              updatedWins.filter(({ id }) => id == teams[11].id)[0].wins <= 2 &&
-              updatedWins.filter(({ id }) => id == teams[3].id)[0].wins <= 2 &&
-              updatedWins.filter(({ id }) => id == teams[12].id)[0].wins <= 2 &&
-              (updatedWins.filter(({ id }) => id == teams[5].id)[0].wins > 2 ||
-                updatedWins.filter(({ id }) => id == teams[10].id)[0].wins >
-                  2 ||
-                updatedWins.filter(({ id }) => id == teams[2].id)[0].wins > 2 ||
-                updatedWins.filter(({ id }) => id == teams[13].id)[0].wins >
-                  2 ||
-                updatedWins.filter(({ id }) => id == teams[6].id)[0].wins > 2 ||
-                updatedWins.filter(({ id }) => id == teams[9].id)[0].wins > 2 ||
-                updatedWins.filter(({ id }) => id == teams[1].id)[0].wins > 2 ||
-                updatedWins.filter(({ id }) => id == teams[14].id)[0].wins >
-                  2) && (
+              updatedWins.filter(({ team }) => team.id == teams[0].team.id)[0]
+                .wins <= 2 &&
+              updatedWins.filter(({ team }) => team.id == teams[15].team.id)[0]
+                .wins <= 2 &&
+              updatedWins.filter(({ team }) => team.id == teams[7].team.id)[0]
+                .wins <= 2 &&
+              updatedWins.filter(({ team }) => team.id == teams[8].team.id)[0]
+                .wins <= 2 &&
+              updatedWins.filter(({ team }) => team.id == teams[4].team.id)[0]
+                .wins <= 2 &&
+              updatedWins.filter(({ team }) => team.id == teams[11].team.id)[0]
+                .wins <= 2 &&
+              updatedWins.filter(({ team }) => team.id == teams[3].team.id)[0]
+                .wins <= 2 &&
+              updatedWins.filter(({ team }) => team.id == teams[12].team.id)[0]
+                .wins <= 2 &&
+              (updatedWins.filter(({ team }) => team.id == teams[5].team.id)[0]
+                .wins > 2 ||
+                updatedWins.filter(
+                  ({ team }) => team.id == teams[10].team.id,
+                )[0].wins > 2 ||
+                updatedWins.filter(({ team }) => team.id == teams[2].team.id)[0]
+                  .wins > 2 ||
+                updatedWins.filter(
+                  ({ team }) => team.id == teams[13].team.id,
+                )[0].wins > 2 ||
+                updatedWins.filter(({ team }) => team.id == teams[6].team.id)[0]
+                  .wins > 2 ||
+                updatedWins.filter(({ team }) => team.id == teams[9].team.id)[0]
+                  .wins > 2 ||
+                updatedWins.filter(({ team }) => team.id == teams[1].team.id)[0]
+                  .wins > 2 ||
+                updatedWins.filter(
+                  ({ team }) => team.id == teams[14].team.id,
+                )[0].wins > 2) && (
                 <PlayoffsMatch
                   topTeam={null}
                   bottomTeam={updatedWins
                     .filter(
-                      ({ id }) =>
-                        id == teams[5].id ||
-                        id == teams[10].id ||
-                        id == teams[2].id ||
-                        id == teams[13].id ||
-                        id == teams[6].id ||
-                        id == teams[9].id ||
-                        id == teams[1].id ||
-                        id == teams[14].id,
+                      ({ team }) =>
+                        team.id == teams[5].team.id ||
+                        team.id == teams[10].team.id ||
+                        team.id == teams[2].team.id ||
+                        team.id == teams[13].team.id ||
+                        team.id == teams[6].team.id ||
+                        team.id == teams[9].team.id ||
+                        team.id == teams[1].team.id ||
+                        team.id == teams[14].team.id,
                     )
                     .sort((a, b) => (a.wins > b.wins ? -1 : 1))
                     .at(0)}
@@ -387,54 +471,70 @@ const PlayoffsBracket = ({ teams, updatedWins, matches }) => {
               )}
             {/* Tercer caso: ambos partidos ya se jugaron */}
             {updatedWins.length > 0 &&
-              (updatedWins.filter(({ id }) => id == teams[0].id)[0].wins > 2 ||
-                updatedWins.filter(({ id }) => id == teams[15].id)[0].wins >
-                  2 ||
-                updatedWins.filter(({ id }) => id == teams[7].id)[0].wins > 2 ||
-                updatedWins.filter(({ id }) => id == teams[8].id)[0].wins > 2 ||
-                updatedWins.filter(({ id }) => id == teams[4].id)[0].wins > 2 ||
-                updatedWins.filter(({ id }) => id == teams[11].id)[0].wins >
-                  2 ||
-                updatedWins.filter(({ id }) => id == teams[3].id)[0].wins > 2 ||
-                updatedWins.filter(({ id }) => id == teams[12].id)[0].wins >
-                  2) &&
-              (updatedWins.filter(({ id }) => id == teams[5].id)[0].wins > 2 ||
-                updatedWins.filter(({ id }) => id == teams[10].id)[0].wins >
-                  2 ||
-                updatedWins.filter(({ id }) => id == teams[2].id)[0].wins > 2 ||
-                updatedWins.filter(({ id }) => id == teams[13].id)[0].wins >
-                  2 ||
-                updatedWins.filter(({ id }) => id == teams[6].id)[0].wins > 2 ||
-                updatedWins.filter(({ id }) => id == teams[9].id)[0].wins > 2 ||
-                updatedWins.filter(({ id }) => id == teams[1].id)[0].wins > 2 ||
-                updatedWins.filter(({ id }) => id == teams[14].id)[0].wins >
-                  2) && (
+              (updatedWins.filter(({ team }) => team.id == teams[0].team.id)[0]
+                .wins > 2 ||
+                updatedWins.filter(
+                  ({ team }) => team.id == teams[15].team.id,
+                )[0].wins > 2 ||
+                updatedWins.filter(({ team }) => team.id == teams[7].team.id)[0]
+                  .wins > 2 ||
+                updatedWins.filter(({ team }) => team.id == teams[8].team.id)[0]
+                  .wins > 2 ||
+                updatedWins.filter(({ team }) => team.id == teams[4].team.id)[0]
+                  .wins > 2 ||
+                updatedWins.filter(
+                  ({ team }) => team.id == teams[11].team.id,
+                )[0].wins > 2 ||
+                updatedWins.filter(({ team }) => team.id == teams[3].team.id)[0]
+                  .wins > 2 ||
+                updatedWins.filter(
+                  ({ team }) => team.id == teams[12].team.id,
+                )[0].wins > 2) &&
+              (updatedWins.filter(({ team }) => team.id == teams[5].team.id)[0]
+                .wins > 2 ||
+                updatedWins.filter(
+                  ({ team }) => team.id == teams[10].team.id,
+                )[0].wins > 2 ||
+                updatedWins.filter(({ team }) => team.id == teams[2].team.id)[0]
+                  .wins > 2 ||
+                updatedWins.filter(
+                  ({ team }) => team.id == teams[13].team.id,
+                )[0].wins > 2 ||
+                updatedWins.filter(({ team }) => team.id == teams[6].team.id)[0]
+                  .wins > 2 ||
+                updatedWins.filter(({ team }) => team.id == teams[9].team.id)[0]
+                  .wins > 2 ||
+                updatedWins.filter(({ team }) => team.id == teams[1].team.id)[0]
+                  .wins > 2 ||
+                updatedWins.filter(
+                  ({ team }) => team.id == teams[14].team.id,
+                )[0].wins > 2) && (
                 <PlayoffsMatch
                   topTeam={updatedWins
                     .filter(
-                      ({ id }) =>
-                        id == teams[0].id ||
-                        id == teams[15].id ||
-                        id == teams[7].id ||
-                        id == teams[8].id ||
-                        id == teams[4].id ||
-                        id == teams[11].id ||
-                        id == teams[3].id ||
-                        id == teams[12].id,
+                      ({ team }) =>
+                        team.id == teams[0].team.id ||
+                        team.id == teams[15].team.id ||
+                        team.id == teams[7].team.id ||
+                        team.id == teams[8].team.id ||
+                        team.id == teams[4].team.id ||
+                        team.id == teams[11].team.id ||
+                        team.id == teams[3].team.id ||
+                        team.id == teams[12].team.id,
                     )
                     .sort((a, b) => (a.wins > b.wins ? -1 : 1))
                     .at(0)}
                   bottomTeam={updatedWins
                     .filter(
-                      ({ id }) =>
-                        id == teams[5].id ||
-                        id == teams[10].id ||
-                        id == teams[2].id ||
-                        id == teams[13].id ||
-                        id == teams[6].id ||
-                        id == teams[9].id ||
-                        id == teams[1].id ||
-                        id == teams[14].id,
+                      ({ team }) =>
+                        team.id == teams[5].team.id ||
+                        team.id == teams[10].team.id ||
+                        team.id == teams[2].team.id ||
+                        team.id == teams[13].team.id ||
+                        team.id == teams[6].team.id ||
+                        team.id == teams[9].team.id ||
+                        team.id == teams[1].team.id ||
+                        team.id == teams[14].team.id,
                     )
                     .sort((a, b) => (a.wins > b.wins ? -1 : 1))
                     .at(0)}
@@ -484,16 +584,20 @@ const PlayoffsBracket = ({ teams, updatedWins, matches }) => {
           >
             {/* Primer caso: el partido 1 está decidido, pero el 2 NO */}
             {updatedWins.length > 0 &&
-              (updatedWins.filter(({ id }) => id == teams[5].id)[0].wins > 0 ||
-                updatedWins.filter(({ id }) => id == teams[10].id)[0].wins >
-                  0) &&
-              updatedWins.filter(({ id }) => id == teams[2].id)[0].wins == 0 &&
-              updatedWins.filter(({ id }) => id == teams[13].id)[0].wins ==
-                0 && (
+              (updatedWins.filter(({ team }) => team.id == teams[5].team.id)[0]
+                .wins > 0 ||
+                updatedWins.filter(
+                  ({ team }) => team.id == teams[10].team.id,
+                )[0].wins > 0) &&
+              updatedWins.filter(({ team }) => team.id == teams[2].team.id)[0]
+                .wins == 0 &&
+              updatedWins.filter(({ team }) => team.id == teams[13].team.id)[0]
+                .wins == 0 && (
                 <PlayoffsMatch
                   topTeam={
-                    updatedWins.filter(({ id }) => id == teams[5].id)[0].wins >
-                    0
+                    updatedWins.filter(
+                      ({ team }) => team.id == teams[5].team.id,
+                    )[0].wins > 0
                       ? teams[5]
                       : teams[10]
                   }
@@ -503,16 +607,21 @@ const PlayoffsBracket = ({ teams, updatedWins, matches }) => {
               )}
             {/* Segundo caso: el partido 1 NO está decidido, pero el 2 SÍ */}
             {updatedWins.length > 0 &&
-              updatedWins.filter(({ id }) => id == teams[5].id)[0].wins == 0 &&
-              updatedWins.filter(({ id }) => id == teams[10].id)[0].wins == 0 &&
-              (updatedWins.filter(({ id }) => id == teams[2].id)[0].wins > 0 ||
-                updatedWins.filter(({ id }) => id == teams[13].id)[0].wins >
-                  0) && (
+              updatedWins.filter(({ team }) => team.id == teams[5].team.id)[0]
+                .wins == 0 &&
+              updatedWins.filter(({ team }) => team.id == teams[10].team.id)[0]
+                .wins == 0 &&
+              (updatedWins.filter(({ team }) => team.id == teams[2].team.id)[0]
+                .wins > 0 ||
+                updatedWins.filter(
+                  ({ team }) => team.id == teams[13].team.id,
+                )[0].wins > 0) && (
                 <PlayoffsMatch
                   topTeam={null}
                   bottomTeam={
-                    updatedWins.filter(({ id }) => id == teams[2].id)[0].wins >
-                    0
+                    updatedWins.filter(
+                      ({ team }) => team.id == teams[2].team.id,
+                    )[0].wins > 0
                       ? teams[2]
                       : teams[13]
                   }
@@ -521,22 +630,28 @@ const PlayoffsBracket = ({ teams, updatedWins, matches }) => {
               )}
             {/* Tercer caso: ambos partidos ya se jugaron */}
             {updatedWins.length > 0 &&
-              (updatedWins.filter(({ id }) => id == teams[5].id)[0].wins > 0 ||
-                updatedWins.filter(({ id }) => id == teams[10].id)[0].wins >
-                  0) &&
-              (updatedWins.filter(({ id }) => id == teams[2].id)[0].wins > 0 ||
-                updatedWins.filter(({ id }) => id == teams[13].id)[0].wins >
-                  0) && (
+              (updatedWins.filter(({ team }) => team.id == teams[5].team.id)[0]
+                .wins > 0 ||
+                updatedWins.filter(
+                  ({ team }) => team.id == teams[10].team.id,
+                )[0].wins > 0) &&
+              (updatedWins.filter(({ team }) => team.id == teams[2].team.id)[0]
+                .wins > 0 ||
+                updatedWins.filter(
+                  ({ team }) => team.id == teams[13].team.id,
+                )[0].wins > 0) && (
                 <PlayoffsMatch
                   topTeam={
-                    updatedWins.filter(({ id }) => id == teams[5].id)[0].wins >
-                    0
+                    updatedWins.filter(
+                      ({ team }) => team.id == teams[5].team.id,
+                    )[0].wins > 0
                       ? teams[5]
                       : teams[10]
                   }
                   bottomTeam={
-                    updatedWins.filter(({ id }) => id == teams[2].id)[0].wins >
-                    0
+                    updatedWins.filter(
+                      ({ team }) => team.id == teams[2].team.id,
+                    )[0].wins > 0
                       ? teams[2]
                       : teams[13]
                   }
@@ -556,16 +671,19 @@ const PlayoffsBracket = ({ teams, updatedWins, matches }) => {
           >
             {/* Primer caso: el partido 1 está decidido, pero el 2 NO */}
             {updatedWins.length > 0 &&
-              (updatedWins.filter(({ id }) => id == teams[6].id)[0].wins > 0 ||
-                updatedWins.filter(({ id }) => id == teams[9].id)[0].wins >
-                  0) &&
-              updatedWins.filter(({ id }) => id == teams[1].id)[0].wins == 0 &&
-              updatedWins.filter(({ id }) => id == teams[14].id)[0].wins ==
-                0 && (
+              (updatedWins.filter(({ team }) => team.id == teams[6].team.id)[0]
+                .wins > 0 ||
+                updatedWins.filter(({ team }) => team.id == teams[9].team.id)[0]
+                  .wins > 0) &&
+              updatedWins.filter(({ team }) => team.id == teams[1].team.id)[0]
+                .wins == 0 &&
+              updatedWins.filter(({ team }) => team.id == teams[14].team.id)[0]
+                .wins == 0 && (
                 <PlayoffsMatch
                   topTeam={
-                    updatedWins.filter(({ id }) => id == teams[6].id)[0].wins >
-                    0
+                    updatedWins.filter(
+                      ({ team }) => team.id == teams[6].team.id,
+                    )[0].wins > 0
                       ? teams[6]
                       : teams[9]
                   }
@@ -575,16 +693,21 @@ const PlayoffsBracket = ({ teams, updatedWins, matches }) => {
               )}
             {/* Segundo caso: el partido 1 NO está decidido, pero el 2 SÍ */}
             {updatedWins.length > 0 &&
-              updatedWins.filter(({ id }) => id == teams[6].id)[0].wins == 0 &&
-              updatedWins.filter(({ id }) => id == teams[9].id)[0].wins == 0 &&
-              (updatedWins.filter(({ id }) => id == teams[1].id)[0].wins > 0 ||
-                updatedWins.filter(({ id }) => id == teams[14].id)[0].wins >
-                  0) && (
+              updatedWins.filter(({ team }) => team.id == teams[6].team.id)[0]
+                .wins == 0 &&
+              updatedWins.filter(({ team }) => team.id == teams[9].team.id)[0]
+                .wins == 0 &&
+              (updatedWins.filter(({ team }) => team.id == teams[1].team.id)[0]
+                .wins > 0 ||
+                updatedWins.filter(
+                  ({ team }) => team.id == teams[14].team.id,
+                )[0].wins > 0) && (
                 <PlayoffsMatch
                   topTeam={null}
                   bottomTeam={
-                    updatedWins.filter(({ id }) => id == teams[1].id)[0].wins >
-                    0
+                    updatedWins.filter(
+                      ({ team }) => team.id == teams[1].team.id,
+                    )[0].wins > 0
                       ? teams[1]
                       : teams[14]
                   }
@@ -593,22 +716,27 @@ const PlayoffsBracket = ({ teams, updatedWins, matches }) => {
               )}
             {/* Tercer caso: ambos partidos ya se jugaron */}
             {updatedWins.length > 0 &&
-              (updatedWins.filter(({ id }) => id == teams[6].id)[0].wins > 0 ||
-                updatedWins.filter(({ id }) => id == teams[9].id)[0].wins >
-                  0) &&
-              (updatedWins.filter(({ id }) => id == teams[1].id)[0].wins > 0 ||
-                updatedWins.filter(({ id }) => id == teams[14].id)[0].wins >
-                  0) && (
+              (updatedWins.filter(({ team }) => team.id == teams[6].team.id)[0]
+                .wins > 0 ||
+                updatedWins.filter(({ team }) => team.id == teams[9].team.id)[0]
+                  .wins > 0) &&
+              (updatedWins.filter(({ team }) => team.id == teams[1].team.id)[0]
+                .wins > 0 ||
+                updatedWins.filter(
+                  ({ team }) => team.id == teams[14].team.id,
+                )[0].wins > 0) && (
                 <PlayoffsMatch
                   topTeam={
-                    updatedWins.filter(({ id }) => id == teams[6].id)[0].wins >
-                    0
+                    updatedWins.filter(
+                      ({ team }) => team.id == teams[6].team.id,
+                    )[0].wins > 0
                       ? teams[6]
                       : teams[9]
                   }
                   bottomTeam={
-                    updatedWins.filter(({ id }) => id == teams[1].id)[0].wins >
-                    0
+                    updatedWins.filter(
+                      ({ team }) => team.id == teams[1].team.id,
+                    )[0].wins > 0
                       ? teams[1]
                       : teams[14]
                   }
@@ -633,25 +761,32 @@ const PlayoffsBracket = ({ teams, updatedWins, matches }) => {
           >
             {/* Primer caso: el equipo de arriba está decidido, pero el de abajo NO */}
             {updatedWins.length > 0 &&
-              (updatedWins.filter(({ id }) => id == teams[5].id)[0].wins > 1 ||
-                updatedWins.filter(({ id }) => id == teams[10].id)[0].wins >
-                  1 ||
-                updatedWins.filter(({ id }) => id == teams[2].id)[0].wins > 1 ||
-                updatedWins.filter(({ id }) => id == teams[13].id)[0].wins >
-                  1) &&
-              updatedWins.filter(({ id }) => id == teams[6].id)[0].wins <= 1 &&
-              updatedWins.filter(({ id }) => id == teams[9].id)[0].wins <= 1 &&
-              updatedWins.filter(({ id }) => id == teams[1].id)[0].wins <= 1 &&
-              updatedWins.filter(({ id }) => id == teams[14].id)[0].wins <=
-                1 && (
+              (updatedWins.filter(({ team }) => team.id == teams[5].team.id)[0]
+                .wins > 1 ||
+                updatedWins.filter(
+                  ({ team }) => team.id == teams[10].team.id,
+                )[0].wins > 1 ||
+                updatedWins.filter(({ team }) => team.id == teams[2].team.id)[0]
+                  .wins > 1 ||
+                updatedWins.filter(
+                  ({ team }) => team.id == teams[13].team.id,
+                )[0].wins > 1) &&
+              updatedWins.filter(({ team }) => team.id == teams[6].team.id)[0]
+                .wins <= 1 &&
+              updatedWins.filter(({ team }) => team.id == teams[9].team.id)[0]
+                .wins <= 1 &&
+              updatedWins.filter(({ team }) => team.id == teams[1].team.id)[0]
+                .wins <= 1 &&
+              updatedWins.filter(({ team }) => team.id == teams[14].team.id)[0]
+                .wins <= 1 && (
                 <PlayoffsMatch
                   topTeam={updatedWins
                     .filter(
-                      ({ id }) =>
-                        id == teams[5].id ||
-                        id == teams[10].id ||
-                        id == teams[2].id ||
-                        id == teams[13].id,
+                      ({ team }) =>
+                        team.id == teams[5].team.id ||
+                        team.id == teams[10].team.id ||
+                        team.id == teams[2].team.id ||
+                        team.id == teams[13].team.id,
                     )
                     .sort((a, b) => (a.wins > b.wins ? -1 : 1))
                     .at(0)}
@@ -661,24 +796,32 @@ const PlayoffsBracket = ({ teams, updatedWins, matches }) => {
               )}
             {/* Segundo caso: el partido 1 NO está decidido, pero el 2 SÍ */}
             {updatedWins.length > 0 &&
-              updatedWins.filter(({ id }) => id == teams[5].id)[0].wins <= 1 &&
-              updatedWins.filter(({ id }) => id == teams[10].id)[0].wins <= 1 &&
-              updatedWins.filter(({ id }) => id == teams[2].id)[0].wins <= 1 &&
-              updatedWins.filter(({ id }) => id == teams[13].id)[0].wins <= 1 &&
-              (updatedWins.filter(({ id }) => id == teams[6].id)[0].wins > 1 ||
-                updatedWins.filter(({ id }) => id == teams[9].id)[0].wins > 1 ||
-                updatedWins.filter(({ id }) => id == teams[1].id)[0].wins > 1 ||
-                updatedWins.filter(({ id }) => id == teams[14].id)[0].wins >
-                  1) && (
+              updatedWins.filter(({ team }) => team.id == teams[5].team.id)[0]
+                .wins <= 1 &&
+              updatedWins.filter(({ team }) => team.id == teams[10].team.id)[0]
+                .wins <= 1 &&
+              updatedWins.filter(({ team }) => team.id == teams[2].team.id)[0]
+                .wins <= 1 &&
+              updatedWins.filter(({ team }) => team.id == teams[13].team.id)[0]
+                .wins <= 1 &&
+              (updatedWins.filter(({ team }) => team.id == teams[6].team.id)[0]
+                .wins > 1 ||
+                updatedWins.filter(({ team }) => team.id == teams[9].team.id)[0]
+                  .wins > 1 ||
+                updatedWins.filter(({ team }) => team.id == teams[1].team.id)[0]
+                  .wins > 1 ||
+                updatedWins.filter(
+                  ({ team }) => team.id == teams[14].team.id,
+                )[0].wins > 1) && (
                 <PlayoffsMatch
                   topTeam={null}
                   bottomTeam={updatedWins
                     .filter(
-                      ({ id }) =>
-                        id == teams[6].id ||
-                        id == teams[9].id ||
-                        id == teams[1].id ||
-                        id == teams[14].id,
+                      ({ team }) =>
+                        team.id == teams[6].id ||
+                        team.id == teams[9].id ||
+                        team.id == teams[1].id ||
+                        team.id == teams[14].id,
                     )
                     .sort((a, b) => (a.wins > b.wins ? -1 : 1))
                     .at(0)}
@@ -687,35 +830,43 @@ const PlayoffsBracket = ({ teams, updatedWins, matches }) => {
               )}
             {/* Tercer caso: ambos partidos ya se jugaron */}
             {updatedWins.length > 0 &&
-              (updatedWins.filter(({ id }) => id == teams[5].id)[0].wins > 1 ||
-                updatedWins.filter(({ id }) => id == teams[10].id)[0].wins >
-                  1 ||
-                updatedWins.filter(({ id }) => id == teams[2].id)[0].wins > 1 ||
-                updatedWins.filter(({ id }) => id == teams[13].id)[0].wins >
-                  1) &&
-              (updatedWins.filter(({ id }) => id == teams[6].id)[0].wins > 1 ||
-                updatedWins.filter(({ id }) => id == teams[9].id)[0].wins > 1 ||
-                updatedWins.filter(({ id }) => id == teams[1].id)[0].wins > 1 ||
-                updatedWins.filter(({ id }) => id == teams[14].id)[0].wins >
-                  1) && (
+              (updatedWins.filter(({ team }) => team.id == teams[5].team.id)[0]
+                .wins > 1 ||
+                updatedWins.filter(
+                  ({ team }) => team.id == teams[10].team.id,
+                )[0].wins > 1 ||
+                updatedWins.filter(({ team }) => team.id == teams[2].team.id)[0]
+                  .wins > 1 ||
+                updatedWins.filter(
+                  ({ team }) => team.id == teams[13].team.id,
+                )[0].wins > 1) &&
+              (updatedWins.filter(({ team }) => team.id == teams[6].team.id)[0]
+                .wins > 1 ||
+                updatedWins.filter(({ team }) => team.id == teams[9].team.id)[0]
+                  .wins > 1 ||
+                updatedWins.filter(({ team }) => team.id == teams[1].team.id)[0]
+                  .wins > 1 ||
+                updatedWins.filter(
+                  ({ team }) => team.id == teams[14].team.id,
+                )[0].wins > 1) && (
                 <PlayoffsMatch
                   topTeam={updatedWins
                     .filter(
-                      ({ id }) =>
-                        id == teams[5].id ||
-                        id == teams[10].id ||
-                        id == teams[2].id ||
-                        id == teams[13].id,
+                      ({ team }) =>
+                        team.id == teams[5].team.id ||
+                        team.id == teams[10].team.id ||
+                        team.id == teams[2].team.id ||
+                        team.id == teams[13].team.id,
                     )
                     .sort((a, b) => (a.wins > b.wins ? -1 : 1))
                     .at(0)}
                   bottomTeam={updatedWins
                     .filter(
-                      ({ id }) =>
-                        id == teams[6].id ||
-                        id == teams[9].id ||
-                        id == teams[1].id ||
-                        id == teams[14].id,
+                      ({ team }) =>
+                        team.id == teams[6].team.id ||
+                        team.id == teams[9].team.id ||
+                        team.id == teams[1].team.id ||
+                        team.id == teams[14].team.id,
                     )
                     .sort((a, b) => (a.wins > b.wins ? -1 : 1))
                     .at(0)}

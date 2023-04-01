@@ -29,6 +29,13 @@ const MatchesTable = ({ data }) => {
               </TableCell>
             </>
           )}
+          {isSm && (
+            <>
+              <TableCell sx={{ color: '#fff', fontWeight: 700 }} align="center">
+                Tipo
+              </TableCell>
+            </>
+          )}
           <TableCell sx={{ color: '#fff', fontWeight: 700 }} align="center">
             Equipo 1
           </TableCell>
@@ -52,6 +59,7 @@ const MatchesTable = ({ data }) => {
             playerP2,
             teamP2,
             scoreP2,
+            type,
           }) => (
             <TableRow
               key={_id}
@@ -81,6 +89,34 @@ const MatchesTable = ({ data }) => {
                     scope="row"
                     align="center"
                   >{`${tournament.name}`}</TableCell>
+                </>
+              )}
+              {isSm && (
+                <>
+                  {type == 'playin' && (
+                    <TableCell
+                      sx={{ color: '#fff' }}
+                      component="th"
+                      scope="row"
+                      align="center"
+                    >{`${'P-in'}`}</TableCell>
+                  )}
+                  {type == 'playoff' && (
+                    <TableCell
+                      sx={{ color: '#fff' }}
+                      component="th"
+                      scope="row"
+                      align="center"
+                    >{`${'P-off'}`}</TableCell>
+                  )}
+                  {type == 'regular' && (
+                    <TableCell
+                      sx={{ color: '#fff' }}
+                      component="th"
+                      scope="row"
+                      align="center"
+                    >{`${'Reg'}`}</TableCell>
+                  )}
                 </>
               )}
               {teamP1.name ? (

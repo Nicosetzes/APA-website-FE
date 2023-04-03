@@ -7,9 +7,6 @@ import LeaguesBoxContainer from '../LeaguesBoxContainer'
 
 const TournamentSettings = ({ format }) => {
   const [data, setData] = useState()
-  // const [teams, setTeams] = useState([])
-  const [selectedPlayers, setSelectedPlayers] = useState([])
-  const [selectedTeams, setSelectedTeams] = useState([])
 
   console.log(format)
 
@@ -37,13 +34,17 @@ const TournamentSettings = ({ format }) => {
     return (
       <StyledTournamentSettings>
         <div>Formato elegido: {format}</div>
-        <div>
+        <div style={{ margin: '1rem auto' }}>
           Jugadores:
           {players.map(({ id, name }) => (
             <div key={id}>{name}</div>
           ))}
         </div>
-        <LeaguesBoxContainer leagues={leagues} />
+        <LeaguesBoxContainer
+          format={format}
+          players={players}
+          leagues={leagues}
+        />
       </StyledTournamentSettings>
     )
   } else {

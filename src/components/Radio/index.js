@@ -1,27 +1,27 @@
 import { useState } from 'react'
-import { StyledCheckbox } from './styled'
+import { StyledRadio } from './styled'
 
-const Checkbox = ({ id, value, name, checked, img, label, ...props }) => {
+const Radio = ({ id, value, checked, img, label, ...props }) => {
   const defaultChecked = checked ? checked : false
   const [isChecked, setIsChecked] = useState(defaultChecked)
 
   return (
-    <StyledCheckbox>
+    <StyledRadio>
       {img && <img src={img} />}
-      <label htmlFor={`custom-checkbox-${id}`}>{label}</label>
+      <label htmlFor={`custom-radio-${id}`}>{label}</label>
       <input
         id={id}
         value={value}
         name={name}
         img={img}
-        type="checkbox"
+        type="radio"
         checked={isChecked}
         onChange={() => setIsChecked((prev) => !prev)}
         {...props}
       />
       {/* <p>{isChecked ? 'Selected' : 'Unchecked'}</p> */}
-    </StyledCheckbox>
+    </StyledRadio>
   )
 }
 
-export default Checkbox
+export default Radio

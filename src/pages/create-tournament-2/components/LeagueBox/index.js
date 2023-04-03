@@ -2,10 +2,21 @@ import { useState } from 'react'
 import { StyledLeagueBox } from './styled'
 
 const LeagueBox = ({ id, name, country, handler }) => {
+  const [isLeagueActive, setIsLeagueActive] = useState(false)
+
+  const isLeagueActiveOnClickHandler = () => {
+    setIsLeagueActive(!isLeagueActive)
+  }
+
   return (
-    <StyledLeagueBox>
+    <StyledLeagueBox
+      onClick={() => isLeagueActiveOnClickHandler(event)}
+      active={isLeagueActive ? true : false}
+    >
       <div id={id} onClick={handler}>
-        <span>{name}</span>
+        <span id={id}>
+          {name} ({country})
+        </span>
       </div>
     </StyledLeagueBox>
   )

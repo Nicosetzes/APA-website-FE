@@ -34,10 +34,21 @@ const TournamentSettings = ({ format }) => {
     return (
       <StyledTournamentSettings>
         <div>Formato elegido: {format}</div>
-        <div style={{ margin: '1rem auto' }}>
+        <div
+          style={{
+            backgroundColor: '#1f3742',
+            color: '#fff',
+            display: 'flex',
+            justifyContent: 'center',
+            margin: '1rem auto',
+            padding: '0.75rem',
+          }}
+        >
           Jugadores:
           {players.map(({ id, name }) => (
-            <div key={id}>{name}</div>
+            <div key={id} style={{ margin: '0 0.5rem' }}>
+              {name}
+            </div>
           ))}
         </div>
         <LeaguesBoxContainer

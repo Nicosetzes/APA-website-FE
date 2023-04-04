@@ -3,11 +3,16 @@ import { api, database } from './../../../../api'
 import { StyledLeaguesBoxContainer } from './styled'
 import LeagueBox from './../LeagueBox'
 import TeamBox from '../TeamBox'
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
 import axios from 'axios'
 import TeamAssignmentBox from '../TeamAssignmentBox'
 
 const LeaguesBoxContainer = ({ format, players, leagues }) => {
+  const MySwal = withReactContent(Swal)
+
   const [tournamentName, setTournamentName] = useState('')
+  const [tournamentImg, setTournamentImg] = useState(null)
   const [selectedLeagues, setSelectedLeagues] = useState([])
   const [availableTeams, setAvailableTeams] = useState([])
   const [selectedTeams, setSelectedTeams] = useState([])
@@ -19,6 +24,27 @@ const LeaguesBoxContainer = ({ format, players, leagues }) => {
     console.log(e.target.value)
     setTournamentName(e.target.value)
   }
+
+  const onChangeTournamentImg = (e) => {
+    setTournamentImg(e.target.files[0])
+    console.log(e.target.files)
+  }
+
+  // const uploadTournamentImg = () => {
+  //   // Create an object of formData
+  //   const formData = new FormData()
+
+  //   // Update the formData object
+  //   formData.append('tournamentImg', tournamentImg, tournamentImg.name)
+
+  //   // Details of the uploaded file
+  //   console.log(tournamentImg)
+
+  //   return formData
+  //   // Request made to the backend api
+  //   // Send formData object
+  //   // axios.post('api/uploadfile', formData)
+  // }
 
   const updateAvailableTeams = (id) => {
     const currentLeagueIds = availableTeams.map(
@@ -110,14 +136,152 @@ const LeaguesBoxContainer = ({ format, players, leagues }) => {
   }
 
   const createTournament = () => {
-    console.log('name')
-    console.log(tournamentName)
-    console.log('format')
-    console.log(format)
-    console.log('players')
-    console.log(players)
-    console.log('Equipos definitivos')
-    console.log(definitiveTeamsForTournament)
+    MySwal.fire({
+      title: 'Nuevo torneo',
+      html: (
+        <div>
+          <div>Está generando el siguiente torneo:</div>
+          <br />
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'flex-start',
+            }}
+          >
+            <div>
+              Nombre: <span style={{ fontWeight: 700 }}>{tournamentName}</span>
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                margin: '0.5rem 0',
+              }}
+            >
+              Jugadores:
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+              >
+                {players.map(({ name, id }, index) => (
+                  <span key={id}>
+                    {index + 1}.
+                    <span style={{ fontWeight: 700, margin: '0 0.25rem' }}>
+                      {name}
+                    </span>
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                margin: '0 auto',
+              }}
+            >
+              <div>Equipos: </div>
+              <div
+                style={{
+                  maxWidth: '300px',
+                }}
+              >
+                {definitiveTeamsForTournament.map(({ id, name }) => (
+                  <span
+                    key={id}
+                    style={{ fontWeight: '700', margin: '0 0.25rem' }}
+                  >
+                    {name}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div style={{ margin: '0.5rem 0' }}>
+              Cantidad de equipos:{' '}
+              {
+                <span style={{ fontWeight: 700, margin: '1rem 0' }}>
+                  {definitiveTeamsForTournament.length}
+                </span>
+              }
+            </div>
+          </div>
+        </div>
+      ),
+      color: '#000',
+      background: 'rgb(240 240 245)',
+      icon: 'info',
+      showCancelButton: true,
+      showConfirmButton: true,
+      allowOutsideClick: false,
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        MySwal.fire({
+          title: 'El torneo ha sido creado con éxito',
+          text: 'Será redirigido en breve...',
+          icon: 'success',
+          timer: 3000,
+          timerProgressBar: true,
+          showCancelButton: false,
+          showConfirmButton: false,
+          allowOutsideClick: false,
+        })
+
+        const name = tournamentName
+
+        const teams = definitiveTeamsForTournament
+
+        console.log('TORNEO CREADO CON ÉXITO')
+
+        // const img = uploadTournamentImg()
+
+        // Create an object of formData
+        const formData = new FormData()
+
+        // Update the formData object
+        formData.append('name', name)
+        formData.append('file', tournamentImg)
+        formData.append('apa_id', null) // Para utilizar formatos más adelante //
+
+        // Details of the uploaded file
+        // console.log(tournamentImg)
+
+        // console.log(Object.fromEntries(formData))
+
+        // Primero, hago la llamada POST para generar el torneo en football-database //
+
+        axios
+          .post(`${database}/tournaments`, formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          })
+          .then((response) => {
+            console.log(response.data)
+          })
+
+        // Segundo, hago la llamada POST para generar el torneo en apa-website-be //
+
+        let apa_id = null
+
+        axios
+          .post(`${api}/tournaments`, { name, format, apa_id, players, teams })
+          .then((response) => {
+            console.log(response.data)
+          })
+      } else {
+        MySwal.fire({
+          title: 'Cancelado',
+          text: 'La creación del torneo ha sido detenida, vuelva a intentarlo',
+          icon: 'error',
+          showCancelButton: false,
+        })
+      }
+    })
+
     // if (
     //   tournamentName != '' &&
     //   format &&
@@ -149,6 +313,28 @@ const LeaguesBoxContainer = ({ format, players, leagues }) => {
               onChange={onChangeTitle}
             />
           </div>{' '}
+          {tournamentImg ? (
+            <div>
+              <p>Nombre del archivo: {tournamentImg.name}</p>
+
+              <p>Tipo de Archivo: {tournamentImg.type}</p>
+
+              <p>
+                Última modificación:{' '}
+                {tournamentImg.lastModifiedDate.toDateString()}
+              </p>
+
+              {/* <button onClick={uploadTournamentImg}>Upload!</button> */}
+            </div>
+          ) : (
+            <div>
+              <input
+                name="files"
+                type="file"
+                onChange={onChangeTournamentImg}
+              />
+            </div>
+          )}
         </div>
         <div className="leagues-box-title">Ligas</div>
         <div>
@@ -159,7 +345,11 @@ const LeaguesBoxContainer = ({ format, players, leagues }) => {
             </span>
           ))}
         </div>
-        <div style={{ margin: '1rem 0' }}>
+        <div
+          style={{
+            margin: '1rem 0',
+          }}
+        >
           Equipos seleccionados:{' '}
           {selectedTeams.map(({ id, name }) => (
             <span key={id} style={{ margin: '1rem' }}>

@@ -31,19 +31,15 @@ const Standings = () => {
   }
 
   const goToSpecificFixture = (id, params) => {
-    if (isNaN(Number(params))) {
-      // El query es de player;
-      navigate({
-        pathname: `/tournaments/${id}/fixture`,
-        search: `?${createSearchParams(playerParams(params))}`,
-      })
-    } else {
-      // El query es de team (numérico, es el id);
-      navigate({
-        pathname: `/tournaments/${id}/fixture`,
-        search: `?${createSearchParams(teamParams(params))}`,
-      })
-    }
+    navigate(
+      {
+        pathname: `/tournaments/${id}/matches`,
+        search: `?${createSearchParams(
+          isNaN(Number(params)) ? playerParams(params) : teamParams(params),
+        )}`,
+      },
+      { state: { hola: 'hola' } }, // Send information from origin to destination //
+    )
   }
 
   const getTournamentsData = () => {
@@ -100,6 +96,7 @@ const Standings = () => {
         </div>
         <TableContainer component={Paper}>
           <StandingsTable
+            tournament={tournament}
             standings={sortedStandings}
             onHandle={goToSpecificFixture}
           />

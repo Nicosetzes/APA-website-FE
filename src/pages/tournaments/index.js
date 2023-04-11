@@ -55,19 +55,19 @@ const Tournaments = () => {
           Torneos activos
         </div>
         <StyledTournamentsContainer>
-          {activeTournaments.map((tournament, index) => (
+          {activeTournaments.map(({ _id, name, apa_id, type }) => (
             <div
               className="container__card"
-              key={tournament._id}
+              key={_id}
               sx={{ maxWidth: 250, display: 'flex', margin: '2rem auto' }}
             >
-              <Link to={`/tournaments/${tournament._id}`}>
+              <Link to={`/tournaments/${_id}`}>
                 <CardActionArea>
                   <CardMedia
                     component="img"
                     height="350"
-                    image={`${database}/tournaments/logos/${tournament.apa_id}`}
-                    alt={`${tournament.name}`}
+                    image={`${database}/tournaments/logos/${apa_id}`}
+                    alt={`${name}`}
                   />
                   <CardContent>
                     <Typography
@@ -76,7 +76,7 @@ const Tournaments = () => {
                       component="div"
                       sx={{ textAlign: 'center' }}
                     >
-                      {tournament.name}
+                      {name}
                     </Typography>
                   </CardContent>
                 </CardActionArea>
@@ -95,16 +95,16 @@ const Tournaments = () => {
           Torneos finalizados
         </div>
         <StyledTournamentsContainer>
-          {inactiveTournaments.map((tournament) => (
-            <div className="container__card" key={tournament._id}>
-              {tournament.type == 'world_cup' ? (
+          {inactiveTournaments.map(({ _id, name, apa_id, type }) => (
+            <div className="container__card" key={_id}>
+              {type == 'world_cup' ? (
                 <Link to={`/world-cup`}>
                   <CardActionArea>
                     <CardMedia
                       component="img"
                       height="350"
-                      image={`${database}/tournaments/logos/${tournament.apa_id}`}
-                      alt={`${tournament.name}`}
+                      image={`${database}/tournaments/logos/${apa_id}`}
+                      alt={`${name}`}
                     />
                     <CardContent>
                       <Typography
@@ -113,19 +113,19 @@ const Tournaments = () => {
                         component="div"
                         sx={{ textAlign: 'center' }}
                       >
-                        {tournament.name}
+                        {name}
                       </Typography>
                     </CardContent>
                   </CardActionArea>
                 </Link>
               ) : (
-                <Link to={`/tournaments/${tournament._id}`}>
+                <Link to={`/tournaments/${_id}`}>
                   <CardActionArea>
                     <CardMedia
                       component="img"
                       height="350"
-                      image={`${database}/tournaments/logos/${tournament.apa_id}`}
-                      alt={`${tournament.name}`}
+                      image={`${database}/tournaments/logos/${apa_id}`}
+                      alt={`${name}`}
                     />
                     <CardContent>
                       <Typography
@@ -134,7 +134,7 @@ const Tournaments = () => {
                         component="div"
                         sx={{ textAlign: 'center' }}
                       >
-                        {tournament.name}
+                        {name}
                       </Typography>
                     </CardContent>
                   </CardActionArea>

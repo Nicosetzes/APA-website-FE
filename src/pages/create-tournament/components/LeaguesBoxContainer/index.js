@@ -243,8 +243,11 @@ const LeaguesBoxContainer = ({ format, players, leagues }) => {
 
         // Update the formData object
         formData.append('name', name)
-        formData.append('file', tournamentImg)
+        formData.append('format', format)
+        formData.append('players', JSON.stringify(players)) // It's needed so it can be processed by node in BE //
+        formData.append('teams', JSON.stringify(teams)) // It's needed so it can be processed by node in BE //
         formData.append('apa_id', null) // Para utilizar formatos más adelante //
+        formData.append('file', tournamentImg)
 
         // Details of the uploaded file
         // console.log(tournamentImg)
@@ -253,22 +256,29 @@ const LeaguesBoxContainer = ({ format, players, leagues }) => {
 
         // Primero, hago la llamada POST para generar el torneo en football-database //
 
+        // axios
+        //   .post(`${database}/tournaments`, formData, {
+        //     headers: {
+        //       'Content-Type': 'multipart/form-data',
+        //     },
+        //   })
+        //   .then((response) => {
+        //     console.log(response.data)
+        //   })
+        //   .catch((err) => {
+        //     console.log(err)
+        //   })
+
+        // Segundo, hago la llamada POST para generar el torneo en apa-website-be //
+
+        // let apa_id = null
+
         axios
-          .post(`${database}/tournaments`, formData, {
+          .post(`${api}/tournaments`, formData, {
             headers: {
               'Content-Type': 'multipart/form-data',
             },
           })
-          .then((response) => {
-            console.log(response.data)
-          })
-
-        // Segundo, hago la llamada POST para generar el torneo en apa-website-be //
-
-        let apa_id = null
-
-        axios
-          .post(`${api}/tournaments`, { name, format, apa_id, players, teams })
           .then((response) => {
             console.log(response.data)
           })

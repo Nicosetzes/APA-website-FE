@@ -1,5 +1,11 @@
 import { useState, useEffect } from 'react'
-import { Link, useParams, useSearchParams, useNavigate } from 'react-router-dom'
+import {
+  Link,
+  useParams,
+  useSearchParams,
+  useNavigate,
+  useLocation,
+} from 'react-router-dom'
 import { useFixture } from '../../context/FixtureContext'
 import FixtureContainer from './components/FixtureContainer'
 import { api, database } from './../../api'
@@ -12,11 +18,19 @@ import Switch from '@mui/material/Switch'
 import { Oval } from 'react-loader-spinner'
 
 const FixtureId = () => {
+  const location = useLocation()
+
+  console.log(location.state)
+
   const { tournament } = useParams()
 
-  const navigate = useNavigate()
+  // const navigate = useNavigate()
 
   const fixture = useFixture()
+
+  const [searchParams] = useSearchParams()
+  // console.log(searchParams.get('player')) // ▶ URLSearchParams {}
+  const teamQuery = searchParams.get('team') // ▶ URLSearchParams {}
 
   // const [players, setPlayers] = useState()
 
@@ -89,7 +103,8 @@ const FixtureId = () => {
         const matches = fixture.originalFixture
         const filteredFixture = matches.filter(
           ({ teamP1, teamP2 }) =>
-            teamP1.id == selectedTeam || teamP2.id == selectedTeam,
+            teamP1.id == (selectedTeam || teamQuery) ||
+            teamP2.id == (selectedTeam || teamQuery),
         )
         console.log(filteredFixture)
         fixture.updateFixture(filteredFixture)

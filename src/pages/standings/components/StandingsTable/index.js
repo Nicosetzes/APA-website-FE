@@ -7,13 +7,14 @@ import TableRow from '@mui/material/TableRow'
 import ScoreBox from './../../../../components/ScoreBox'
 import { database } from './../../../../api'
 
-const StandingsTable = ({ standings, onHandle }) => {
+const StandingsTable = ({ tournament, standings, onHandle }) => {
   const isL = useMediaQuery({ query: '(min-width: 992px)' })
   const isM = useMediaQuery({ query: '(min-width: 768px)' })
   const isSm = useMediaQuery({ query: '(min-width: 500px)' })
   const isXS = useMediaQuery({ query: '(min-width: 400px)' })
 
-  console.log(standings)
+  // console.log(tournament)
+  // console.log(standings)
 
   return (
     <StyledTable
@@ -101,7 +102,7 @@ const StandingsTable = ({ standings, onHandle }) => {
               <TableCell component="th" scope="row">
                 <div
                   className="teamAndLogoWrapper"
-                  // onClick={() => onHandle(tournament.tournamentId, team.id)}
+                  onClick={() => onHandle(tournament, team.id)}
                 >
                   <img src={`${database}/logos/${team.id}`} alt={team.name} />
                   {isM

@@ -1,18 +1,22 @@
 import { useState, useEffect } from 'react'
 import { api, database } from './../../api'
 import axios from 'axios'
-import CountryContainer from './components/CountryContainer'
 import { Oval } from 'react-loader-spinner'
 import { Link } from 'react-router-dom'
 
+import FormatsContainer from './components/FormatsContainer'
+import PreviousTournamentsContainer from './components/PreviousTournamentsContainer'
+
 const CreateTournament = () => {
   const [tournamentData, setTournamentData] = useState()
+  //   const [tournamentFormat, setTournamentFormat] = useState()
 
   const getTournamentData = () => {
     const players = axios.get(`${api}/users`)
     const leagues = axios.get(`${database}/leagues`)
+    const previousTournaments = axios.get(`${database}/tournaments`)
 
-    Promise.all([players, leagues]).then((values) => {
+    Promise.all([leagues, players, previousTournaments]).then((values) => {
       const data = values.map((response) => response.data)
       setTournamentData(data)
     })
@@ -23,32 +27,17 @@ const CreateTournament = () => {
   }, [])
 
   if (tournamentData) {
-    const players = tournamentData[0]
-    const countries = tournamentData[1]
+    const previousTournaments = tournamentData[2]
+    console.log(previousTournaments)
 
     return (
       <>
-        <div
-          style={{
-            display: 'flex',
-            margin: '2rem auto',
-            justifyContent: 'center',
-          }}
-        >
-          <Link to={`world-cup`} style={{ fontSize: '1.25rem' }}>
-            Generar Copa del Mundo 2022
-          </Link>
-        </div>
-        <div
-          style={{
-            display: 'flex',
-            margin: '2rem auto',
-            justifyContent: 'center',
-          }}
-        >
-          Crear torneo
-        </div>
-        <CountryContainer countries={countries} players={players} />
+        <FormatsContainer database={database} />
+
+        <PreviousTournamentsContainer
+          database={database}
+          tournaments={previousTournaments}
+        />
       </>
     )
   } else {

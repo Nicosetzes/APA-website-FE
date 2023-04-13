@@ -38,7 +38,7 @@ const Standings = () => {
           isNaN(Number(params)) ? playerParams(params) : teamParams(params),
         )}`,
       },
-      { state: { hola: 'hola' } }, // Send information from origin to destination //
+      // { state: { hola: 'hola' } }, // Send information from origin to destination //
     )
   }
 

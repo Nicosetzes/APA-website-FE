@@ -14,23 +14,43 @@ import { motion } from 'framer-motion'
 import Swal from 'sweetalert2'
 import FormGroup from '@mui/material/FormGroup'
 import FormControlLabel from '@mui/material/FormControlLabel'
+import Pagination from '@mui/material/Pagination'
+import Stack from '@mui/material/Stack'
 import Switch from '@mui/material/Switch'
 import { Oval } from 'react-loader-spinner'
 
 const FixtureId = () => {
-  const location = useLocation()
+  // const location = useLocation()
 
-  console.log(location.state)
+  // console.log(location.state)
+
+  // const { team } = location.state
+
+  // console.log(team)
+
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  const handlePageChange = (event, value) => {
+    // Second param (value) is the page that's been clicked! //
+    const player = searchParams.get('player')
+    const team = searchParams.get('team')
+    if (player && team) setSearchParams({ page: value, player, team })
+    else if (player && !team) setSearchParams({ page: value, player })
+    else if (!player && team) setSearchParams({ page: value, team })
+    else setSearchParams({ page: value })
+
+    // If I don't do it like this, the team and player params are erased //
+  }
+
+  // console.log(searchParams.get('page'))
+  // console.log(searchParams.get('player'))
+  // console.log(searchParams.get('team'))
 
   const { tournament } = useParams()
 
   // const navigate = useNavigate()
 
   const fixture = useFixture()
-
-  const [searchParams] = useSearchParams()
-  // console.log(searchParams.get('player')) // ▶ URLSearchParams {}
-  const teamQuery = searchParams.get('team') // ▶ URLSearchParams {}
 
   // const [players, setPlayers] = useState()
 
@@ -45,10 +65,101 @@ const FixtureId = () => {
       },
     )
 
-    const allMatches = axios.get(`${api}/tournaments/${tournament}/matches`, {
-      withCredentials: true,
-      credentials: 'include',
-    })
+    const page = searchParams.get('page')
+    // const player = searchParams.get('player')
+    const team = searchParams.get('team')
+
+    let allMatches
+
+    // if (page && player && team)
+    //   allMatches = axios.get(
+    //     `${api}/tournaments/${tournament}/matches?page=${page}&player=${player}&team=${team}`,
+    //     {
+    //       withCredentials: true,
+    //       credentials: 'include',
+    //     },
+    //   )
+    // else if (page && player && !team)
+    //   allMatches = axios.get(
+    //     `${api}/tournaments/${tournament}/matches?page=${page}&player=${player}`,
+    //     {
+    //       withCredentials: true,
+    //       credentials: 'include',
+    //     },
+    //   )
+    // else if (page && !player && team) {
+    //   console.log('hola')
+    //   allMatches = axios.get(
+    //     `${api}/tournaments/${tournament}/matches?page=${page}&team=${team}`,
+    //     {
+    //       withCredentials: true,
+    //       credentials: 'include',
+    //     },
+    //   )
+    // } else if (!page && player && team)
+    //   allMatches = axios.get(
+    //     `${api}/tournaments/${tournament}/matches?player=${player}&team=${team}`,
+    //     {
+    //       withCredentials: true,
+    //       credentials: 'include',
+    //     },
+    //   )
+    // else if (page && !player && !team)
+    //   allMatches = axios.get(
+    //     `${api}/tournaments/${tournament}/matches?page=${page}`,
+    //     {
+    //       withCredentials: true,
+    //       credentials: 'include',
+    //     },
+    //   )
+    // else if (!page && player && !team)
+    //   allMatches = axios.get(
+    //     `${api}/tournaments/${tournament}/matches?player=${player}`,
+    //     {
+    //       withCredentials: true,
+    //       credentials: 'include',
+    //     },
+    //   )
+    // else if (!page && !player && team)
+    //   allMatches = axios.get(
+    //     `${api}/tournaments/${tournament}/matches?team=${team}`,
+    //     {
+    //       withCredentials: true,
+    //       credentials: 'include',
+    //     },
+    //   )
+    // else {
+    //   allMatches = axios.get(`${api}/tournaments/${tournament}/matches`, {
+    //     withCredentials: true,
+    //     credentials: 'include',
+    //   })
+    // }
+
+    if (page && team)
+      allMatches = axios.get(
+        `${api}/tournaments/${tournament}/matches?page=${page}&team=${team}`,
+      )
+    else if (page && !team) {
+      allMatches = axios.get(
+        `${api}/tournaments/${tournament}/matches?page=${page}`,
+        {
+          withCredentials: true,
+          credentials: 'include',
+        },
+      )
+    } else if (!page && team) {
+      allMatches = axios.get(
+        `${api}/tournaments/${tournament}/matches?team=${team}`,
+        {
+          withCredentials: true,
+          credentials: 'include',
+        },
+      )
+    } else {
+      allMatches = axios.get(`${api}/tournaments/${tournament}/matches`, {
+        params: { page: 0, algo: JSON.stringify(['1', '2']) },
+      })
+    }
 
     Promise.all([playersFromTournament, allMatches]).then((values) => {
       const data = values.map((response) => response.data)
@@ -62,8 +173,9 @@ const FixtureId = () => {
   }
 
   useEffect(() => {
+    console.log('me ejecuto')
     getFixtureData()
-  }, [])
+  }, [searchParams])
 
   const { selectedTeam } = fixture
 
@@ -91,132 +203,8 @@ const FixtureId = () => {
         .filter(({ state }) => state)
 
       console.log(activeSwitches)
-
-      if (!activeSwitches.length && !selectedTeam) {
-        console.log('Jugadores: no / equipo: no')
-        fixture.updateFixture(fixture.originalFixture)
-        console.log(fixture.fixture)
-      }
-
-      if (!activeSwitches.length && selectedTeam) {
-        console.log('Jugadores: no / equipo: sí')
-        const matches = fixture.originalFixture
-        const filteredFixture = matches.filter(
-          ({ teamP1, teamP2 }) =>
-            teamP1.id == (selectedTeam || teamQuery) ||
-            teamP2.id == (selectedTeam || teamQuery),
-        )
-        console.log(filteredFixture)
-        fixture.updateFixture(filteredFixture)
-        console.log(filteredFixture.length)
-      }
-
-      if (activeSwitches.length === 1 && !selectedTeam) {
-        console.log('Jugadores: 1 / equipo: no')
-        const [{ player }] = activeSwitches
-        const matches = fixture.originalFixture
-        console.log(player)
-        console.log(matches[0].playerP2.id)
-        const filteredFixture = matches.filter(
-          ({ playerP1, playerP2 }) =>
-            playerP1.id == player || playerP2.id == player,
-        )
-        fixture.updateFixture(filteredFixture)
-        console.log(filteredFixture.length)
-      }
-
-      if (activeSwitches.length === 1 && selectedTeam) {
-        console.log('Jugadores: 1 / equipo: sí')
-        const [{ player }] = activeSwitches
-        const matches = fixture.originalFixture
-        const filteredFixture = matches.filter(
-          ({ playerP1, playerP2, teamP1, teamP2 }) =>
-            (teamP1.id == selectedTeam || teamP2.id == selectedTeam) &&
-            (playerP1.id === player || playerP2.id === player),
-        )
-        fixture.updateFixture(filteredFixture)
-        console.log(filteredFixture.length)
-      }
-
-      if (activeSwitches.length === 2 && !selectedTeam) {
-        console.log('Jugadores: 2 / equipo: no')
-        const [switchP1, switchP2] = activeSwitches
-        const matches = fixture.originalFixture
-        const filteredFixture = matches.filter(
-          ({ playerP1, playerP2 }) =>
-            (playerP1.id === switchP1.player &&
-              playerP2.id === switchP2.player) ||
-            (playerP1.id === switchP2.player &&
-              playerP2.id === switchP1.player),
-        )
-        fixture.updateFixture(filteredFixture)
-        console.log(filteredFixture.length)
-      }
-
-      if (activeSwitches.length === 2 && selectedTeam) {
-        console.log('Jugadores: 2 / equipo: sí')
-        const [switchP1, switchP2] = activeSwitches
-        const matches = fixture.originalFixture
-        const filteredFixture = matches.filter(
-          ({ playerP1, playerP2, teamP1, teamP2 }) =>
-            (teamP1.id == selectedTeam || teamP2.id == selectedTeam) &&
-            ((playerP1.id === switchP1.player &&
-              playerP2.id === switchP2.player) ||
-              (playerP1.id === switchP2.player &&
-                playerP2.id === switchP1.player)),
-        )
-        fixture.updateFixture(filteredFixture)
-        console.log(filteredFixture.length)
-      }
-
-      if (activeSwitches.length === 3 && !selectedTeam) {
-        console.log('Jugadores: 3 / equipo: no')
-        const [switchP1, switchP2, switchP3] = activeSwitches
-        const matches = fixture.originalFixture
-        const filteredFixture = matches.filter(
-          ({ playerP1, playerP2 }) =>
-            (playerP1.id === switchP1.player &&
-              playerP2.id === switchP2.player) ||
-            (playerP1.id === switchP2.player &&
-              playerP2.id === switchP1.player) ||
-            (playerP1.id === switchP1.player &&
-              playerP2.id === switchP3.player) ||
-            (playerP1.id === switchP3.player &&
-              playerP2.id === switchP1.player) ||
-            (playerP1.id === switchP2.player &&
-              playerP2.id === switchP3.player) ||
-            (playerP1.id === switchP3.player &&
-              playerP2.id === switchP2.player),
-        )
-        fixture.updateFixture(filteredFixture)
-        console.log(filteredFixture.length)
-      }
-
-      if (activeSwitches.length === 3 && selectedTeam) {
-        console.log('Jugadores: 3 / equipo: sí')
-        const [switchP1, switchP2, switchP3] = activeSwitches
-        const matches = fixture.originalFixture
-        const filteredFixture = matches.filter(
-          ({ playerP1, playerP2, teamP1, teamP2 }) =>
-            (teamP1.id == selectedTeam || teamP2.id == selectedTeam) &&
-            ((playerP1.id === switchP1.player &&
-              playerP2.id === switchP2.player) ||
-              (playerP1.id === switchP2.player &&
-                playerP2.id === switchP1.player) ||
-              (playerP1.id === switchP1.player &&
-                playerP2.id === switchP3.player) ||
-              (playerP1.id === switchP3.player &&
-                playerP2.id === switchP1.player) ||
-              (playerP1.id === switchP2.player &&
-                playerP2.id === switchP3.player) ||
-              (playerP1.id === switchP3.player &&
-                playerP2.id === switchP2.player)),
-        )
-        fixture.updateFixture(filteredFixture)
-        console.log(filteredFixture.length)
-      }
     }
-  }, [switchState, selectedTeam])
+  }, [switchState])
 
   const resetTeamFilter = () => {
     fixture.updateSelectedTeam() // Elimino el equipo seleccionado (si hay) //
@@ -317,6 +305,7 @@ const FixtureId = () => {
 
   if (fixture.fixture) {
     const { playersFromTournament } = fixture
+    const { matches, totalPages, currentPage } = fixture.fixture
     return (
       <motion.div
         initial={{ opacity: 0 }}
@@ -356,7 +345,7 @@ const FixtureId = () => {
             ))}
           </div>
           <div>
-            {selectedTeam && (
+            {searchParams.get('team') && (
               <div
                 style={{
                   display: 'flex',
@@ -366,7 +355,7 @@ const FixtureId = () => {
               >
                 Equipo seleccionado:{' '}
                 <img
-                  src={`${database}/logos/${selectedTeam}`}
+                  src={`${database}/logos/${searchParams.get('team')}`}
                   style={{ width: '25px', margin: '0 0.5rem 0 0.5rem' }}
                 />
                 <button
@@ -385,10 +374,19 @@ const FixtureId = () => {
         </FormGroup>
 
         {fixture.fixture && (
-          <FixtureContainer
-            matches={fixture.fixture}
-            handleSubmit={handleSubmit}
-          />
+          <>
+            <FixtureContainer matches={matches} handleSubmit={handleSubmit} />
+            <Stack spacing={2}>
+              <Pagination
+                count={totalPages}
+                page={Number(searchParams.get('page'))}
+                name={'page'}
+                onChange={handlePageChange}
+                variant="outlined"
+                color="secondary"
+              />
+            </Stack>
+          </>
         )}
       </motion.div>
     )

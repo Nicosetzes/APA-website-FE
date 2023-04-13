@@ -14,6 +14,19 @@ const Match = ({ match }) => {
 
   const fixture = useFixture()
 
+  const onClickTeamChange = (event) => {
+    // const player = searchParams.get('player')
+    const team = event.target.value
+    console.log(event.target)
+    console.log(team)
+    // if (player && team) setSearchParams({ page: value, player, team })
+    // else if (player && !team) setSearchParams({ page: value, player })
+    // else if (!player && team) setSearchParams({ page: value, team })
+    // else setSearchParams({ page: value })
+
+    // If I don't do it like this, the team and player params are erased //
+  }
+
   const {
     playerP1,
     playerP2,
@@ -247,7 +260,8 @@ const Match = ({ match }) => {
             src={`${database}/logos/${teamP1.id}`}
             alt={match.teamP1}
             className="match-info__logo"
-            onClick={() => fixture.updateSelectedTeam(teamP1.id)}
+            // onClick={() => fixture.updateSelectedTeam(teamP1.id)}
+            onClick={(e) => onClickTeamChange(e)}
           />
           <input
             name="playerP1"

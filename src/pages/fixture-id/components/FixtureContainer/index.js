@@ -1,8 +1,8 @@
+import { useState } from 'react'
 import { StyledFixtureContainer } from './styled'
 import Match from './../../../../components/Match'
 
 const FixtureContainer = ({ matches, handleSubmit }) => {
-  console.log(matches)
   return (
     <>
       <StyledFixtureContainer>

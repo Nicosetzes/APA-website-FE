@@ -1,7 +1,6 @@
-// import { useNavigate, createSearchParams } from 'react-router-dom'
+import { useNavigate, createSearchParams } from 'react-router-dom'
 import { useState } from 'react'
-import { useParams, useSearchParams, useNavigate } from 'react-router-dom'
-import { useFixture } from './../../context/FixtureContext'
+import { useParams, useSearchParams } from 'react-router-dom'
 import Swal from 'sweetalert2'
 import axios from 'axios'
 import { api, database } from './../../api'
@@ -10,22 +9,9 @@ import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 
 const Match = ({ match }) => {
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
   const { tournament } = useParams()
-
-  const fixture = useFixture()
-
-  const onClickTeamChange = (event) => {
-    // const player = searchParams.get('player')
-    const team = event.target.value
-    console.log(event.target)
-    console.log(team)
-    // if (player && team) setSearchParams({ page: value, player, team })
-    // else if (player && !team) setSearchParams({ page: value, player })
-    // else if (!player && team) setSearchParams({ page: value, team })
-    // else setSearchParams({ page: value })
-
-    // If I don't do it like this, the team and player params are erased //
-  }
 
   const {
     playerP1,
@@ -107,29 +93,10 @@ const Match = ({ match }) => {
     axios
       .put(`${api}/tournaments/${tournament}/matches/update-game/${_id}`, data)
       .then(({ data }) => {
-        const matches = fixture.originalFixture
-        const indexOfUpdatedMatch = matches.findIndex(
-          ({ _id }) => _id == data._id,
-        )
-
-        const updatedFixture = matches.map((match, index) => {
-          let returnedMatch = { ...match }
-          if (index == indexOfUpdatedMatch) {
-            returnedMatch = data
-          }
-          return returnedMatch
-        })
-
-        console.log(updatedFixture)
-
-        setMatchScore({
-          ...matchScore,
-          scoreP1: data.scoreP1,
-          scoreP2: data.scoreP2,
-        })
-        fixture.updateSelectedTeam() // Reseteo el filtro de equipo //
-        fixture.updateOriginalFixture(updatedFixture)
-        fixture.updateFixture(updatedFixture)
+        console.log(data)
+        // navigate({
+        //   pathname: `/tournaments/${tournament}/matches`,
+        // })
       })
   }
 
@@ -174,65 +141,14 @@ const Match = ({ match }) => {
         axios
           .put(`${api}/tournaments/${tournament}/matches/delete-game/${_id}`)
           .then(({ data }) => {
-            // console.log(response)
-            const matches = fixture.originalFixture
-            const indexOfDeletedMatch = matches.findIndex(
-              ({ _id }) => _id == data._id,
-            )
-
-            const updatedFixture = matches.map((match, index) => {
-              let returnedMatch = { ...match }
-              if (index == indexOfDeletedMatch) {
-                const {
-                  playerP1,
-                  playerP2,
-                  teamP1,
-                  teamP2,
-                  tournament,
-                  type,
-                  _id,
-                } = returnedMatch
-
-                returnedMatch = {
-                  playerP1,
-                  playerP2,
-                  teamP1,
-                  teamP2,
-                  tournament,
-                  type,
-                  _id,
-                  updatedAt: new Date().toString(),
-                  played: false,
-                }
-              }
-              return returnedMatch
-            })
-
-            console.log(updatedFixture)
-
-            setMatchScore({ ...matchScore, scoreP1: '', scoreP2: '' })
-
-            fixture.updateSelectedTeam() // Reseteo el filtro de equipo //
-            fixture.updateOriginalFixture(updatedFixture)
-            fixture.updateFixture(updatedFixture)
+            console.log(data)
+            // navigate({
+            //   pathname: `/tournaments/${tournament}/matches`,
+            // })
           })
       }
     })
   }
-
-  // const navigate = useNavigate()
-
-  // const teamParams = (param) => {
-  //   return { team: param }
-  // }
-
-  // const goToSpecificFixture = (params) => {
-  //   // El query es de team (numérico, es el id);
-  //   navigate({
-  //     pathname: ``,
-  //     search: `?${createSearchParams(teamParams(params))}`,
-  //   })
-  // }
 
   return (
     <form
@@ -261,7 +177,7 @@ const Match = ({ match }) => {
             alt={match.teamP1}
             className="match-info__logo"
             // onClick={() => fixture.updateSelectedTeam(teamP1.id)}
-            onClick={(e) => onClickTeamChange(e)}
+            onClick={() => setSearchParams({ team: teamP1.id })}
           />
           <input
             name="playerP1"
@@ -317,7 +233,7 @@ const Match = ({ match }) => {
             src={`${database}/logos/${teamP2.id}`}
             alt={teamP2.name}
             className="match-info__logo"
-            onClick={() => fixture.updateSelectedTeam(teamP2.id)}
+            onClick={() => setSearchParams({ team: teamP2.id })}
           />
           <input
             name="playerP2"

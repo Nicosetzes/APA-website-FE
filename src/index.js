@@ -3,9 +3,7 @@ import ReactDOM from 'react-dom'
 import { BrowserRouter } from 'react-router-dom'
 import './index.css'
 import reportWebVitals from './reportWebVitals'
-import { FixtureProvider } from './context/FixtureContext'
 import { LoginProvider } from './context/LoginContext'
-import { TeamAssignmentProvider } from './context/TeamAssignmentContext'
 import Navbar from './components/Navbar'
 import AnimatedRoutes from './routes/AnimatedRoutes'
 
@@ -14,11 +12,7 @@ ReactDOM.render(
     <BrowserRouter>
       <LoginProvider>
         <Navbar />
-        <FixtureProvider>
-          <TeamAssignmentProvider>
-            <AnimatedRoutes />
-          </TeamAssignmentProvider>
-        </FixtureProvider>
+        <AnimatedRoutes />
       </LoginProvider>
     </BrowserRouter>
   </React.StrictMode>,

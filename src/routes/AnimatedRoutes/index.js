@@ -12,9 +12,7 @@ import Statistics from './../../pages/statistics'
 import CreateTournament from '../../pages/create-tournament'
 import HallOfFame from '../../pages/hall-of-fame'
 import WorldCup from '../../pages/world-cup'
-import WorldCupAssignment from '../../pages/world-cup-assignment'
 import WorldCupStandings from '../../pages/world-cup-standings'
-import WorldCupMatches from '../../pages/world-cup-matches'
 import WorldCupPlayoffs from '../../pages/world-cup-playoffs'
 // import CreateGame from '../../pages/create-game'
 
@@ -37,12 +35,7 @@ export const AnimatedRoutes = () => {
         </Route>
         <Route path="/create-tournament" element={<CreateTournament />} />
         <Route path="/world-cup" element={<WorldCup />} />
-        <Route
-          path="/world-cup/team-assignment"
-          element={<WorldCupAssignment />}
-        />
         <Route path="/world-cup/standings" element={<WorldCupStandings />} />
-        <Route path="/world-cup/matches" element={<WorldCupMatches />} />
         <Route path="/world-cup/playoffs" element={<WorldCupPlayoffs />} />
         <Route path="/matches" element={<Matches />} />
         <Route path="/statistics" element={<Statistics />} />

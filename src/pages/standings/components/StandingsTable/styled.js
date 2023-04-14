@@ -40,6 +40,7 @@ export const StyledTable = styled(Table)`
         &:nth-child(2) {
           .teamAndLogoWrapper {
             align-items: center;
+            cursor: pointer;
             display: flex;
             height: 100%;
             img {

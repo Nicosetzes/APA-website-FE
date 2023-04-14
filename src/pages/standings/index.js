@@ -91,7 +91,7 @@ const Standings = () => {
               margin: '1rem 1rem 1rem auto',
             }}
           >
-            Fixture
+            Ir a Fixture
           </Link>
         </div>
         <TableContainer component={Paper}>

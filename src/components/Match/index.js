@@ -2,8 +2,11 @@ import { useNavigate, createSearchParams } from 'react-router-dom'
 import { useState } from 'react'
 import { useParams, useSearchParams } from 'react-router-dom'
 import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
 import axios from 'axios'
 import { api, database } from './../../api'
+import TeamInformationModal from '../TeamInformationModal'
+import BarChartIcon from '@mui/icons-material/BarChart'
 import IconButton from '@mui/material/IconButton'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -150,6 +153,33 @@ const Match = ({ match }) => {
     })
   }
 
+  const MySwal = withReactContent(Swal)
+
+  // const [teamInformation, setTeamInformation] = useState()
+
+  const displayExtraInfoFromTeam = (id) => {
+    MySwal.fire({
+      background: 'rgba(0,74,121,0.8)',
+      width: 600,
+      showConfirmButton: false,
+      showCloseButton: true,
+      didOpen: () => {
+        // `MySwal` is a subclass of `Swal` with all the same instance & static methods
+        MySwal.showLoading()
+        axios
+          .get(`${api}/tournaments/${tournament}/teams/${id}`)
+          .then(({ data }) => {
+            MySwal.update({
+              html: <TeamInformationModal teamInformation={data} />,
+            })
+          })
+      },
+      didRender: () => {
+        MySwal.hideLoading()
+      },
+    })
+  }
+
   return (
     <form
       className="match"
@@ -162,6 +192,10 @@ const Match = ({ match }) => {
     >
       <div className="match-view">
         <div className="match-info">
+          <BarChartIcon
+            fontSize="medium"
+            onClick={() => displayExtraInfoFromTeam(teamP1.id)}
+          />
           <textarea
             name="teamP1"
             wrap="soft"
@@ -171,12 +205,11 @@ const Match = ({ match }) => {
           >
             {teamP1.name}
           </textarea>
-          {/* <Route path={`/tournaments/62e0b0a53d86565327b95a82/fixture?team=${teamP1.id}`} element={<FixtureId />} /> className="logo-link"> */}
+
           <img
             src={`${database}/logos/${teamP1.id}`}
             alt={match.teamP1}
             className="match-info__logo"
-            // onClick={() => fixture.updateSelectedTeam(teamP1.id)}
             onClick={() => setSearchParams({ team: teamP1.id })}
           />
           <input
@@ -220,6 +253,10 @@ const Match = ({ match }) => {
         /> */}
         </div>
         <div className="match-info">
+          <BarChartIcon
+            fontSize="medium"
+            onClick={() => displayExtraInfoFromTeam(teamP2.id)}
+          />
           <textarea
             name="teamP2"
             wrap="soft"
@@ -243,10 +280,12 @@ const Match = ({ match }) => {
           />
         </div>
       </div>
-      {updatedAt && (
+      {updatedAt ? (
         <div className="match-date">
           Actualizado el: {updatedAt && new Date(updatedAt).toLocaleString()}{' '}
         </div>
+      ) : (
+        <div className="match-date">No hay fecha de actualización</div>
       )}
     </form>
   )

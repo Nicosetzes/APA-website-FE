@@ -82,7 +82,7 @@ const FixtureId = () => {
 
     if (page && team)
       allMatches = axios.get(
-        `${api}/tournaments/${tournament}/matches?page=${page}&team=${team}`,
+        `${api}/tournaments/${tournament}/fixture?page=${page}&team=${team}`,
         {
           params: {
             players: `${switchState.length ? JSON.stringify(switchState) : ``}`,
@@ -91,7 +91,7 @@ const FixtureId = () => {
       )
     else if (page && !team) {
       allMatches = axios.get(
-        `${api}/tournaments/${tournament}/matches?page=${page}`,
+        `${api}/tournaments/${tournament}/fixture?page=${page}`,
         {
           params: {
             players: `${switchState.length ? JSON.stringify(switchState) : ``}`,
@@ -100,7 +100,7 @@ const FixtureId = () => {
       )
     } else if (!page && team) {
       allMatches = axios.get(
-        `${api}/tournaments/${tournament}/matches?team=${team}`,
+        `${api}/tournaments/${tournament}/fixture?team=${team}`,
         {
           params: {
             players: `${switchState.length ? JSON.stringify(switchState) : ``}`,
@@ -108,7 +108,7 @@ const FixtureId = () => {
         },
       )
     } else {
-      allMatches = axios.get(`${api}/tournaments/${tournament}/matches`, {
+      allMatches = axios.get(`${api}/tournaments/${tournament}/fixture`, {
         params: {
           players: `${switchState.length ? JSON.stringify(switchState) : ``}`,
         },

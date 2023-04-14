@@ -14,7 +14,7 @@ export const StyledFixtureContainer = styled.div`
     margin: 0.5rem;
     max-width: 400px;
     outline: #dc3545 3px solid;
-    padding: 0.5rem 0;
+    padding: 1rem 0;
 
     .match-view {
       align-items: center;
@@ -29,7 +29,6 @@ export const StyledFixtureContainer = styled.div`
 
         .match-info__player {
           border: 0;
-          cursor: pointer;
           display: flex;
           flex-wrap: wrap;
           font-size: 0.875rem;
@@ -44,12 +43,12 @@ export const StyledFixtureContainer = styled.div`
         }
 
         .match-info__logo {
+          cursor: pointer;
           margin-bottom: 1rem;
         }
 
         .match-info__team {
           border: 0;
-          cursor: pointer;
           font-size: 0.875rem;
           font-weight: 800;
           resize: none;
@@ -73,6 +72,7 @@ export const StyledFixtureContainer = styled.div`
         flex-direction: column;
         flex-wrap: wrap;
         justify-content: space-evenly;
+        margin: auto 0 1rem 0;
         // width: 125px;
 
         .match-score__goals {
@@ -153,7 +153,7 @@ export const StyledFixtureContainer = styled.div`
     .match-date {
       display: flex;
       font-size: 0.875rem;
-      margin: 0.5rem 0 0 0;
+      margin: 1rem 0 0 0;
     }
   }
 `

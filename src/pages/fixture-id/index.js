@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useMediaQuery } from 'react-responsive'
-import { Link, useParams, useSearchParams } from 'react-router-dom'
+import { Link, useLocation, useParams, useSearchParams } from 'react-router-dom'
 // import { useFixture } from '../../context/FixtureContext'
 import FixtureContainer from './components/FixtureContainer'
 import { api, database } from './../../api'
@@ -18,7 +18,13 @@ const FixtureId = () => {
   const isSm = useMediaQuery({ query: '(min-width: 500px)' })
   const isXS = useMediaQuery({ query: '(min-width: 375px)' })
 
-  const [switchState, setSwitchState] = useState([])
+  const location = useLocation()
+
+  const initialPlayer = location?.state?.player
+
+  const [switchState, setSwitchState] = useState(
+    initialPlayer ? [initialPlayer] : [],
+  )
 
   useEffect(() => {
     const arrayOfKeys = Object.keys(switchState)
@@ -172,7 +178,7 @@ const FixtureId = () => {
                     }
                     size="small"
                     color="warning"
-                    checked={switchState.name}
+                    checked={switchState.includes(id)}
                     onChange={handleSwitchChange}
                     name={id}
                   />

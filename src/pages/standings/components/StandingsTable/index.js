@@ -148,9 +148,9 @@ const StandingsTable = ({ tournament, standings, onHandle }) => {
               <TableCell
                 component="th"
                 scope="row"
-                // onClick={() => onHandle(tournament.tournamentId, team.player)}
+                onClick={() => onHandle(tournament, player.id)}
               >
-                {player.name}
+                <span style={{ cursor: 'pointer' }}>{player.name}</span>
               </TableCell>
               <TableCell component="th" scope="row">
                 {played}

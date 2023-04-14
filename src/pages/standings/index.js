@@ -23,6 +23,7 @@ const Standings = () => {
   // const api = 'http://localhost:5000/api'
 
   const navigate = useNavigate()
+
   const playerParams = (param) => {
     return { player: param }
   }
@@ -31,15 +32,19 @@ const Standings = () => {
   }
 
   const goToSpecificFixture = (id, params) => {
-    navigate(
-      {
+    if (isNaN(Number(params)))
+      // El param es de jugador (id) //
+      return navigate(
+        {
+          pathname: `/tournaments/${id}/matches`,
+        },
+        { state: playerParams(params) }, // Send information about player id from origin to destination //
+      )
+    else
+      return navigate({
         pathname: `/tournaments/${id}/matches`,
-        search: `?${createSearchParams(
-          isNaN(Number(params)) ? playerParams(params) : teamParams(params),
-        )}`,
-      },
-      // { state: { hola: 'hola' } }, // Send information from origin to destination //
-    )
+        search: `?${createSearchParams(teamParams(params))}`,
+      })
   }
 
   const getTournamentsData = () => {

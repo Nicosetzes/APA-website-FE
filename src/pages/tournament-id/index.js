@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, useParams, useSearchParams, useNavigate } from 'react-router-dom'
+import BreadCrumbsMUI from './../../components/BreadCrumbsMUI'
 import { api, database } from './../../api'
 import axios from 'axios'
 import { motion } from 'framer-motion'
@@ -33,12 +34,21 @@ const TournamentId = () => {
   }, [])
 
   if (currentTournament) {
-    const { name, players, teams, type } = currentTournament
+    const { name, players, teams, type, apa_id } = currentTournament
 
     console.log(name)
     console.log(players)
     console.log(teams)
     console.log(type)
+
+    const breadCrumbsLinks = [
+      { name: 'Home', route: '' },
+      { name: 'Torneos', route: 'tournaments' },
+      {
+        name: `${name}`,
+        route: `tournaments/${tournament}`,
+      },
+    ]
 
     return (
       <motion.div
@@ -46,70 +56,84 @@ const TournamentId = () => {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
-        <div>
-          <div
-            style={{
-              fontSize: '1.5rem',
-              fontWeight: 700,
-              margin: '1.5rem 0',
-              textAlign: 'center',
-            }}
-          >
-            <span>{name}</span>
-          </div>{' '}
-        </div>
-        {/* <div style={{ margin: '1rem 0' }}>
-          <Link to={`create-game`}>Cargar resultado</Link>
-        </div> */}
+        <BreadCrumbsMUI links={breadCrumbsLinks} />
         <div
           style={{
-            alignItems: 'center',
             display: 'flex',
-            flexDirection: 'column',
+            flexWrap: 'wrap',
             justifyContent: 'center',
-            margin: '1rem auto',
-            outline: 'black 2px solid',
-            padding: '1rem',
-            width: '250px',
           }}
         >
-          <Link
-            to={`matches`}
-            style={{
-              color: '#004a79',
-              fontSize: '2rem',
-              margin: '1.25rem',
-              textDecoration: 'none',
-            }}
-          >
-            Partidos
-          </Link>
-          {type == 'league' && (
-            <Link
-              to={`standings`}
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <div>
+              <div
+                style={{
+                  fontSize: '1.5rem',
+                  fontWeight: 700,
+                  margin: '1.5rem 0',
+                  textAlign: 'center',
+                }}
+              >
+                <span>{name}</span>
+              </div>{' '}
+            </div>
+            <div
               style={{
-                color: '#004a79',
-                fontSize: '2rem',
-                margin: '1.25rem',
-                textDecoration: 'none',
+                alignItems: 'center',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                margin: '1rem auto',
+                outline: 'black 2px solid',
+                padding: '1rem',
+                width: '250px',
               }}
             >
-              Clasificación
-            </Link>
-          )}
-          {type == 'playoffs' && (
-            <Link
-              to={`playoffs`}
-              style={{
-                color: '#004a79',
-                fontSize: '2rem',
-                margin: '1.25rem',
-                textDecoration: 'none',
-              }}
-            >
-              Playoffs
-            </Link>
-          )}
+              <Link
+                to={`fixture`}
+                style={{
+                  color: '#004a79',
+                  fontSize: '2rem',
+                  margin: '1.25rem',
+                  textDecoration: 'none',
+                }}
+              >
+                Fixture
+              </Link>
+              {(type == 'league' || type == 'world_cup') && (
+                <Link
+                  to={`standings`}
+                  style={{
+                    color: '#004a79',
+                    fontSize: '2rem',
+                    margin: '1.25rem',
+                    textDecoration: 'none',
+                  }}
+                >
+                  Clasificación
+                </Link>
+              )}
+              {type == 'playoffs' && (
+                <Link
+                  to={`playoffs`}
+                  style={{
+                    color: '#004a79',
+                    fontSize: '2rem',
+                    margin: '1.25rem',
+                    textDecoration: 'none',
+                  }}
+                >
+                  Playoffs
+                </Link>
+              )}
+            </div>
+          </div>
+          <div>
+            <img
+              src={`${database}/tournaments/logos/${apa_id}`}
+              style={{ height: '300px' }}
+            />
+          </div>
         </div>
         <div
           style={{

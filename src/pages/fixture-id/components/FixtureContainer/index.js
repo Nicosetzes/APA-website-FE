@@ -2,6 +2,7 @@ import { StyledFixtureContainer } from './styled'
 import Match from './../../../../components/Match'
 
 const FixtureContainer = ({ matches }) => {
+  console.log(matches)
   return (
     <>
       <StyledFixtureContainer>

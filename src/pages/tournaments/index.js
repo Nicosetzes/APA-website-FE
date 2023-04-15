@@ -1,6 +1,7 @@
 import CardContent from '@mui/material/CardContent'
 import CardMedia from '@mui/material/CardMedia'
 import Typography from '@mui/material/Typography'
+import BreadCrumbsMUI from './../../components/BreadCrumbsMUI'
 import { StyledTournamentsContainer } from './styled'
 import { api } from './../../api'
 import { CardActionArea } from '@mui/material'
@@ -35,15 +36,19 @@ const Tournaments = () => {
   }, [])
 
   if (tournaments) {
-    console.log(tournaments)
     const { activeTournaments, inactiveTournaments } = tournaments
     console.log(activeTournaments, inactiveTournaments)
+    const breadCrumbsLinks = [
+      { name: 'Home', route: '' },
+      { name: 'Torneos', route: 'tournaments' },
+    ]
     return (
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
+        <BreadCrumbsMUI links={breadCrumbsLinks} />
         <div
           style={{
             fontSize: '1.75rem',
@@ -97,49 +102,26 @@ const Tournaments = () => {
         <StyledTournamentsContainer>
           {inactiveTournaments.map(({ _id, name, apa_id, type }) => (
             <div className="container__card" key={_id}>
-              {type == 'world_cup' ? (
-                <Link to={`/world-cup`}>
-                  <CardActionArea>
-                    <CardMedia
-                      component="img"
-                      height="350"
-                      image={`${database}/tournaments/logos/${apa_id}`}
-                      alt={`${name}`}
-                    />
-                    <CardContent>
-                      <Typography
-                        gutterBottom
-                        variant="h5"
-                        component="div"
-                        sx={{ textAlign: 'center' }}
-                      >
-                        {name}
-                      </Typography>
-                    </CardContent>
-                  </CardActionArea>
-                </Link>
-              ) : (
-                <Link to={`/tournaments/${_id}`}>
-                  <CardActionArea>
-                    <CardMedia
-                      component="img"
-                      height="350"
-                      image={`${database}/tournaments/logos/${apa_id}`}
-                      alt={`${name}`}
-                    />
-                    <CardContent>
-                      <Typography
-                        gutterBottom
-                        variant="h5"
-                        component="div"
-                        sx={{ textAlign: 'center' }}
-                      >
-                        {name}
-                      </Typography>
-                    </CardContent>
-                  </CardActionArea>
-                </Link>
-              )}
+              <Link to={`/tournaments/${_id}`}>
+                <CardActionArea>
+                  <CardMedia
+                    component="img"
+                    height="350"
+                    image={`${database}/tournaments/logos/${apa_id}`}
+                    alt={`${name}`}
+                  />
+                  <CardContent>
+                    <Typography
+                      gutterBottom
+                      variant="h5"
+                      component="div"
+                      sx={{ textAlign: 'center' }}
+                    >
+                      {name}
+                    </Typography>
+                  </CardContent>
+                </CardActionArea>
+              </Link>
             </div>
           ))}
         </StyledTournamentsContainer>

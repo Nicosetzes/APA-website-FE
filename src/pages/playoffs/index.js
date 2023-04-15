@@ -50,10 +50,10 @@ const Playoffs = () => {
     const playoffsUpdatedWins = playoffsData[3].winsByTeam
     const playoffsMatches = playoffsData[3].playoffsMatches
 
-    // console.log(playoffsTeamsForTable)
-    // console.log(playoffsBracketInfo)
-    // console.log(playoffsUpdatedWins)
-    // console.log(playoffsMatches)
+    console.log(playoffsTeamsForTable)
+    console.log(playoffsBracketInfo)
+    console.log(playoffsUpdatedWins)
+    console.log(playoffsMatches)
 
     return (
       <motion.div

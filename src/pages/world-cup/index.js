@@ -86,7 +86,7 @@ const WorldCup = () => {
               }}
             >
               <Link
-                to={`matches`}
+                to={`fixture`}
                 style={{
                   color: '#004a79',
                   fontSize: '2rem',
@@ -94,7 +94,7 @@ const WorldCup = () => {
                   textDecoration: 'none',
                 }}
               >
-                Partidos
+                Fixture
               </Link>
               <Link
                 to={`standings`}

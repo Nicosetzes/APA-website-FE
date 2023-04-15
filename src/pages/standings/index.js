@@ -11,6 +11,7 @@ import { motion } from 'framer-motion'
 import PlayerStatsTable from './../../components/PlayerStatsTable'
 import { api } from './../../api'
 import { Oval } from 'react-loader-spinner'
+import BreadCrumbsMUI from './../../components/BreadCrumbsMUI'
 import TableContainer from '@mui/material/TableContainer'
 import Paper from '@mui/material/Paper'
 import StandingsTable from './components/StandingsTable'
@@ -36,13 +37,13 @@ const Standings = () => {
       // El param es de jugador (id) //
       return navigate(
         {
-          pathname: `/tournaments/${id}/matches`,
+          pathname: `/tournaments/${id}/fixture`,
         },
         { state: playerParams(params) }, // Send information about player id from origin to destination //
       )
     else
       return navigate({
-        pathname: `/tournaments/${id}/matches`,
+        pathname: `/tournaments/${id}/fixture`,
         search: `?${createSearchParams(teamParams(params))}`,
       })
   }
@@ -71,12 +72,26 @@ const Standings = () => {
     const { name, sortedStandings } = tournamentsData[0] // Index 0 because of the order in which I invoked the promises call in Promise.all //
     const playerStats = tournamentsData[1]
 
+    const breadCrumbsLinks = [
+      { name: 'Home', route: '' },
+      { name: 'Torneos', route: 'tournaments' },
+      {
+        name: `${name}`,
+        route: `tournaments/${tournament}`,
+      },
+      {
+        name: 'Clasificación',
+        route: `tournaments/${tournament}/standings`,
+      },
+    ]
+
     return (
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
+        <BreadCrumbsMUI links={breadCrumbsLinks} />
         <div
           style={{
             fontSize: '1.5rem',
@@ -89,7 +104,7 @@ const Standings = () => {
         </div>
         <div style={{ display: 'flex' }}>
           <Link
-            to={`/tournaments/${tournament}/matches`}
+            to={`/tournaments/${tournament}/fixture`}
             style={{
               color: '#004a79',
               fontSize: '1.5rem',

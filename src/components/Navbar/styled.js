@@ -5,7 +5,6 @@ export const StyledNavbar = styled.div`
   background-color: #004a79;
   display: flex;
   height: 110px;
-  justify-content: space-between;
   width: 100%;
   .logo {
     height: 80px;

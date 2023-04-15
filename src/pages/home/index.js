@@ -13,16 +13,6 @@ const Home = () => {
       exit={{ opacity: 0 }}
     >
       <StyledHome>
-        <Link to={'/tournaments'}>
-          <Card
-            title={'Torneos'}
-            subtitle={'Torneos en activo'}
-            icon={SportsSoccerIcon}
-            text={
-              'Esta sección incluye toda la información relevante acerca de los torneos que se disputan en la actualidad'
-            }
-          />
-        </Link>
         <Link to={'/matches'}>
           <Card
             title={'Partidos'}
@@ -30,6 +20,16 @@ const Home = () => {
             icon={ArchiveIcon}
             text={
               'Esta sección contiene toda la información acerca de los partidos jugados en la historia APA'
+            }
+          />
+        </Link>
+        <Link to={'/tournaments'}>
+          <Card
+            title={'Torneos'}
+            subtitle={'Torneos en activo'}
+            icon={SportsSoccerIcon}
+            text={
+              'Esta sección incluye toda la información relevante acerca de los torneos que se disputan en la actualidad'
             }
           />
         </Link>

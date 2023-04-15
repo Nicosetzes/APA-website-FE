@@ -23,17 +23,17 @@ export const AnimatedRoutes = () => {
     <AnimatePresence>
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<App />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/users/login" element={<Login />} />
         <Route path="/playoffs" element={<Playoffs />} />
         <Route path="/tournaments">
           <Route index element={<Tournaments />} />
+          <Route path="create-tournament" element={<CreateTournament />} />
           <Route path=":tournament" element={<TournamentId />} />
           {/* <Route path=":tournament/create-game" element={<CreateGame />} /> */}
-          <Route path=":tournament/matches" element={<FixtureId />} />
+          <Route path=":tournament/fixture" element={<FixtureId />} />
           <Route path=":tournament/standings" element={<Standings />} />
           <Route path=":tournament/playoffs" element={<Playoffs />} />
         </Route>
-        <Route path="/create-tournament" element={<CreateTournament />} />
         <Route path="/world-cup" element={<WorldCup />} />
         <Route path="/world-cup/standings" element={<WorldCupStandings />} />
         <Route path="/world-cup/playoffs" element={<WorldCupPlayoffs />} />

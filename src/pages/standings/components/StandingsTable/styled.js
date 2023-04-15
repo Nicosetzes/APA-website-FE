@@ -2,11 +2,12 @@ import styled from 'styled-components'
 import Table from '@mui/material/Table'
 
 export const StyledTable = styled(Table)`
-  background-color: #212529;
+  background-color: rgba(0, 74, 121, 1);
+  border: #d8a711 3px solid;
 
   .MuiTableBody-root {
     .MuiTableRow-root {
-      &:nth-child(1),
+      /* &:nth-child(1),
       &:nth-child(2),
       &:nth-child(3),
       &:nth-child(4),
@@ -30,7 +31,7 @@ export const StyledTable = styled(Table)`
         &:hover {
           background-color: #8f5e42;
         }
-      }
+      } */
       .MuiTableCell-root {
         color: #fff;
         font-family: 'Fira Sans', sans-serif;

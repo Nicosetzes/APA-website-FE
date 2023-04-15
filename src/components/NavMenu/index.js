@@ -65,18 +65,9 @@ const NavMenu = ({ handleClose, isOpen, anchorEl }) => {
         <Divider />
         <MenuItem onClick={handleClose}>
           <ListItemIcon>
-            <EmojiEventsIcon fontSize="small" />
-          </ListItemIcon>
-          <NavLink to="/world-cup">
-            <ListItemText>Copa del Mundo</ListItemText>
-          </NavLink>
-        </MenuItem>
-        <Divider />
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
             <CreateIcon fontSize="small" />
           </ListItemIcon>
-          <NavLink to="/create-tournament">
+          <NavLink to="/tournaments/create-tournament">
             <ListItemText>Crear torneo</ListItemText>
           </NavLink>
         </MenuItem>

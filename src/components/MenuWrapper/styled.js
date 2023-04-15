@@ -1,5 +1,5 @@
 import styled from 'styled-components'
 
 export const StyledMenuWrapper = styled.div`
-  margin: 0 1rem;
+  margin: 0 1rem 0 auto;
 `

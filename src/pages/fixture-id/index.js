@@ -6,6 +6,7 @@ import FixtureContainer from './components/FixtureContainer'
 import { api, database } from './../../api'
 import axios from 'axios'
 import { motion } from 'framer-motion'
+import BreadCrumbsMUI from './../../components/BreadCrumbsMUI'
 import FormGroup from '@mui/material/FormGroup'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Pagination from '@mui/material/Pagination'
@@ -135,13 +136,32 @@ const FixtureId = () => {
   if (data) {
     console.log(data)
     const players = data[0]
-    const { matches, totalPages, currentPage } = data[1]
+    const { matches } = data[1]
+    const matchesFromDB = matches.matches
+    const { totalPages, currentPage } = matches
+    const tournamentFromDB = data[1].tournament
+    const { name } = tournamentFromDB
+
+    const breadCrumbsLinks = [
+      { name: 'Home', route: '' },
+      { name: 'Torneos', route: 'tournaments' },
+      {
+        name: `${name}`,
+        route: `tournaments/${tournament}`,
+      },
+      {
+        name: 'Fixture',
+        route: `tournaments/${tournament}/fixture`,
+      },
+    ]
+
     return (
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
+        <BreadCrumbsMUI links={breadCrumbsLinks} />
         <div style={{ display: 'flex' }}>
           <Link
             to={`/tournaments/${tournament}/standings`}
@@ -216,9 +236,9 @@ const FixtureId = () => {
           </div>
         </FormGroup>
 
-        {matches && (
+        {matchesFromDB && (
           <>
-            <FixtureContainer matches={matches} />
+            <FixtureContainer matches={matchesFromDB} />
             <Pagination
               count={totalPages}
               page={Number(searchParams.get('page')) + 1}

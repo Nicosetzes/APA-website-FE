@@ -5,7 +5,7 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import { StyledTable } from './styled'
 
-const MatchesTable = ({ data }) => {
+const MatchesTable = ({ matches }) => {
   //   const isL = useMediaQuery({ query: "(min-width: 992px)" });
   const isM = useMediaQuery({ query: '(min-width: 768px)' })
   const isSm = useMediaQuery({ query: '(min-width: 500px)' })
@@ -48,7 +48,7 @@ const MatchesTable = ({ data }) => {
         </TableRow>
       </TableHead>
       <TableBody>
-        {data.map(
+        {matches.map(
           ({
             _id,
             updatedAt,
@@ -63,7 +63,9 @@ const MatchesTable = ({ data }) => {
           }) => (
             <TableRow
               key={_id}
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+              sx={{
+                '&:last-child td, &:last-child th': { border: 0 },
+              }}
             >
               {isSm && (
                 <>
@@ -73,7 +75,10 @@ const MatchesTable = ({ data }) => {
                     scope="row"
                     align="center"
                   >
-                    {updatedAt
+                    {updatedAt &&
+                    updatedAt !== '2023-03-30T23:22:00.005Z' &&
+                    updatedAt !== '2023-03-30T23:21:44.961Z' &&
+                    updatedAt !== '2023-03-30T22:51:17.806Z'
                       ? new Date(updatedAt).toLocaleString()
                       : new Date(
                           parseInt(_id.substring(0, 8), 16) * 1000,

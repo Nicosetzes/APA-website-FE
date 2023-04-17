@@ -1,16 +1,12 @@
-import CardContent from '@mui/material/CardContent'
-import CardMedia from '@mui/material/CardMedia'
-import Typography from '@mui/material/Typography'
 import BreadCrumbsMUI from './../../components/BreadCrumbsMUI'
+import { Image } from 'cloudinary-react'
 import { StyledTournamentsContainer } from './styled'
-import { api } from './../../api'
-import { CardActionArea } from '@mui/material'
+import { api, cloudName } from './../../api'
 import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { motion } from 'framer-motion'
 import { Oval } from 'react-loader-spinner'
-import { database } from './../../api'
 
 const Tournaments = () => {
   const [tournaments, setTournaments] = useState()
@@ -60,34 +56,16 @@ const Tournaments = () => {
           Torneos activos
         </div>
         <StyledTournamentsContainer>
-          {activeTournaments.map(({ _id, name, apa_id, type }) => (
-            <div
-              className="container__card"
-              key={_id}
-              sx={{ maxWidth: 250, display: 'flex', margin: '2rem auto' }}
-            >
-              <Link to={`/tournaments/${_id}`}>
-                <CardActionArea>
-                  <CardMedia
-                    component="img"
-                    height="350"
-                    image={`${database}/tournaments/logos/${apa_id}`}
-                    alt={`${name}`}
-                  />
-                  <CardContent>
-                    <Typography
-                      gutterBottom
-                      variant="h5"
-                      component="div"
-                      sx={{ textAlign: 'center' }}
-                    >
-                      {name}
-                    </Typography>
-                  </CardContent>
-                </CardActionArea>
-              </Link>
-            </div>
-          ))}
+          {activeTournaments.map(
+            ({ _id, name, apa_id, cloudinary_id, type }) => (
+              <div className="container__card" key={_id}>
+                <Link to={`/tournaments/${_id}`}>
+                  <Image cloudName={cloudName} publicId={cloudinary_id} />
+                  <div className="container__card-name">{name}</div>
+                </Link>
+              </div>
+            ),
+          )}
         </StyledTournamentsContainer>
         <div
           style={{
@@ -100,30 +78,16 @@ const Tournaments = () => {
           Torneos finalizados
         </div>
         <StyledTournamentsContainer>
-          {inactiveTournaments.map(({ _id, name, apa_id, type }) => (
-            <div className="container__card" key={_id}>
-              <Link to={`/tournaments/${_id}`}>
-                <CardActionArea>
-                  <CardMedia
-                    component="img"
-                    height="350"
-                    image={`${database}/tournaments/logos/${apa_id}`}
-                    alt={`${name}`}
-                  />
-                  <CardContent>
-                    <Typography
-                      gutterBottom
-                      variant="h5"
-                      component="div"
-                      sx={{ textAlign: 'center' }}
-                    >
-                      {name}
-                    </Typography>
-                  </CardContent>
-                </CardActionArea>
-              </Link>
-            </div>
-          ))}
+          {inactiveTournaments.map(
+            ({ _id, name, apa_id, cloudinary_id, type }) => (
+              <div className="container__card" key={_id}>
+                <Link to={`/tournaments/${_id}`}>
+                  <Image cloudName={cloudName} publicId={cloudinary_id} />
+                  <div className="container__card-name">{name}</div>
+                </Link>
+              </div>
+            ),
+          )}
         </StyledTournamentsContainer>
       </motion.div>
     )

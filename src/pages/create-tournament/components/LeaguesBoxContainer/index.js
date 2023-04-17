@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { api, database } from './../../../../api'
+import { useNavigate } from 'react-router-dom'
 import { StyledLeaguesBoxContainer } from './styled'
 import LeagueBox from './../LeagueBox'
 import TeamBox from '../TeamBox'
@@ -10,6 +11,8 @@ import TeamAssignmentBox from '../TeamAssignmentBox'
 
 const LeaguesBoxContainer = ({ format, players, leagues }) => {
   const MySwal = withReactContent(Swal)
+
+  const navigate = useNavigate()
 
   const [tournamentName, setTournamentName] = useState('')
   const [tournamentImg, setTournamentImg] = useState(null)
@@ -29,22 +32,6 @@ const LeaguesBoxContainer = ({ format, players, leagues }) => {
     setTournamentImg(e.target.files[0])
     console.log(e.target.files)
   }
-
-  // const uploadTournamentImg = () => {
-  //   // Create an object of formData
-  //   const formData = new FormData()
-
-  //   // Update the formData object
-  //   formData.append('tournamentImg', tournamentImg, tournamentImg.name)
-
-  //   // Details of the uploaded file
-  //   console.log(tournamentImg)
-
-  //   return formData
-  //   // Request made to the backend api
-  //   // Send formData object
-  //   // axios.post('api/uploadfile', formData)
-  // }
 
   const updateAvailableTeams = (id) => {
     const currentLeagueIds = availableTeams.map(
@@ -219,68 +206,51 @@ const LeaguesBoxContainer = ({ format, players, leagues }) => {
       reverseButtons: true,
     }).then((result) => {
       if (result.isConfirmed) {
-        MySwal.fire({
-          title: 'El torneo ha sido creado con éxito',
-          text: 'Será redirigido en breve...',
-          icon: 'success',
-          timer: 3000,
-          timerProgressBar: true,
-          showCancelButton: false,
-          showConfirmButton: false,
-          allowOutsideClick: false,
-        })
+        // Cargo la imagen a Cloudinary //
 
-        const name = tournamentName
-
-        const teams = definitiveTeamsForTournament
-
-        console.log('TORNEO CREADO CON ÉXITO')
-
-        // const img = uploadTournamentImg()
-
-        // Create an object of formData
         const formData = new FormData()
 
-        // Update the formData object
-        formData.append('name', name)
-        formData.append('format', format)
-        formData.append('players', JSON.stringify(players)) // It's needed so it can be processed by node in BE //
-        formData.append('teams', JSON.stringify(teams)) // It's needed so it can be processed by node in BE //
-        formData.append('apa_id', null) // Para utilizar formatos más adelante //
         formData.append('file', tournamentImg)
-
-        // Details of the uploaded file
-        // console.log(tournamentImg)
-
-        // console.log(Object.fromEntries(formData))
-
-        // Primero, hago la llamada POST para generar el torneo en football-database //
-
-        // axios
-        //   .post(`${database}/tournaments`, formData, {
-        //     headers: {
-        //       'Content-Type': 'multipart/form-data',
-        //     },
-        //   })
-        //   .then((response) => {
-        //     console.log(response.data)
-        //   })
-        //   .catch((err) => {
-        //     console.log(err)
-        //   })
-
-        // Segundo, hago la llamada POST para generar el torneo en apa-website-be //
-
-        // let apa_id = null
+        formData.append('upload_preset', 'tournaments')
 
         axios
-          .post(`${api}/tournaments`, formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          })
-          .then((response) => {
-            console.log(response.data)
+          .post(
+            'https://api.cloudinary.com/v1_1/apa-images-repository/image/upload',
+            formData,
+          )
+          .then(({ data }) => {
+            const cloudinaryId = data.public_id
+            const name = tournamentName
+            const teams = definitiveTeamsForTournament
+            axios
+              .post(`${api}/tournaments`, {
+                name,
+                format,
+                players,
+                teams,
+                cloudinaryId,
+              })
+              .then(({ data }) => {
+                console.log(data)
+                MySwal.fire({
+                  icon: 'success',
+                  toast: true,
+                  title: 'Torneo creado con éxito',
+                  position: 'top-end',
+                  showConfirmButton: false,
+                  timer: 3000,
+                  timerProgressBar: true,
+                  didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                  },
+                  didClose: () => {
+                    navigate({
+                      pathname: `/tournaments/${data._id}`,
+                    })
+                  },
+                })
+              })
           })
       } else {
         MySwal.fire({
@@ -291,24 +261,6 @@ const LeaguesBoxContainer = ({ format, players, leagues }) => {
         })
       }
     })
-
-    // if (
-    //   tournamentName != '' &&
-    //   format &&
-    //   players &&
-    //   definitiveTeamsForTournament
-    // ) {
-    //   axios
-    //     .post(`${api}/tournaments`, {
-    //       tournamentName,
-    //       format,
-    //       players,
-    //       definitiveTeamsForTournament,
-    //     })
-    //     .then((response) => {
-    //       console.log(response.data)
-    //     })
-    // }
   }
 
   return (

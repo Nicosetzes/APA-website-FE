@@ -3,3 +3,5 @@ export const api = 'https://apa-website-be.vercel.app/api'
 
 export const database = 'https://apa-football-database.vercel.app/api'
 // export const database = 'http://localhost:8080/api'
+
+export const cloudName = 'apa-images-repository'

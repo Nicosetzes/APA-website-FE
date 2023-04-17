@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import { Link, useParams, useSearchParams, useNavigate } from 'react-router-dom'
 import BreadCrumbsMUI from './../../components/BreadCrumbsMUI'
-import { api, database } from './../../api'
+import { api, database, cloudName } from './../../api'
 import axios from 'axios'
+import { Image } from 'cloudinary-react'
 import { motion } from 'framer-motion'
 import { Oval } from 'react-loader-spinner'
 
@@ -34,7 +35,8 @@ const TournamentId = () => {
   }, [])
 
   if (currentTournament) {
-    const { name, players, teams, type, apa_id } = currentTournament
+    const { name, players, teams, type, apa_id, cloudinary_id } =
+      currentTournament
 
     console.log(name)
     console.log(players)
@@ -129,8 +131,9 @@ const TournamentId = () => {
             </div>
           </div>
           <div>
-            <img
-              src={`${database}/tournaments/logos/${apa_id}`}
+            <Image
+              cloudName={cloudName}
+              publicId={cloudinary_id}
               style={{ height: '300px' }}
             />
           </div>

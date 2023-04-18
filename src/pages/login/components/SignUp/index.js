@@ -1,3 +1,5 @@
+import { useState } from 'react'
+// import { api } from './../../../../api'
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
 import Box from '@mui/material/Box'
@@ -6,12 +8,27 @@ import AccountCircle from '@mui/icons-material/AccountCircle'
 import KeyIcon from '@mui/icons-material/Key'
 import EmojiPeopleIcon from '@mui/icons-material/EmojiPeople'
 import { StyledSignUp } from './styled'
+// import axios from 'axios'
 
-const SignUp = ({
-  registerData,
-  handleRegisterSubmit,
-  handleRegisterChange,
-}) => {
+const SignUp = () => {
+  const [registerData, setRegisterData] = useState({})
+
+  const handleRegisterChange = (event) => {
+    const name = event.target.name
+    const value = event.target.value
+    setRegisterData((values) => ({ ...values, [name]: value }))
+  }
+
+  const handleRegisterSubmit = async (event) => {
+    event.preventDefault()
+
+    // await axios.post(
+    //   `${api}/register`,
+    //   { ...registerData },
+    //   { withCredentials: true, credentials: 'include' }, // IMPORTANTE
+    // )
+  }
+
   return (
     <StyledSignUp onSubmit={handleRegisterSubmit}>
       <Typography component="h2" sx={{ margin: '0.5rem', fontWeight: 'bold' }}>

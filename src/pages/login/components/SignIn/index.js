@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
 import Box from '@mui/material/Box'
@@ -5,8 +6,98 @@ import Typography from '@mui/material/Typography'
 import AccountCircle from '@mui/icons-material/AccountCircle'
 import KeyIcon from '@mui/icons-material/Key'
 import { StyledSignIn } from './styled'
+import { useLogin } from '../../../../context/LoginContext'
+import { api } from './../../../../api'
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+import axios from 'axios'
 
-const SignIn = ({ loginData, handleLoginSubmit, handleLoginChange }) => {
+const SignIn = () => {
+  const MySwal = withReactContent(Swal)
+
+  const [loginData, setLoginData] = useState({})
+
+  const login = useLogin()
+
+  const { setLoginStatus } = login
+
+  const handleLoginChange = (event) => {
+    // Tengo que ver cómo cifrar la contraseña mientras el user la escribe (se ve en la consola) //
+    const { name, value } = event.target
+    setLoginData((values) => ({ ...values, [name]: value }))
+  }
+
+  const handleLoginSubmit = async (event) => {
+    event.preventDefault()
+    await axios
+      .post(
+        `${api}/users/login`,
+        { ...loginData },
+        { withCredentials: true, credentials: 'include' }, // IMPORTANTE
+      )
+      .then(({ data }) => {
+        const { auth, id, message } = data
+        console.log(data)
+        MySwal.fire({
+          background: `rgba(28, 25, 25, 0.95)`,
+          color: `#fff`,
+          icon: 'success',
+          iconColor: '#18890e',
+          toast: true,
+          title: message,
+          position: 'top-end',
+          showConfirmButton: false,
+          text: 'Será redirigido en breve...',
+          timer: 3000,
+          timerProgressBar: true,
+          customClass: { timerProgressBar: 'toast-progress-dark' }, // Definido en index.css //
+          didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+          },
+          didClose: () => {
+            console.log(id)
+            setLoginStatus((loginStatus) => ({
+              ...loginStatus,
+              status: auth,
+              id,
+            }))
+            // navigate({
+            //   pathname: `/`,
+            // })
+          },
+        })
+      })
+      .catch(({ response }) => {
+        const { data } = response
+        const { auth, message } = data
+        MySwal.fire({
+          background: `rgba(28, 25, 25, 0.95)`,
+          color: `#fff`,
+          icon: 'error',
+          iconColor: '#b30a0a',
+          text: message,
+          title: '¡Error!',
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          customClass: { timerProgressBar: 'toast-progress-dark' }, // Definido en index.css //
+          didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+          },
+          didClose: () => {
+            setLoginStatus((loginStatus) => ({ ...loginStatus, status: auth }))
+            // navigate({
+            //   pathname: `/tournaments/${data._id}`,
+            // })
+          },
+        })
+      })
+  }
+
   return (
     <StyledSignIn onSubmit={handleLoginSubmit}>
       <Typography component="h2" sx={{ margin: '0.5rem', fontWeight: 'bold' }}>

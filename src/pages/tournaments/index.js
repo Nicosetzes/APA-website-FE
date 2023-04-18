@@ -4,11 +4,18 @@ import { StyledTournamentsContainer } from './styled'
 import { api, cloudName } from './../../api'
 import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
+import { useLogin } from './../../context/LoginContext'
 import axios from 'axios'
 import { motion } from 'framer-motion'
 import { Oval } from 'react-loader-spinner'
 
 const Tournaments = () => {
+  const login = useLogin()
+
+  const { loginStatus, setLoginStatus } = login
+
+  console.log(loginStatus)
+
   const [tournaments, setTournaments] = useState()
 
   const getTournamentsData = async () => {

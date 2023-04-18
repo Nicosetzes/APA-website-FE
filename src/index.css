@@ -16,6 +16,10 @@ code {
     monospace;
 }
 
+.toast-progress-dark {
+  background: rgb(187 186 186) !important;
+}
+
 .title {
   font-size: 1.5rem;
   font-weight: 800;

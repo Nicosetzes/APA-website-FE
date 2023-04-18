@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { NavLink } from 'react-router-dom'
+import { useLogin } from './../../context/LoginContext'
 import Divider from '@mui/material/Divider'
 import Menu from '@mui/material/Menu'
 import MenuList from '@mui/material/MenuList'
@@ -16,6 +17,14 @@ import CreateIcon from '@mui/icons-material/Create'
 import BarChartIcon from '@mui/icons-material/BarChart'
 
 const NavMenu = ({ handleClose, isOpen, anchorEl }) => {
+  const login = useLogin()
+
+  const { loginStatus } = login
+
+  console.log(loginStatus)
+
+  const { status } = loginStatus
+
   return (
     <Menu
       id="basic-menu"
@@ -41,7 +50,9 @@ const NavMenu = ({ handleClose, isOpen, anchorEl }) => {
             <AccountCircle fontSize="small" />
           </ListItemIcon>
           <NavLink to="/login">
-            <ListItemText>Login</ListItemText>
+            <ListItemText>
+              {status ? 'Mi perfil' : 'Iniciar sesión'}
+            </ListItemText>
           </NavLink>
         </MenuItem>
         <Divider />

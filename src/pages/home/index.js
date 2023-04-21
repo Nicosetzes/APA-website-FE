@@ -3,9 +3,6 @@ import { useMediaQuery } from 'react-responsive'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { StyledHome } from './styled'
-// import homeMobile from './../../../src/images/home-mobile.png'
-// import homeDesktop from './../../../src/images/home-desktop.png'
-import presentationBackground from './../../../src/images/home-presentation-fondo.png'
 import team from './../../../src/images/polonia-bandera.png'
 import trophy from './../../../src/images/world-cup.png'
 import tournament from './../../../src/images/tournaments/9.png'
@@ -32,14 +29,7 @@ const Home = () => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
-      <StyledHome
-        presentationBackground={presentationBackground}
-        championBackground={championBackground}
-        small={!isSm}
-        // isM={}
-        // isL={}
-        // isXL={}
-      >
+      <StyledHome championBackground={championBackground} small={!isSm}>
         {/* <div className="container__presentation"></div> */}
         <div className="container__champion">
           <div className="champion-title">CAMPEÓN VIGENTE</div>

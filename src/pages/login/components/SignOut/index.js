@@ -20,7 +20,7 @@ const SignOut = () => {
       (await axios
         .get(
           `${api}/users/logout`,
-          { withCredentials: true, credentials: 'include' }, // IMPORTANTE? REVISAR //
+          { withCredentials: true, credentials: 'include' }, // Es importante, sino la cookie (alojada en el browser) NO se envía con la request //
         )
         .then(({ data }) => {
           const { auth, message } = data
@@ -36,7 +36,7 @@ const SignOut = () => {
             position: 'top-end',
             showConfirmButton: false,
             text: 'Será redirigido en breve...',
-            timer: 3000,
+            timer: 1500,
             timerProgressBar: true,
             customClass: { timerProgressBar: 'toast-progress-dark' }, // Definido en index.css //
             didOpen: (toast) => {
@@ -47,6 +47,7 @@ const SignOut = () => {
               setLoginStatus((loginStatus) => ({
                 ...loginStatus,
                 status: auth,
+                id: '',
               }))
               // navigate({
               //   pathname: `/`,
@@ -68,7 +69,7 @@ const SignOut = () => {
             toast: true,
             position: 'top-end',
             showConfirmButton: false,
-            timer: 3000,
+            timer: 1500,
             timerProgressBar: true,
             customClass: { timerProgressBar: 'toast-progress-dark' }, // Definido en index.css //
             didOpen: (toast) => {

@@ -48,7 +48,7 @@ const SignIn = () => {
           position: 'top-end',
           showConfirmButton: false,
           text: 'Será redirigido en breve...',
-          timer: 3000,
+          timer: 1500,
           timerProgressBar: true,
           customClass: { timerProgressBar: 'toast-progress-dark' }, // Definido en index.css //
           didOpen: (toast) => {
@@ -81,7 +81,7 @@ const SignIn = () => {
           toast: true,
           position: 'top-end',
           showConfirmButton: false,
-          timer: 3000,
+          timer: 1500,
           timerProgressBar: true,
           customClass: { timerProgressBar: 'toast-progress-dark' }, // Definido en index.css //
           didOpen: (toast) => {

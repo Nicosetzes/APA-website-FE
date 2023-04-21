@@ -7,6 +7,9 @@ export const StyledChampionshipBox = styled.div`
   margin: 1rem 0.5rem;
   outline: #0d8499 3px solid;
   width: 550px;
+  a {
+    text-decoration: none;
+  }
   .showcase__header {
     display: flex;
     width: 100%;

@@ -142,6 +142,7 @@ const Showcase = () => {
         finalistTeam={'Lanús'}
         finalistLogo={logoLanus}
         trophy={trophySuperligaArgentina}
+        id={'625e0f191b3f1ce6b5ee4756'}
       />
       <ChampionshipBox
         tournament={'Superliga Europea 2022'}
@@ -152,6 +153,7 @@ const Showcase = () => {
         finalistTeam={'Bayern'}
         finalistLogo={logoBayern}
         trophy={trophyRandomOne}
+        id={'625f32c9cfe012fb71aae3af'}
       />
       <ChampionshipBox
         tournament={'Superliga Inglesa 2022'}
@@ -162,6 +164,7 @@ const Showcase = () => {
         finalistTeam={'Manchester Utd.'}
         finalistLogo={logoManchesterUnited}
         trophy={trophyPremierLeague}
+        id={'6340436678316e185af86762'}
       />
       <ChampionshipBox
         tournament={'Copa del Mundo 2022/23'}
@@ -172,6 +175,7 @@ const Showcase = () => {
         finalistTeam={'Brazil'}
         finalistLogo={banderaBrazil}
         trophy={trophyWorldCup}
+        id={'6372f83c88e2408e9cadcc73'}
       />
     </StyledShowcase>
   )

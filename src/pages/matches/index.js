@@ -79,30 +79,32 @@ const Matches = () => {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
-        <span>Realizar búsqueda de partidos</span>
-        <input
-          className="search"
-          placeholder="Equipo..."
-          onChange={(e) => handleTeamNameChange(e)}
-          style={{ margin: '1rem' }}
-        />
-        <TableContainer component={Paper}>
-          <MatchesTable matches={matches} />
-        </TableContainer>
-        <Pagination
-          count={totalPages}
-          page={Number(searchParams.get('page')) + 1}
-          name={'page'}
-          onChange={handlePageChange}
-          variant="outlined"
-          color="secondary"
-          size={!isXS ? 'small' : 'medium'}
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            padding: '0.75rem 0.5rem',
-          }}
-        />
+        <div style={{ padding: '2rem 0 0 0' }}>
+          <span>Realizar búsqueda de partidos</span>
+          <input
+            className="search"
+            placeholder="Equipo..."
+            onChange={(e) => handleTeamNameChange(e)}
+            style={{ margin: '1rem' }}
+          />
+          <TableContainer component={Paper} sx={{ padding: '3rem 0' }}>
+            <MatchesTable matches={matches} />
+          </TableContainer>
+          <Pagination
+            count={totalPages}
+            page={Number(searchParams.get('page')) + 1}
+            name={'page'}
+            onChange={handlePageChange}
+            variant="outlined"
+            color="secondary"
+            size={!isXS ? 'small' : 'medium'}
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              padding: '0.75rem 0.5rem',
+            }}
+          />
+        </div>
       </motion.div>
     )
   } else {

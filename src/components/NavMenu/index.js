@@ -49,7 +49,7 @@ const NavMenu = ({ handleClose, isOpen, anchorEl }) => {
           <ListItemIcon>
             <AccountCircle fontSize="small" />
           </ListItemIcon>
-          <NavLink to="/login">
+          <NavLink to="users/login">
             <ListItemText>
               {status ? 'Mi perfil' : 'Iniciar sesión'}
             </ListItemText>

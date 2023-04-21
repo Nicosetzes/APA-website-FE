@@ -15,6 +15,7 @@ export const StyledSignOut = styled.button`
     Arial, sans-serif;
   font-size: 16px;
   font-weight: 600;
+  height: 50px;
   justify-content: center;
   line-height: 1.25;
   margin: 0.5rem auto 0;

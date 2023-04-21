@@ -5,6 +5,7 @@ import './index.css'
 import reportWebVitals from './reportWebVitals'
 import { LoginProvider } from './context/LoginContext'
 import Navbar from './components/Navbar'
+import Footer from './components/Footer'
 import AnimatedRoutes from './routes/AnimatedRoutes'
 
 ReactDOM.render(
@@ -13,6 +14,7 @@ ReactDOM.render(
       <LoginProvider>
         <Navbar />
         <AnimatedRoutes />
+        <Footer />
       </LoginProvider>
     </BrowserRouter>
   </React.StrictMode>,

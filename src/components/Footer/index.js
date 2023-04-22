@@ -48,7 +48,7 @@ const Footer = () => {
         </div>
         <div className="menu-item">
           <Link to={'users/login'}>
-            <span>{status ? 'MI PERFIL' : 'INICIAR SESIÓN'}</span>
+            <span>{status ? 'MI PERFIL' : 'LOGIN'}</span>
           </Link>
         </div>
       </div>

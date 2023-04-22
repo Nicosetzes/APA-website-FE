@@ -6,8 +6,9 @@ export const StyledFooter = styled.div`
   border-top: #cfa420 10px solid;
   display: flex;
   flex-direction: ${(props) => `${props.isXS ? 'column' : 'row'}`};
+  /* height: 110px; */
   justify-content: space-between;
-  padding: 3.75rem 0;
+  padding: 1.75rem 0;
   width: 100%;
   .footer__img {
     display: flex;
@@ -17,7 +18,7 @@ export const StyledFooter = styled.div`
     }
   }
   .footer__social {
-    margin: 1rem 0;
+    margin: 1rem auto;
     img {
       margin: 0 0.5rem;
       &:first-child {
@@ -28,6 +29,7 @@ export const StyledFooter = styled.div`
       }
     }
   }
+
   .footer__menu {
     align-items: ${(props) => `${props.isXS ? 'center' : 'flex-end'}`};
     display: flex;

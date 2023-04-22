@@ -6,6 +6,6 @@ export const StyledSignUp = styled.form`
   display: flex;
   flex-direction: column;
   height: 100%;
-  margin: 1rem auto;
+  margin: 0 auto 2.5rem auto;
   width: 300px;
 `

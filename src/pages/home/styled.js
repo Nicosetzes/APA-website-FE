@@ -2,23 +2,16 @@ import styled from 'styled-components'
 
 export const StyledHome = styled.div`
   .container__presentation {
+    align-items: center;
     background-image: ${(props) => `url(${props.presentationBackground})`};
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-    min-height: 500px;
-  }
-  .container__champion {
-    align-items: center;
-    background-image: ${(props) => `url(${props.championBackground})`};
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: ${(props) => `${props.isXL && 'cover'}`};
     display: flex;
     flex-direction: column;
+    justify-content: flex-end;
+    height: 89vh;
     isolation: isolate;
-    justify-content: center;
-    padding: 2rem 1rem 0 1rem;
     position: relative;
     &::after {
       content: '';
@@ -28,31 +21,62 @@ export const StyledHome = styled.div`
       inset: 0;
       z-index: -1;
     }
+    .logo {
+      margin: auto 0;
+      width: 175px;
+    }
     .container__coaches {
-      display: ${(props) => `${props.small ? 'none' : 'flex'}`};
+      display: flex;
       height: 200px;
-      margin: 1rem 0 0 0;
+      margin: 0 auto;
       position: relative;
-      width: 500px;
+      width: ${(props) => `${props.isM ? '700px' : '350px'}`};
       img {
-        height: 200px;
         position: absolute;
+        height: ${(props) => `${props.isM ? '250px' : '150px'}`};
         &:nth-child(1) {
+          bottom: 0;
           left: 0px;
         }
         &:nth-child(2) {
-          left: 10px;
+          bottom: 0;
+          left: ${(props) => `${props.isM ? '50px' : '5px'}`};
         }
         &:nth-child(3) {
-          left: 5px;
+          bottom: 0;
+          left: ${(props) => `${props.isM ? '100px' : '20px'}`};
         }
         &:nth-child(4) {
-          right: 0px;
+          bottom: 0;
+          left: ${(props) => `${props.isM ? '485px' : '215px'}`};
         }
         &:nth-child(5) {
-          right: 30px;
+          bottom: 0;
+          left: ${(props) => `${props.isM ? '315px' : '125px'}`};
         }
       }
+    }
+  }
+  .container__champion {
+    align-items: center;
+    background-image: ${(props) => `url(${props.championBackground})`};
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    /* background-size: ${(props) => `${props.isXL && 'cover'}`}; */
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    isolation: isolate;
+    justify-content: center;
+    position: relative;
+    &::after {
+      content: '';
+      background-color: #004a79;
+      mix-blend-mode: hard-light;
+      position: absolute;
+      inset: 0;
+      z-index: -1;
     }
     .champion-title {
       color: #fff;

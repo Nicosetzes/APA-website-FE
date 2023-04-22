@@ -72,7 +72,7 @@ const Login = () => {
             text: message,
             title: '¡Hola!',
             toast: true,
-            position: 'top-end',
+            position: 'top-start',
             showConfirmButton: false,
             timer: 1500,
             timerProgressBar: true,

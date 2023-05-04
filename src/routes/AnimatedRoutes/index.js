@@ -24,7 +24,6 @@ export const AnimatedRoutes = () => {
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<App />} />
         <Route path="/users/login" element={<Login />} />
-        <Route path="/playoffs" element={<Playoffs />} />
         <Route path="/tournaments">
           <Route index element={<Tournaments />} />
           <Route path="create-tournament" element={<CreateTournament />} />

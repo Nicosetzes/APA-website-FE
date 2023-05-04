@@ -20,13 +20,29 @@ const PlayoffsMatch = ({ topTeam, bottomTeam, matches }) => {
             (topTeam.team.id == teamP1.id && bottomTeam.team.id == teamP2.id) ||
             (topTeam.team.id == teamP2.id && bottomTeam.team.id == teamP1.id),
         )
-        .map(({ teamP1, teamP2, scoreP1, scoreP2 }) => {
-          return {
-            teamP1,
-            teamP2,
-            scoreP1,
-            scoreP2,
-          }
+        .map(({ teamP1, teamP2, scoreP1, scoreP2, outcome }) => {
+          if (scoreP1 !== scoreP2)
+            return {
+              teamP1,
+              teamP2,
+              scoreP1,
+              scoreP2,
+            }
+          else
+            return {
+              teamP1,
+              teamP2,
+              scoreP1,
+              scoreP2,
+              penaltyScoreP1:
+                outcome.teamThatWon.id == teamP1.id
+                  ? outcome.scoreFromTeamThatWon
+                  : outcome.scoreFromTeamThatLost,
+              penaltyScoreP2:
+                outcome.teamThatWon.id == teamP2.id
+                  ? outcome.scoreFromTeamThatWon
+                  : outcome.scoreFromTeamThatLost,
+            }
         })
 
       filteredMatches.length && setMatchScoreFromDatabase(filteredMatches[0])
@@ -36,6 +52,8 @@ const PlayoffsMatch = ({ topTeam, bottomTeam, matches }) => {
   useEffect(() => {
     findMatchResult(topTeam, bottomTeam)
   }, [])
+
+  console.log(matchScoreFromDatabase)
 
   const onHandleChange = (event) => {
     const name = event.target.name
@@ -167,6 +185,17 @@ const PlayoffsMatch = ({ topTeam, bottomTeam, matches }) => {
                       : matchScoreFromDatabase.scoreP2}
                   </span>
                 )}
+                {matchScoreFromDatabase &&
+                  (matchScoreFromDatabase.penaltyScoreP1 ||
+                    matchScoreFromDatabase.penaltyScoreP2) && (
+                    <span className="team-score">
+                      (
+                      {matchScoreFromDatabase.teamP1.id == topTeam.team.id
+                        ? matchScoreFromDatabase.penaltyScoreP1
+                        : matchScoreFromDatabase.penaltyScoreP2}
+                      )
+                    </span>
+                  )}
                 <input
                   name="scoreP1"
                   value={matchScore.scoreP1 || ''}
@@ -205,6 +234,17 @@ const PlayoffsMatch = ({ topTeam, bottomTeam, matches }) => {
                       : matchScoreFromDatabase.scoreP2}
                   </span>
                 )}
+                {matchScoreFromDatabase &&
+                  (matchScoreFromDatabase.penaltyScoreP1 ||
+                    matchScoreFromDatabase.penaltyScoreP2) && (
+                    <span className="team-score">
+                      (
+                      {matchScoreFromDatabase.teamP1.id == bottomTeam.team.id
+                        ? matchScoreFromDatabase.penaltyScoreP1
+                        : matchScoreFromDatabase.penaltyScoreP2}
+                      )
+                    </span>
+                  )}
                 <input
                   name="scoreP2"
                   value={matchScore.scoreP2 || ''}

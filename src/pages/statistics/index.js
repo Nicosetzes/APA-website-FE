@@ -1,36 +1,23 @@
 import { useState, useEffect } from 'react'
-import { useMediaQuery } from 'react-responsive'
+// import { useMediaQuery } from 'react-responsive'
 import { motion } from 'framer-motion'
 import { StyledStatistics } from './styled'
 import { api } from './../../api'
 import BarChart from './../../charts/BarChart'
 import DoughnutChart from './../../charts/DoughnutChart'
-import MatchView from './components/MatchView'
 import { Oval } from 'react-loader-spinner'
 import axios from 'axios'
 import StreakContainer from './components/StreakContainer'
 
 const Statistics = () => {
   // const isL = useMediaQuery({ query: "(min-width: 992px)" });
-  const isM = useMediaQuery({ query: '(min-width: 768px)' })
+  // const isM = useMediaQuery({ query: '(min-width: 768px)' })
   // const isSm = useMediaQuery({ query: "(min-width: 500px)" });
   // const isXS = useMediaQuery({ query: '(min-width: 400px)' })
 
   // const api = 'http://localhost:5000/api'
 
   const [stats, setStats] = useState()
-
-  const slideUpVariant = {
-    hidden: { y: 50 },
-    visible: {
-      y: 0,
-      transition: {
-        type: 'spring',
-        duration: 1,
-        bounce: 0.3,
-      },
-    },
-  }
 
   const flipVariant = {
     hidden: { rotateY: 180 },
@@ -61,18 +48,17 @@ const Statistics = () => {
   console.log(stats)
 
   if (stats) {
-    const { playerStats, recentMatches, accolades } = stats[0]
+    const { playerStats } = stats[0]
     const { playerStreaks } = stats[1]
-    const { mostWins, mostDraws, mostLosses } = accolades
 
     console.log(stats)
 
     const dataForDoughnutChart = {
-      labels: playerStats.map((data) => data.player),
+      labels: playerStats.map(({ player }) => player.name),
       datasets: [
         {
           label: 'Victorias totales',
-          data: playerStats.map((data) => data.wins),
+          data: playerStats.map(({ wins }) => wins),
           backgroundColor: [
             '#FF6384',
             '#36A2EB',
@@ -124,10 +110,10 @@ const Statistics = () => {
     }
 
     const dataForBarChart = {
-      labels: playerStats.map((data) => data.player),
+      labels: playerStats.map(({ player }) => player.name),
       datasets: [
         {
-          data: playerStats.map((data) => data.effectiveness),
+          data: playerStats.map(({ effectiveness }) => effectiveness),
           label: 'Efectividad (%)',
           fill: true,
           backgroundColor: [
@@ -258,54 +244,6 @@ const Statistics = () => {
               </motion.div>
             ))}
           </div>
-
-          <motion.div
-            style={{
-              display: 'grid',
-              gridTemplateRows: isM ? 'auto' : 'auto auto',
-              gridTemplateColumns: isM ? 'auto auto auto auto' : 'auto auto',
-              justifyContent: 'space-evenly',
-            }}
-            initial="hidden"
-            whileInView={'visible'}
-            viewport={{ once: false, amount: 0.125 }}
-            transition={{ staggerChildren: 0.1 }}
-            variants={slideUpVariant}
-          >
-            {recentMatches.map((match, index) => (
-              <MatchView key={index} match={match} />
-            ))}
-          </motion.div>
-          <motion.div
-            className="accolades"
-            initial="hidden"
-            whileInView={'visible'}
-            viewport={{ once: false, amount: 0.25 }}
-            transition={{ staggerChildren: 0.1 }}
-            variants={slideUpVariant}
-          >
-            <motion.div className="accolades-item" variants={slideUpVariant}>
-              <div className="accolades-item-title">
-                Mayor cantidad de victorias
-              </div>
-              <div className="accolades-item-player">{mostWins.player}</div>
-              <div className="accolades-item-number">{mostWins.wins}</div>
-            </motion.div>
-            <motion.div className="accolades-item" variants={slideUpVariant}>
-              <div className="accolades-item-title">
-                Mayor cantidad de empates
-              </div>
-              <div className="accolades-item-player">{mostDraws.player}</div>
-              <div className="accolades-item-number">{mostDraws.draws}</div>
-            </motion.div>
-            <motion.div className="accolades-item" variants={slideUpVariant}>
-              <div className="accolades-item-title">
-                Mayor cantidad de derrotas
-              </div>
-              <div className="accolades-item-player">{mostLosses.player}</div>
-              <div className="accolades-item-number">{mostLosses.losses}</div>
-            </motion.div>
-          </motion.div>
         </StyledStatistics>
       </motion.div>
     )

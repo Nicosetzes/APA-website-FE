@@ -194,6 +194,7 @@ const Match = ({ match }) => {
         <div className="match-info">
           <BarChartIcon
             fontSize="medium"
+            sx={{ cursor: 'pointer' }}
             onClick={() => displayExtraInfoFromTeam(teamP1.id)}
           />
           <textarea
@@ -255,6 +256,7 @@ const Match = ({ match }) => {
         <div className="match-info">
           <BarChartIcon
             fontSize="medium"
+            sx={{ cursor: 'pointer' }}
             onClick={() => displayExtraInfoFromTeam(teamP2.id)}
           />
           <textarea

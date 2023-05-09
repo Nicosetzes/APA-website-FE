@@ -3,6 +3,7 @@ import { Routes, Route, useLocation } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
 import Login from './../../pages/login'
 import Standings from './../../pages/standings'
+import Playin from '../../pages/playin'
 import Playoffs from '../../pages/playoffs'
 import Matches from './../../pages/matches'
 import Tournaments from './../../pages/tournaments'
@@ -14,6 +15,7 @@ import HallOfFame from '../../pages/hall-of-fame'
 import WorldCup from '../../pages/world-cup'
 import WorldCupStandings from '../../pages/world-cup-standings'
 import WorldCupPlayoffs from '../../pages/world-cup-playoffs'
+
 // import CreateGame from '../../pages/create-game'
 
 export const AnimatedRoutes = () => {
@@ -31,6 +33,7 @@ export const AnimatedRoutes = () => {
           {/* <Route path=":tournament/create-game" element={<CreateGame />} /> */}
           <Route path=":tournament/fixture" element={<FixtureId />} />
           <Route path=":tournament/standings" element={<Standings />} />
+          <Route path=":tournament/playin" element={<Playin />} />
           <Route path=":tournament/playoffs" element={<Playoffs />} />
         </Route>
         <Route path="/world-cup" element={<WorldCup />} />

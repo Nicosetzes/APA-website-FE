@@ -1,6 +1,7 @@
 import { useState } from 'react'
 // import CheckBox from './../../../../components/Checkbox'
 import Radio from './../../../../components/Radio'
+import Select from '../../../../components/Select'
 import { StyledTeamAssignmentBox } from './styled'
 
 const TeamAssignmentBox = ({
@@ -10,7 +11,7 @@ const TeamAssignmentBox = ({
   definitiveTeamsForTournament,
   updateDefinitiveTeamsForTournament,
 }) => {
-  const assignPlayerToTeam = (e) => {
+  const assignPlayerAndGroupToTeam = (e) => {
     const inputsFromRadioButtons = Array.from(
       e.target.previousSibling.children[1].children,
     ).map(({ children }) => children[1])
@@ -24,18 +25,24 @@ const TeamAssignmentBox = ({
       return
     }
 
-    const infoAboutCheckedRadioButton = inputsFromRadioButtons
+    const selectedGroupForTeam =
+      e.target.previousSibling.children[0].children[1].children[0].value
+
+    const infoAboutCheckedRadioButtonAndGroup = inputsFromRadioButtons
       .filter(({ checked }) => checked)
       .map(({ id, name, value }) => {
         return {
           id,
           name,
           value,
+          group: selectedGroupForTeam,
         }
       })
       .at(0)
 
-    return updateDefinitiveTeamsForTournament(infoAboutCheckedRadioButton)
+    return updateDefinitiveTeamsForTournament(
+      infoAboutCheckedRadioButtonAndGroup,
+    )
   }
 
   console.log(definitiveTeamsForTournament)
@@ -44,8 +51,14 @@ const TeamAssignmentBox = ({
     <StyledTeamAssignmentBox>
       <div className="teams-assignment__container-team">
         <div style={{ alignItems: 'center', display: 'flex' }}>
-          <div>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
             <span>{name}</span>
+            <Select
+              options={[
+                { name: 'Zona A', value: 'A' },
+                { name: 'Zona B', value: 'B' },
+              ]}
+            />
           </div>
           <div
             style={{
@@ -69,7 +82,9 @@ const TeamAssignmentBox = ({
             ))}
           </div>
         </div>
-        <button onClick={(e) => assignPlayerToTeam(e)}>Asignar equipo</button>
+        <button onClick={(e) => assignPlayerAndGroupToTeam(e)}>
+          Asignar equipo
+        </button>
       </div>
     </StyledTeamAssignmentBox>
   )

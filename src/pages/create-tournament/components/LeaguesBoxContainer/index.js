@@ -208,50 +208,50 @@ const LeaguesBoxContainer = ({ format, players, leagues }) => {
       if (result.isConfirmed) {
         // Cargo la imagen a Cloudinary //
 
-        const formData = new FormData()
+        // const formData = new FormData()
 
-        formData.append('file', tournamentImg)
-        formData.append('upload_preset', 'tournaments')
+        // formData.append('file', tournamentImg)
+        // formData.append('upload_preset', 'tournaments')
 
+        // axios
+        //   .post(
+        //     'https://api.cloudinary.com/v1_1/apa-images-repository/image/upload',
+        //     formData,
+        //   )
+        //   .then(({ data }) => {
+        // const cloudinaryId = data.public_id
+        const name = tournamentName
+        const teams = definitiveTeamsForTournament
         axios
-          .post(
-            'https://api.cloudinary.com/v1_1/apa-images-repository/image/upload',
-            formData,
-          )
-          .then(({ data }) => {
-            const cloudinaryId = data.public_id
-            const name = tournamentName
-            const teams = definitiveTeamsForTournament
-            axios
-              .post(`${api}/tournaments`, {
-                name,
-                format,
-                players,
-                teams,
-                cloudinaryId,
-              })
-              .then(({ data }) => {
-                console.log(data)
-                MySwal.fire({
-                  icon: 'success',
-                  toast: true,
-                  title: 'Torneo creado con éxito',
-                  position: 'top-end',
-                  showConfirmButton: false,
-                  timer: 3000,
-                  timerProgressBar: true,
-                  didOpen: (toast) => {
-                    toast.addEventListener('mouseenter', Swal.stopTimer)
-                    toast.addEventListener('mouseleave', Swal.resumeTimer)
-                  },
-                  didClose: () => {
-                    navigate({
-                      pathname: `/tournaments/${data._id}`,
-                    })
-                  },
-                })
-              })
+          .post(`${api}/tournaments`, {
+            name,
+            format,
+            players,
+            teams,
+            // cloudinaryId,
           })
+          .then(({ data }) => {
+            console.log(data)
+            MySwal.fire({
+              icon: 'success',
+              toast: true,
+              title: 'Torneo creado con éxito',
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 3000,
+              timerProgressBar: true,
+              didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+              },
+              // didClose: () => {
+              //   navigate({
+              //     pathname: `/tournaments/${data._id}`,
+              //   })
+              // },
+            })
+          })
+        // })
       } else {
         MySwal.fire({
           title: 'Cancelado',

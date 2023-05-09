@@ -180,6 +180,12 @@ const Match = ({ match }) => {
     })
   }
 
+  const onHandleTeamChange = (id) => {
+    const group = searchParams.get('group')
+    if (!group) setSearchParams({ team: id })
+    else setSearchParams({ team: id, group })
+  }
+
   return (
     <form
       className="match"
@@ -211,7 +217,7 @@ const Match = ({ match }) => {
             src={`${database}/logos/${teamP1.id}`}
             alt={match.teamP1}
             className="match-info__logo"
-            onClick={() => setSearchParams({ team: teamP1.id })}
+            onClick={() => onHandleTeamChange(teamP1.id)}
           />
           <input
             name="playerP1"
@@ -272,7 +278,7 @@ const Match = ({ match }) => {
             src={`${database}/logos/${teamP2.id}`}
             alt={teamP2.name}
             className="match-info__logo"
-            onClick={() => setSearchParams({ team: teamP2.id })}
+            onClick={() => onHandleTeamChange(teamP2.id)}
           />
           <input
             name="playerP2"

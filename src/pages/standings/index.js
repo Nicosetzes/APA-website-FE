@@ -1,10 +1,12 @@
 import * as React from 'react'
 import { useEffect, useState } from 'react'
 import {
-  Link,
-  useNavigate,
   createSearchParams,
+  Link,
+  useLocation,
+  useNavigate,
   useParams,
+  useSearchParams,
 } from 'react-router-dom'
 import axios from 'axios'
 import { motion } from 'framer-motion'
@@ -17,11 +19,15 @@ import Paper from '@mui/material/Paper'
 import StandingsTable from './components/StandingsTable'
 
 const Standings = () => {
-  const [tournamentsData, setTournamentsData] = useState('')
+  const [tournamentData, setTournamentData] = useState()
+
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  // const { state } = useLocation()
+
+  const [tournamentGroups, setTournamentGroups] = useState([])
 
   const { tournament } = useParams()
-
-  // const api = 'http://localhost:5000/api'
 
   const navigate = useNavigate()
 
@@ -48,29 +54,51 @@ const Standings = () => {
       })
   }
 
-  const getTournamentsData = () => {
-    const standings = axios.get(
-      `${api}/tournaments/${tournament}/standings/table`,
-    )
-    const playerInfoFromTournament = axios.get(
-      `${api}/tournaments/${tournament}/standings/player-info`,
-    )
+  const onHandleGroupChange = (group) => {
+    setSearchParams({ group })
+  }
 
-    Promise.all([standings, playerInfoFromTournament]).then((values) => {
+  const getTournamentData = () => {
+    const group = searchParams.get('group')
+
+    const tournamentInfo = axios.get(`${api}/tournaments/${tournament}`)
+
+    let standings
+    let playerInfo
+
+    if (group) {
+      // Hay un grupo seleccionado //
+      standings = axios.get(
+        `${api}/tournaments/${tournament}/standings/table?group=${group}`,
+      )
+      playerInfo = axios.get(
+        `${api}/tournaments/${tournament}/standings/player-info?group=${group}`,
+      )
+    } else {
+      // No hay grupos seleccionadps //
+      standings = axios.get(`${api}/tournaments/${tournament}/standings/table`)
+      playerInfo = axios.get(
+        `${api}/tournaments/${tournament}/standings/player-info`,
+      )
+    }
+
+    Promise.all([tournamentInfo, standings, playerInfo]).then((values) => {
       const data = values.map((response) => response.data)
-      setTournamentsData(data)
+      setTournamentData(data)
     })
   }
 
   useEffect(() => {
-    getTournamentsData()
-  }, [])
+    console.log('me ejecuté')
+    getTournamentData()
+  }, [searchParams])
 
-  console.log(tournamentsData)
+  console.log(tournamentData)
 
-  if (tournamentsData) {
-    const { name, sortedStandings } = tournamentsData[0] // Index 0 because of the order in which I invoked the promises call in Promise.all //
-    const playerStats = tournamentsData[1]
+  if (tournamentData) {
+    const { groups } = tournamentData[0]
+    const { id, name, activeGroup, sortedStandings } = tournamentData[1] // Index 0 because of the order in which I invoked the promises call in Promise.all //
+    const playerStats = tournamentData[2]
 
     const breadCrumbsLinks = [
       { name: 'Home', route: '' },
@@ -100,7 +128,36 @@ const Standings = () => {
             textAlign: 'center',
           }}
         >
-          {name}
+          <div>{name}</div>
+          {groups.length ? (
+            <div
+              style={{
+                border: 'black 2px solid',
+                display: 'flex',
+                margin: '0.75rem auto',
+                padding: '0.5rem 1rem',
+                width: 'fit-content',
+              }}
+            >
+              Grupos:{' '}
+              {groups.map((group) => (
+                <span
+                  key={group}
+                  onClick={() => onHandleGroupChange(group)}
+                  style={{
+                    color:
+                      (group == 'A' && !searchParams.get('group')) ||
+                      group == searchParams.get('group')
+                        ? 'green'
+                        : 'red',
+                    margin: '0 0.5rem',
+                  }}
+                >
+                  {group}
+                </span>
+              ))}
+            </div>
+          ) : null}
         </div>
         <div style={{ display: 'flex' }}>
           <Link

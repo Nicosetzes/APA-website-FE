@@ -1,8 +1,14 @@
 import { useState, useEffect } from 'react'
 import { useMediaQuery } from 'react-responsive'
-import { Link, useLocation, useParams, useSearchParams } from 'react-router-dom'
+import {
+  Link,
+  useLocation,
+  useParams,
+  useSearchParams,
+  useNavigate,
+} from 'react-router-dom'
 // import { useFixture } from '../../context/FixtureContext'
-import FixtureContainer from './components/FixtureContainer'
+import FixtureContainer from './../../components/FixtureContainer'
 import { api, database } from './../../api'
 import axios from 'axios'
 import { motion } from 'framer-motion'
@@ -11,6 +17,8 @@ import FormGroup from '@mui/material/FormGroup'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Pagination from '@mui/material/Pagination'
 import Switch from '@mui/material/Switch'
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
 import { Oval } from 'react-loader-spinner'
 
 const FixtureId = () => {
@@ -18,6 +26,8 @@ const FixtureId = () => {
   // const isM = useMediaQuery({ query: '(min-width: 768px)' })
   const isSm = useMediaQuery({ query: '(min-width: 500px)' })
   const isXS = useMediaQuery({ query: '(min-width: 375px)' })
+
+  const MySwal = withReactContent(Swal)
 
   const location = useLocation()
 
@@ -47,8 +57,13 @@ const FixtureId = () => {
 
   const handleSwitchChange = (event) => {
     const team = searchParams.get('team')
-    team ? setSearchParams({ page: 0, team }) : setSearchParams({ page: 0 })
+    const group = searchParams.get('group')
     // I set current page to 0 //
+    if (!team && !group) setSearchParams({ page: 0 })
+    else if (team && !group) setSearchParams({ page: 0, team })
+    else if (!team && group) setSearchParams({ page: 0, group })
+    else setSearchParams({ page: 0, team, group })
+
     event.target.checked
       ? setSwitchState([...switchState, event.target.name])
       : setSwitchState((currentState) =>
@@ -61,36 +76,33 @@ const FixtureId = () => {
   const handlePageChange = (event, value) => {
     // Second param (value) is the page that's been clicked! //
     const team = searchParams.get('team')
-    team
-      ? setSearchParams({ page: Number(value) - 1, team })
-      : setSearchParams({ page: Number(value) - 1 })
-    // If I don't do it like this, the team and player params are erased //
+    const group = searchParams.get('group')
+    if (!team && !group) setSearchParams({ page: Number(value) - 1 })
+    else if (team && !group) setSearchParams({ page: Number(value) - 1, team })
+    else if (!team && group) setSearchParams({ page: Number(value) - 1, group })
+    else setSearchParams({ page: Number(value) - 1, team, group })
   }
 
   const { tournament } = useParams()
 
-  const [data, setData] = useState()
+  const [fixtureData, setFixtureData] = useState()
 
   const getFixtureData = () => {
-    const playersFromTournament = axios.get(
-      `${api}/tournaments/${tournament}/players`,
-    )
+    const tournamentInfo = axios.get(`${api}/tournaments/${tournament}`)
 
     const page = searchParams.get('page')
     const team = searchParams.get('team')
+    const group = searchParams.get('group')
 
     let allMatches
 
-    if (page && team)
-      allMatches = axios.get(
-        `${api}/tournaments/${tournament}/fixture?page=${page}&team=${team}`,
-        {
-          params: {
-            players: `${switchState.length ? JSON.stringify(switchState) : ``}`,
-          },
+    if (!page && !team && !group)
+      allMatches = axios.get(`${api}/tournaments/${tournament}/fixture`, {
+        params: {
+          players: `${switchState.length ? JSON.stringify(switchState) : ``}`,
         },
-      )
-    else if (page && !team) {
+      })
+    else if (page && !team && !group)
       allMatches = axios.get(
         `${api}/tournaments/${tournament}/fixture?page=${page}`,
         {
@@ -99,7 +111,7 @@ const FixtureId = () => {
           },
         },
       )
-    } else if (!page && team) {
+    else if (!page && team && !group)
       allMatches = axios.get(
         `${api}/tournaments/${tournament}/fixture?team=${team}`,
         {
@@ -108,17 +120,56 @@ const FixtureId = () => {
           },
         },
       )
-    } else {
-      allMatches = axios.get(`${api}/tournaments/${tournament}/fixture`, {
-        params: {
-          players: `${switchState.length ? JSON.stringify(switchState) : ``}`,
+    else if (!page && !team && group)
+      allMatches = axios.get(
+        `${api}/tournaments/${tournament}/fixture?group=${group}`,
+        {
+          params: {
+            players: `${switchState.length ? JSON.stringify(switchState) : ``}`,
+          },
         },
-      })
+      )
+    else if (page && team && !group)
+      allMatches = axios.get(
+        `${api}/tournaments/${tournament}/fixture?page=${page}&team=${team}`,
+        {
+          params: {
+            players: `${switchState.length ? JSON.stringify(switchState) : ``}`,
+          },
+        },
+      )
+    else if (page && !team && group) {
+      allMatches = axios.get(
+        `${api}/tournaments/${tournament}/fixture?page=${page}&group=${group}`,
+        {
+          params: {
+            players: `${switchState.length ? JSON.stringify(switchState) : ``}`,
+          },
+        },
+      )
+    } else if (!page && team && group) {
+      allMatches = axios.get(
+        `${api}/tournaments/${tournament}/fixture?team=${team}&group=${group}`,
+        {
+          params: {
+            players: `${switchState.length ? JSON.stringify(switchState) : ``}`,
+          },
+        },
+      )
+    } else {
+      allMatches = axios.get(
+        `${api}/tournaments/${tournament}/fixture?page=${page}&team=${team}&group=${group}`,
+        {
+          params: {
+            players: `${switchState.length ? JSON.stringify(switchState) : ``}`,
+          },
+        },
+      )
     }
 
-    Promise.all([playersFromTournament, allMatches]).then((values) => {
+    Promise.all([tournamentInfo, allMatches]).then((values) => {
       const data = values.map((response) => response.data)
-      setData(data)
+      setFixtureData(data)
     })
   }
 
@@ -127,20 +178,79 @@ const FixtureId = () => {
     getFixtureData()
   }, [searchParams, switchState])
 
-  // const { selectedTeam } = fixture
-
-  const resetTeamFilter = () => {
-    setSearchParams({})
+  const getFixtureDataForTheFirstTime = () => {
+    // Ejecuto esta función cuando genero los partidos (1ra vez), para traerlos //
+    const tournamentInfo = axios.get(`${api}/tournaments/${tournament}`)
+    const allMatches = axios.get(`${api}/tournaments/${tournament}/fixture`, {
+      params: {
+        players: `${switchState.length ? JSON.stringify(switchState) : ``}`,
+      },
+    })
+    Promise.all([tournamentInfo, allMatches]).then((values) => {
+      const data = values.map((response) => response.data)
+      setFixtureData(data)
+    })
   }
 
-  if (data) {
-    console.log(data)
-    const players = data[0]
-    const { matches } = data[1]
+  // const { selectedTeam } = fixture
+
+  const onHandleGroupChange = (group) => {
+    const page = searchParams.get('page')
+    const team = searchParams.get('team')
+
+    if (!page && !team) setSearchParams({ group })
+    else if (!page && team) setSearchParams({ team: team, group })
+    else if (page && !team) setSearchParams({ page: page, group })
+    else setSearchParams({ page: page, team: team, group })
+  }
+
+  const resetTeamFilter = () => {
+    const group = searchParams.get('group')
+    group ? setSearchParams({ group: group }) : setSearchParams({})
+  }
+
+  const fixtureGenerationForGroup = (group) => {
+    console.log(group)
+    if (group)
+      axios
+        .post(`${api}/tournaments/${tournament}/fixture`, {
+          group,
+        })
+        .then(({ data }) => {
+          console.log(data)
+          MySwal.fire({
+            background: `rgba(28, 25, 25, 0.95)`,
+            color: `#fff`,
+            icon: 'success',
+            iconColor: '#18890e',
+            toast: true,
+            title: `Fixture para la zona ${group} creado con éxito`,
+            position: 'top-end',
+            showConfirmButton: false,
+            text: 'Aguarde unos instantes...',
+            timer: 1500,
+            timerProgressBar: true,
+            customClass: { timerProgressBar: 'toast-progress-dark' }, // Definido en index.css //
+            didOpen: (toast) => {
+              toast.addEventListener('mouseenter', Swal.stopTimer)
+              toast.addEventListener('mouseleave', Swal.resumeTimer)
+            },
+            didClose: () => {
+              getFixtureDataForTheFirstTime()
+            },
+          })
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+  }
+
+  if (fixtureData) {
+    console.log(fixtureData)
+    const { name, players, groups } = fixtureData[0]
+    const { matches } = fixtureData[1]
     const matchesFromDB = matches.matches
     const { totalPages, currentPage } = matches
-    const tournamentFromDB = data[1].tournament
-    const { name } = tournamentFromDB
 
     const breadCrumbsLinks = [
       { name: 'Home', route: '' },
@@ -163,6 +273,40 @@ const FixtureId = () => {
       >
         <BreadCrumbsMUI links={breadCrumbsLinks} />
         <div style={{ display: 'flex' }}>
+          {groups.length ? (
+            <div
+              style={{
+                border: 'black 2px solid',
+                display: 'flex',
+                margin: '0.75rem auto',
+                padding: '0.5rem 1rem',
+                width: 'fit-content',
+              }}
+            >
+              Grupos:{' '}
+              {groups.map((group) => (
+                <span
+                  key={group}
+                  onClick={() => onHandleGroupChange(group)}
+                  style={{
+                    color:
+                      (group == 'A' && !searchParams.get('group')) ||
+                      group == searchParams.get('group')
+                        ? 'green'
+                        : 'red',
+                    margin: '0 0.5rem',
+                    textDecoration:
+                      (group == 'A' && !searchParams.get('group')) ||
+                      group == searchParams.get('group')
+                        ? 'underline'
+                        : 'none',
+                  }}
+                >
+                  {group}
+                </span>
+              ))}
+            </div>
+          ) : null}
           <Link
             to={`/tournaments/${tournament}/standings`}
             style={{
@@ -236,7 +380,7 @@ const FixtureId = () => {
           </div>
         </FormGroup>
 
-        {matchesFromDB && (
+        {matchesFromDB.length ? (
           <>
             <FixtureContainer matches={matchesFromDB} />
             <Pagination
@@ -254,6 +398,35 @@ const FixtureId = () => {
               }}
             />
           </>
+        ) : (
+          <div
+            style={{
+              alignItems: 'center',
+              border: '#004a79 3px solid',
+              display: 'flex',
+              flexDirection: 'column',
+              margin: '2rem auto',
+              padding: '1.5rem 1.75rem',
+              width: 'fit-content',
+            }}
+          >
+            <div style={{ fontSize: '1.25rem' }}>
+              La zona{' '}
+              <span style={{ color: '#004a79', fontWeight: '700' }}>
+                {searchParams.get('group') || 'A'}
+              </span>{' '}
+              aun no cuenta con partidos
+            </div>
+            <div style={{ margin: '0.5rem auto' }}>¿Desea generarlos?</div>
+            <button
+              className="button-main"
+              onClick={() =>
+                fixtureGenerationForGroup(searchParams.get('group') || 'A')
+              }
+            >
+              Generar partidos
+            </button>
+          </div>
         )}
       </motion.div>
     )

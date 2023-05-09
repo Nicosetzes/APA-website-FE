@@ -35,13 +35,14 @@ const TournamentId = () => {
   }, [])
 
   if (currentTournament) {
-    const { name, players, teams, type, apa_id, cloudinary_id } =
+    const { name, players, teams, format, groups, cloudinary_id } =
       currentTournament
 
     console.log(name)
     console.log(players)
     console.log(teams)
-    console.log(type)
+    console.log(format)
+    console.log(groups)
 
     const breadCrumbsLinks = [
       { name: 'Home', route: '' },
@@ -61,6 +62,7 @@ const TournamentId = () => {
         <BreadCrumbsMUI links={breadCrumbsLinks} />
         <div
           style={{
+            alignItems: 'center',
             display: 'flex',
             flexWrap: 'wrap',
             justifyContent: 'center',
@@ -93,35 +95,58 @@ const TournamentId = () => {
             >
               <Link
                 to={`fixture`}
+                state={{ groups: groups }}
                 style={{
                   color: '#004a79',
                   fontSize: '2rem',
-                  margin: '1.25rem',
+                  margin: '1rem',
                   textDecoration: 'none',
                 }}
               >
                 Fixture
               </Link>
-              {(type == 'league' || type == 'world_cup') && (
+              {(format == 'league' ||
+                format == 'league_playoff' ||
+                format == 'league_playin_playoff' ||
+                format == 'world_cup') && (
                 <Link
                   to={`standings`}
+                  state={{ groups: groups }}
                   style={{
                     color: '#004a79',
                     fontSize: '2rem',
-                    margin: '1.25rem',
+                    margin: '1rem',
                     textDecoration: 'none',
                   }}
                 >
                   Clasificación
                 </Link>
               )}
-              {type == 'playoffs' && (
+              {format == 'league_playin_playoff' && (
                 <Link
-                  to={`playoffs`}
+                  to={`playin`}
+                  state={{ groups: groups }}
                   style={{
                     color: '#004a79',
                     fontSize: '2rem',
-                    margin: '1.25rem',
+                    margin: '1rem',
+                    textDecoration: 'none',
+                  }}
+                >
+                  Playin
+                </Link>
+              )}
+              {(format == 'playoff' ||
+                format == 'league_playoff' ||
+                format == 'league_playin_playoff' ||
+                format == 'world_cup') && (
+                <Link
+                  to={`playoffs`}
+                  state={{ groups: groups }}
+                  style={{
+                    color: '#004a79',
+                    fontSize: '2rem',
+                    margin: '1rem',
                     textDecoration: 'none',
                   }}
                 >
@@ -130,7 +155,7 @@ const TournamentId = () => {
               )}
             </div>
           </div>
-          <div>
+          <div style={{ display: 'flex', height: '100%' }}>
             <Image
               cloudName={cloudName}
               publicId={cloudinary_id}

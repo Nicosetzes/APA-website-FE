@@ -1,5 +1,5 @@
 import { StyledFixtureContainer } from './styled'
-import Match from './../../../../components/Match'
+import Match from './../Match'
 
 const FixtureContainer = ({ matches }) => {
   console.log(matches)

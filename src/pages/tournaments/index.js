@@ -63,16 +63,14 @@ const Tournaments = () => {
           Torneos activos
         </div>
         <StyledTournamentsContainer>
-          {activeTournaments.map(
-            ({ _id, name, apa_id, cloudinary_id, type }) => (
-              <div className="container__card" key={_id}>
-                <Link to={`/tournaments/${_id}`}>
-                  <Image cloudName={cloudName} publicId={cloudinary_id} />
-                  <div className="container__card-name">{name}</div>
-                </Link>
-              </div>
-            ),
-          )}
+          {activeTournaments.map(({ _id, name, cloudinary_id }) => (
+            <div className="container__card" key={_id}>
+              <Link to={`/tournaments/${_id}`}>
+                <Image cloudName={cloudName} publicId={cloudinary_id} />
+                <div className="container__card-name">{name}</div>
+              </Link>
+            </div>
+          ))}
         </StyledTournamentsContainer>
         <div
           style={{
@@ -85,16 +83,14 @@ const Tournaments = () => {
           Torneos finalizados
         </div>
         <StyledTournamentsContainer>
-          {inactiveTournaments.map(
-            ({ _id, name, apa_id, cloudinary_id, type }) => (
-              <div className="container__card" key={_id}>
-                <Link to={`/tournaments/${_id}`}>
-                  <Image cloudName={cloudName} publicId={cloudinary_id} />
-                  <div className="container__card-name">{name}</div>
-                </Link>
-              </div>
-            ),
-          )}
+          {inactiveTournaments.map(({ _id, name, cloudinary_id }) => (
+            <div className="container__card" key={_id}>
+              <Link to={`/tournaments/${_id}`}>
+                <Image cloudName={cloudName} publicId={cloudinary_id} />
+                <div className="container__card-name">{name}</div>
+              </Link>
+            </div>
+          ))}
         </StyledTournamentsContainer>
       </motion.div>
     )

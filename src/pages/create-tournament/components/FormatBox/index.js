@@ -1,12 +1,12 @@
 // import { useState } from 'react'
 import { StyledFormatBox } from './styled'
 
-const FormatBox = ({ title, img, handler }) => {
+const FormatBox = ({ title, format, img, handler }) => {
   return (
     <StyledFormatBox img={img} onClick={handler}>
-      <div className="formats__box-title" title={title}>
+      <div className="formats__box-title" title={title} format={format}>
         {/*  Debo pasarle la prop title para que funcione el onClick! */}
-        <span>{title}</span>
+        <span>{format}</span>
       </div>
     </StyledFormatBox>
   )

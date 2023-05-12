@@ -29,6 +29,10 @@ const FixtureId = () => {
 
   const MySwal = withReactContent(Swal)
 
+  const { tournament } = useParams()
+
+  const [searchParams, setSearchParams] = useSearchParams()
+
   const location = useLocation()
 
   const initialPlayer = location?.state?.player
@@ -36,24 +40,6 @@ const FixtureId = () => {
   const [switchState, setSwitchState] = useState(
     initialPlayer ? [initialPlayer] : [],
   )
-
-  useEffect(() => {
-    const arrayOfKeys = Object.keys(switchState)
-    const arrayOfValues = Object.values(switchState)
-    let activeSwitches = arrayOfValues
-      .map((state, index) => {
-        return {
-          index,
-          state,
-          player: arrayOfKeys[index],
-        }
-      })
-      .filter(({ state }) => state)
-
-    console.log(activeSwitches)
-  }, [switchState])
-
-  console.log(switchState)
 
   const handleSwitchChange = (event) => {
     const team = searchParams.get('team')
@@ -71,24 +57,23 @@ const FixtureId = () => {
         )
   }
 
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [tournamentData, setTournamentData] = useState()
 
-  const handlePageChange = (event, value) => {
-    // Second param (value) is the page that's been clicked! //
-    const team = searchParams.get('team')
-    const group = searchParams.get('group')
-    if (!team && !group) setSearchParams({ page: Number(value) - 1 })
-    else if (team && !group) setSearchParams({ page: Number(value) - 1, team })
-    else if (!team && group) setSearchParams({ page: Number(value) - 1, group })
-    else setSearchParams({ page: Number(value) - 1, team, group })
+  const getTournamentData = () => {
+    console.log('Traigo la data del torneo')
+    axios
+      .get(`${api}/tournaments/${tournament}`)
+      .then(({ data }) => setTournamentData(data))
   }
 
-  const { tournament } = useParams()
+  useEffect(() => {
+    getTournamentData()
+  }, [])
 
   const [fixtureData, setFixtureData] = useState()
 
   const getFixtureData = () => {
-    const tournamentInfo = axios.get(`${api}/tournaments/${tournament}`)
+    console.log('Traigo el fixture del torneo')
 
     const page = searchParams.get('page')
     const team = searchParams.get('team')
@@ -167,32 +152,24 @@ const FixtureId = () => {
       )
     }
 
-    Promise.all([tournamentInfo, allMatches]).then((values) => {
-      const data = values.map((response) => response.data)
+    allMatches.then(({ data }) => {
       setFixtureData(data)
     })
   }
 
   useEffect(() => {
-    console.log('me ejecuto')
     getFixtureData()
   }, [searchParams, switchState])
 
-  const getFixtureDataForTheFirstTime = () => {
-    // Ejecuto esta función cuando genero los partidos (1ra vez), para traerlos //
-    const tournamentInfo = axios.get(`${api}/tournaments/${tournament}`)
-    const allMatches = axios.get(`${api}/tournaments/${tournament}/fixture`, {
-      params: {
-        players: `${switchState.length ? JSON.stringify(switchState) : ``}`,
-      },
-    })
-    Promise.all([tournamentInfo, allMatches]).then((values) => {
-      const data = values.map((response) => response.data)
-      setFixtureData(data)
-    })
+  const handlePageChange = (event, value) => {
+    // Second param (value) is the page that's been clicked! //
+    const team = searchParams.get('team')
+    const group = searchParams.get('group')
+    if (!team && !group) setSearchParams({ page: Number(value) - 1 })
+    else if (team && !group) setSearchParams({ page: Number(value) - 1, team })
+    else if (!team && group) setSearchParams({ page: Number(value) - 1, group })
+    else setSearchParams({ page: Number(value) - 1, team, group })
   }
-
-  // const { selectedTeam } = fixture
 
   const onHandleGroupChange = (group) => {
     const page = searchParams.get('page')
@@ -236,7 +213,8 @@ const FixtureId = () => {
               toast.addEventListener('mouseleave', Swal.resumeTimer)
             },
             didClose: () => {
-              getFixtureDataForTheFirstTime()
+              // Traigo nuevamente la data, para mostrarla sin necesidad de refrescar la página //
+              getFixtureData()
             },
           })
         })
@@ -245,10 +223,10 @@ const FixtureId = () => {
         })
   }
 
-  if (fixtureData) {
+  if (tournamentData && fixtureData) {
     console.log(fixtureData)
-    const { name, players, groups } = fixtureData[0]
-    const { matches } = fixtureData[1]
+    const { name, players, groups } = tournamentData
+    const { matches } = fixtureData
     const matchesFromDB = matches.matches
     const { totalPages, currentPage } = matches
 
@@ -382,7 +360,10 @@ const FixtureId = () => {
 
         {matchesFromDB.length ? (
           <>
-            <FixtureContainer matches={matchesFromDB} />
+            <FixtureContainer
+              matches={matchesFromDB}
+              getFixtureData={getFixtureData}
+            />
             <Pagination
               count={totalPages}
               page={Number(searchParams.get('page')) + 1}

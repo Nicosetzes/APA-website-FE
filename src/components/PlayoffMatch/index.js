@@ -21,6 +21,7 @@ const PlayoffMatch = ({
   seedP2,
   scoreP2,
   outcome,
+  getData,
 }) => {
   const MySwal = withReactContent(Swal)
 
@@ -63,19 +64,18 @@ const PlayoffMatch = ({
           icon: 'success',
           iconColor: '#18890e',
           toast: true,
-          title: `Resultado cargado con éxito`,
+          // title: `Resultado cargado con éxito`,
           position: 'top-end',
           showConfirmButton: false,
-          text: 'Aguarde unos instantes...',
+          text: 'Resultado cargado con éxito',
           timer: 1500,
           timerProgressBar: true,
           customClass: { timerProgressBar: 'toast-progress-dark' }, // Definido en index.css //
           didOpen: (toast) => {
+            // Vuelvo a traer la data de los partidos, para mostrar los partidos actualizados //
+            getData()
             toast.addEventListener('mouseenter', Swal.stopTimer)
             toast.addEventListener('mouseleave', Swal.resumeTimer)
-          },
-          didClose: () => {
-            window.location.reload(true) // TODO: Cambiar por algo que sea más React-style //
           },
         })
       })

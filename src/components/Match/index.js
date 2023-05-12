@@ -11,8 +11,8 @@ import IconButton from '@mui/material/IconButton'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 
-const Match = ({ match }) => {
-  const navigate = useNavigate()
+const Match = ({ match, getFixtureData }) => {
+  const MySwal = withReactContent(Swal)
   const [searchParams, setSearchParams] = useSearchParams()
   const { tournament } = useParams()
 
@@ -35,7 +35,7 @@ const Match = ({ match }) => {
   const onHandleChange = (event) => {
     const name = event.target.name
     const value = event.target.value
-    setMatchScore((values) => ({ ...values, [name]: Number(value) }))
+    setMatchScore((values) => ({ ...values, [name]: value }))
   }
 
   const handleMatchSubmit = async (event) => {
@@ -48,19 +48,22 @@ const Match = ({ match }) => {
       scoreP2 === ''
     ) {
       // The comparison with == checks for both null and undefined //
-      Swal.fire({
-        title: 'Error!',
-        html: `Uno de los resultados no fue cargado. <br>
-    					Intente nuevamente`,
-        color: '#000',
-        background: 'rgb(240 240 245)',
+      MySwal.fire({
+        background: `rgba(28, 25, 25, 0.95)`,
+        color: `#fff`,
         icon: 'error',
-        confirmButtonText: 'Volver',
-        showClass: {
-          popup: 'animate__animated animate__fadeInDown',
-        },
-        hideClass: {
-          popup: 'animate__animated animate__fadeOutUp',
+        iconColor: '#b30a0a',
+        text: `Resultado incompleto, intente nuevamente`,
+        title: '¡Error!',
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+        customClass: { timerProgressBar: 'toast-progress-dark' }, // Definido en index.css //
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer)
+          toast.addEventListener('mouseleave', Swal.resumeTimer)
         },
       })
       return
@@ -75,50 +78,52 @@ const Match = ({ match }) => {
       scoreP2,
     }
 
-    Swal.fire({
-      title: 'Resultado actualizado con éxito',
-      html: `Aguarde unos instantes...`,
-      color: '#000',
-      background: 'rgb(240 240 245)',
-      icon: 'success',
-      timer: 3000,
-      timerProgressBar: true,
-      showCancelButton: false,
-      showConfirmButton: false,
-      allowOutsideClick: false,
-      showClass: {
-        popup: 'animate__animated animate__fadeInDown',
-      },
-      hideClass: {
-        popup: 'animate__animated animate__fadeOutUp',
-      },
-    })
     axios
       .put(`${api}/tournaments/${tournament}/matches/update-game/${_id}`, data)
       .then(({ data }) => {
-        console.log(data)
-        // navigate({
-        //   pathname: `/tournaments/${tournament}/matches`,
-        // })
+        // ¿Debería hacer algo con data? //
+        MySwal.fire({
+          background: `rgba(28, 25, 25, 0.95)`,
+          color: `#fff`,
+          icon: 'success',
+          iconColor: '#18890e',
+          toast: true,
+          title: `Partido cargado con éxito`,
+          position: 'top-end',
+          showConfirmButton: false,
+          text: 'Aguarde unos instantes...',
+          timer: 1500,
+          timerProgressBar: true,
+          customClass: { timerProgressBar: 'toast-progress-dark' }, // Definido en index.css //
+          didOpen: (toast) => {
+            // Vuelvo a traer los partidos del fixture, para mostrar los partidos actualizados sin recargar la página //
+            getFixtureData()
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+          },
+        })
       })
   }
 
   const handleMatchRemoval = async () => {
     if (scoreP1 == null || scoreP2 == null) {
       // The comparison with == checks for both null and undefined //
-      Swal.fire({
-        title: 'Error!',
-        html: `No puede borrar partidos que no tengan cargado un resultado. <br>
-    					Intente nuevamente`,
-        color: '#000',
-        background: 'rgb(240 240 245)',
+      MySwal.fire({
+        background: `rgba(28, 25, 25, 0.95)`,
+        color: `#fff`,
         icon: 'error',
-        confirmButtonText: 'Volver',
-        showClass: {
-          popup: 'animate__animated animate__fadeInDown',
-        },
-        hideClass: {
-          popup: 'animate__animated animate__fadeOutUp',
+        iconColor: '#b30a0a',
+        title: '¡Error!',
+        text: `No puede borrar partidos que no tengan el resultado cargado`,
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+        customClass: { timerProgressBar: 'toast-progress-dark' }, // Definido en index.css //
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer)
+          toast.addEventListener('mouseleave', Swal.resumeTimer)
         },
       })
       return
@@ -136,24 +141,56 @@ const Match = ({ match }) => {
       cancelButtonText: 'Volver',
     }).then((result) => {
       if (result.isConfirmed) {
-        Swal.fire(
-          'Eliminado!',
-          'El partido ha sido eliminado de la base de datos.',
-          'success',
-        )
         axios
           .put(`${api}/tournaments/${tournament}/matches/delete-game/${_id}`)
           .then(({ data }) => {
             console.log(data)
-            // navigate({
-            //   pathname: `/tournaments/${tournament}/matches`,
-            // })
+            MySwal.fire({
+              background: `rgba(28, 25, 25, 0.95)`,
+              color: `#fff`,
+              icon: 'success',
+              iconColor: '#18890e',
+              toast: true,
+              title: `Partido eliminado con éxito`,
+              position: 'top-end',
+              showConfirmButton: false,
+              text: 'Aguarde unos instantes...',
+              timer: 2000,
+              timerProgressBar: true,
+              customClass: { timerProgressBar: 'toast-progress-dark' }, // Definido en index.css //
+              didOpen: (toast) => {
+                // Vuelvo a traer los partidos del fixture, para mostrar los partidos actualizados sin recargar la página //
+                getFixtureData()
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+              },
+            })
+          })
+          .catch(({ response }) => {
+            const { data } = response
+            const { message } = data
+            MySwal.fire({
+              background: `rgba(28, 25, 25, 0.95)`,
+              color: `#fff`,
+              icon: 'error',
+              iconColor: '#b30a0a',
+              title: '¡Error!',
+              text: message,
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 2000,
+              timerProgressBar: true,
+              customClass: { timerProgressBar: 'toast-progress-dark' }, // Definido en index.css //
+              didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+              },
+            })
           })
       }
     })
   }
-
-  const MySwal = withReactContent(Swal)
 
   // const [teamInformation, setTeamInformation] = useState()
 

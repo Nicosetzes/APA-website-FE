@@ -6,12 +6,10 @@ import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import axios from 'axios'
 
-const PlayoffRound = ({ matches, round }) => {
+const PlayoffRound = ({ matches, round, getData }) => {
   const { tournament } = useParams()
 
   const MySwal = withReactContent(Swal)
-
-  console.log(matches)
 
   const checkForNewPlayoffMatches = (round) => {
     axios
@@ -25,19 +23,18 @@ const PlayoffRound = ({ matches, round }) => {
           icon: 'success',
           iconColor: '#18890e',
           toast: true,
-          title: `Se han generado nuevos partidos (${data.length})`,
+          title: `¡Éxito!`,
           position: 'top-end',
           showConfirmButton: false,
-          text: 'Aguarde unos instantes...',
-          timer: 1500,
+          text: `Se han generado nuevos partidos (${data.length})`,
+          timer: 2000,
           timerProgressBar: true,
           customClass: { timerProgressBar: 'toast-progress-dark' }, // Definido en index.css //
           didOpen: (toast) => {
+            // Vuelvo a traer la data de Playoffs, para mostrar la vista actualizada //
+            getData()
             toast.addEventListener('mouseenter', Swal.stopTimer)
             toast.addEventListener('mouseleave', Swal.resumeTimer)
-          },
-          didClose: () => {
-            window.location.reload(true) // TODO: Cambiar por algo que sea más React-style //
           },
         }),
       )
@@ -102,6 +99,7 @@ const PlayoffRound = ({ matches, round }) => {
                 seedP2={seedP2}
                 scoreP2={scoreP2}
                 outcome={outcome}
+                getData={getData}
               />
             ),
           )

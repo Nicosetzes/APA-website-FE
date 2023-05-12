@@ -16,8 +16,6 @@ import WorldCup from '../../pages/world-cup'
 import WorldCupStandings from '../../pages/world-cup-standings'
 import WorldCupPlayoffs from '../../pages/world-cup-playoffs'
 
-// import CreateGame from '../../pages/create-game'
-
 export const AnimatedRoutes = () => {
   const location = useLocation()
 
@@ -30,7 +28,6 @@ export const AnimatedRoutes = () => {
           <Route index element={<Tournaments />} />
           <Route path="create-tournament" element={<CreateTournament />} />
           <Route path=":tournament" element={<TournamentId />} />
-          {/* <Route path=":tournament/create-game" element={<CreateGame />} /> */}
           <Route path=":tournament/fixture" element={<FixtureId />} />
           <Route path=":tournament/standings" element={<Standings />} />
           <Route path=":tournament/playin" element={<Playin />} />

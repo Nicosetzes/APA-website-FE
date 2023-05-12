@@ -23,19 +23,26 @@ const Playin = () => {
 
   const { tournament } = useParams()
 
+  const [tournamentData, setTournamentData] = useState()
+
+  const getTournamentData = () => {
+    console.log('Traigo la data del torneo')
+    axios
+      .get(`${api}/tournaments/${tournament}`)
+      .then(({ data }) => setTournamentData(data))
+  }
+
+  useEffect(() => {
+    getTournamentData()
+  }, [])
+
   const [playinData, setPlayinData] = useState()
 
   const getPlayinData = () => {
-    const tournamentInfo = axios.get(`${api}/tournaments/${tournament}`)
-
-    const allMatches = axios.get(
-      `${api}/tournaments/${tournament}/playin/matches`,
-    )
-
-    Promise.all([tournamentInfo, allMatches]).then((values) => {
-      const data = values.map((response) => response.data)
-      setPlayinData(data)
-    })
+    console.log('Traigo data del playin')
+    axios
+      .get(`${api}/tournaments/${tournament}/playin/matches`)
+      .then(({ data }) => setPlayinData(data))
   }
 
   useEffect(() => {
@@ -55,19 +62,18 @@ const Playin = () => {
           icon: 'success',
           iconColor: '#18890e',
           toast: true,
-          title: `Playin de la zona ${group} creado con éxito`,
+          title: `¡Éxito!`,
           position: 'top-end',
           showConfirmButton: false,
-          text: 'Aguarde unos instantes...',
-          timer: 1500,
+          text: `Playin de la zona ${group} creado con éxito`,
+          timer: 2000,
           timerProgressBar: true,
           customClass: { timerProgressBar: 'toast-progress-dark' }, // Definido en index.css //
           didOpen: (toast) => {
+            // Vuelvo a traer la data de Playin, para mostrar la vista actualizada //
+            getPlayinData()
             toast.addEventListener('mouseenter', Swal.stopTimer)
             toast.addEventListener('mouseleave', Swal.resumeTimer)
-          },
-          didClose: () => {
-            getPlayinDataForTheFirstTime()
           },
         })
       })
@@ -76,22 +82,10 @@ const Playin = () => {
       })
   }
 
-  const getPlayinDataForTheFirstTime = () => {
-    // Ejecuto esta función cuando genero los partidos (1ra vez), para traerlos //
-    const tournamentInfo = axios.get(`${api}/tournaments/${tournament}`)
-    const allMatches = axios.get(
-      `${api}/tournaments/${tournament}/playin/matches`,
-    )
-    Promise.all([tournamentInfo, allMatches]).then((values) => {
-      const data = values.map((response) => response.data)
-      setPlayinData(data)
-    })
-  }
-
-  if (playinData) {
+  if (tournamentData && playinData) {
     // console.log(playinData)
-    const { name, players } = playinData[0]
-    const { matches } = playinData[1]
+    const { name, players } = tournamentData
+    const { matches } = playinData
 
     const breadCrumbsLinks = [
       { name: 'Home', route: '' },
@@ -105,8 +99,6 @@ const Playin = () => {
         route: `tournaments/${tournament}/playin`,
       },
     ]
-
-    console.log(matches)
 
     return (
       <motion.div
@@ -129,10 +121,12 @@ const Playin = () => {
               <PlayinRound
                 matches={matches.filter(({ playoff_id }) => playoff_id <= 4)}
                 round={1}
+                getData={getPlayinData}
               />
               <PlayinRound
                 matches={matches.filter(({ playoff_id }) => playoff_id > 4)}
                 round={2}
+                getData={getPlayinData}
               />
               {matches.length &&
                 matches.filter(({ outcome }) => outcome).length == 6 && (

@@ -19,19 +19,25 @@ const Playoffs = () => {
 
   const MySwal = withReactContent(Swal)
 
+  const [tournamentData, setTournamentData] = useState()
+
+  const getTournamentData = () => {
+    console.log('Traigo la data del torneo')
+    axios
+      .get(`${api}/tournaments/${tournament}`)
+      .then(({ data }) => setTournamentData(data))
+  }
+
+  useEffect(() => {
+    getTournamentData()
+  }, [])
+
   const [playoffData, setPlayoffData] = useState()
 
   const getPlayoffsData = () => {
-    const tournamentInfo = axios.get(`${api}/tournaments/${tournament}`)
-
-    const matches = axios.get(
-      `${api}/tournaments/${tournament}/playoff/matches`,
-    )
-
-    Promise.all([tournamentInfo, matches]).then((values) => {
-      const data = values.map((response) => response.data)
-      setPlayoffData(data)
-    })
+    axios
+      .get(`${api}/tournaments/${tournament}/playoff/matches`)
+      .then(({ data }) => setPlayoffData(data))
   }
 
   useEffect(() => {
@@ -49,19 +55,18 @@ const Playoffs = () => {
           icon: 'success',
           iconColor: '#18890e',
           toast: true,
-          title: `Playoff creado con éxito`,
+          title: `¡Éxito!`,
           position: 'top-end',
           showConfirmButton: false,
-          text: 'Aguarde unos instantes...',
-          timer: 1500,
+          text: `Playoff creado con éxito`,
+          timer: 2000,
           timerProgressBar: true,
           customClass: { timerProgressBar: 'toast-progress-dark' }, // Definido en index.css //
           didOpen: (toast) => {
+            // Vuelvo a traer la data de Playoffs, para mostrar la vista actualizada //
+            getPlayoffsData()
             toast.addEventListener('mouseenter', Swal.stopTimer)
             toast.addEventListener('mouseleave', Swal.resumeTimer)
-          },
-          didClose: () => {
-            getPlayoffDataForTheFirstTime()
           },
         })
       })
@@ -94,22 +99,9 @@ const Playoffs = () => {
       })
   }
 
-  const getPlayoffDataForTheFirstTime = () => {
-    // Ejecuto esta función cuando genero los partidos (1ra vez), para traerlos //
-    const tournamentInfo = axios.get(`${api}/tournaments/${tournament}`)
-    const allMatches = axios.get(
-      `${api}/tournaments/${tournament}/playoff/matches`,
-    )
-    Promise.all([tournamentInfo, allMatches]).then((values) => {
-      const data = values.map((response) => response.data)
-      setPlayoffData(data)
-    })
-  }
-
-  if (playoffData) {
-    console.log(playoffData)
-    const { name } = playoffData[0]
-    const { matches } = playoffData[1]
+  if (tournamentData && playoffData) {
+    const { name } = tournamentData
+    const { matches } = playoffData
 
     const breadCrumbsLinks = [
       { name: 'Home', route: '' },
@@ -144,22 +136,26 @@ const Playoffs = () => {
             <PlayoffRound
               matches={matches.filter(({ playoff_id }) => playoff_id <= 8)}
               round={1}
+              getData={getPlayoffsData}
             />
             <PlayoffRound
               matches={matches.filter(
                 ({ playoff_id }) => playoff_id > 8 && playoff_id <= 12,
               )}
               round={2}
+              getData={getPlayoffsData}
             />
             <PlayoffRound
               matches={matches.filter(
                 ({ playoff_id }) => playoff_id > 12 && playoff_id <= 14,
               )}
               round={3}
+              getData={getPlayoffsData}
             />
             <PlayoffRound
               matches={matches.filter(({ playoff_id }) => playoff_id == 15)}
               round={4}
+              getData={getPlayoffsData}
             />
             {matches.filter(({ outcome }) => outcome).length == 15 && (
               <div

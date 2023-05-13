@@ -195,6 +195,8 @@ const Match = ({ match, getFixtureData }) => {
   // const [teamInformation, setTeamInformation] = useState()
 
   const displayExtraInfoFromTeam = (id) => {
+    const group = searchParams.get('group')
+
     MySwal.fire({
       background: 'rgba(0,74,121,0.8)',
       width: 600,
@@ -204,7 +206,7 @@ const Match = ({ match, getFixtureData }) => {
         // `MySwal` is a subclass of `Swal` with all the same instance & static methods
         MySwal.showLoading()
         axios
-          .get(`${api}/tournaments/${tournament}/teams/${id}`)
+          .get(`${api}/tournaments/${tournament}/teams/${id}?group=${group}`)
           .then(({ data }) => {
             MySwal.update({
               html: <TeamInformationModal teamInformation={data} />,

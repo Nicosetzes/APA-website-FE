@@ -19,5 +19,9 @@ export const StyledTeamBox = styled.div`
       transition: transform 0.3s linear;
       transform: scale(1.025, 1.025);
     }
+    img {
+      margin: 0 0.25rem;
+      width: 25px;
+    }
   }
 `

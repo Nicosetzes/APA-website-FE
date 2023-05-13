@@ -1,60 +1,58 @@
 import { useState, useEffect } from 'react'
+import { useMediaQuery } from 'react-responsive'
 import { api, database } from './../../api'
+import { StyledFormatsContainer } from './styled'
+import TournamentSettings from './components/TournamentSettings'
 import axios from 'axios'
 import { Oval } from 'react-loader-spinner'
 import { Link } from 'react-router-dom'
 
-import FormatsContainer from './components/FormatsContainer'
-import PreviousTournamentsContainer from './components/PreviousTournamentsContainer'
-
 const CreateTournament = () => {
-  const [tournamentData, setTournamentData] = useState()
-  //   const [tournamentFormat, setTournamentFormat] = useState()
+  const isXL = useMediaQuery({ query: '(min-width: 1200px)' })
+  const isL = useMediaQuery({ query: '(min-width: 992px)' })
+  const isM = useMediaQuery({ query: '(min-width: 768px)' })
+  const isSm = useMediaQuery({ query: '(min-width: 500px)' })
+  const isXS = useMediaQuery({ query: '(min-width: 350px)' })
 
-  const getTournamentData = () => {
-    const players = axios.get(`${api}/users`)
-    const leagues = axios.get(`${database}/leagues`)
-    const previousTournaments = axios.get(`${database}/tournaments`)
+  const [tournamentFormat, setTournamentFormat] = useState()
 
-    Promise.all([leagues, players, previousTournaments]).then((values) => {
-      const data = values.map((response) => response.data)
-      setTournamentData(data)
-    })
-  }
-
-  useEffect(() => {
-    getTournamentData()
-  }, [])
-
-  if (tournamentData) {
-    const previousTournaments = tournamentData[2]
-    console.log(previousTournaments)
-
-    return (
-      <>
-        <FormatsContainer database={database} />
-
-        <PreviousTournamentsContainer
-          database={database}
-          tournaments={previousTournaments}
-        />
-      </>
-    )
-  } else {
-    return (
-      <div style={{ margin: 'auto', width: '100px' }}>
-        <Oval
-          height="80"
-          width="80"
-          radius="9"
-          color="green"
-          ariaLabel="three-dots-loading"
-          $wrapperStyle
-          $wrapperClass
-        />
-      </div>
-    )
-  }
+  return (
+    <>
+      <StyledFormatsContainer>
+        <div
+          className="format__container"
+          onClick={() => setTournamentFormat('world_cup')}
+        >
+          <div className="formats__box-title">Copa del Mundo</div>
+          <img src={`${database}/tournaments/logos/2`} />
+        </div>
+        <div
+          className="format__container"
+          onClick={() => setTournamentFormat('league')}
+        >
+          <div className="formats__box-title">Liga única</div>
+          <img src={`${database}/tournaments/logos/1`} />
+        </div>
+        <div
+          className="format__container"
+          onClick={() => setTournamentFormat('playoff')}
+        >
+          <div className="formats__box-title">Playoffs</div>
+          <img src={`${database}/tournaments/logos/4`} />
+        </div>
+        <div
+          className="format__container"
+          onClick={() => setTournamentFormat('league_playin_playoff')}
+        >
+          <div className="formats__box-title">
+            Liga con grupos + Playin + Playoffs
+          </div>
+          <img src={`${database}/tournaments/logos/8`} />
+        </div>
+      </StyledFormatsContainer>
+      {tournamentFormat && <TournamentSettings format={tournamentFormat} />}
+    </>
+  )
 }
 
 export default CreateTournament

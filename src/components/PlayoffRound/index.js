@@ -16,37 +16,58 @@ const PlayoffRound = ({ matches, round, getData }) => {
       .post(`${api}/tournaments/${tournament}/playoff/update`, {
         round,
       })
-      .then(({ data }) =>
-        MySwal.fire({
-          background: `rgba(28, 25, 25, 0.95)`,
-          color: `#fff`,
-          icon: 'success',
-          iconColor: '#18890e',
-          toast: true,
-          title: `¡Éxito!`,
-          position: 'top-end',
-          showConfirmButton: false,
-          text: `Se han generado nuevos partidos (${data.length})`,
-          timer: 2000,
-          timerProgressBar: true,
-          customClass: { timerProgressBar: 'toast-progress-dark' }, // Definido en index.css //
-          didOpen: (toast) => {
-            // Vuelvo a traer la data de Playoffs, para mostrar la vista actualizada //
-            getData()
-            toast.addEventListener('mouseenter', Swal.stopTimer)
-            toast.addEventListener('mouseleave', Swal.resumeTimer)
-          },
-        }),
-      )
+      .then(({ data }) => {
+        console.log(data)
+        const { matches, message } = data
+        matches.length
+          ? MySwal.fire({
+              background: `rgba(28, 25, 25, 0.95)`,
+              color: `#fff`,
+              icon: 'success',
+              iconColor: '#18890e',
+              toast: true,
+              title: `¡Éxito!`,
+              position: 'top-end',
+              showConfirmButton: false,
+              text: message,
+              timer: 2000,
+              timerProgressBar: true,
+              customClass: { timerProgressBar: 'toast-progress-dark' }, // Definido en index.css //
+              didOpen: (toast) => {
+                // Vuelvo a traer la data de Playoffs, para mostrar la vista actualizada //
+                getData()
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+              },
+            })
+          : MySwal.fire({
+              background: `rgba(28, 25, 25, 0.95)`,
+              color: `#fff`,
+              icon: 'info',
+              iconColor: '#0a15d1',
+              title: '¡Atención!',
+              text: message,
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 1500,
+              timerProgressBar: true,
+              customClass: { timerProgressBar: 'toast-progress-dark' }, // Definido en index.css //
+              didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+              },
+            })
+      })
       .catch(({ response }) => {
-        const { data } = response
         MySwal.fire({
           background: `rgba(28, 25, 25, 0.95)`,
           color: `#fff`,
-          icon: 'info',
-          iconColor: '#0a15d1',
-          text: data.message,
-          title: '¡Atención!',
+          icon: 'error',
+          iconColor: '#b30a0a',
+          // Arreglar error //
+          text: 'Hubo un error',
+          title: '¡Error!',
           toast: true,
           position: 'top-end',
           showConfirmButton: false,

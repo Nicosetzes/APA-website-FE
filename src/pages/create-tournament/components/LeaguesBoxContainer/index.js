@@ -233,22 +233,27 @@ const LeaguesBoxContainer = ({ format, players, leagues }) => {
           .then(({ data }) => {
             console.log(data)
             MySwal.fire({
+              background: `rgba(28, 25, 25, 0.95)`,
+              color: `#fff`,
               icon: 'success',
+              iconColor: '#18890e',
               toast: true,
-              title: 'Torneo creado con éxito',
+              title: `Torneo cargado con éxito`,
               position: 'top-end',
               showConfirmButton: false,
-              timer: 3000,
+              text: 'Aguarde unos instantes y será redirigido...',
+              timer: 1500,
               timerProgressBar: true,
+              customClass: { timerProgressBar: 'toast-progress-dark' }, // Definido en index.css //
               didOpen: (toast) => {
                 toast.addEventListener('mouseenter', Swal.stopTimer)
                 toast.addEventListener('mouseleave', Swal.resumeTimer)
               },
-              // didClose: () => {
-              //   navigate({
-              //     pathname: `/tournaments/${data._id}`,
-              //   })
-              // },
+              didClose: () => {
+                navigate({
+                  pathname: `/tournaments/${data._id}`,
+                })
+              },
             })
           })
         // })
@@ -309,16 +314,27 @@ const LeaguesBoxContainer = ({ format, players, leagues }) => {
         </div>
         <div
           style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            flexDirection: 'column',
             margin: '1rem 0',
           }}
         >
-          Equipos seleccionados:{' '}
-          {selectedTeams.map(({ id, name }) => (
-            <span key={id} style={{ margin: '1rem' }}>
-              {name}
-            </span>
-          ))}
-          ({selectedTeams.length})
+          <div>Equipos seleccionados:</div>
+          <div
+            style={{
+              alignItems: 'center',
+              display: 'flex',
+              flexWrap: 'wrap',
+            }}
+          >
+            {selectedTeams.map(({ id, name }) => (
+              <span key={id} style={{ margin: '1rem' }}>
+                {name}
+              </span>
+            ))}
+            ({selectedTeams.length})
+          </div>
         </div>
         <div className="leagues-box-container">
           {leagues.map(({ id, name, country }) => (
@@ -389,6 +405,7 @@ const LeaguesBoxContainer = ({ format, players, leagues }) => {
                   id={id}
                   name={name}
                   players={players}
+                  format={format}
                   definitiveTeamsForTournament={definitiveTeamsForTournament}
                   updateDefinitiveTeamsForTournament={
                     updateDefinitiveTeamsForTournament

@@ -186,41 +186,39 @@ const FixtureId = () => {
     group ? setSearchParams({ group: group }) : setSearchParams({})
   }
 
-  const fixtureGenerationForGroup = (group) => {
-    console.log(group)
-    if (group)
-      axios
-        .post(`${api}/tournaments/${tournament}/fixture`, {
-          group,
+  const fixtureGeneration = (group = null) => {
+    axios
+      .post(`${api}/tournaments/${tournament}/fixture`, {
+        group,
+      })
+      .then(({ data }) => {
+        console.log(data)
+        MySwal.fire({
+          background: `rgba(28, 25, 25, 0.95)`,
+          color: `#fff`,
+          icon: 'success',
+          iconColor: '#18890e',
+          toast: true,
+          title: `Fixture ${
+            group ? `para la zona ${group}` : `del torneo`
+          } creado con éxito`,
+          position: 'top-end',
+          showConfirmButton: false,
+          text: 'Aguarde unos instantes...',
+          timer: 1500,
+          timerProgressBar: true,
+          customClass: { timerProgressBar: 'toast-progress-dark' }, // Definido en index.css //
+          didOpen: (toast) => {
+            // Traigo nuevamente la data, para mostrarla sin necesidad de refrescar la página //
+            getFixtureData()
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+          },
         })
-        .then(({ data }) => {
-          console.log(data)
-          MySwal.fire({
-            background: `rgba(28, 25, 25, 0.95)`,
-            color: `#fff`,
-            icon: 'success',
-            iconColor: '#18890e',
-            toast: true,
-            title: `Fixture para la zona ${group} creado con éxito`,
-            position: 'top-end',
-            showConfirmButton: false,
-            text: 'Aguarde unos instantes...',
-            timer: 1500,
-            timerProgressBar: true,
-            customClass: { timerProgressBar: 'toast-progress-dark' }, // Definido en index.css //
-            didOpen: (toast) => {
-              toast.addEventListener('mouseenter', Swal.stopTimer)
-              toast.addEventListener('mouseleave', Swal.resumeTimer)
-            },
-            didClose: () => {
-              // Traigo nuevamente la data, para mostrarla sin necesidad de refrescar la página //
-              getFixtureData()
-            },
-          })
-        })
-        .catch((err) => {
-          console.log(err)
-        })
+      })
+      .catch((err) => {
+        console.log(err)
+      })
   }
 
   if (tournamentData && fixtureData) {
@@ -391,22 +389,43 @@ const FixtureId = () => {
               width: 'fit-content',
             }}
           >
-            <div style={{ fontSize: '1.25rem' }}>
-              La zona{' '}
-              <span style={{ color: '#004a79', fontWeight: '700' }}>
-                {searchParams.get('group') || 'A'}
-              </span>{' '}
-              aun no cuenta con partidos
-            </div>
-            <div style={{ margin: '0.5rem auto' }}>¿Desea generarlos?</div>
-            <button
-              className="button-main"
-              onClick={() =>
-                fixtureGenerationForGroup(searchParams.get('group') || 'A')
-              }
-            >
-              Generar partidos
-            </button>
+            {groups.length ? (
+              <>
+                <div style={{ fontSize: '1.25rem' }}>
+                  La zona{' '}
+                  <span style={{ color: '#004a79', fontWeight: '700' }}>
+                    {searchParams.get('group') || 'A'}
+                  </span>{' '}
+                  aun no cuenta con partidos
+                </div>
+                <div style={{ margin: '0.5rem auto' }}>¿Desea generarlos?</div>
+                <button
+                  className="button-main"
+                  onClick={() =>
+                    fixtureGeneration(searchParams.get('group') || 'A')
+                  }
+                >
+                  Generar partidos
+                </button>
+              </>
+            ) : (
+              <>
+                <div style={{ fontSize: '1.25rem' }}>
+                  El torneo{' '}
+                  <span style={{ color: '#004a79', fontWeight: '700' }}>
+                    {name}
+                  </span>{' '}
+                  aun no cuenta con partidos
+                </div>
+                <div style={{ margin: '0.5rem auto' }}>¿Desea generarlos?</div>
+                <button
+                  className="button-main"
+                  onClick={() => fixtureGeneration()}
+                >
+                  Generar partidos
+                </button>
+              </>
+            )}
           </div>
         )}
       </motion.div>

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { StyledTeamBox } from './styled'
+import { database } from './../../../../api'
 
 const TeamBox = ({ team, updateSelectedTeams, selectedTeams }) => {
   const [isTeamActive, setIsTeamActive] = useState(false)
@@ -28,9 +29,8 @@ const TeamBox = ({ team, updateSelectedTeams, selectedTeams }) => {
         onClick={() => updateSelectedTeams(team)}
         className="teams__container-team"
       >
-        <div>
-          <span>{team.name}</span> {/* <span>({league.name})</span> */}
-        </div>
+        <span>{team.name}</span>
+        <img src={`${database}/logos/${team.id}`} />
       </div>
     </StyledTeamBox>
   )

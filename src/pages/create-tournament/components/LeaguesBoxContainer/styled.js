@@ -5,7 +5,7 @@ export const StyledLeaguesBoxContainer = styled.div`
   flex-direction: column;
   flex-wrap: wrap;
   justify-content: center;
-  margin: 1.5rem;
+  margin: 1.5rem auto;
   padding: 0.75rem;
   .leagues-box-title {
     font-weight: 700;

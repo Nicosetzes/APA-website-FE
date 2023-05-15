@@ -7,7 +7,7 @@ import TeamBox from '../TeamBox'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import axios from 'axios'
-import TeamAssignmentBox from '../TeamAssignmentBox'
+import Assignment from './../Assignment'
 
 const LeaguesBoxContainer = ({ format, players, leagues }) => {
   const MySwal = withReactContent(Swal)
@@ -22,6 +22,13 @@ const LeaguesBoxContainer = ({ format, players, leagues }) => {
   const [confirmedTeams, setConfirmedTeams] = useState([])
   const [definitiveTeamsForTournament, setDefinitiveTeamsForTournament] =
     useState([])
+
+  let groups
+
+  if (format == 'league_playin_playoff') groups = ['A', 'B']
+  else if (format == 'world_cup')
+    groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
+  else groups = []
 
   const onChangeTitle = (e) => {
     console.log(e.target.value)
@@ -122,7 +129,7 @@ const LeaguesBoxContainer = ({ format, players, leagues }) => {
     console.log(definitiveTeamsForTournament)
   }
 
-  const createTournament = () => {
+  const createTournament = (assignedTeams) => {
     MySwal.fire({
       title: 'Nuevo torneo',
       html: (
@@ -143,22 +150,23 @@ const LeaguesBoxContainer = ({ format, players, leagues }) => {
               style={{
                 display: 'flex',
                 flexDirection: 'column',
-                margin: '0.5rem 0',
+                margin: '1rem 0',
               }}
             >
               Jugadores:
               <div
                 style={{
+                  alignItems: 'center',
                   display: 'flex',
-                  flexDirection: 'column',
+                  justifyContent: 'space-evenly',
                 }}
               >
                 {players.map(({ name, id }, index) => (
-                  <span key={id}>
-                    {index + 1}.
-                    <span style={{ fontWeight: 700, margin: '0 0.25rem' }}>
-                      {name}
-                    </span>
+                  <span
+                    key={id}
+                    style={{ fontWeight: 700, margin: '0 0.25rem' }}
+                  >
+                    {name}
                   </span>
                 ))}
               </div>
@@ -173,24 +181,38 @@ const LeaguesBoxContainer = ({ format, players, leagues }) => {
               <div>Equipos: </div>
               <div
                 style={{
+                  alignItems: 'center',
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  justifyContent: 'space-evenly',
                   maxWidth: '300px',
                 }}
               >
-                {definitiveTeamsForTournament.map(({ id, name }) => (
-                  <span
-                    key={id}
-                    style={{ fontWeight: '700', margin: '0 0.25rem' }}
+                {assignedTeams.map(({ team }) => (
+                  <div
+                    key={team.id}
+                    style={{
+                      alignItems: 'center',
+                      display: 'flex',
+                      minWidth: '75px',
+                    }}
                   >
-                    {name}
-                  </span>
+                    <span style={{ fontWeight: '700', margin: '0 0.25rem' }}>
+                      {team.name}
+                    </span>
+                    <img
+                      src={`${database}/logos/${team.id}`}
+                      style={{ margin: '0.25rem', width: '25px' }}
+                    />
+                  </div>
                 ))}
               </div>
             </div>
-            <div style={{ margin: '0.5rem 0' }}>
+            <div style={{ margin: '1rem 0 0 0' }}>
               Cantidad de equipos:{' '}
               {
                 <span style={{ fontWeight: 700, margin: '1rem 0' }}>
-                  {definitiveTeamsForTournament.length}
+                  {assignedTeams.length}
                 </span>
               }
             </div>
@@ -221,7 +243,10 @@ const LeaguesBoxContainer = ({ format, players, leagues }) => {
         //   .then(({ data }) => {
         // const cloudinaryId = data.public_id
         const name = tournamentName
-        const teams = definitiveTeamsForTournament
+        const teams = assignedTeams.map(({ team, player, group }) => {
+          return { team, player, group }
+        })
+        // const teams = definitiveTeamsForTournament
         axios
           .post(`${api}/tournaments`, {
             name,
@@ -273,7 +298,7 @@ const LeaguesBoxContainer = ({ format, players, leagues }) => {
       <StyledLeaguesBoxContainer>
         <div>
           <div>
-            Nombre del torneo:{' '}
+            <div>Nombre del torneo: </div>
             <input
               type="text"
               value={tournamentName}
@@ -368,7 +393,17 @@ const LeaguesBoxContainer = ({ format, players, leagues }) => {
         {!!selectedTeams.length && (
           <button onClick={() => confirmTeams()}>Seleccionar equipos</button>
         )}
-        {!!confirmedTeams.length && (
+
+        {confirmedTeams.length ? (
+          <Assignment
+            players={players}
+            teams={confirmedTeams}
+            groups={groups}
+            createTournament={createTournament}
+          />
+        ) : null}
+
+        {/* {!!confirmedTeams.length && (
           <div className="teams-assignment__container">
             <div
               style={{
@@ -436,7 +471,7 @@ const LeaguesBoxContainer = ({ format, players, leagues }) => {
               )}
             </div>
           </div>
-        )}
+        )} */}
       </StyledLeaguesBoxContainer>
     </>
   )

@@ -1,23 +1,34 @@
 import { useState, useEffect } from 'react'
-import { useMediaQuery } from 'react-responsive'
+// import { useMediaQuery } from 'react-responsive'
 import { api, database } from './../../api'
 import { StyledFormatsContainer } from './styled'
 import TournamentSettings from './components/TournamentSettings'
-import axios from 'axios'
-import { Oval } from 'react-loader-spinner'
-import { Link } from 'react-router-dom'
+// import axios from 'axios'
+// import { Oval } from 'react-loader-spinner'
+// import { Link } from 'react-router-dom'
 
 const CreateTournament = () => {
-  const isXL = useMediaQuery({ query: '(min-width: 1200px)' })
-  const isL = useMediaQuery({ query: '(min-width: 992px)' })
-  const isM = useMediaQuery({ query: '(min-width: 768px)' })
-  const isSm = useMediaQuery({ query: '(min-width: 500px)' })
-  const isXS = useMediaQuery({ query: '(min-width: 350px)' })
+  // const isXL = useMediaQuery({ query: '(min-width: 1200px)' })
+  // const isL = useMediaQuery({ query: '(min-width: 992px)' })
+  // const isM = useMediaQuery({ query: '(min-width: 768px)' })
+  // const isSm = useMediaQuery({ query: '(min-width: 500px)' })
+  // const isXS = useMediaQuery({ query: '(min-width: 350px)' })
 
   const [tournamentFormat, setTournamentFormat] = useState()
 
   return (
     <>
+      <div
+        style={{
+          display: 'flex',
+          fontWeight: 700,
+          justifyContent: 'center',
+          margin: '1.5rem',
+          textDecoration: 'underline',
+        }}
+      >
+        Elija el formato deseado
+      </div>
       <StyledFormatsContainer>
         <div
           className="format__container"

@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 
 export const StyledTeamBox = styled.div`
+  margin: 1rem;
   .teams__container-team {
     align-items: center;
     color: #fff;
@@ -8,16 +9,13 @@ export const StyledTeamBox = styled.div`
     display: flex;
     height: 40px;
     justify-content: center;
-    margin: 1rem;
     outline: ${(props) =>
       props.active ? '#0beb0b 2px solid' : '#fff 2px solid'};
     text-align: center;
     width: 150px;
     &:hover {
-      /* background-color: #5e5b5b; */
       background-color: #2a2929;
-      transition: transform 0.3s linear;
-      transform: scale(1.025, 1.025);
+      outline: rgb(116, 232, 220) 2px solid;
     }
     img {
       margin: 0 0.25rem;

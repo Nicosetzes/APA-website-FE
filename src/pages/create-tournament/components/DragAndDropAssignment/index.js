@@ -1,27 +1,61 @@
 import { useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
-import { database } from './../../../../api'
-import { StyledAssignment } from './styled'
-import randomColor from 'randomcolor'
+import { database } from '../../../../api'
+import { StyledDragAndDropAssignment } from './styled'
 
-const Assignment = ({ players, teams, groups, createTournament }) => {
+const DragAndDropAssignment = ({
+  players,
+  teams,
+  groups,
+  createTournament,
+}) => {
   // const isXL = useMediaQuery({ query: '(min-width: 1200px)' })
   // const isL = useMediaQuery({ query: '(min-width: 992px)' })
   // const isM = useMediaQuery({ query: '(min-width: 768px)' })
   const isSm = useMediaQuery({ query: '(min-width: 576px)' })
   // const isXS = useMediaQuery({ query: '(min-width: 350px)' })
 
+  // Mezclo los colores iniciales, para asignarlos al azar //
+  // Utilizo una combinación de .map y .sort  //
+
+  const colors = [
+    '#004a79', // azul oscuro //
+    '#6fc140', // verde //
+    '#ffa4a4', // rosa //
+    '#8e8eed', // lila //
+    '#3dbfb1', // aguamarina //
+    '#b5083b', // fucsia //
+    '#f9d207', // dorado //
+  ]
+    .map((value) => ({ value, sort: Math.random() }))
+    .sort((a, b) => a.sort - b.sort)
+    .map(({ value }) => value)
+
+  const [unassignedTeams, setUnassignedTeams] = useState(teams)
   const [assignedTeams, setAssignedTeams] = useState([])
   const [playersWithAssignedColors, setPlayersWithAssignedColors] = useState(
-    players.map(({ id, name }) => {
-      return { id, name, color: randomColor() }
+    players.map(({ id, name }, index) => {
+      return {
+        id,
+        name,
+        color: colors[index],
+      }
     }),
   )
 
   const regenerateColors = () => {
+    // Vuelvo a mezclar los colores //
+    const randomColors = colors
+      .map((value) => ({ value, sort: Math.random() }))
+      .sort((a, b) => a.sort - b.sort)
+      .map(({ value }) => value)
     setPlayersWithAssignedColors(
-      players.map(({ id, name }) => {
-        return { id, name, color: randomColor() }
+      players.map(({ id, name }, index) => {
+        return {
+          id,
+          name,
+          color: randomColors[index],
+        }
       }),
     )
     if (assignedTeams.length) {
@@ -106,9 +140,9 @@ const Assignment = ({ players, teams, groups, createTournament }) => {
     )
   }
 
-  console.log(playersWithAssignedColors)
+  // console.log(playersWithAssignedColors)
 
-  console.log(assignedTeams)
+  // console.log(assignedTeams)
 
   const handleOnDrag = (e, id, name) => {
     e.dataTransfer.setData('id', id)
@@ -118,6 +152,9 @@ const Assignment = ({ players, teams, groups, createTournament }) => {
   const handleOnDrop = (e, group) => {
     const id = e.dataTransfer.getData('id')
     const name = e.dataTransfer.getData('name')
+    // Si no posee data asociada, cancelo el onDrop. //
+    if (!id || !name) return
+    // Esto soluciona bug donde arrastro un elemento ya asignado y lo vuelvo a soltar en el container //
     e.dataTransfer.setData('id', id)
     e.dataTransfer.setData('name', name)
     // ¿El equipo ya estaba en algún grupo? //
@@ -142,11 +179,16 @@ const Assignment = ({ players, teams, groups, createTournament }) => {
       )
     } else if (!team.length && group) {
       // El equipo no había sido asignado a ningún grupo, el torneo tiene zonas //
+      // Primero borro el equipo asignado de unassignedTeams, esto hace que desaparezca de la lista //
+      // Luego lo agrego a assignedTeams, así es mapeado en la zona indicada //
+      setUnassignedTeams(unassignedTeams.filter((team) => team.id != id))
       setAssignedTeams([...assignedTeams, { team: { id, name }, group }])
     } else {
       // El equipo no había sido asignado a ningún grupo, pero el torneo no tiene zonas //
+      setUnassignedTeams(unassignedTeams.filter((team) => team.id != id))
       setAssignedTeams([...assignedTeams, { team: { id, name } }])
     }
+    //
   }
 
   const handleDragOver = (e) => {
@@ -155,7 +197,7 @@ const Assignment = ({ players, teams, groups, createTournament }) => {
   }
 
   return (
-    <StyledAssignment>
+    <StyledDragAndDropAssignment>
       <div className="container__players">
         {playersWithAssignedColors.map(({ id, name, color }) => (
           <div
@@ -173,7 +215,7 @@ const Assignment = ({ players, teams, groups, createTournament }) => {
       {/* {groups.length ? ( */}
       {/* <> */}
       <div className="container__teams">
-        {teams.map(({ id, name }) => (
+        {unassignedTeams.map(({ id, name }) => (
           <div
             key={id}
             className="teams-box draggable"
@@ -295,8 +337,8 @@ const Assignment = ({ players, teams, groups, createTournament }) => {
           </button>
         </div>
       ) : null}
-    </StyledAssignment>
+    </StyledDragAndDropAssignment>
   )
 }
 
-export default Assignment
+export default DragAndDropAssignment

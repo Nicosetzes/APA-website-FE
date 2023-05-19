@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-export const StyledAssignment = styled.div`
+export const StyledDragAndDropAssignment = styled.div`
   margin: 1rem 0;
   .container__players {
     align-items: center;

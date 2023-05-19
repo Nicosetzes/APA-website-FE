@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useMediaQuery } from 'react-responsive'
 import { api, database } from './../../../../api'
 import { useNavigate } from 'react-router-dom'
 import { StyledLeaguesBoxContainer } from './styled'
@@ -7,9 +8,16 @@ import TeamBox from '../TeamBox'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import axios from 'axios'
-import Assignment from './../Assignment'
+import DragAndDropAssignment from './../DragAndDropAssignment'
+import MobileAssignment from './../MobileAssignment'
 
 const LeaguesBoxContainer = ({ format, players, leagues }) => {
+  // const isXL = useMediaQuery({ query: '(min-width: 1200px)' })
+  const isL = useMediaQuery({ query: '(min-width: 992px)' })
+  // const isM = useMediaQuery({ query: '(min-width: 768px)' })
+  // const isSm = useMediaQuery({ query: '(min-width: 500px)' })
+  // const isXS = useMediaQuery({ query: '(min-width: 350px)' })
+
   const MySwal = withReactContent(Swal)
 
   const navigate = useNavigate()
@@ -19,9 +27,7 @@ const LeaguesBoxContainer = ({ format, players, leagues }) => {
   const [selectedLeagues, setSelectedLeagues] = useState([])
   const [availableTeams, setAvailableTeams] = useState([])
   const [selectedTeams, setSelectedTeams] = useState([])
-  const [confirmedTeams, setConfirmedTeams] = useState([])
-  const [definitiveTeamsForTournament, setDefinitiveTeamsForTournament] =
-    useState([])
+  const [confirmedTeams, setConfirmedTeams] = useState()
 
   let groups
 
@@ -83,30 +89,6 @@ const LeaguesBoxContainer = ({ format, players, leagues }) => {
     }
   }
 
-  const updateDefinitiveTeamsForTournament = (teamWithAssignedTeam) => {
-    console.log(definitiveTeamsForTournament)
-
-    const isTeamAlreadyAssigned = definitiveTeamsForTournament.findIndex(
-      ({ id }) => id == teamWithAssignedTeam.id,
-    )
-
-    if (isTeamAlreadyAssigned !== -1) {
-      console.log('Reemplazo la asignación para este equipo')
-      setDefinitiveTeamsForTournament((currentTeams) =>
-        currentTeams.map((team, index) => {
-          if (isTeamAlreadyAssigned == index) return teamWithAssignedTeam
-          if (isTeamAlreadyAssigned != index) return team
-        }),
-      )
-    } else {
-      console.log('Equipo nuevo con jugador asignado')
-      console.log(teamWithAssignedTeam)
-      setDefinitiveTeamsForTournament((currentTeams) =>
-        currentTeams.concat(teamWithAssignedTeam),
-      )
-    }
-  }
-
   const leagueOnClickHandler = (e) => {
     const id = e.target.id
 
@@ -124,12 +106,71 @@ const LeaguesBoxContainer = ({ format, players, leagues }) => {
   }
 
   const confirmTeams = () => {
+    // TODO: Cuando actualizo confirmedTeams (agrego equipos adicionales, luego de haber
+    // apretado el botón por 1ra vez), el componente del D&D no se rerenderiza, por lo que
+    // no hereda los equipos actualizados //
     setConfirmedTeams([...selectedTeams])
-    console.log('Equipos confirmados')
-    console.log(definitiveTeamsForTournament)
+    console.log('Confirmo equipos')
   }
 
   const createTournament = (assignedTeams) => {
+    // Si el torneo tiene formato con grupos, averiguo si todos los equipos tienen un grupo asignado //
+    if (format == 'league_playin_playoff' || format == 'world_cup') {
+      const teamsWithAssignedGroups = assignedTeams.filter(({ group }) => group)
+
+      if (teamsWithAssignedGroups.length != assignedTeams.length) {
+        MySwal.fire({
+          background: `rgba(28, 25, 25, 0.95)`,
+          color: `#fff`,
+          icon: 'error',
+          iconColor: '#b30a0a',
+          title: '¡Error!',
+          text: 'Todos los equipos deben tener al menos una zona asignada',
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+          customClass: { timerProgressBar: 'toast-progress-dark' }, // Definido en index.css //
+          didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+          },
+        })
+        return
+      }
+    }
+
+    // Averiguo si todos los equipos tienen un jugador asignado //
+    // Si no es así, advierto y retorno //
+    const teamsWithAssignedPlayers = assignedTeams.filter(
+      ({ player }) => player,
+    )
+
+    console.log(teamsWithAssignedPlayers)
+
+    if (teamsWithAssignedPlayers.length != assignedTeams.length) {
+      MySwal.fire({
+        background: `rgba(28, 25, 25, 0.95)`,
+        color: `#fff`,
+        icon: 'error',
+        iconColor: '#b30a0a',
+        title: '¡Error!',
+        text: 'Todos los equipos deben tener al menos un jugador asignado',
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+        customClass: { timerProgressBar: 'toast-progress-dark' }, // Definido en index.css //
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer)
+          toast.addEventListener('mouseleave', Swal.resumeTimer)
+        },
+      })
+      return
+    }
+
     MySwal.fire({
       title: 'Nuevo torneo',
       html: (
@@ -394,84 +435,22 @@ const LeaguesBoxContainer = ({ format, players, leagues }) => {
           <button onClick={() => confirmTeams()}>Seleccionar equipos</button>
         )}
 
-        {confirmedTeams.length ? (
-          <Assignment
+        {confirmedTeams && isL && (
+          <DragAndDropAssignment
             players={players}
             teams={confirmedTeams}
             groups={groups}
             createTournament={createTournament}
           />
-        ) : null}
-
-        {/* {!!confirmedTeams.length && (
-          <div className="teams-assignment__container">
-            <div
-              style={{
-                color: '#fff',
-                margin: '2rem auto',
-              }}
-            >
-              Equipos asignados:{' '}
-              {`${definitiveTeamsForTournament.length}/${confirmedTeams.length}`}
-            </div>
-            <div style={{ color: '#fff', margin: '0 auto 2rem' }}>
-              {players.map(({ id, name }) => (
-                <div key={id}>
-                  {name}:{' '}
-                  {
-                    definitiveTeamsForTournament.filter(
-                      ({ value }) => value == id,
-                    ).length
-                  }
-                </div>
-              ))}
-            </div>
-            <div
-              style={{
-                alignItems: 'center',
-                display: 'flex',
-                flexWrap: 'wrap',
-                justifyContent: 'center',
-              }}
-            >
-              {confirmedTeams.map(({ id, name }) => (
-                <TeamAssignmentBox
-                  key={id}
-                  id={id}
-                  name={name}
-                  players={players}
-                  format={format}
-                  definitiveTeamsForTournament={definitiveTeamsForTournament}
-                  updateDefinitiveTeamsForTournament={
-                    updateDefinitiveTeamsForTournament
-                  }
-                />
-              ))}
-              {definitiveTeamsForTournament.length == confirmedTeams.length && (
-                <>
-                  <div
-                    style={{
-                      alignItems: 'center',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'center',
-                      margin: 'auto 0.5rem',
-                      padding: '0.25rem',
-                      width: '250px',
-                    }}
-                  >
-                    <button
-                      className="create-tournament-button"
-                      onClick={() => createTournament()}
-                    >
-                      Crear torneo
-                    </button>
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-        )} */}
+        )}
+        {confirmedTeams && !isL && (
+          <MobileAssignment
+            players={players}
+            teams={confirmedTeams}
+            groups={groups}
+            createTournament={createTournament}
+          />
+        )}
       </StyledLeaguesBoxContainer>
     </>
   )

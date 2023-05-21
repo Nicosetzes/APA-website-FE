@@ -46,6 +46,15 @@ const CreateTournament = () => {
         </div>
         <div
           className="format__container"
+          onClick={() => setTournamentFormat('champions_league')}
+        >
+          <div className="formats__box-title">
+            <i>Chempions</i>
+          </div>
+          <img src={`${database}/tournaments/logos/5`} />
+        </div>
+        <div
+          className="format__container"
           onClick={() => setTournamentFormat('playoff')}
         >
           <div className="formats__box-title">Playoffs</div>

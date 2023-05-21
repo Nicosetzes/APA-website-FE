@@ -32,7 +32,7 @@ const LeaguesBoxContainer = ({ format, players, leagues }) => {
   let groups
 
   if (format == 'league_playin_playoff') groups = ['A', 'B']
-  else if (format == 'world_cup')
+  else if (format == 'world_cup' || format == 'champions_league')
     groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
   else groups = []
 

@@ -16,7 +16,6 @@ const TournamentId = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log('Hago el fetch de dataaaa')
       await axios
         .get(`${api}/tournaments/${tournament}`, {
           withCredentials: true,
@@ -108,7 +107,8 @@ const TournamentId = () => {
               {(format == 'league' ||
                 format == 'league_playoff' ||
                 format == 'league_playin_playoff' ||
-                format == 'world_cup') && (
+                format == 'world_cup' ||
+                format == 'champions_league') && (
                 <Link
                   to={`standings`}
                   state={{ groups: groups }}
@@ -139,7 +139,8 @@ const TournamentId = () => {
               {(format == 'playoff' ||
                 format == 'league_playoff' ||
                 format == 'league_playin_playoff' ||
-                format == 'world_cup') && (
+                format == 'world_cup' ||
+                format == 'champions_league') && (
                 <Link
                   to={`playoffs`}
                   state={{ groups: groups }}

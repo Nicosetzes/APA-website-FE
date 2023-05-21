@@ -19,12 +19,7 @@ const Tournaments = () => {
   const [tournaments, setTournaments] = useState()
 
   const getTournamentsData = async () => {
-    const tournaments = await axios.get(`${api}/tournaments`, {
-      params: {
-        active: true,
-        inactive: true,
-      },
-    })
+    const tournaments = await axios.get(`${api}/tournaments`)
 
     setTournaments(tournaments.data)
 

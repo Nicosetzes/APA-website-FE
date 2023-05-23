@@ -14,6 +14,28 @@ import max from './../../../src/images/max.png'
 import santi from './../../../src/images/santi.png'
 import lucho from './../../../src/images/lucho.png'
 import leo from './../../../src/images/leo.png'
+import banderaAlemania from './../../images/alemania-bandera.png'
+import banderaArgentina from './../../images/argentina-bandera.png'
+import banderaBelgica from './../../images/belgica-bandera.png'
+import banderaPortugal from './../../images/portugal-bandera.png'
+import banderaPolonia from './../../images/polonia-bandera.png'
+import logoEstudiantes from './../../images/estudiantes-escudo.png'
+import logoLiverpool from './../../images/liverpool-escudo.png'
+import logoManchesterUnited from './../../images/manchester-united-escudo.png'
+import logoRacingClub from './../../images/racing-club-escudo.png'
+import logoRealMadrid from './../../images/real-madrid-escudo.png'
+import logoRiverPlate from './../../images/river-plate-escudo.png'
+import logoRosarioCentral from './../../images/rosario-central-escudo.png'
+import logoSanLorenzo from './../../images/san-lorenzo-escudo.png'
+import logoTottenhamHotspur from './../../images/tottenham-hotspur-escudo.png'
+import trophyChampions from './../../images/champions.png'
+import trophyCopaAmerica from './../../images/copa-america.png'
+import trophyCopaArgentina from './../../images/copa-argentina.png'
+import trophyMundialDeClubes from './../../images/mundial-de-clubes.png'
+import trophyPremierLeague from './../../images/premier-league.png'
+import trophySuperligaArgentina from './../../images/superliga-argentina.png'
+import trophySuperligaEuropea from './../../images/superliga-europea.png'
+import trophyWorldCup from './../../images/world-cup.png'
 
 const Home = () => {
   // const isXL = useMediaQuery({ query: '(min-width: 1200px)' })
@@ -47,20 +69,191 @@ const Home = () => {
             <img src={leo} />
           </div>
         </div>
-        <div className="container__champion">
-          <div className="champion-title">CAMPEÓN VIGENTE</div>
-          <div className="champion-player">Leo</div>
-          <div className="champion-img">
-            <img src={trophy} />
+        <div className="container__accolades">
+          <div className="box__tournaments">
+            <div className="row__tournaments">
+              <div className="tournaments-result">
+                <div className="result-title">TORNEO ARGENTINO</div>
+                <div className="result-year">2016</div>
+                <div className="result-image">
+                  <img src={trophySuperligaArgentina} />
+                </div>
+                <div className="result-player">
+                  <div className="player-name">Max</div>
+                  <img src={logoRosarioCentral} />
+                </div>
+              </div>
+              <div className="tournaments-result">
+                <div className="result-title">TORNEO ARGENTINO</div>
+                <div className="result-year">2017</div>
+                <div className="result-image">
+                  <img src={trophySuperligaArgentina} />
+                </div>
+                <div className="result-player">
+                  <div className="player-name">Max</div>
+                  <img src={logoEstudiantes} />
+                </div>
+              </div>
+              <div className="tournaments-result">
+                <div className="result-title">COPA DEL MUNDO</div>
+                <div className="result-year">2017</div>
+                <div className="result-image">
+                  <img src={trophyWorldCup} />
+                </div>
+                <div className="result-player">
+                  <div className="player-name">Leo</div>
+                  <img src={banderaPortugal} />
+                </div>
+              </div>
+            </div>
+            <div className="row__tournaments">
+              <div className="tournaments-result">
+                <div className="result-title">TORNEO ARGENTINO</div>
+                <div className="result-year">2018</div>
+                <div className="result-image">
+                  <img src={trophySuperligaArgentina} />
+                </div>
+                <div className="result-player">
+                  <div className="player-name">Leo</div>
+                  <img src={logoSanLorenzo} />
+                </div>
+              </div>
+              <div className="tournaments-result">
+                <div className="result-title">COPA DEL MUNDO</div>
+                <div className="result-year">2018 (I)</div>
+                <div className="result-image">
+                  <img src={trophyWorldCup} />
+                </div>
+                <div className="result-player">
+                  <div className="player-name">Leo</div>
+                  <img src={banderaAlemania} />
+                </div>
+              </div>
+              <div className="tournaments-result">
+                <div className="result-title">COPA DEL MUNDO</div>
+                <div className="result-year">2018 (II)</div>
+                <div className="result-image">
+                  <img src={trophyWorldCup} />
+                </div>
+                <div className="result-player">
+                  <div className="player-name">Max</div>
+                  <img src={banderaBelgica} />
+                </div>
+              </div>
+            </div>
+            <div className="row__tournaments">
+              <div className="tournaments-result">
+                <div className="result-title">MUNDIAL DE CLUBES</div>
+                <div className="result-year">2018</div>
+                <div className="result-image">
+                  <img src={trophyMundialDeClubes} />
+                </div>
+                <div className="result-player">
+                  <div className="player-name">Max</div>
+                  <img src={logoManchesterUnited} />
+                </div>
+              </div>
+              <div className="tournaments-result">
+                <div className="result-title">COPA ARGENTINA</div>
+                <div className="result-year">2018</div>
+                <div className="result-image">
+                  <img src={trophyCopaArgentina} />
+                </div>
+                <div className="result-player">
+                  <div className="player-name">Max</div>
+                  <img src={logoRacingClub} />
+                </div>
+              </div>
+              <div className="tournaments-result">
+                <div className="result-title">
+                  <i>CHEMPIONS LEAGUE</i>
+                </div>
+                <div className="result-year">2019</div>
+                <div className="result-image">
+                  <img src={trophyChampions} />
+                </div>
+                <div className="result-player">
+                  <div className="player-name">Leo</div>
+                  <img src={logoRealMadrid} />
+                </div>
+              </div>
+            </div>
+            <div className="row__tournaments">
+              <div className="tournaments-result">
+                <div className="result-title">COPA AMÉRICA</div>
+                <div className="result-year">2019</div>
+                <div className="result-image">
+                  <img src={trophyCopaAmerica} />
+                </div>
+                <div className="result-player">
+                  <div className="player-name">Santi</div>
+                  <img src={banderaArgentina} />
+                </div>
+              </div>
+              <div className="tournaments-result">
+                <div className="result-title">TORNEO ARGENTINO</div>
+                <div className="result-year">2021/22</div>
+                <div className="result-image">
+                  <img src={trophySuperligaArgentina} />
+                </div>
+                <div className="result-player">
+                  <div className="player-name">Leo</div>
+                  <img src={logoRiverPlate} />
+                </div>
+              </div>
+              <div className="tournaments-result">
+                <div className="result-title">SUPERLIGA EUROPEA</div>
+                <div className="result-year">2022</div>
+                <div className="result-image">
+                  <img src={trophySuperligaEuropea} />
+                </div>
+                <div className="result-player">
+                  <div className="player-name">Nico</div>
+                  <img src={logoLiverpool} />
+                </div>
+              </div>
+            </div>
+            <div className="row__tournaments">
+              <div className="tournaments-result">
+                <div className="result-title">SUPERLIGA INGLESA</div>
+                <div className="result-year">2022</div>
+                <div className="result-image">
+                  <img src={trophyPremierLeague} />
+                </div>
+                <div className="result-player">
+                  <div className="player-name">Nico</div>
+                  <img src={logoTottenhamHotspur} />
+                </div>
+              </div>
+              <div className="tournaments-result">
+                <div className="result-title">COPA DEL MUNDO</div>
+                <div className="result-year">2022</div>
+                <div className="result-image">
+                  <img src={trophyWorldCup} />
+                </div>
+                <div className="result-player">
+                  <div className="player-name">Leo</div>
+                  <img src={banderaPolonia} />
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="champion-team">
-            <span>POLONIA</span>
-            <img src={team} />
+          <div className="box__champion">
+            <div className="champion-title">CAMPEÓN VIGENTE</div>
+            <div className="champion-player">Leo</div>
+            <div className="champion-img">
+              <img src={trophy} />
+            </div>
+            <div className="champion-team">
+              <span>POLONIA</span>
+              <img src={team} />
+            </div>
+            <button onClick={() => navigate('./hall-of-fame')}>
+              SALÓN DE LA FAMA
+            </button>
           </div>
-          <button onClick={() => navigate('./hall-of-fame')}>
-            SALÓN DE LA FAMA
-          </button>
         </div>
+
         <div className="container__tournament">
           <div className="tournament-title">TORNEO ACTIVO</div>
           <div className="tournament-img">

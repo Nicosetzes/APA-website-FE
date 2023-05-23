@@ -71,11 +71,15 @@ const ChampionshipBox = ({
               {isSm && (
                 <div
                   className="showcase__body-trophy"
-                  style={{ display: 'flex', outline: '#0d8499 3px solid' }}
+                  style={{
+                    display: 'flex',
+                    outline: '#0d8499 3px solid',
+                    width: '215px',
+                  }}
                 >
                   <img
                     src={trophy}
-                    style={{ width: '250px', margin: 'auto 0' }}
+                    style={{ height: '300px', margin: 'auto 0' }}
                   />
                 </div>
               )}
@@ -128,14 +132,8 @@ const ChampionshipBox = ({
                 </div>
               </div>
               {isSm && (
-                <div
-                  className="showcase__body-trophy"
-                  style={{ display: 'flex', outline: '#0d8499 3px solid' }}
-                >
-                  <img
-                    src={trophy}
-                    style={{ width: '250px', margin: 'auto 0' }}
-                  />
+                <div className="showcase__body-trophy">
+                  <img src={trophy} />
                 </div>
               )}
             </div>{' '}

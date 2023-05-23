@@ -4,12 +4,12 @@ export const StyledPlayerBox = styled.div`
   background-color: beige;
   box-sizing: border-box;
   display: flex;
-  height: 275px;
+  flex-direction: column;
   justify-content: start;
   margin: 1rem auto;
   outline: #0d8499 3px solid;
-  padding: 1rem;
-  width: 550px;
+  padding: 3rem 0;
+  width: 650px;
   .player-box-name {
     color: #004a79;
     font-size: 3rem;
@@ -17,11 +17,14 @@ export const StyledPlayerBox = styled.div`
     line-height: 2.5rem;
   }
   .player-box-trophies {
+    align-items: center;
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 2rem;
     img {
+      height: 175px;
       margin: 0.5rem 0;
-      width: 100px;
     }
   }
 `

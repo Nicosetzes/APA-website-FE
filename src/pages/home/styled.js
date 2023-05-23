@@ -57,7 +57,7 @@ export const StyledHome = styled.div`
       }
     }
   }
-  .container__champion {
+  .container__accolades {
     align-items: center;
     background-image: ${(props) => `url(${props.championBackground})`};
     background-position: center;
@@ -66,9 +66,10 @@ export const StyledHome = styled.div`
     /* background-size: ${(props) => `${props.isXL && 'cover'}`}; */
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    /* height: 100vh; */
     isolation: isolate;
     justify-content: center;
+    padding: 1.5rem 0;
     position: relative;
     &::after {
       content: '';
@@ -78,52 +79,114 @@ export const StyledHome = styled.div`
       inset: 0;
       z-index: -1;
     }
-    .champion-title {
-      color: #fff;
-      display: flex;
-      font-size: 1rem;
-      font-weight: 700;
-      margin: 0.5rem auto;
-    }
-    .champion-player {
-      color: #fff;
-      display: flex;
-      font-size: 2rem;
-      font-weight: 700;
-    }
-    .champion-img {
-      display: flex;
-      margin: 0.75rem auto;
-      img {
-        height: 150px;
-      }
-    }
-    .champion-team {
+    .box__tournaments {
       align-items: center;
       display: flex;
+      /* flex-direction: column; */
+      flex-wrap: wrap;
       justify-content: center;
-      span {
-        color: #fff;
+      margin: 0.5rem auto;
+      .row__tournaments {
         display: flex;
-        font-size: 1.75rem;
-        font-weight: 700;
-        margin: 0 0.5rem;
-        text-align: center;
-      }
-      img {
-        width: 50px;
+        margin: 0.5rem 0;
+        justify-content: center;
+        .tournaments-result {
+          align-items: center;
+          display: flex;
+          flex-direction: column;
+          margin: 0 0.5rem;
+          .result-title {
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: 700;
+            max-width: 100px;
+            text-align: center;
+          }
+          .result-year {
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: 700;
+          }
+          .result-image {
+            height: 175px;
+            margin: 0.5rem 0;
+            max-width: 100px;
+            img {
+              height: 100%;
+              width: 100%;
+            }
+          }
+          .result-player {
+            align-items: center;
+            display: flex;
+            justify-content: center;
+            .player-name {
+              color: #fff;
+              font-size: 1.1rem;
+              font-weight: 700;
+              margin-right: 0.25rem;
+            }
+            img {
+              width: 50px;
+            }
+          }
+        }
       }
     }
-    button {
-      background: none;
-      border: #f5d77f 2px solid;
-      border-radius: 5px;
-      color: #fff;
-      cursor: pointer;
-      font-size: 0.75rem;
-      font-weight: 700;
-      margin: 1.25rem auto;
-      padding: 0.5rem 2rem;
+    .box__champion {
+      align-items: center;
+      display: flex;
+      flex-direction: column;
+      margin: 0.5rem auto;
+      outline: #fff 2px solid;
+      padding: 1rem 3rem;
+      .champion-title {
+        color: #fff;
+        display: flex;
+        font-size: 1rem;
+        font-weight: 700;
+        margin: 0.5rem auto;
+      }
+      .champion-player {
+        color: #fff;
+        display: flex;
+        font-size: 2rem;
+        font-weight: 700;
+      }
+      .champion-img {
+        display: flex;
+        margin: 0.75rem auto;
+        img {
+          height: 150px;
+        }
+      }
+      .champion-team {
+        align-items: center;
+        display: flex;
+        justify-content: center;
+        span {
+          color: #fff;
+          display: flex;
+          font-size: 1.75rem;
+          font-weight: 700;
+          margin: 0 0.5rem;
+          text-align: center;
+        }
+        img {
+          width: 50px;
+        }
+      }
+      button {
+        background: none;
+        border: #f5d77f 2px solid;
+        border-radius: 5px;
+        color: #fff;
+        cursor: pointer;
+        font-size: 0.75rem;
+        font-weight: 700;
+        margin: 1.25rem auto;
+        padding: 0.5rem 2rem;
+      }
     }
   }
   .container__tournament {

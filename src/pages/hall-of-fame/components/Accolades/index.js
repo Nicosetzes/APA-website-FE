@@ -5,7 +5,7 @@ import trophyCopaAmerica from './../../../../images/copa-america.png'
 import trophyCopaArgentina from './../../../../images/copa-argentina.png'
 import trophyMundialDeClubes from './../../../../images/mundial-de-clubes.png'
 import trophyPremierLeague from './../../../../images/premier-league.png'
-import trophyRandomOne from './../../../../images/random-one.png'
+import trophyRandomOne from './../../../../images/superliga-europea.png'
 import trophySuperligaArgentina from './../../../../images/superliga-argentina.png'
 import trophyWorldCup from './../../../../images/world-cup.png'
 
@@ -39,7 +39,7 @@ const Accolades = () => {
           trophies={[trophyRandomOne, trophyPremierLeague]}
         />
         <PlayerBox player={'Santi'} trophies={[trophyCopaAmerica]} />
-        <PlayerBox player={'Lucho'} />
+        <PlayerBox player={'Lucho'} trophies={[]} />
       </StyledAccolades>
     </>
   )

@@ -122,6 +122,7 @@ const Showcase = () => {
         finalistTeam={'Lokomotiv'}
         finalistLogo={logoLokomotiv}
         trophy={trophyChampions}
+        id={'64697ac9d542ff4ada3038d3'}
       />
       <ChampionshipBox
         tournament={'Copa América 2019'}

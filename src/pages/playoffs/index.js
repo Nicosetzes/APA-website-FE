@@ -100,7 +100,7 @@ const Playoffs = () => {
   }
 
   if (tournamentData && playoffData) {
-    const { name } = tournamentData
+    const { name, format } = tournamentData
     const { matches } = playoffData
 
     const breadCrumbsLinks = [
@@ -134,41 +134,66 @@ const Playoffs = () => {
             }}
           >
             <PlayoffRound
-              matches={matches.filter(({ playoff_id }) => playoff_id <= 8)}
+              matches={matches.filter(({ playoff_id }) =>
+                format == 'champions_league'
+                  ? playoff_id <= 16
+                  : playoff_id <= 8,
+              )}
               round={1}
               getData={getPlayoffsData}
             />
             <PlayoffRound
-              matches={matches.filter(
-                ({ playoff_id }) => playoff_id > 8 && playoff_id <= 12,
+              matches={matches.filter(({ playoff_id }) =>
+                format == 'champions_league'
+                  ? playoff_id > 16 && playoff_id <= 24
+                  : playoff_id > 8 && playoff_id <= 12,
               )}
               round={2}
               getData={getPlayoffsData}
             />
             <PlayoffRound
-              matches={matches.filter(
-                ({ playoff_id }) => playoff_id > 12 && playoff_id <= 14,
+              matches={matches.filter(({ playoff_id }) =>
+                format == 'champions_league'
+                  ? playoff_id > 24 && playoff_id <= 28
+                  : playoff_id > 12 && playoff_id <= 14,
               )}
               round={3}
               getData={getPlayoffsData}
             />
             <PlayoffRound
-              matches={matches.filter(({ playoff_id }) => playoff_id == 15)}
+              matches={matches.filter(({ playoff_id }) =>
+                format == 'champions_league'
+                  ? playoff_id == 29
+                  : playoff_id == 15,
+              )}
               round={4}
               getData={getPlayoffsData}
             />
-            {matches.filter(({ outcome }) => outcome).length == 15 && (
-              <div
-                style={{
-                  alignItems: 'space-around',
-                  display: 'flex',
-                  flexDirection: 'column',
-                }}
-              >
-                <ChampionBox match={matches.at(-1)} />
-                <FinalistBox match={matches.at(-1)} />
-              </div>
-            )}
+            {format == 'champions_league'
+              ? matches.filter(({ outcome }) => outcome).length == 29 && (
+                  <div
+                    style={{
+                      alignItems: 'space-around',
+                      display: 'flex',
+                      flexDirection: 'column',
+                    }}
+                  >
+                    <ChampionBox match={matches.at(-1)} />
+                    <FinalistBox match={matches.at(-1)} />
+                  </div>
+                )
+              : matches.filter(({ outcome }) => outcome).length == 15 && (
+                  <div
+                    style={{
+                      alignItems: 'space-around',
+                      display: 'flex',
+                      flexDirection: 'column',
+                    }}
+                  >
+                    <ChampionBox match={matches.at(-1)} />
+                    <FinalistBox match={matches.at(-1)} />
+                  </div>
+                )}
           </div>
         )}
         {!matches.length && (

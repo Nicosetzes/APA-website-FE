@@ -88,7 +88,7 @@ export const StyledHome = styled.div`
       margin: 0.5rem auto;
       .row__tournaments {
         display: flex;
-        margin: 0.5rem 0;
+        margin: 1.5rem 0;
         justify-content: center;
         .tournaments-result {
           align-items: center;
@@ -127,7 +127,7 @@ export const StyledHome = styled.div`
               margin-right: 0.25rem;
             }
             img {
-              width: 50px;
+              width: 35px;
             }
           }
         }

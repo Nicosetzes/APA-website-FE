@@ -97,7 +97,7 @@ const Standings = () => {
 
   if (tournamentData) {
     const { groups } = tournamentData[0]
-    const { id, name, activeGroup, sortedStandings } = tournamentData[1] // Index 0 because of the order in which I invoked the promises call in Promise.all //
+    const { id, name, activeGroup, standings } = tournamentData[1] // Index 0 because of the order in which I invoked the promises call in Promise.all //
     const playerStats = tournamentData[2]
 
     const breadCrumbsLinks = [
@@ -174,7 +174,7 @@ const Standings = () => {
         <TableContainer component={Paper}>
           <StandingsTable
             tournament={tournament}
-            standings={sortedStandings}
+            standings={standings}
             onHandle={goToSpecificFixture}
           />
           <PlayerStatsTable stats={playerStats} />

@@ -15,6 +15,8 @@ import HallOfFame from '../../pages/hall-of-fame'
 import WorldCup from '../../pages/world-cup'
 import WorldCupStandings from '../../pages/world-cup-standings'
 import WorldCupPlayoffs from '../../pages/world-cup-playoffs'
+import Teams from '../../pages/teams'
+import Lineup from './../../pages/lineup'
 
 export const AnimatedRoutes = () => {
   const location = useLocation()
@@ -32,6 +34,8 @@ export const AnimatedRoutes = () => {
           <Route path=":tournament/standings" element={<Standings />} />
           <Route path=":tournament/playin" element={<Playin />} />
           <Route path=":tournament/playoffs" element={<Playoffs />} />
+          <Route path=":tournament/teams" element={<Teams />} />
+          <Route path=":tournament/teams/:team/squad" element={<Lineup />} />
         </Route>
         <Route path="/world-cup" element={<WorldCup />} />
         <Route path="/world-cup/standings" element={<WorldCupStandings />} />

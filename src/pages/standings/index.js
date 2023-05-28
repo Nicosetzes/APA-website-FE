@@ -96,8 +96,8 @@ const Standings = () => {
   console.log(tournamentData)
 
   if (tournamentData) {
-    const { groups } = tournamentData[0]
-    const { id, name, activeGroup, standings } = tournamentData[1] // Index 0 because of the order in which I invoked the promises call in Promise.all //
+    const { name, format, groups } = tournamentData[0]
+    const { activeGroup, standings } = tournamentData[1] // Index 0 because of the order in which I invoked the promises call in Promise.all //
     const playerStats = tournamentData[2]
 
     const breadCrumbsLinks = [
@@ -132,6 +132,7 @@ const Standings = () => {
           {groups.length ? (
             <div
               style={{
+                alignItems: 'center',
                 border: 'black 2px solid',
                 display: 'flex',
                 margin: '0.75rem auto',
@@ -150,6 +151,8 @@ const Standings = () => {
                       group == searchParams.get('group')
                         ? 'green'
                         : 'red',
+                    cursor: 'pointer',
+                    fontSize: '1.75rem',
                     margin: '0 0.5rem',
                   }}
                 >
@@ -174,6 +177,7 @@ const Standings = () => {
         <TableContainer component={Paper}>
           <StandingsTable
             tournament={tournament}
+            format={format}
             standings={standings}
             onHandle={goToSpecificFixture}
           />

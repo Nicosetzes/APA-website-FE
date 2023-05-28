@@ -7,31 +7,40 @@ export const StyledTable = styled(Table)`
 
   .MuiTableBody-root {
     .MuiTableRow-root {
-      /* &:nth-child(1),
+      &:hover {
+        background-color: #306485;
+      }
+      &:nth-child(1),
       &:nth-child(2),
       &:nth-child(3),
       &:nth-child(4),
       &:nth-child(5),
       &:nth-child(6) {
-        background-color: #007058;
+        background-color: ${(props) =>
+          `${props.playin ? '#007058' : 'rgba(0, 74, 121, 1)'}`};
         &:hover {
-          background-color: #237c69;
+          background-color: ${(props) =>
+            `${props.playin ? '#237c69' : '#306485'}`};
         }
       }
       &:nth-child(7),
       &:nth-child(8) {
-        background-color: #a1920a;
+        background-color: ${(props) =>
+          `${props.playin ? '#a1920a' : 'rgba(0, 74, 121, 1)'}`};
         &:hover {
-          background-color: #b8ae58;
+          background-color: ${(props) =>
+            `${props.playin ? '#b8ae58' : '#306485'}`};
         }
       }
       &:nth-child(9),
       &:nth-child(10) {
-        background-color: #75330c;
+        background-color: ${(props) =>
+          `${props.playin ? '#75330c' : 'rgba(0, 74, 121, 1)'}`};
         &:hover {
-          background-color: #8f5e42;
+          background-color: ${(props) =>
+            `${props.playin ? '#8f5e42' : '#306485'}`};
         }
-      } */
+      }
       .MuiTableCell-root {
         color: #fff;
         font-family: 'Fira Sans', sans-serif;

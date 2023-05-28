@@ -8,7 +8,6 @@ import championBackground from './../../../src/images/desktop-2.jpg'
 import logo from './../../../src/images/sitioapalogo2.png'
 import team from './../../../src/images/polonia-bandera.png'
 import trophy from './../../../src/images/world-cup.png'
-import tournament from './../../../src/images/tournaments/9.png'
 import nico from './../../../src/images/nico.png'
 import max from './../../../src/images/max.png'
 import santi from './../../../src/images/santi.png'
@@ -35,6 +34,7 @@ import trophyMundialDeClubes from './../../images/mundial-de-clubes.png'
 import trophyPremierLeague from './../../images/premier-league.png'
 import trophySuperligaArgentina from './../../images/superliga-argentina.png'
 import trophySuperligaEuropea from './../../images/superliga-europea.png'
+import trophySuperligaItaloEspañola from './../../../src/images/tournaments/9.png'
 import trophyWorldCup from './../../images/world-cup.png'
 
 const Home = () => {
@@ -255,11 +255,48 @@ const Home = () => {
         </div>
 
         <div className="container__tournament">
-          <div className="tournament-title">TORNEO ACTIVO</div>
-          <div className="tournament-img">
-            <img src={tournament} />
+          <div
+            style={{
+              color: '#004a79',
+              display: 'flex',
+              fontSize: '1rem',
+              fontWeight: 700,
+              margin: '0.5rem auto',
+            }}
+          >
+            TORNEOS ACTIVOS
           </div>
-          <div className="tournament-name">SUPERLIGA ÍTALO-ESPAÑOLA</div>
+          <div style={{ display: 'flex' }}>
+            <div
+              style={{
+                alignItems: 'center',
+                display: 'flex',
+                flexDirection: 'column',
+              }}
+              onClick={() => navigate('./tournaments/6377fb8eb217aa7d3bf61eef')}
+            >
+              <div className="tournament-name">
+                SUPERLIGA ÍTALO-ESPAÑOLA 2022
+              </div>
+              <div className="tournament-img">
+                <img src={trophySuperligaItaloEspañola} />
+              </div>
+            </div>
+            <div
+              style={{
+                alignItems: 'center',
+                display: 'flex',
+                flexDirection: 'column',
+              }}
+              onClick={() => navigate('./tournaments/646ff40e2524b3187034f790')}
+            >
+              <div className="tournament-name">SUPERLIGA ARGENTINA 2023</div>
+              <div className="tournament-img">
+                <img src={trophySuperligaArgentina} />
+              </div>
+            </div>
+          </div>
+
           <button onClick={() => navigate('./tournaments')}>VER TORNEOS</button>
         </div>
       </StyledHome>

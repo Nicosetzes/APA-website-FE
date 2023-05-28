@@ -7,22 +7,24 @@ import TableRow from '@mui/material/TableRow'
 import ScoreBox from './../../../../components/ScoreBox'
 import { database } from './../../../../api'
 
-const StandingsTable = ({ tournament, standings, onHandle }) => {
+const StandingsTable = ({ tournament, format, standings, onHandle }) => {
   const isL = useMediaQuery({ query: '(min-width: 992px)' })
   const isM = useMediaQuery({ query: '(min-width: 768px)' })
   const isSm = useMediaQuery({ query: '(min-width: 500px)' })
   const isXS = useMediaQuery({ query: '(min-width: 400px)' })
 
   console.log(standings)
+  console.log(format)
 
   return (
     <>
       <StyledTable
         sx={{ minWidth: 300, maxWidth: 1000, margin: '0.5rem auto' }}
         aria-label="simple table"
+        playin={format == 'league_playin_playoff'}
       >
         <TableHead>
-          <TableRow>
+          <TableRow sx={{ backgroundColor: '#262121' }}>
             <TableCell sx={{ color: '#fff', fontWeight: 800 }} align="center">
               {isL ? 'Posición' : 'Pos.'}
             </TableCell>

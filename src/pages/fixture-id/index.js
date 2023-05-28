@@ -252,8 +252,11 @@ const FixtureId = () => {
           {groups.length ? (
             <div
               style={{
-                border: 'black 2px solid',
+                alignItems: 'center',
+                border: 'black 3px solid',
                 display: 'flex',
+                fontSize: '1.5rem',
+                fontWeight: 700,
                 margin: '0.75rem auto',
                 padding: '0.5rem 1rem',
                 width: 'fit-content',
@@ -270,6 +273,7 @@ const FixtureId = () => {
                       group == searchParams.get('group')
                         ? 'green'
                         : 'red',
+                    cursor: 'pointer',
                     margin: '0 0.5rem',
                     textDecoration:
                       (group == 'A' && !searchParams.get('group')) ||

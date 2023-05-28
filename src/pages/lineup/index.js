@@ -242,7 +242,15 @@ const Lineup = () => {
 
   return (
     <>
-      <div>HOLA</div>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          margin: '1rem 0 0 0',
+        }}
+      >
+        <img src={`${database}/logos/${team}`} />
+      </div>
       <StyledLineup>
         <div
           style={{

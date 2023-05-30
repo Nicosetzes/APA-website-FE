@@ -270,6 +270,7 @@ const Home = () => {
             <div
               style={{
                 alignItems: 'center',
+                cursor: 'pointer',
                 display: 'flex',
                 flexDirection: 'column',
               }}
@@ -285,6 +286,7 @@ const Home = () => {
             <div
               style={{
                 alignItems: 'center',
+                cursor: 'pointer',
                 display: 'flex',
                 flexDirection: 'column',
               }}

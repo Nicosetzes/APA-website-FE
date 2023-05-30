@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useMediaQuery } from 'react-responsive'
 import { useParams } from 'react-router-dom'
 import { StyledLineup } from './styled'
 import { api, database } from '../../api'
@@ -10,6 +11,12 @@ import axios from 'axios'
 
 const Lineup = () => {
   const MySwal = withReactContent(Swal)
+
+  // const isXL = useMediaQuery({ query: '(min-width: 1200px)' })
+  const isL = useMediaQuery({ query: '(min-width: 992px)' })
+  // const isM = useMediaQuery({ query: '(min-width: 768px)' })
+  // const isSm = useMediaQuery({ query: '(min-width: 500px)' })
+  // const isXS = useMediaQuery({ query: '(min-width: 350px)' })
 
   const { tournament, team } = useParams()
 
@@ -252,49 +259,52 @@ const Lineup = () => {
         <img src={`${database}/logos/${team}`} />
       </div>
       <StyledLineup>
-        <div
-          style={{
-            // alignContent: 'center',
-            alignItems: 'start',
-            border: 'black 2px solid',
-            display: 'flex',
-            flexDirection: 'column',
-            flexWrap: 'wrap',
-            height: '100%',
-            justifyContent: 'center',
-            margin: '0 1rem 0 0',
-            width: '500px',
-          }}
-          onDrop={(e) => handleOnDrop(e, 'pool')}
-          onDragOver={handleDragOver}
-        >
-          {/* {unassignedPlayers ? ( */}
-          {unassignedPlayers.map(({ id, name, age, number, position }) => (
-            <div
-              key={id}
-              draggable
-              onDragStart={(e) => handleOnDrag(e, id, name)}
-              style={{
-                alignItems: 'center',
-                cursor: 'grab',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyConter: 'center',
-                height: '75px',
-                margin: '0.25rem',
-                width: '75px',
-              }}
-            >
-              <img
-                src={`${database}/players/${id}`}
-                style={{ height: '50px', width: '50px' }}
-              />
-              <div style={{ fontSize: '0.75rem', textAlign: 'center' }}>
-                {name}
+        {isL && (
+          <div
+            style={{
+              // alignContent: 'center',
+              alignItems: 'start',
+              border: 'black 2px solid',
+              display: 'flex',
+              flexDirection: 'column',
+              flexWrap: 'wrap',
+              height: '100%',
+              justifyContent: 'center',
+              margin: '0 1rem 0 0',
+              width: '500px',
+            }}
+            onDrop={(e) => handleOnDrop(e, 'pool')}
+            onDragOver={handleDragOver}
+          >
+            {/* {unassignedPlayers ? ( */}
+            {unassignedPlayers.map(({ id, name, age, number, position }) => (
+              <div
+                key={id}
+                draggable
+                onDragStart={(e) => handleOnDrag(e, id, name)}
+                style={{
+                  alignItems: 'center',
+                  cursor: 'grab',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyConter: 'center',
+                  height: '75px',
+                  margin: '0.25rem',
+                  width: '75px',
+                }}
+              >
+                <img
+                  src={`${database}/players/${id}`}
+                  style={{ height: '50px', width: '50px' }}
+                />
+                <div style={{ fontSize: '0.75rem', textAlign: 'center' }}>
+                  {name}
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
+
         <div
           style={{
             alignItems: 'center',
@@ -305,8 +315,7 @@ const Lineup = () => {
             display: 'flex',
             flexDirection: 'column-reverse',
             height: '100%',
-            // justifyContent: 'space-evenly',
-            width: '600px',
+            maxWidth: `${!isL && `400px`}`,
           }}
         >
           <div className="row">

@@ -14,7 +14,7 @@ export const StyledPlayerBox = styled.div`
     display: flex;
     flex-direction: column;
     .drop-zone-name {
-      color: #fff;
+      color: #000;
       font-weight: 700;
       margin-top: 0.25rem;
     }

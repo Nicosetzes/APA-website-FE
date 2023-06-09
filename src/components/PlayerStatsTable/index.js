@@ -9,7 +9,7 @@ import ScoreBox from './../ScoreBox'
 const PlayerStatsTable = ({ stats }) => {
   const isL = useMediaQuery({ query: '(min-width: 992px)' })
   const isM = useMediaQuery({ query: '(min-width: 768px)' })
-  // const isSm = useMediaQuery({ query: "(min-width: 500px)" });
+  const isSm = useMediaQuery({ query: '(min-width: 576px)' })
   const isXS = useMediaQuery({ query: '(min-width: 400px)' })
 
   console.log(stats)
@@ -40,6 +40,11 @@ const PlayerStatsTable = ({ stats }) => {
               </TableCell>
             </>
           )}
+          {stats[0].effectiveness && isSm && (
+            <TableCell sx={{ fontWeight: 800, color: '#fff' }} align="center">
+              % Ef.
+            </TableCell>
+          )}
           <TableCell sx={{ fontWeight: 800, color: '#fff' }} align="center">
             {isL ? 'Puntos' : 'Pts.'}
           </TableCell>
@@ -54,7 +59,16 @@ const PlayerStatsTable = ({ stats }) => {
       </TableHead>
       <TableBody>
         {stats.map(
-          ({ player, played, wins, draws, losses, points, streak }) => (
+          ({
+            player,
+            played,
+            wins,
+            draws,
+            losses,
+            effectiveness,
+            points,
+            streak,
+          }) => (
             <TableRow
               key={player.id}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -102,6 +116,14 @@ const PlayerStatsTable = ({ stats }) => {
                     {losses}
                   </TableCell>
                 </>
+              )}
+              {stats[0].effectiveness && isSm && (
+                <TableCell
+                  sx={{ fontWeight: 800, color: '#fff' }}
+                  align="center"
+                >
+                  {effectiveness}
+                </TableCell>
               )}
               <TableCell
                 component="th"

@@ -6,7 +6,6 @@ const PlayerBox = ({ player, trophies }) => {
   const isM = useMediaQuery({ query: '(min-width: 768px)' })
   // const isSm = useMediaQuery({ query: '(min-width: 576px)' })
   // const isXS = useMediaQuery({ query: '(min-width: 400px)' })
-  console.log(trophies)
   return (
     <>
       <StyledPlayerBox style={{ width: !isM && '350px' }}>

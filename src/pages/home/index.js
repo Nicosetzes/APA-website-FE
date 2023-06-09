@@ -2,6 +2,8 @@ import { useMediaQuery } from 'react-responsive'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { StyledHome } from './styled'
+import { cloudName } from './../../api'
+import { Image } from 'cloudinary-react'
 import presentationDesktop from './../../../src/images/desktop.jpg'
 import presentationMobile from './../../../src/images/mobile.jpg'
 import championBackground from './../../../src/images/desktop-2.jpg'
@@ -27,15 +29,18 @@ import logoRiverPlate from './../../images/river-plate-escudo.png'
 import logoRosarioCentral from './../../images/rosario-central-escudo.png'
 import logoSanLorenzo from './../../images/san-lorenzo-escudo.png'
 import logoTottenhamHotspur from './../../images/tottenham-hotspur-escudo.png'
-import trophyChampions from './../../images/champions.png'
-import trophyCopaAmerica from './../../images/copa-america.png'
-import trophyCopaArgentina from './../../images/copa-argentina.png'
-import trophyMundialDeClubes from './../../images/mundial-de-clubes.png'
-import trophyPremierLeague from './../../images/premier-league.png'
-import trophySuperligaArgentina from './../../images/superliga-argentina.png'
-import trophySuperligaEuropea from './../../images/superliga-europea.png'
-import trophySuperligaItaloEspañola from './../../../src/images/tournaments/9.png'
-import trophyWorldCup from './../../images/world-cup.png'
+
+const torneo_argentino_cloudinary_id = 'tournaments/rqi862k543ltlmdbgjjm'
+const chempions_cloudinary_id = 'tournaments/5_qyvcdb'
+const world_cup_cloudinary_id = 'tournaments/qvkjpzyorvsglzft0ehq'
+const superliga_italo_española_cloudinary_id =
+  'tournaments/h26y9hwsqbroiqjdgmyn'
+const superliga_inglesa_cloudinary_id = 'tournaments/chemvkybmg1wmvjanwby'
+const copa_america_cloudinary_id = 'tournaments/copa-america_yo28ma'
+const mundial_de_clubes_cloudinary_id = 'tournaments/mundial-de-clubes_zc7sdt'
+const superliga_europea_cloudinary_id = 'tournaments/mbdi22w2xyirjwnrbyiu'
+const superliga_argentina_cloudinary_id = 'tournaments/_wz61rs'
+const copa_argentina_cloudinary_id = 'tournaments/copa-argentina_uf76a1'
 
 const Home = () => {
   // const isXL = useMediaQuery({ query: '(min-width: 1200px)' })
@@ -76,7 +81,10 @@ const Home = () => {
                 <div className="result-title">TORNEO ARGENTINO</div>
                 <div className="result-year">2016</div>
                 <div className="result-image">
-                  <img src={trophySuperligaArgentina} />
+                  <Image
+                    cloudName={cloudName}
+                    publicId={torneo_argentino_cloudinary_id}
+                  />
                 </div>
                 <div className="result-player">
                   <div className="player-name">Max</div>
@@ -87,7 +95,10 @@ const Home = () => {
                 <div className="result-title">TORNEO ARGENTINO</div>
                 <div className="result-year">2017</div>
                 <div className="result-image">
-                  <img src={trophySuperligaArgentina} />
+                  <Image
+                    cloudName={cloudName}
+                    publicId={torneo_argentino_cloudinary_id}
+                  />
                 </div>
                 <div className="result-player">
                   <div className="player-name">Max</div>
@@ -98,7 +109,10 @@ const Home = () => {
                 <div className="result-title">COPA DEL MUNDO</div>
                 <div className="result-year">2017</div>
                 <div className="result-image">
-                  <img src={trophyWorldCup} />
+                  <Image
+                    cloudName={cloudName}
+                    publicId={world_cup_cloudinary_id}
+                  />
                 </div>
                 <div className="result-player">
                   <div className="player-name">Leo</div>
@@ -111,7 +125,10 @@ const Home = () => {
                 <div className="result-title">TORNEO ARGENTINO</div>
                 <div className="result-year">2018</div>
                 <div className="result-image">
-                  <img src={trophySuperligaArgentina} />
+                  <Image
+                    cloudName={cloudName}
+                    publicId={torneo_argentino_cloudinary_id}
+                  />
                 </div>
                 <div className="result-player">
                   <div className="player-name">Leo</div>
@@ -122,7 +139,10 @@ const Home = () => {
                 <div className="result-title">COPA DEL MUNDO</div>
                 <div className="result-year">2018 (I)</div>
                 <div className="result-image">
-                  <img src={trophyWorldCup} />
+                  <Image
+                    cloudName={cloudName}
+                    publicId={world_cup_cloudinary_id}
+                  />
                 </div>
                 <div className="result-player">
                   <div className="player-name">Leo</div>
@@ -133,7 +153,10 @@ const Home = () => {
                 <div className="result-title">COPA DEL MUNDO</div>
                 <div className="result-year">2018 (II)</div>
                 <div className="result-image">
-                  <img src={trophyWorldCup} />
+                  <Image
+                    cloudName={cloudName}
+                    publicId={world_cup_cloudinary_id}
+                  />
                 </div>
                 <div className="result-player">
                   <div className="player-name">Max</div>
@@ -146,7 +169,10 @@ const Home = () => {
                 <div className="result-title">MUNDIAL DE CLUBES</div>
                 <div className="result-year">2018</div>
                 <div className="result-image">
-                  <img src={trophyMundialDeClubes} />
+                  <Image
+                    cloudName={cloudName}
+                    publicId={mundial_de_clubes_cloudinary_id}
+                  />
                 </div>
                 <div className="result-player">
                   <div className="player-name">Max</div>
@@ -157,7 +183,10 @@ const Home = () => {
                 <div className="result-title">COPA ARGENTINA</div>
                 <div className="result-year">2018</div>
                 <div className="result-image">
-                  <img src={trophyCopaArgentina} />
+                  <Image
+                    cloudName={cloudName}
+                    publicId={copa_argentina_cloudinary_id}
+                  />
                 </div>
                 <div className="result-player">
                   <div className="player-name">Max</div>
@@ -170,7 +199,10 @@ const Home = () => {
                 </div>
                 <div className="result-year">2019</div>
                 <div className="result-image">
-                  <img src={trophyChampions} />
+                  <Image
+                    cloudName={cloudName}
+                    publicId={chempions_cloudinary_id}
+                  />
                 </div>
                 <div className="result-player">
                   <div className="player-name">Leo</div>
@@ -183,7 +215,10 @@ const Home = () => {
                 <div className="result-title">COPA AMÉRICA</div>
                 <div className="result-year">2019</div>
                 <div className="result-image">
-                  <img src={trophyCopaAmerica} />
+                  <Image
+                    cloudName={cloudName}
+                    publicId={copa_america_cloudinary_id}
+                  />
                 </div>
                 <div className="result-player">
                   <div className="player-name">Santi</div>
@@ -194,7 +229,10 @@ const Home = () => {
                 <div className="result-title">TORNEO ARGENTINO</div>
                 <div className="result-year">2021/22</div>
                 <div className="result-image">
-                  <img src={trophySuperligaArgentina} />
+                  <Image
+                    cloudName={cloudName}
+                    publicId={torneo_argentino_cloudinary_id}
+                  />
                 </div>
                 <div className="result-player">
                   <div className="player-name">Leo</div>
@@ -205,7 +243,10 @@ const Home = () => {
                 <div className="result-title">SUPERLIGA EUROPEA</div>
                 <div className="result-year">2022</div>
                 <div className="result-image">
-                  <img src={trophySuperligaEuropea} />
+                  <Image
+                    cloudName={cloudName}
+                    publicId={superliga_europea_cloudinary_id}
+                  />
                 </div>
                 <div className="result-player">
                   <div className="player-name">Nico</div>
@@ -218,7 +259,10 @@ const Home = () => {
                 <div className="result-title">SUPERLIGA INGLESA</div>
                 <div className="result-year">2022</div>
                 <div className="result-image">
-                  <img src={trophyPremierLeague} />
+                  <Image
+                    cloudName={cloudName}
+                    publicId={superliga_inglesa_cloudinary_id}
+                  />
                 </div>
                 <div className="result-player">
                   <div className="player-name">Nico</div>
@@ -229,7 +273,10 @@ const Home = () => {
                 <div className="result-title">COPA DEL MUNDO</div>
                 <div className="result-year">2022</div>
                 <div className="result-image">
-                  <img src={trophyWorldCup} />
+                  <Image
+                    cloudName={cloudName}
+                    publicId={world_cup_cloudinary_id}
+                  />
                 </div>
                 <div className="result-player">
                   <div className="player-name">Leo</div>
@@ -280,7 +327,10 @@ const Home = () => {
                 SUPERLIGA ÍTALO-ESPAÑOLA 2022
               </div>
               <div className="tournament-img">
-                <img src={trophySuperligaItaloEspañola} />
+                <Image
+                  cloudName={cloudName}
+                  publicId={superliga_italo_española_cloudinary_id}
+                />
               </div>
             </div>
             <div
@@ -294,7 +344,10 @@ const Home = () => {
             >
               <div className="tournament-name">SUPERLIGA ARGENTINA 2023</div>
               <div className="tournament-img">
-                <img src={trophySuperligaArgentina} />
+                <Image
+                  cloudName={cloudName}
+                  publicId={superliga_argentina_cloudinary_id}
+                />
               </div>
             </div>
           </div>

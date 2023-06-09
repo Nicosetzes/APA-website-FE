@@ -12,8 +12,6 @@ const FaceToFaceTable = ({ stats }) => {
   const isSm = useMediaQuery({ query: '(min-width: 500px)' })
   const isXS = useMediaQuery({ query: '(min-width: 400px)' })
 
-  console.log(stats)
-
   return (
     <StyledFaceToFaceTable
       sx={{ minWidth: 300, maxWidth: 1000, margin: '0.5rem auto' }}

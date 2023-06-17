@@ -24,7 +24,7 @@ import { Oval } from 'react-loader-spinner'
 const FixtureId = () => {
   // const isL = useMediaQuery({ query: '(min-width: 992px)' })
   // const isM = useMediaQuery({ query: '(min-width: 768px)' })
-  const isSm = useMediaQuery({ query: '(min-width: 500px)' })
+  const isSm = useMediaQuery({ query: '(min-width: 600px)' })
   const isXS = useMediaQuery({ query: '(min-width: 375px)' })
 
   const MySwal = withReactContent(Swal)
@@ -68,6 +68,19 @@ const FixtureId = () => {
 
   useEffect(() => {
     getTournamentData()
+  }, [])
+
+  const [notPlayedData, setNotPlayedData] = useState()
+
+  const getNotPlayedMatchesData = () => {
+    console.log('Traigo la data de los partidos pendientes')
+    axios
+      .get(`${api}/tournaments/${tournament}/fixture/not-played`)
+      .then(({ data }) => setNotPlayedData(data))
+  }
+
+  useEffect(() => {
+    getNotPlayedMatchesData()
   }, [])
 
   const [fixtureData, setFixtureData] = useState()
@@ -186,6 +199,15 @@ const FixtureId = () => {
     group ? setSearchParams({ group: group }) : setSearchParams({})
   }
 
+  // const calculateRemainingMatchesForPlayer = (id, matches) => {
+  //   const amountOfRemainingMatches = matches.filter(
+  //     ({ playerP1, playerP2, played }) =>
+  //       (id == playerP1.id || id == playerP2.id) && !played,
+  //   ).length
+
+  //   return amountOfRemainingMatches
+  // }
+
   const fixtureGeneration = (group = null) => {
     axios
       .post(`${api}/tournaments/${tournament}/fixture`, {
@@ -221,9 +243,11 @@ const FixtureId = () => {
       })
   }
 
-  if (tournamentData && fixtureData) {
+  if (tournamentData && notPlayedData && fixtureData) {
     console.log(fixtureData)
+    console.log(notPlayedData)
     const { name, players, groups } = tournamentData
+    const { remainingMatchesInTotal, remainingMatchesByPlayer } = notPlayedData
     const { matches } = fixtureData
     const matchesFromDB = matches.matches
     const { totalPages, currentPage } = matches
@@ -304,32 +328,103 @@ const FixtureId = () => {
           <div
             style={{
               display: 'flex',
-              flexDirection: isSm ? 'row' : 'column',
+              flexDirection: isSm ? 'column' : 'row',
               flexWrap: 'wrap',
               justifyContent: 'center',
               margin: '0 1.5rem',
             }}
           >
-            {players.map(({ name, id }) => (
-              <FormControlLabel
-                key={id}
-                control={
-                  <Switch
-                    disabled={
-                      switchState.length === 2 && !switchState.includes(id)
-                        ? true
-                        : false
-                    }
-                    size="small"
-                    color="warning"
-                    checked={switchState.includes(id)}
-                    onChange={handleSwitchChange}
-                    name={id}
-                  />
-                }
-                label={name}
-              />
-            ))}
+            <div
+              style={{
+                alignItems: 'center',
+                display: 'flex',
+                flexDirection: isSm ? 'row' : 'column',
+                flexWrap: 'wrap',
+                justifyContent: 'space-evenly',
+                margin: isSm ? '0 auto' : '0',
+              }}
+            >
+              <div
+                style={{
+                  fontWeight: 700,
+                  margin: isSm ? '0' : '0 auto 1rem auto',
+                  padding: isSm ? '0' : '0 1rem 0.5rem 1rem',
+                }}
+              >
+                Partidos restantes
+              </div>
+              {players.map(({ name, id }) => (
+                <div
+                  key={id}
+                  style={{
+                    alignItems: 'center',
+                    display: 'flex',
+                    fontSize: '1.05rem',
+                    lineHeight: '1.5rem',
+                    margin: '0 0.5rem',
+                  }}
+                >
+                  {name}:{' '}
+                  {
+                    remainingMatchesByPlayer
+                      .filter((player) => player.id == id)
+                      .at(0).amount
+                  }
+                  {/* {calculateRemainingMatchesForPlayer(id, matchesFromDB)} */}
+                </div>
+              ))}
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: isSm ? 'row' : 'column',
+                flexWrap: 'wrap',
+                justifyContent: 'center',
+                margin: isSm ? '1rem 1.5rem' : '0 1.5rem',
+              }}
+            >
+              <div
+                style={{
+                  fontWeight: 700,
+                  margin: isSm ? '0' : '0 auto',
+                  padding: '0.75rem',
+                }}
+              >
+                Jugadores
+              </div>
+              {players.map(({ name, id }) => (
+                <FormControlLabel
+                  key={id}
+                  control={
+                    <Switch
+                      disabled={
+                        switchState.length === 2 && !switchState.includes(id)
+                          ? true
+                          : false
+                      }
+                      color="warning"
+                      checked={switchState.includes(id)}
+                      onChange={handleSwitchChange}
+                      name={id}
+                    />
+                  }
+                  label={name}
+                />
+              ))}
+            </div>
+            <div
+              style={{
+                border: '#ffdf21 2px solid',
+                color: '#004a79',
+                fontSize: '1.125rem',
+                fontWeight: 700,
+                margin: '1rem auto',
+                padding: '0.75em 1em',
+              }}
+            >
+              {remainingMatchesInTotal.remaining} partidos restantes de{' '}
+              {remainingMatchesInTotal.total}
+            </div>
           </div>
           <div>
             {searchParams.get('team') && (

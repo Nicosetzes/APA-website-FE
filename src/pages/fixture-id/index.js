@@ -75,13 +75,17 @@ const FixtureId = () => {
   const getNotPlayedMatchesData = () => {
     console.log('Traigo la data de los partidos pendientes')
     axios
-      .get(`${api}/tournaments/${tournament}/fixture/not-played`)
+      .get(`${api}/tournaments/${tournament}/fixture/not-played`, {
+        params: {
+          players: `${switchState.length ? JSON.stringify(switchState) : ``}`,
+        },
+      })
       .then(({ data }) => setNotPlayedData(data))
   }
 
   useEffect(() => {
     getNotPlayedMatchesData()
-  }, [])
+  }, [switchState])
 
   const [fixtureData, setFixtureData] = useState()
 
@@ -198,15 +202,6 @@ const FixtureId = () => {
     const group = searchParams.get('group')
     group ? setSearchParams({ group: group }) : setSearchParams({})
   }
-
-  // const calculateRemainingMatchesForPlayer = (id, matches) => {
-  //   const amountOfRemainingMatches = matches.filter(
-  //     ({ playerP1, playerP2, played }) =>
-  //       (id == playerP1.id || id == playerP2.id) && !played,
-  //   ).length
-
-  //   return amountOfRemainingMatches
-  // }
 
   const fixtureGeneration = (group = null) => {
     axios
@@ -340,28 +335,37 @@ const FixtureId = () => {
                 display: 'flex',
                 flexDirection: isSm ? 'row' : 'column',
                 flexWrap: 'wrap',
-                justifyContent: 'space-evenly',
+                justifyContent:
+                  remainingMatchesByPlayer.length > 2
+                    ? 'space-evenly'
+                    : 'start',
                 margin: isSm ? '0 auto' : '0',
+                padding:
+                  remainingMatchesByPlayer.length > 2 ? '0' : '0.75rem 0 0 0',
               }}
             >
               <div
                 style={{
+                  alignItems: 'center',
+                  display: 'flex',
                   fontWeight: 700,
-                  margin: isSm ? '0' : '0 auto 1rem auto',
-                  padding: isSm ? '0' : '0 1rem 0.5rem 1rem',
+                  height: '40px',
+                  // margin: isSm ? '0' : '0 auto 1rem auto',
+                  // padding: isSm ? '0' : '0 1rem 0.5rem 1rem',
                 }}
               >
                 Partidos restantes
               </div>
-              {players.map(({ name, id }) => (
+              {remainingMatchesByPlayer.map(({ name, id }) => (
                 <div
                   key={id}
                   style={{
                     alignItems: 'center',
                     display: 'flex',
                     fontSize: '1.05rem',
+                    height: '40px',
                     lineHeight: '1.5rem',
-                    margin: '0 0.5rem',
+                    margin: isSm ? '0 0.75rem' : '0',
                   }}
                 >
                   {name}:{' '}
@@ -370,7 +374,6 @@ const FixtureId = () => {
                       .filter((player) => player.id == id)
                       .at(0).amount
                   }
-                  {/* {calculateRemainingMatchesForPlayer(id, matchesFromDB)} */}
                 </div>
               ))}
             </div>
@@ -379,7 +382,7 @@ const FixtureId = () => {
                 display: 'flex',
                 flexDirection: isSm ? 'row' : 'column',
                 flexWrap: 'wrap',
-                justifyContent: 'center',
+                justifyContent: 'space-evenly',
                 margin: isSm ? '1rem 1.5rem' : '0 1.5rem',
               }}
             >
@@ -420,10 +423,11 @@ const FixtureId = () => {
                 fontWeight: 700,
                 margin: '1rem auto',
                 padding: '0.75em 1em',
+                textAlign: 'center',
               }}
             >
               {remainingMatchesInTotal.remaining} partidos restantes de{' '}
-              {remainingMatchesInTotal.total}
+              {remainingMatchesInTotal.total} en TOTAL
             </div>
           </div>
           <div>

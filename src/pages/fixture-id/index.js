@@ -243,9 +243,13 @@ const FixtureId = () => {
     console.log(notPlayedData)
     const { name, players, groups } = tournamentData
     const { remainingMatchesInTotal, remainingMatchesByPlayer } = notPlayedData
-    const { matches } = fixtureData
-    const matchesFromDB = matches.matches
-    const { totalPages, currentPage } = matches
+    const {
+      matches,
+      amountOfNotPlayedMatches,
+      amountOfTotalMatches,
+      totalPages,
+      currentPage,
+    } = fixtureData
 
     const breadCrumbsLinks = [
       { name: 'Home', route: '' },
@@ -331,54 +335,6 @@ const FixtureId = () => {
           >
             <div
               style={{
-                alignItems: 'center',
-                display: 'flex',
-                flexDirection: isSm ? 'row' : 'column',
-                flexWrap: 'wrap',
-                justifyContent:
-                  remainingMatchesByPlayer.length > 2
-                    ? 'space-evenly'
-                    : 'start',
-                margin: isSm ? '0 auto' : '0',
-                padding:
-                  remainingMatchesByPlayer.length > 2 ? '0' : '0.75rem 0 0 0',
-              }}
-            >
-              <div
-                style={{
-                  alignItems: 'center',
-                  display: 'flex',
-                  fontWeight: 700,
-                  height: '40px',
-                  // margin: isSm ? '0' : '0 auto 1rem auto',
-                  // padding: isSm ? '0' : '0 1rem 0.5rem 1rem',
-                }}
-              >
-                Partidos restantes
-              </div>
-              {remainingMatchesByPlayer.map(({ name, id }) => (
-                <div
-                  key={id}
-                  style={{
-                    alignItems: 'center',
-                    display: 'flex',
-                    fontSize: '1.05rem',
-                    height: '40px',
-                    lineHeight: '1.5rem',
-                    margin: isSm ? '0 0.75rem' : '0',
-                  }}
-                >
-                  {name}:{' '}
-                  {
-                    remainingMatchesByPlayer
-                      .filter((player) => player.id == id)
-                      .at(0).amount
-                  }
-                </div>
-              ))}
-            </div>
-            <div
-              style={{
                 display: 'flex',
                 flexDirection: isSm ? 'row' : 'column',
                 flexWrap: 'wrap',
@@ -426,8 +382,8 @@ const FixtureId = () => {
                 textAlign: 'center',
               }}
             >
-              {remainingMatchesInTotal.remaining} partidos restantes de{' '}
-              {remainingMatchesInTotal.total} en TOTAL
+              {amountOfNotPlayedMatches} partidos restantes de{' '}
+              {amountOfTotalMatches} en TOTAL
             </div>
           </div>
           <div>
@@ -459,10 +415,10 @@ const FixtureId = () => {
           </div>
         </FormGroup>
 
-        {matchesFromDB.length ? (
+        {matches.length ? (
           <>
             <FixtureContainer
-              matches={matchesFromDB}
+              matches={matches}
               getFixtureData={getFixtureData}
             />
             <Pagination
@@ -480,6 +436,18 @@ const FixtureId = () => {
               }}
             />
           </>
+        ) : searchParams.get('team') ? (
+          <div
+            style={{
+              display: 'flex',
+              fontSize: '1.125rem',
+              fontWeight: 700,
+              justifyContent: 'center',
+              margin: '1.5rem 0',
+            }}
+          >
+            No existen partidos con los filtros seleccionados
+          </div>
         ) : (
           <div
             style={{

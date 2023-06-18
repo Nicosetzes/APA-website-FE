@@ -70,23 +70,6 @@ const FixtureId = () => {
     getTournamentData()
   }, [])
 
-  const [notPlayedData, setNotPlayedData] = useState()
-
-  const getNotPlayedMatchesData = () => {
-    console.log('Traigo la data de los partidos pendientes')
-    axios
-      .get(`${api}/tournaments/${tournament}/fixture/not-played`, {
-        params: {
-          players: `${switchState.length ? JSON.stringify(switchState) : ``}`,
-        },
-      })
-      .then(({ data }) => setNotPlayedData(data))
-  }
-
-  useEffect(() => {
-    getNotPlayedMatchesData()
-  }, [switchState])
-
   const [fixtureData, setFixtureData] = useState()
 
   const getFixtureData = () => {
@@ -238,11 +221,10 @@ const FixtureId = () => {
       })
   }
 
-  if (tournamentData && notPlayedData && fixtureData) {
+  if (tournamentData && fixtureData) {
+    console.log(tournamentData)
     console.log(fixtureData)
-    console.log(notPlayedData)
     const { name, players, groups } = tournamentData
-    const { remainingMatchesInTotal, remainingMatchesByPlayer } = notPlayedData
     const {
       matches,
       amountOfNotPlayedMatches,

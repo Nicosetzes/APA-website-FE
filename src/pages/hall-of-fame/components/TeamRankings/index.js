@@ -14,21 +14,22 @@ const TeamRankings = ({ title, subtitle, teams }) => {
       <div className="subtitle">{subtitle}</div>
       <div className="container__rankings">
         {teams.map(
-          ({ id, name, played, wins, points, effectiveness }, index) => (
-            <div key={id} className="rankings__row">
+          ({ player, team, played, wins, points, effectiveness }, index) => (
+            <div key={team.id} className="rankings__row">
               <div className="row__team">
                 <div className="row__position">
                   <span className="position-pos">Pos.</span>{' '}
                   <span className="position-number">{index + 1}.</span>{' '}
                 </div>
-                <img src={`${database}/logos/${id}`} alt={name} />
+                <img src={`${database}/logos/${team.id}`} alt={team.name} />
               </div>
               <div
                 className="row__stats"
                 style={{ marginTop: !isSm ? '1rem' : '0' }}
               >
                 <div className="stats-title">
-                  <span>{name}</span>
+                  <span>{team.name}</span>
+                  <span> ({player.name})</span>
                 </div>
                 <div className="stats-numbers">
                   <div className="numbers-row">

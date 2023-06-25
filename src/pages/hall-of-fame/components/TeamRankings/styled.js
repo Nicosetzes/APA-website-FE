@@ -57,6 +57,11 @@ export const StyledTeamRankings = styled.div`
           font-size: 1.25rem;
           font-weight: 700;
           text-align: center;
+          span {
+            &:nth-of-type(2) {
+              color: #f5d77f;
+            }
+          }
         }
         .stats-numbers {
           display: flex;

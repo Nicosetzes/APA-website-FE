@@ -62,6 +62,10 @@ export const StyledTeamRankings = styled.div`
               color: #f5d77f;
             }
           }
+          & > div {
+            color: #cbb51b;
+            font-size: 1rem;
+          }
         }
         .stats-numbers {
           display: flex;

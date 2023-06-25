@@ -14,7 +14,10 @@ const TeamRankings = ({ title, subtitle, teams }) => {
       <div className="subtitle">{subtitle}</div>
       <div className="container__rankings">
         {teams.map(
-          ({ player, team, played, wins, points, effectiveness }, index) => (
+          (
+            { player, team, played, wins, points, effectiveness, tournament },
+            index,
+          ) => (
             <div key={team.id} className="rankings__row">
               <div className="row__team">
                 <div className="row__position">
@@ -30,6 +33,7 @@ const TeamRankings = ({ title, subtitle, teams }) => {
                 <div className="stats-title">
                   <span>{team.name}</span>
                   <span> ({player.name})</span>
+                  <div>{tournament.name}</div>
                 </div>
                 <div className="stats-numbers">
                   <div className="numbers-row">

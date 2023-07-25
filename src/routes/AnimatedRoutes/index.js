@@ -3,6 +3,8 @@ import { Routes, Route, useLocation } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
 import Login from './../../pages/login'
 import Standings from './../../pages/standings'
+import Simulator from './../../pages/simulator'
+import Calculator from '../../pages/calculator'
 import Playin from '../../pages/playin'
 import Playoffs from '../../pages/playoffs'
 import Matches from './../../pages/matches'
@@ -32,6 +34,11 @@ export const AnimatedRoutes = () => {
           <Route path=":tournament" element={<TournamentId />} />
           <Route path=":tournament/fixture" element={<FixtureId />} />
           <Route path=":tournament/standings" element={<Standings />} />
+          <Route path=":tournament/simulator" element={<Simulator />} />
+          <Route
+            path=":tournament/simulator/calculator"
+            element={<Calculator />}
+          />
           <Route path=":tournament/playin" element={<Playin />} />
           <Route path=":tournament/playoffs" element={<Playoffs />} />
           <Route path=":tournament/teams" element={<Teams />} />

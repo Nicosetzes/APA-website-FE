@@ -40,6 +40,8 @@ const Simulator = () => {
 
     console.log(id)
 
+    if (selectedTeams.length == 6 && !selectedTeams.includes(id)) return // Si se alcanzó el máximo y el equipo clickeado es uno nuevo, retorna
+
     if (selectedTeams.includes(id)) {
       setSelectedTeams((currentTeams) =>
         currentTeams.filter((team) => team !== id),
@@ -80,24 +82,45 @@ const Simulator = () => {
         exit={{ opacity: 0 }}
       >
         <BreadCrumbsMUI links={breadCrumbsLinks} />
-        <div>Elija los equipos para la predicción de resultados</div>
-        <div>
-          {selectedTeams.length &&
-            selectedTeams.map((id) => (
-              <img
-                key={id}
-                id={id}
-                src={`${database}/logos/${id}`}
-                alt={id}
-                style={{ margin: '0.5rem', width: '45px' }}
-              />
-            ))}
+        <div
+          style={{
+            display: 'flex',
+            flexFlow: 'row wrap',
+            fontSize: '1.125rem',
+            fontWeight: 'bold',
+            justifyContent: 'center',
+            margin: '1rem 0',
+            textAlign: 'center',
+          }}
+        >
+          Elija los equipos para la predicción de resultados (máx 6)
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            flexFlow: 'row wrap',
+            justifyContent: 'center',
+            margin: '1rem 0',
+          }}
+        >
+          {selectedTeams.length
+            ? selectedTeams.map((id) => (
+                <img
+                  key={id}
+                  id={id}
+                  src={`${database}/logos/${id}`}
+                  alt={id}
+                  style={{ margin: '0.5rem', width: '45px' }}
+                />
+              ))
+            : null}
         </div>
         <div
           style={{
             alignItems: 'center',
             display: 'flex',
             flexFlow: 'row wrap',
+            justifyContent: 'center',
           }}
         >
           {teams.map(({ team, player }) => (
@@ -106,13 +129,15 @@ const Simulator = () => {
               team={team}
               player={player}
               handler={() => teamOnClickHandler(event)}
+              selectedTeams={selectedTeams}
             />
           ))}
         </div>
-        <div>
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
           <button
+            className="button-main"
             onClick={() => navigateToCalculator()}
-            style={{ margin: '1rem auto', padding: '0.5em 0.75em' }}
+            style={{ margin: '2rem 0 1rem 0' }}
           >
             Confirmar
           </button>

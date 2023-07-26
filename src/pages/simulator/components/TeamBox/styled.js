@@ -4,6 +4,7 @@ export const StyledTeamBox = styled.div`
   align-items: center;
   background-color: #004a79;
   color: #fff;
+  cursor: pointer;
   justify-content: center;
   margin: 1rem;
   outline: ${(props) =>

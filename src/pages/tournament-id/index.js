@@ -122,6 +122,19 @@ const TournamentId = () => {
                   Clasificación
                 </Link>
               )}
+              {format == 'league' && (
+                <Link
+                  to={`simulator`}
+                  style={{
+                    color: '#004a79',
+                    fontSize: '2rem',
+                    margin: '1rem',
+                    textDecoration: 'none',
+                  }}
+                >
+                  Simulador
+                </Link>
+              )}
               <Link
                 to={`teams`}
                 style={{

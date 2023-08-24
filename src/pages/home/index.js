@@ -28,7 +28,7 @@ import logoRiverPlate from './../../images/river-plate-escudo.png'
 import logoRosarioCentral from './../../images/rosario-central-escudo.png'
 import logoSanLorenzo from './../../images/san-lorenzo-escudo.png'
 import logoTottenhamHotspur from './../../images/tottenham-hotspur-escudo.png'
-import logoAtleticoMadrid from './../../images/atletico-madrid-escudo-2.webp'
+import logoAtleticoMadrid from './../../images/atletico-madrid-escudo.png'
 
 const torneo_argentino_cloudinary_id = 'tournaments/rqi862k543ltlmdbgjjm'
 const chempions_cloudinary_id = 'tournaments/5_qyvcdb'
@@ -309,7 +309,10 @@ const Home = () => {
             <div className="champion-title">CAMPEÓN VIGENTE</div>
             <div className="champion-player">Leo</div>
             <div className="champion-img">
-              <img src={trophy} />
+              <Image
+                cloudName={cloudName}
+                publicId={superliga_italo_española_cloudinary_id}
+              />
             </div>
             <div className="champion-team">
               <span>ATLÉTICO MADRID</span>

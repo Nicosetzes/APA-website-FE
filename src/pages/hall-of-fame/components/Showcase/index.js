@@ -11,7 +11,7 @@ import banderaPolonia from './../../../../images/polonia-bandera.png'
 import logoAtleticoMadrid from './../../../../images/atletico-madrid-escudo.png'
 import logoBayern from './../../../../images/bayern-escudo.png'
 import logoEstudiantes from './../../../../images/estudiantes-escudo.png'
-// import logoFiorentina from './../../../../images/fiorentina-escudo.png'
+import logoFiorentina from './../../../../images/fiorentina-escudo.png'
 import logoLanus from './../../../../images/lanus-escudo.png'
 import logoLiverpool from './../../../../images/liverpool-escudo.png'
 import logoLokomotiv from './../../../../images/lokomotiv-escudo.png'
@@ -187,7 +187,7 @@ const Showcase = () => {
         championLogo={logoAtleticoMadrid}
         finalistUser={'Nico'}
         finalistTeam={'Fiorentina'}
-        // finalistLogo={logoFiorentina}
+        finalistLogo={logoFiorentina}
         trophy={trophySuperligaItaloEspañola}
         id={'6377fb8eb217aa7d3bf61eef'}
       />

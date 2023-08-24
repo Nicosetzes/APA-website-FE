@@ -22,8 +22,11 @@ export const StyledTournamentsContainer = styled.div`
     }
     .container__card-name {
       color: #004a79;
+      display: flex;
+      flex-flow: column;
       font-size: 1.25rem;
       font-weight: 700;
+      justify-content: space-between;
       width: 75%;
     }
   }

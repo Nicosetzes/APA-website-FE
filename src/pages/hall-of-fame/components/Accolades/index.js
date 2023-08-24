@@ -8,6 +8,7 @@ import trophyPremierLeague from './../../../../images/premier-league.png'
 import trophyRandomOne from './../../../../images/superliga-europea.png'
 import trophySuperligaArgentina from './../../../../images/superliga-argentina.png'
 import trophyWorldCup from './../../../../images/world-cup.png'
+import trophySuperligaItaloEspañola from './../../../../images/superliga-italo-española.png'
 
 const Accolades = () => {
   return (
@@ -22,6 +23,7 @@ const Accolades = () => {
             trophyChampions,
             trophySuperligaArgentina,
             trophyWorldCup,
+            trophySuperligaItaloEspañola,
           ]}
         />
         <PlayerBox

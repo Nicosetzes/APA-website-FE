@@ -10,7 +10,6 @@ const ChampionshipBox = ({
   finalistUser,
   finalistTeam,
   finalistLogo,
-  national,
   trophy,
   id,
 }) => {

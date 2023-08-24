@@ -4,10 +4,17 @@ import BreadCrumbsMUI from './../../components/BreadCrumbsMUI'
 import { api, database, cloudName } from './../../api'
 import axios from 'axios'
 import { Image } from 'cloudinary-react'
+import StarIcon from '@mui/icons-material/Star'
 import { motion } from 'framer-motion'
+import { useMediaQuery } from 'react-responsive'
 import { Oval } from 'react-loader-spinner'
 
 const TournamentId = () => {
+  // const isL = useMediaQuery({ query: '(min-width: 992px)' })
+  // const isM = useMediaQuery({ query: '(min-width: 768px)' })
+  const isSm = useMediaQuery({ query: '(min-width: 576px)' })
+  // const isXS = useMediaQuery({ query: '(min-width: 400px)' })
+
   const { tournament } = useParams()
 
   const navigate = useNavigate()
@@ -34,14 +41,18 @@ const TournamentId = () => {
   }, [])
 
   if (currentTournament) {
-    const { name, players, teams, format, groups, cloudinary_id } =
+    const { name, players, teams, format, groups, cloudinary_id, outcome } =
       currentTournament
+
+    const champion = outcome?.champion
+    const finalist = outcome?.finalist
 
     console.log(name)
     console.log(players)
     console.log(teams)
     console.log(format)
     console.log(groups)
+    console.log(outcome)
 
     const breadCrumbsLinks = [
       { name: 'Home', route: '' },
@@ -188,6 +199,153 @@ const TournamentId = () => {
             />
           </div>
         </div>
+        {outcome && (
+          <div
+            style={{
+              display: 'flex',
+              flexFlow: 'row wrap',
+              padding: '0 0.75rem',
+            }}
+          >
+            <div
+              style={{
+                backgroundColor: '#004a79',
+                margin: '2rem auto',
+                outline: '#cfa420 4px solid',
+                padding: '1.5rem',
+              }}
+            >
+              <div
+                style={{
+                  alignItems: 'center',
+                  display: 'flex',
+                  justifyContent: !isSm ? 'center' : 'start',
+                  margin: '0 0 1rem 0',
+                }}
+              >
+                <span
+                  style={{
+                    color: '#fff',
+                    fontSize: '2rem',
+                    fontWeight: 700,
+                    margin: '0 0.5rem 0 0',
+                  }}
+                >
+                  Campeón
+                </span>{' '}
+                <StarIcon htmlColor={'#ffc30b'} fontSize={'large'} />
+              </div>
+              <div
+                style={{
+                  display: 'flex',
+                  flexFlow: 'row wrap',
+                  justifyContent: !isSm ? 'center' : 'start',
+                  margin: '0 0 0 1rem',
+                }}
+              >
+                <img
+                  src={`${database}/logos/${champion.team.id}`}
+                  style={{ width: '150px' }}
+                />
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    margin: '0 0 0 1.5rem',
+                  }}
+                >
+                  <div
+                    style={{
+                      color: '#fff',
+                      fontSize: '1.75rem',
+                      fontWeight: 700,
+                    }}
+                  >
+                    {champion.team.name}
+                  </div>
+                  <div
+                    style={{
+                      color: '#fff',
+                      fontSize: '1.5rem',
+                      fontWeight: 700,
+                      margin: '1rem 0 0 1rem',
+                    }}
+                  >
+                    ({champion.player.name})
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              style={{
+                backgroundColor: '#004a79',
+                margin: '2rem auto',
+                outline: '#cfa420 4px solid',
+                padding: '1.5rem',
+              }}
+            >
+              <div
+                style={{
+                  alignItems: 'center',
+                  display: 'flex',
+                  justifyContent: !isSm ? 'center' : 'start',
+                  margin: '0 0 1rem 0',
+                }}
+              >
+                <span
+                  style={{
+                    color: '#fff',
+                    fontSize: '2rem',
+                    fontWeight: 700,
+                    margin: '0 0.5rem 0 0',
+                  }}
+                >
+                  Finalista
+                </span>{' '}
+                <StarIcon htmlColor={'#b3b3b3'} fontSize={'large'} />
+              </div>
+              <div
+                style={{
+                  display: 'flex',
+                  flexFlow: 'row wrap',
+                  justifyContent: !isSm ? 'center' : 'start',
+                  margin: '0 0 0 1rem',
+                }}
+              >
+                <img src={`${database}/logos/${finalist.team.id}`} />
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    margin: '0 0 0 1.5rem',
+                  }}
+                >
+                  <div
+                    style={{
+                      color: '#fff',
+                      fontSize: '1.75rem',
+                      fontWeight: 700,
+                    }}
+                  >
+                    {finalist.team.name}
+                  </div>
+                  <div
+                    style={{
+                      color: '#fff',
+                      fontSize: '1.5rem',
+                      fontWeight: 700,
+                      margin: '1rem 0 0 1rem',
+                    }}
+                  >
+                    ({finalist.player.name})
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
         <div
           style={{
             alignItems: 'center',

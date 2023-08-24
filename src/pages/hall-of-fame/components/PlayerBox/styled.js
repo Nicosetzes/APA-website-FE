@@ -9,7 +9,7 @@ export const StyledPlayerBox = styled.div`
   margin: 1rem auto;
   outline: #0d8499 3px solid;
   padding: 3rem 0;
-  width: 650px;
+  width: 600px;
   .player-box-name {
     color: #004a79;
     font-size: 3rem;

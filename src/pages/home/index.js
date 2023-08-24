@@ -8,8 +8,7 @@ import presentationDesktop from './../../../src/images/desktop.jpg'
 import presentationMobile from './../../../src/images/mobile.jpg'
 import championBackground from './../../../src/images/desktop-2.jpg'
 import logo from './../../../src/images/sitioapalogo2.png'
-import team from './../../../src/images/polonia-bandera.png'
-import trophy from './../../../src/images/world-cup.png'
+import trophy from './../../../src/images/superliga-italo-española.png'
 import nico from './../../../src/images/nico.png'
 import max from './../../../src/images/max.png'
 import santi from './../../../src/images/santi.png'
@@ -29,6 +28,7 @@ import logoRiverPlate from './../../images/river-plate-escudo.png'
 import logoRosarioCentral from './../../images/rosario-central-escudo.png'
 import logoSanLorenzo from './../../images/san-lorenzo-escudo.png'
 import logoTottenhamHotspur from './../../images/tottenham-hotspur-escudo.png'
+import logoAtleticoMadrid from './../../images/atletico-madrid-escudo-2.webp'
 
 const torneo_argentino_cloudinary_id = 'tournaments/rqi862k543ltlmdbgjjm'
 const chempions_cloudinary_id = 'tournaments/5_qyvcdb'
@@ -105,6 +105,8 @@ const Home = () => {
                   <img src={logoEstudiantes} />
                 </div>
               </div>
+            </div>
+            <div className="row__tournaments">
               <div className="tournaments-result">
                 <div className="result-title">COPA DEL MUNDO</div>
                 <div className="result-year">2017</div>
@@ -119,8 +121,6 @@ const Home = () => {
                   <img src={banderaPortugal} />
                 </div>
               </div>
-            </div>
-            <div className="row__tournaments">
               <div className="tournaments-result">
                 <div className="result-title">TORNEO ARGENTINO</div>
                 <div className="result-year">2018</div>
@@ -135,6 +135,8 @@ const Home = () => {
                   <img src={logoSanLorenzo} />
                 </div>
               </div>
+            </div>
+            <div className="row__tournaments">
               <div className="tournaments-result">
                 <div className="result-title">COPA DEL MUNDO</div>
                 <div className="result-year">2018 (I)</div>
@@ -193,6 +195,8 @@ const Home = () => {
                   <img src={logoRacingClub} />
                 </div>
               </div>
+            </div>
+            <div className="row__tournaments">
               <div className="tournaments-result">
                 <div className="result-title">
                   <i>CHEMPIONS LEAGUE</i>
@@ -209,8 +213,6 @@ const Home = () => {
                   <img src={logoRealMadrid} />
                 </div>
               </div>
-            </div>
-            <div className="row__tournaments">
               <div className="tournaments-result">
                 <div className="result-title">COPA AMÉRICA</div>
                 <div className="result-year">2019</div>
@@ -225,6 +227,8 @@ const Home = () => {
                   <img src={banderaArgentina} />
                 </div>
               </div>
+            </div>
+            <div className="row__tournaments">
               <div className="tournaments-result">
                 <div className="result-title">TORNEO ARGENTINO</div>
                 <div className="result-year">2021/22</div>
@@ -284,6 +288,22 @@ const Home = () => {
                 </div>
               </div>
             </div>
+            <div className="row__tournaments">
+              <div className="tournaments-result">
+                <div className="result-title">SUPERLIGA ÍTALO-ESPAÑOLA</div>
+                <div className="result-year">2022/23</div>
+                <div className="result-image">
+                  <Image
+                    cloudName={cloudName}
+                    publicId={superliga_italo_española_cloudinary_id}
+                  />
+                </div>
+                <div className="result-player">
+                  <div className="player-name">Leo</div>
+                  <img src={logoAtleticoMadrid} />
+                </div>
+              </div>
+            </div>
           </div>
           <div className="box__champion">
             <div className="champion-title">CAMPEÓN VIGENTE</div>
@@ -292,8 +312,8 @@ const Home = () => {
               <img src={trophy} />
             </div>
             <div className="champion-team">
-              <span>POLONIA</span>
-              <img src={team} />
+              <span>ATLÉTICO MADRID</span>
+              <img src={logoAtleticoMadrid} />
             </div>
             <button onClick={() => navigate('./hall-of-fame')}>
               SALÓN DE LA FAMA

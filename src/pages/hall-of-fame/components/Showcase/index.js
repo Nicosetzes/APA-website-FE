@@ -11,6 +11,7 @@ import banderaPolonia from './../../../../images/polonia-bandera.png'
 import logoAtleticoMadrid from './../../../../images/atletico-madrid-escudo.png'
 import logoBayern from './../../../../images/bayern-escudo.png'
 import logoEstudiantes from './../../../../images/estudiantes-escudo.png'
+// import logoFiorentina from './../../../../images/fiorentina-escudo.png'
 import logoLanus from './../../../../images/lanus-escudo.png'
 import logoLiverpool from './../../../../images/liverpool-escudo.png'
 import logoLokomotiv from './../../../../images/lokomotiv-escudo.png'
@@ -28,6 +29,7 @@ import trophyMundialDeClubes from './../../../../images/mundial-de-clubes.png'
 import trophyPremierLeague from './../../../../images/premier-league.png'
 import trophyRandomOne from './../../../../images/superliga-europea.png'
 import trophySuperligaArgentina from './../../../../images/superliga-argentina.png'
+import trophySuperligaItaloEspañola from './../../../../images/superliga-italo-española.png'
 import trophyWorldCup from './../../../../images/world-cup.png'
 
 const Showcase = () => {
@@ -177,6 +179,17 @@ const Showcase = () => {
         finalistLogo={banderaBrazil}
         trophy={trophyWorldCup}
         id={'6372f83c88e2408e9cadcc73'}
+      />
+      <ChampionshipBox
+        tournament={'Superliga ítalo-española 2022/23'}
+        championUser={'Leo'}
+        championTeam={'Atlético Madrid'}
+        championLogo={logoAtleticoMadrid}
+        finalistUser={'Nico'}
+        finalistTeam={'Fiorentina'}
+        // finalistLogo={logoFiorentina}
+        trophy={trophySuperligaItaloEspañola}
+        id={'6377fb8eb217aa7d3bf61eef'}
       />
     </StyledShowcase>
   )

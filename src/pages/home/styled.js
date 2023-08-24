@@ -94,12 +94,13 @@ export const StyledHome = styled.div`
           align-items: center;
           display: flex;
           flex-direction: column;
+          justify-content: end;
           margin: 0 0.5rem;
           .result-title {
             color: #fff;
             font-size: 1.1rem;
             font-weight: 700;
-            max-width: 100px;
+            max-width: 150px;
             text-align: center;
           }
           .result-year {
@@ -110,7 +111,7 @@ export const StyledHome = styled.div`
           .result-image {
             height: 175px;
             margin: 0.5rem 0;
-            max-width: 100px;
+            max-width: 125px;
             img {
               height: 100%;
               width: 100%;

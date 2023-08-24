@@ -1,7 +1,7 @@
 import BreadCrumbsMUI from './../../components/BreadCrumbsMUI'
 import { Image } from 'cloudinary-react'
 import { StyledTournamentsContainer } from './styled'
-import { api, cloudName } from './../../api'
+import { api, database, cloudName } from './../../api'
 import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { useLogin } from './../../context/LoginContext'
@@ -78,11 +78,21 @@ const Tournaments = () => {
           Torneos finalizados
         </div>
         <StyledTournamentsContainer>
-          {inactiveTournaments.map(({ _id, name, cloudinary_id }) => (
+          {inactiveTournaments.map(({ _id, name, cloudinary_id, outcome }) => (
             <div className="container__card" key={_id}>
               <Link to={`/tournaments/${_id}`}>
                 <Image cloudName={cloudName} publicId={cloudinary_id} />
-                <div className="container__card-name">{name}</div>
+                <div className="container__card-name">
+                  <span>{name}</span>
+                  <img
+                    src={`${database}/logos/${outcome.champion.team.id}`}
+                    style={{
+                      alignSelf: 'center',
+                      height: 'auto',
+                      width: '120px',
+                    }}
+                  />
+                </div>
               </Link>
             </div>
           ))}

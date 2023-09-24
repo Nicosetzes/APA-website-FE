@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
+import { useLogin } from './../../../../context/LoginContext'
 import { api, database } from './../../../../api'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { StyledLeaguesBoxContainer } from './styled'
 import LeagueBox from './../LeagueBox'
 import TeamBox from '../TeamBox'
@@ -21,6 +22,12 @@ const LeaguesBoxContainer = ({ format, players, leagues }) => {
   const MySwal = withReactContent(Swal)
 
   const navigate = useNavigate()
+
+  const location = useLocation()
+
+  const login = useLogin()
+
+  const { setLoginStatus } = login
 
   const [tournamentName, setTournamentName] = useState('')
   const [tournamentImg, setTournamentImg] = useState(null)
@@ -289,13 +296,20 @@ const LeaguesBoxContainer = ({ format, players, leagues }) => {
         })
         // const teams = definitiveTeamsForTournament
         axios
-          .post(`${api}/tournaments`, {
-            name,
-            format,
-            players,
-            teams,
-            // cloudinaryId,
-          })
+          .post(
+            `${api}/tournaments`,
+            {
+              name,
+              format,
+              players,
+              teams,
+              // cloudinaryId,
+            },
+            {
+              withCredentials: true,
+              credentials: 'include',
+            } /* Importante, sirve para incluir la cookie alojada en el navegador */,
+          )
           .then(({ data }) => {
             console.log(data)
             MySwal.fire({
@@ -308,7 +322,7 @@ const LeaguesBoxContainer = ({ format, players, leagues }) => {
               position: 'top-end',
               showConfirmButton: false,
               text: 'Aguarde unos instantes y será redirigido...',
-              timer: 1500,
+              timer: 2000,
               timerProgressBar: true,
               customClass: { timerProgressBar: 'toast-progress-dark' }, // Definido en index.css //
               didOpen: (toast) => {
@@ -319,6 +333,43 @@ const LeaguesBoxContainer = ({ format, players, leagues }) => {
                 navigate({
                   pathname: `/tournaments/${data._id}`,
                 })
+              },
+            })
+          })
+          .catch(({ response }) => {
+            const { data } = response
+            const { auth, message } = data
+            MySwal.fire({
+              background: `rgba(28, 25, 25, 0.95)`,
+              color: `#fff`,
+              icon: 'error',
+              iconColor: '#b30a0a',
+              text: message,
+              title: '¡Error!',
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 2000,
+              timerProgressBar: true,
+              customClass: { timerProgressBar: 'toast-progress-dark' }, // Definido en index.css //
+              didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+              },
+              didClose: () => {
+                setLoginStatus((loginStatus) => ({
+                  ...loginStatus,
+                  status: auth,
+                }))
+                auth === false &&
+                  navigate(
+                    {
+                      pathname: `/users/login`,
+                    },
+                    {
+                      state: { url: location.pathname },
+                    } /* Adjunto info de la ruta actual, para luego volver a ella en caso de login exitoso */,
+                  )
               },
             })
           })

@@ -20,7 +20,10 @@ const SignOut = () => {
       (await axios
         .get(
           `${api}/users/logout`,
-          { withCredentials: true, credentials: 'include' }, // Es importante, sino la cookie (alojada en el browser) NO se envía con la request //
+          {
+            withCredentials: true,
+            credentials: 'include',
+          } /* Importante, sirve para incluir la cookie alojada en el navegador */,
         )
         .then(({ data }) => {
           const { auth, message } = data

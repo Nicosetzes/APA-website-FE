@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
+import { useLogin } from '../../context/LoginContext'
 import axios from 'axios'
 import { motion } from 'framer-motion'
 import { api, database } from './../../api'
@@ -24,6 +25,11 @@ const PlayoffMatch = ({
   getData,
 }) => {
   const MySwal = withReactContent(Swal)
+
+  const navigate = useNavigate()
+
+  const login = useLogin()
+  const { setLoginStatus } = login
 
   const { tournament } = useParams()
 
@@ -55,7 +61,14 @@ const PlayoffMatch = ({
     }
 
     axios
-      .put(`${api}/tournaments/${tournament}/matches/update-game/${id}`, update)
+      .put(
+        `${api}/tournaments/${tournament}/matches/update-game/${id}`,
+        update,
+        {
+          withCredentials: true,
+          credentials: 'include',
+        } /* Importante, sirve para incluir la cookie alojada en el navegador */,
+      )
       .then(({ data }) => {
         console.log(data)
         MySwal.fire({
@@ -68,7 +81,7 @@ const PlayoffMatch = ({
           position: 'top-end',
           showConfirmButton: false,
           text: 'Resultado cargado con éxito',
-          timer: 1500,
+          timer: 2000,
           timerProgressBar: true,
           customClass: { timerProgressBar: 'toast-progress-dark' }, // Definido en index.css //
           didOpen: (toast) => {
@@ -76,6 +89,45 @@ const PlayoffMatch = ({
             getData()
             toast.addEventListener('mouseenter', Swal.stopTimer)
             toast.addEventListener('mouseleave', Swal.resumeTimer)
+          },
+        })
+      })
+      .catch(({ response }) => {
+        const { data } = response
+        const { auth, message } = data
+        MySwal.fire({
+          background: `rgba(28, 25, 25, 0.95)`,
+          color: `#fff`,
+          icon: 'error',
+          iconColor: '#b30a0a',
+          text: message,
+          title: '¡Error!',
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+          customClass: { timerProgressBar: 'toast-progress-dark' }, // Definido en index.css //
+          didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+          },
+          didClose: () => {
+            setLoginStatus((loginStatus) => ({
+              ...loginStatus,
+              status: auth,
+            }))
+            /* auth ==== false solo cuando el endpoint del BE corra el middleware isAuth() y este falle */
+            /* Por lo tanto, redirijo a /users/login */
+            auth === false &&
+              navigate(
+                {
+                  pathname: `/users/login`,
+                },
+                {
+                  state: { url: location.pathname },
+                } /* Adjunto info de la ruta actual, para luego volver a ella en caso de login exitoso */,
+              )
           },
         })
       })

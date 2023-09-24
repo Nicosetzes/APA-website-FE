@@ -222,9 +222,16 @@ const Lineup = () => {
     }
 
     axios
-      .put(`${api}/tournaments/${tournament}/teams/${team}/squad`, {
-        squad: assignedPlayers,
-      })
+      .put(
+        `${api}/tournaments/${tournament}/teams/${team}/squad`,
+        {
+          squad: assignedPlayers,
+        },
+        {
+          withCredentials: true,
+          credentials: 'include',
+        } /* Importante, sirve para incluir la cookie alojada en el navegador */,
+      )
       .then(({ data }) => {
         console.log(data)
         MySwal.fire({

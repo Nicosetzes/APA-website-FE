@@ -1,6 +1,11 @@
-import { useNavigate, createSearchParams } from 'react-router-dom'
 import { useState } from 'react'
-import { useParams, useSearchParams } from 'react-router-dom'
+import {
+  useParams,
+  useSearchParams,
+  useNavigate,
+  createSearchParams,
+} from 'react-router-dom'
+import { useLogin } from '../../context/LoginContext'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import axios from 'axios'
@@ -13,7 +18,14 @@ import DeleteIcon from '@mui/icons-material/Delete'
 
 const Match = ({ match, getFixtureData }) => {
   const MySwal = withReactContent(Swal)
+
   const [searchParams, setSearchParams] = useSearchParams()
+
+  const navigate = useNavigate()
+
+  const login = useLogin()
+  const { setLoginStatus } = login
+
   const { tournament } = useParams()
 
   const {
@@ -79,7 +91,14 @@ const Match = ({ match, getFixtureData }) => {
     }
 
     axios
-      .put(`${api}/tournaments/${tournament}/matches/update-game/${_id}`, data)
+      .put(
+        `${api}/tournaments/${tournament}/matches/update-game/${_id}`,
+        data,
+        {
+          withCredentials: true,
+          credentials: 'include',
+        } /* Importante, sirve para incluir la cookie alojada en el navegador */,
+      )
       .then(({ data }) => {
         // ¿Debería hacer algo con data? //
         MySwal.fire({
@@ -92,7 +111,7 @@ const Match = ({ match, getFixtureData }) => {
           position: 'top-end',
           showConfirmButton: false,
           text: 'Aguarde unos instantes...',
-          timer: 1500,
+          timer: 2000,
           timerProgressBar: true,
           customClass: { timerProgressBar: 'toast-progress-dark' }, // Definido en index.css //
           didOpen: (toast) => {
@@ -100,6 +119,49 @@ const Match = ({ match, getFixtureData }) => {
             getFixtureData()
             toast.addEventListener('mouseenter', Swal.stopTimer)
             toast.addEventListener('mouseleave', Swal.resumeTimer)
+          },
+        })
+      })
+      .catch(({ response }) => {
+        const { data } = response
+        const { auth, message } = data
+        MySwal.fire({
+          background: `rgba(28, 25, 25, 0.95)`,
+          color: `#fff`,
+          icon: 'error',
+          iconColor: '#b30a0a',
+          text: message,
+          title: '¡Error!',
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+          customClass: { timerProgressBar: 'toast-progress-dark' }, // Definido en index.css //
+          didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+          },
+          didClose: () => {
+            // setLoginStatus((loginStatus) => ({
+            //   ...loginStatus,
+            //   status: auth,
+            // }))
+            /* auth ==== false solo cuando el endpoint del BE corra el middleware isAuth() y este falle */
+            /* Por lo tanto, redirijo a /users/login */
+            setLoginStatus((loginStatus) => ({
+              ...loginStatus,
+              status: auth,
+            }))
+            auth === false &&
+              navigate(
+                {
+                  pathname: `/users/login`,
+                },
+                {
+                  state: { url: location.pathname },
+                } /* Adjunto info de la ruta actual, para luego volver a ella en caso de login exitoso */,
+              )
           },
         })
       })
@@ -142,7 +204,14 @@ const Match = ({ match, getFixtureData }) => {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .put(`${api}/tournaments/${tournament}/matches/delete-game/${_id}`)
+          .put(
+            `${api}/tournaments/${tournament}/matches/delete-game/${_id}`,
+            _id /* Importante, debo adjuntar algo en la request, sino no toma la configuración de abajo (y por ende no incluye la cookie) */,
+            {
+              withCredentials: true,
+              credentials: 'include',
+            } /* Importante, sirve para incluir la cookie alojada en el navegador */,
+          )
           .then(({ data }) => {
             console.log(data)
             MySwal.fire({
@@ -168,14 +237,14 @@ const Match = ({ match, getFixtureData }) => {
           })
           .catch(({ response }) => {
             const { data } = response
-            const { message } = data
+            const { auth, message } = data
             MySwal.fire({
               background: `rgba(28, 25, 25, 0.95)`,
               color: `#fff`,
               icon: 'error',
               iconColor: '#b30a0a',
-              title: '¡Error!',
               text: message,
+              title: '¡Error!',
               toast: true,
               position: 'top-end',
               showConfirmButton: false,
@@ -185,6 +254,23 @@ const Match = ({ match, getFixtureData }) => {
               didOpen: (toast) => {
                 toast.addEventListener('mouseenter', Swal.stopTimer)
                 toast.addEventListener('mouseleave', Swal.resumeTimer)
+              },
+              didClose: () => {
+                setLoginStatus((loginStatus) => ({
+                  ...loginStatus,
+                  status: auth,
+                }))
+                /* auth ==== false solo cuando el endpoint del BE corra el middleware isAuth() y este falle */
+                /* Por lo tanto, redirijo a /users/login */
+                auth === false &&
+                  navigate(
+                    {
+                      pathname: `/users/login`,
+                    },
+                    {
+                      state: { url: location.pathname },
+                    } /* Adjunto info de la ruta actual, para luego volver a ella en caso de login exitoso */,
+                  )
               },
             })
           })

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
 import Box from '@mui/material/Box'
@@ -17,6 +18,14 @@ const SignIn = () => {
 
   const [loginData, setLoginData] = useState({})
 
+  const location = useLocation()
+
+  const navigate = useNavigate()
+
+  const previousUrl = location?.state?.url
+
+  console.log(previousUrl)
+
   const login = useLogin()
 
   const { setLoginStatus } = login
@@ -33,7 +42,10 @@ const SignIn = () => {
       .post(
         `${api}/users/login`,
         { ...loginData },
-        { withCredentials: true, credentials: 'include' }, // IMPORTANTE
+        {
+          withCredentials: true,
+          credentials: 'include',
+        } /* Importante, sirve para incluir la cookie alojada en el navegador */,
       )
       .then(({ data }) => {
         const { auth, id, message } = data
@@ -47,8 +59,8 @@ const SignIn = () => {
           title: message,
           position: 'top-end',
           showConfirmButton: false,
-          text: 'Será redirigido en breve...',
-          timer: 1500,
+          text: 'Inicio de sesión exitoso! Será redirigido en breve...',
+          timer: 2000,
           timerProgressBar: true,
           customClass: { timerProgressBar: 'toast-progress-dark' }, // Definido en index.css //
           didOpen: (toast) => {
@@ -62,9 +74,9 @@ const SignIn = () => {
               status: auth,
               id,
             }))
-            // navigate({
-            //   pathname: `/`,
-            // })
+            navigate({
+              pathname: previousUrl,
+            })
           },
         })
       })
@@ -90,9 +102,6 @@ const SignIn = () => {
           },
           didClose: () => {
             setLoginStatus((loginStatus) => ({ ...loginStatus, status: auth }))
-            // navigate({
-            //   pathname: `/tournaments/${data._id}`,
-            // })
           },
         })
       })

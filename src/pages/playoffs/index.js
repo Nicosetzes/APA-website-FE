@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { useLogin } from '../../context/LoginContext'
 import axios from 'axios'
 import { motion } from 'framer-motion'
 import { api } from './../../api'
@@ -16,6 +17,10 @@ const Playoffs = () => {
   const { tournament } = useParams()
 
   const navigate = useNavigate()
+
+  const login = useLogin()
+
+  const { setLoginStatus } = login
 
   const MySwal = withReactContent(Swal)
 
@@ -46,7 +51,14 @@ const Playoffs = () => {
 
   const playoffGeneration = () => {
     axios
-      .post(`${api}/tournaments/${tournament}/playoff`)
+      .post(
+        `${api}/tournaments/${tournament}/playoff`,
+        tournament /* Importante, debo adjuntar algo en la request, sino no toma la configuración de abajo (y por ende no incluye la cookie) */,
+        {
+          withCredentials: true,
+          credentials: 'include',
+        } /* Importante, sirve para incluir la cookie alojada en el navegador */,
+      )
       .then(({ data }) => {
         console.log(data)
         MySwal.fire({
@@ -72,7 +84,7 @@ const Playoffs = () => {
       })
       .catch(({ response }) => {
         const { data } = response
-        const { message } = data
+        const { auth, message } = data
         MySwal.fire({
           background: `rgba(28, 25, 25, 0.95)`,
           color: `#fff`,
@@ -91,9 +103,22 @@ const Playoffs = () => {
             toast.addEventListener('mouseleave', Swal.resumeTimer)
           },
           didClose: () => {
-            navigate({
-              pathname: `/tournaments/${tournament}/playin`,
-            })
+            setLoginStatus((loginStatus) => ({
+              ...loginStatus,
+              status: auth,
+            }))
+            auth === false
+              ? navigate(
+                  {
+                    pathname: `/users/login`,
+                  },
+                  {
+                    state: { url: location.pathname },
+                  } /* Adjunto info de la ruta actual, para luego volver a ella en caso de login exitoso */,
+                )
+              : navigate({
+                  pathname: `/tournaments/${tournament}/playin`,
+                })
           },
         })
       })

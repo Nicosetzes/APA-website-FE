@@ -1,5 +1,6 @@
 import PlayoffMatch from '../PlayoffMatch'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
+import { useLogin } from '../../context/LoginContext'
 import { StyledPlayinRound } from './styled'
 import { api } from '../../api'
 import Swal from 'sweetalert2'
@@ -11,11 +12,23 @@ const PlayinRound = ({ matches, round, getData }) => {
 
   const MySwal = withReactContent(Swal)
 
+  const navigate = useNavigate()
+
+  const login = useLogin()
+  const { setLoginStatus } = login
+
   const checkForNewPlayinMatches = (round) => {
     axios
-      .post(`${api}/tournaments/${tournament}/playin/update`, {
-        round,
-      })
+      .post(
+        `${api}/tournaments/${tournament}/playin/update`,
+        {
+          round,
+        },
+        {
+          withCredentials: true,
+          credentials: 'include',
+        } /* Importante, sirve para incluir la cookie alojada en el navegador */,
+      )
       .then(({ data }) =>
         MySwal.fire({
           background: `rgba(28, 25, 25, 0.95)`,
@@ -40,22 +53,40 @@ const PlayinRound = ({ matches, round, getData }) => {
       )
       .catch(({ response }) => {
         const { data } = response
+        const { auth, message } = data
         MySwal.fire({
           background: `rgba(28, 25, 25, 0.95)`,
           color: `#fff`,
-          icon: 'info',
-          iconColor: '#0a15d1',
-          text: data.message,
-          title: '¡Atención!',
+          icon: 'error',
+          iconColor: '#b30a0a',
+          text: message,
+          title: '¡Error!',
           toast: true,
           position: 'top-end',
           showConfirmButton: false,
-          timer: 1500,
+          timer: 2000,
           timerProgressBar: true,
           customClass: { timerProgressBar: 'toast-progress-dark' }, // Definido en index.css //
           didOpen: (toast) => {
             toast.addEventListener('mouseenter', Swal.stopTimer)
             toast.addEventListener('mouseleave', Swal.resumeTimer)
+          },
+          didClose: () => {
+            setLoginStatus((loginStatus) => ({
+              ...loginStatus,
+              status: auth,
+            }))
+            /* auth ==== false solo cuando el endpoint del BE corra el middleware isAuth() y este falle */
+            /* Por lo tanto, redirijo a /users/login */
+            auth === false &&
+              navigate(
+                {
+                  pathname: `/users/login`,
+                },
+                {
+                  state: { url: location.pathname },
+                } /* Adjunto info de la ruta actual, para luego volver a ella en caso de login exitoso */,
+              )
           },
         })
       })

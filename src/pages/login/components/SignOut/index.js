@@ -18,8 +18,9 @@ const SignOut = () => {
   const handleLogoutSubmit = async () => {
     status &&
       (await axios
-        .get(
+        .post(
           `${api}/users/logout`,
+          {} /* Importante, adjunto {} a la request porque sino no toma el objeto de configuración de abajo (y por ende, no viaja la cookie) */,
           {
             withCredentials: true,
             credentials: 'include',

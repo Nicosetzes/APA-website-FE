@@ -206,7 +206,7 @@ const Match = ({ match, getFixtureData }) => {
         axios
           .put(
             `${api}/tournaments/${tournament}/matches/delete-game/${_id}`,
-            _id /* Importante, debo adjuntar algo en la request, sino no toma la configuración de abajo (y por ende no incluye la cookie) */,
+            {} /* Importante, adjunto {} a la request porque sino no toma el objeto de configuración de abajo (y por ende, no viaja la cookie) */,
             {
               withCredentials: true,
               credentials: 'include',

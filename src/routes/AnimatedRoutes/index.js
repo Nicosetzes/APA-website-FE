@@ -2,6 +2,7 @@ import App from './../../App'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
 import Login from './../../pages/login'
+import RetrievePassword from '../../pages/retrieve-password'
 import Standings from './../../pages/standings'
 import Simulator from './../../pages/simulator'
 import Calculator from '../../pages/calculator'
@@ -25,6 +26,7 @@ export const AnimatedRoutes = () => {
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<App />} />
         <Route path="/users/login" element={<Login />} />
+        <Route path="/users/retrieve-password" element={<RetrievePassword />} />
         <Route path="/tournaments">
           <Route index element={<Tournaments />} />
           <Route path="create-tournament" element={<CreateTournament />} />

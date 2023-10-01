@@ -154,6 +154,11 @@ const Standings = () => {
                     cursor: 'pointer',
                     fontSize: '1.75rem',
                     margin: '0 0.5rem',
+                    textDecoration:
+                      (group == 'A' && !searchParams.get('group')) ||
+                      group == searchParams.get('group')
+                        ? 'underline'
+                        : 'none',
                   }}
                 >
                   {group}

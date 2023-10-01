@@ -4,14 +4,16 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useLogin } from '../../context/LoginContext'
 import axios from 'axios'
 import { motion } from 'framer-motion'
-import { api } from './../../api'
+import { api, database } from './../../api'
 import { Oval } from 'react-loader-spinner'
+import StandingsTable from './../standings/components/StandingsTable'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import BreadCrumbsMUI from './../../components/BreadCrumbsMUI'
 import PlayoffRound from '../../components/PlayoffRound'
 import ChampionBox from '../../components/ChampionBox'
 import FinalistBox from './../../components/FinalistBox'
+import MatchPreview from './components/MatchPreview'
 
 const Playoffs = () => {
   const { tournament } = useParams()
@@ -33,9 +35,16 @@ const Playoffs = () => {
       .then(({ data }) => setTournamentData(data))
   }
 
-  useEffect(() => {
-    getTournamentData()
-  }, [])
+  const [playoffsTableData, setPlayoffsTableData] = useState()
+
+  const [showMatchPreviews, setShowMatchPreviews] = useState(false)
+
+  const getPlayoffsTableData = () => {
+    console.log('Traigo la playoff table del torneo')
+    axios
+      .get(`${api}/tournaments/${tournament}/playoffs/table`)
+      .then(({ data }) => setPlayoffsTableData(data))
+  }
 
   const [playoffData, setPlayoffData] = useState()
 
@@ -46,6 +55,8 @@ const Playoffs = () => {
   }
 
   useEffect(() => {
+    getTournamentData()
+    getPlayoffsTableData()
     getPlayoffsData()
   }, [])
 
@@ -124,9 +135,12 @@ const Playoffs = () => {
       })
   }
 
-  if (tournamentData && playoffData) {
+  if (tournamentData && playoffsTableData && playoffData) {
     const { name, format } = tournamentData
+    const { standings } = playoffsTableData
     const { matches } = playoffData
+
+    console.log(playoffsTableData)
 
     const breadCrumbsLinks = [
       { name: 'Home', route: '' },
@@ -148,7 +162,84 @@ const Playoffs = () => {
         exit={{ opacity: 0 }}
       >
         <BreadCrumbsMUI links={breadCrumbsLinks} />
-        {matches.length && (
+        {standings.length ? (
+          <div
+            style={{
+              alignItems: 'center',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+            }}
+          >
+            <StandingsTable standings={standings} />
+            <button
+              onClick={() => setShowMatchPreviews(!showMatchPreviews)}
+              className="button-main"
+            >
+              {showMatchPreviews ? 'Ocultar' : 'Mostrar'} emparejamientos
+            </button>
+            {showMatchPreviews ? (
+              <div
+                style={{
+                  alignItems: 'center',
+                  display: 'flex',
+                  flexFlow: 'row wrap',
+                  justifyContent: 'center',
+                }}
+              >
+                <MatchPreview
+                  teamOne={standings.at(0)}
+                  positionOne={'1'}
+                  teamTwo={''}
+                  positionTwo={'16'}
+                />
+                <MatchPreview
+                  teamOne={standings.at(1)}
+                  positionOne={'2'}
+                  teamTwo={''}
+                  positionTwo={'15'}
+                />
+                <MatchPreview
+                  teamOne={standings.at(2)}
+                  positionOne={'3'}
+                  teamTwo={''}
+                  positionTwo={'14'}
+                />
+                <MatchPreview
+                  teamOne={standings.at(3)}
+                  positionOne={'4'}
+                  teamTwo={''}
+                  positionTwo={'13'}
+                />
+                <MatchPreview
+                  teamOne={standings.at(4)}
+                  positionOne={'5'}
+                  teamTwo={standings.at(11)}
+                  positionTwo={'12'}
+                />
+                <MatchPreview
+                  teamOne={standings.at(5)}
+                  positionOne={'6'}
+                  teamTwo={standings.at(10)}
+                  positionTwo={'11'}
+                />
+                <MatchPreview
+                  teamOne={standings.at(6)}
+                  positionOne={'7'}
+                  teamTwo={standings.at(9)}
+                  positionTwo={'10'}
+                />
+                <MatchPreview
+                  teamOne={standings.at(7)}
+                  positionOne={'8'}
+                  teamTwo={standings.at(8)}
+                  positionTwo={'9'}
+                />
+              </div>
+            ) : null}
+          </div>
+        ) : null}
+        {matches.length ? (
           <div
             style={{
               alignContent: 'center',
@@ -220,7 +311,7 @@ const Playoffs = () => {
                   </div>
                 )}
           </div>
-        )}
+        ) : null}
         {!matches.length && (
           <div
             style={{

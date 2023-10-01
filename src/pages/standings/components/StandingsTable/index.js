@@ -21,7 +21,9 @@ const StandingsTable = ({ tournament, format, standings, onHandle }) => {
       <StyledTable
         sx={{ minWidth: 300, maxWidth: 1000, margin: '0.5rem auto' }}
         aria-label="simple table"
-        playin={format == 'league_playin_playoff'}
+        playin={
+          format == 'league_playin_playoff' ? true : undefined
+        } /* Before I just had "format == 'league_playin_playoff", but React asked me to change it to the new version */
       >
         <TableHead>
           <TableRow sx={{ backgroundColor: '#262121' }}>
@@ -140,7 +142,7 @@ const StandingsTable = ({ tournament, format, standings, onHandle }) => {
                         *
                       </span>
                     )}
-                    {isM && (
+                    {streak && isM && (
                       <div className="streak">
                         {streak.map(
                           (

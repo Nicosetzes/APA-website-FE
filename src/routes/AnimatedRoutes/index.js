@@ -8,6 +8,7 @@ import Simulator from './../../pages/simulator'
 import Calculator from '../../pages/calculator'
 import Playin from '../../pages/playin'
 import Playoffs from '../../pages/playoffs'
+import Players from './../../pages/players'
 import Matches from './../../pages/matches'
 import Tournaments from './../../pages/tournaments'
 import TournamentId from './../../pages/tournament-id'
@@ -40,6 +41,7 @@ export const AnimatedRoutes = () => {
           />
           <Route path=":tournament/playin" element={<Playin />} />
           <Route path=":tournament/playoffs" element={<Playoffs />} />
+          <Route path=":tournament/players" element={<Players />} />
           <Route path=":tournament/teams" element={<Teams />} />
           <Route path=":tournament/teams/:team/squad" element={<Lineup />} />
         </Route>

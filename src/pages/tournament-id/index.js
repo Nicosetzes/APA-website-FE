@@ -157,6 +157,17 @@ const TournamentId = () => {
               >
                 Equipos
               </Link>
+              <Link
+                to={`players`}
+                style={{
+                  color: '#004a79',
+                  fontSize: '2rem',
+                  margin: '1rem',
+                  textDecoration: 'none',
+                }}
+              >
+                Jugadores
+              </Link>
               {format == 'league_playin_playoff' && (
                 <Link
                   to={`playin`}

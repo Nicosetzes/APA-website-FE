@@ -188,9 +188,16 @@ const FixtureId = () => {
 
   const fixtureGeneration = (group = null) => {
     axios
-      .post(`${api}/tournaments/${tournament}/fixture`, {
-        group,
-      })
+      .post(
+        `${api}/tournaments/${tournament}/fixture`,
+        {
+          group,
+        },
+        {
+          withCredentials: true,
+          credentials: 'include',
+        } /* Importante, sirve para incluir la cookie alojada en el navegador */,
+      )
       .then(({ data }) => {
         console.log(data)
         MySwal.fire({

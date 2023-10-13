@@ -41,6 +41,8 @@ const mundial_de_clubes_cloudinary_id = 'tournaments/mundial-de-clubes_zc7sdt'
 const superliga_europea_cloudinary_id = 'tournaments/mbdi22w2xyirjwnrbyiu'
 const superliga_argentina_cloudinary_id = 'tournaments/_wz61rs'
 const copa_argentina_cloudinary_id = 'tournaments/copa-argentina_uf76a1'
+const superliga_internacional_cloudinary_id =
+  'tournaments/asa9912881kas_xqnhmh_vbvmvp'
 
 const Home = () => {
   // const isXL = useMediaQuery({ query: '(min-width: 1200px)' })
@@ -344,15 +346,13 @@ const Home = () => {
                 display: 'flex',
                 flexDirection: 'column',
               }}
-              onClick={() => navigate('./tournaments/6377fb8eb217aa7d3bf61eef')}
+              onClick={() => navigate('./tournaments/646ff40e2524b3187034f790')}
             >
-              <div className="tournament-name">
-                SUPERLIGA ÍTALO-ESPAÑOLA 2022
-              </div>
+              <div className="tournament-name">SUPERLIGA ARGENTINA 2023</div>
               <div className="tournament-img">
                 <Image
                   cloudName={cloudName}
-                  publicId={superliga_italo_española_cloudinary_id}
+                  publicId={superliga_argentina_cloudinary_id}
                 />
               </div>
             </div>
@@ -363,13 +363,15 @@ const Home = () => {
                 display: 'flex',
                 flexDirection: 'column',
               }}
-              onClick={() => navigate('./tournaments/646ff40e2524b3187034f790')}
+              onClick={() => navigate('./tournaments/65296f319f7070f68fa8ec70')}
             >
-              <div className="tournament-name">SUPERLIGA ARGENTINA 2023</div>
+              <div className="tournament-name">
+                SUPERLIGA INTERNACIONAL 2023/24
+              </div>
               <div className="tournament-img">
                 <Image
                   cloudName={cloudName}
-                  publicId={superliga_argentina_cloudinary_id}
+                  publicId={superliga_internacional_cloudinary_id}
                 />
               </div>
             </div>

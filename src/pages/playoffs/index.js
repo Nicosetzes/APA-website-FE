@@ -140,6 +140,8 @@ const Playoffs = () => {
     const { standings } = playoffsTableData
     const { matches } = playoffData
 
+    console.log(matches)
+
     console.log(playoffsTableData)
 
     const breadCrumbsLinks = [

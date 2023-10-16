@@ -31,7 +31,7 @@ export const StyledPlayoffMatch = styled.div`
       font-size: 0.8rem;
       height: 40px;
       margin: 0 0.5rem;
-      width: 90px;
+      width: 125px;
     }
     .team-user {
       align-items: center;
@@ -45,6 +45,9 @@ export const StyledPlayoffMatch = styled.div`
     .team-penalties {
       color: #fff;
       font-weight: 700;
+    }
+    .team-score {
+      margin: 0 0 0 0.5rem;
     }
     .team-penalties {
       margin: 0 0.25rem;

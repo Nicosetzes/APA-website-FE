@@ -8,6 +8,6 @@ export const StyledPlayerBox = styled.div`
   flex-direction: column;
   justify-content: center;
   margin: 1rem;
-  max-width: 300px;
   padding: 2.75rem 1.25rem;
+  width: 100px;
 `

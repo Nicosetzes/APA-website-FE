@@ -116,6 +116,7 @@ const PlayinRound = ({ matches, round, getData }) => {
               teamP2,
               seedP2,
               scoreP2,
+              played,
               outcome,
             }) => (
               <PlayoffMatch
@@ -129,6 +130,7 @@ const PlayinRound = ({ matches, round, getData }) => {
                 teamP2={teamP2}
                 seedP2={seedP2}
                 scoreP2={scoreP2}
+                played={played}
                 outcome={outcome}
                 getData={getData}
               />

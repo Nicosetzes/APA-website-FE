@@ -147,6 +147,8 @@ const Playin = () => {
     const { name, players } = tournamentData
     const { matches } = playinData
 
+    console.log(matches)
+
     const breadCrumbsLinks = [
       { name: 'Home', route: '' },
       { name: 'Torneos', route: 'tournaments' },

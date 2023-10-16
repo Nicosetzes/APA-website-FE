@@ -10,6 +10,7 @@ import CheckIcon from '@mui/icons-material/Check'
 import IconButton from '@mui/material/IconButton'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+import { useMediaQuery } from 'react-responsive'
 
 const PlayoffMatch = ({
   id,
@@ -21,9 +22,15 @@ const PlayoffMatch = ({
   teamP2,
   seedP2,
   scoreP2,
+  played,
   outcome,
   getData,
 }) => {
+  // const isL = useMediaQuery({ query: '(min-width: 992px)' })
+  // const isM = useMediaQuery({ query: '(min-width: 768px)' })
+  const isSm = useMediaQuery({ query: '(min-width: 500px)' })
+  const isXS = useMediaQuery({ query: '(min-width: 375px)' })
+
   const MySwal = withReactContent(Swal)
 
   const navigate = useNavigate()
@@ -145,7 +152,7 @@ const PlayoffMatch = ({
               {teamP1.name} ({playerP1.name[0]}
               {playerP1.name[1].toUpperCase()})
             </div>
-            {outcome ? (
+            {played ? (
               <div className="team-score">{scoreP1}</div>
             ) : (
               <div className="team-inputs">
@@ -183,7 +190,7 @@ const PlayoffMatch = ({
               {teamP2.name} ({playerP2.name[0]}
               {playerP2.name[1].toUpperCase()})
             </div>
-            {outcome ? (
+            {played ? (
               <div className="team-score">{scoreP2}</div>
             ) : (
               <div className="team-inputs">
@@ -215,7 +222,7 @@ const PlayoffMatch = ({
         </div>
       </div>
 
-      {!outcome && (
+      {!played && (
         <div className="match__confirmation">
           <IconButton
             type="submit"

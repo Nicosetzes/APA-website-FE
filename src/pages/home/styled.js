@@ -30,29 +30,30 @@ export const StyledHome = styled.div`
       height: 200px;
       margin: 0 auto;
       position: relative;
-      width: ${(props) => `${props.isM ? '700px' : '350px'}`};
+      overflow: hidden;
+      width: ${(props) => `${props.isM ? '700px' : '300px'}`};
       img {
         position: absolute;
-        height: ${(props) => `${props.isM ? '250px' : '150px'}`};
+        height: ${(props) => `${props.isM ? '250px' : '125px'}`};
         &:nth-child(1) {
           bottom: 0;
-          left: 0px;
+          left: -12.5px;
         }
         &:nth-child(2) {
           bottom: 0;
-          left: ${(props) => `${props.isM ? '50px' : '5px'}`};
+          left: ${(props) => `${props.isM ? '50px' : '0px'}`};
         }
         &:nth-child(3) {
           bottom: 0;
-          left: ${(props) => `${props.isM ? '100px' : '20px'}`};
+          left: ${(props) => `${props.isM ? '100px' : '12.5px'}`};
         }
         &:nth-child(4) {
           bottom: 0;
-          left: ${(props) => `${props.isM ? '485px' : '215px'}`};
+          left: ${(props) => `${props.isM ? '485px' : '195px'}`};
         }
         &:nth-child(5) {
           bottom: 0;
-          left: ${(props) => `${props.isM ? '315px' : '125px'}`};
+          left: ${(props) => `${props.isM ? '315px' : '110px'}`};
         }
       }
     }
@@ -214,7 +215,7 @@ export const StyledHome = styled.div`
       align-items: center;
       color: #004a79;
       display: flex;
-      font-size: 1.75rem;
+      font-size: 1rem;
       font-weight: 700;
       justify-content: center;
       margin: 0 0.5rem;

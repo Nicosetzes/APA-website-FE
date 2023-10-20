@@ -14,18 +14,18 @@ const MatchBox = ({
 }) => {
   const [searchParams, setSearchParams] = useSearchParams()
 
-  const establishMatchBorderColor = (outcome) => {
+  const establishOutcomeColor = (outcome) => {
     const player = searchParams.get('player')
     const { playerThatWon } = outcome
-    if (!playerThatWon) return `#dbb311`
-    else if (playerThatWon.id == player) return `#42eb2b`
-    else return `#e10e0e`
+    if (!playerThatWon) return `#ebebe9`
+    else if (playerThatWon.id == player) return `#67eb55`
+    else return `#f53f3f`
   }
 
   return (
     <>
       <StyledMatchBox
-        style={{ border: `${establishMatchBorderColor(outcome)} 2px solid` }}
+        style={{ border: `${establishOutcomeColor(outcome)} 2px solid` }}
       >
         <div className="match__info">
           <div className="info__team">
@@ -34,8 +34,14 @@ const MatchBox = ({
             </span>
             <img src={`${database}/logos/${teamP1.id}`} alt={teamP1.name} />
           </div>
-          <div className="info__score">
-            {scoreP1} - {scoreP2}
+          <div
+            className="info__score"
+            style={{
+              backgroundColor: `${establishOutcomeColor(outcome)}`,
+            }}
+          >
+            <div>{scoreP1}</div>
+            <div>{scoreP2}</div>
           </div>
           <div className="info__team">
             <img src={`${database}/logos/${teamP2.id}`} alt={teamP2.name} />

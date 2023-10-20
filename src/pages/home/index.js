@@ -41,8 +41,7 @@ const mundial_de_clubes_cloudinary_id = 'tournaments/mundial-de-clubes_zc7sdt'
 const superliga_europea_cloudinary_id = 'tournaments/mbdi22w2xyirjwnrbyiu'
 const superliga_argentina_cloudinary_id = 'tournaments/_wz61rs'
 const copa_argentina_cloudinary_id = 'tournaments/copa-argentina_uf76a1'
-const superliga_internacional_cloudinary_id =
-  'tournaments/asa9912881kas_xqnhmh_vbvmvp'
+const superliga_internacional_cloudinary_id = 'tournaments/_xqnhmh'
 
 const Home = () => {
   // const isXL = useMediaQuery({ query: '(min-width: 1200px)' })
@@ -331,20 +330,28 @@ const Home = () => {
             style={{
               color: '#004a79',
               display: 'flex',
-              fontSize: '1rem',
+              fontSize: '1.5rem',
               fontWeight: 700,
-              margin: '0.5rem auto',
+              margin: '0.5rem auto 1rem auto',
             }}
           >
             TORNEOS ACTIVOS
           </div>
-          <div style={{ display: 'flex' }}>
+          <div
+            style={{
+              alignItems: 'end',
+              display: 'flex',
+              justifyContent: 'center',
+              margin: '0.5rem 0',
+            }}
+          >
             <div
               style={{
                 alignItems: 'center',
                 cursor: 'pointer',
                 display: 'flex',
                 flexDirection: 'column',
+                flexBasis: '50%',
               }}
               onClick={() => navigate('./tournaments/646ff40e2524b3187034f790')}
             >
@@ -362,6 +369,7 @@ const Home = () => {
                 cursor: 'pointer',
                 display: 'flex',
                 flexDirection: 'column',
+                flexBasis: '50%',
               }}
               onClick={() => navigate('./tournaments/65296f319f7070f68fa8ec70')}
             >

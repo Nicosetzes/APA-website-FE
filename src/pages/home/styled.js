@@ -27,17 +27,17 @@ export const StyledHome = styled.div`
     }
     .container__coaches {
       display: flex;
-      height: 200px;
+      height: ${(props) => `${props.isM ? '300px' : '200px'}`};
       margin: 0 auto;
       position: relative;
-      overflow: hidden;
-      width: ${(props) => `${props.isM ? '700px' : '300px'}`};
+      overflow-x: hidden;
+      width: ${(props) => `${props.isM ? '750px' : '300px'}`};
       img {
         position: absolute;
         height: ${(props) => `${props.isM ? '250px' : '125px'}`};
         &:nth-child(1) {
           bottom: 0;
-          left: -12.5px;
+          left: ${(props) => `${props.isM ? '0' : '-12.5px'}`};
         }
         &:nth-child(2) {
           bottom: 0;
@@ -49,7 +49,7 @@ export const StyledHome = styled.div`
         }
         &:nth-child(4) {
           bottom: 0;
-          left: ${(props) => `${props.isM ? '485px' : '195px'}`};
+          left: ${(props) => `${props.isM ? '500px' : '195px'}`};
         }
         &:nth-child(5) {
           bottom: 0;

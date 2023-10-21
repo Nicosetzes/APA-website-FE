@@ -17,7 +17,6 @@ import Statistics from './../../pages/statistics'
 import CreateTournament from '../../pages/create-tournament'
 import HallOfFame from '../../pages/hall-of-fame'
 import Teams from '../../pages/teams'
-import Lineup from './../../pages/lineup'
 
 export const AnimatedRoutes = () => {
   const location = useLocation()
@@ -43,7 +42,6 @@ export const AnimatedRoutes = () => {
           <Route path=":tournament/playoffs" element={<Playoffs />} />
           <Route path=":tournament/players" element={<Players />} />
           <Route path=":tournament/teams" element={<Teams />} />
-          <Route path=":tournament/teams/:team/squad" element={<Lineup />} />
         </Route>
         <Route path="/matches" element={<Matches />} />
         <Route path="/statistics" element={<Statistics />} />

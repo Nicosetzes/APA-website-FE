@@ -76,6 +76,7 @@ const TournamentId = () => {
             display: 'flex',
             flexWrap: 'wrap',
             justifyContent: 'center',
+            padding: '0 0 3rem 0',
           }}
         >
           <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -357,38 +358,6 @@ const TournamentId = () => {
             </div>
           </div>
         )}
-        <div
-          style={{
-            alignItems: 'center',
-            display: 'flex',
-            flexDirection: 'column',
-            flexWrap: 'wrap',
-            margin: '3rem',
-          }}
-        >
-          <span>Equipos:</span>{' '}
-          <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-            {teams.map(({ team }) => (
-              <div
-                key={team.id}
-                style={{
-                  backgroundColor: 'grey',
-                  display: 'flex',
-                  height: '90px',
-                  justifyContent: 'center',
-                  margin: '1rem',
-                  padding: '0.5rem',
-                  width: '90px',
-                }}
-              >
-                <img
-                  src={`${database}/logos/${team.id}`}
-                  style={{ width: '100%' }}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
       </motion.div>
     )
   } else {

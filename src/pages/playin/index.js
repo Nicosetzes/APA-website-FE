@@ -21,8 +21,8 @@ import { Oval } from 'react-loader-spinner'
 const Playin = () => {
   // const isL = useMediaQuery({ query: '(min-width: 992px)' })
   // const isM = useMediaQuery({ query: '(min-width: 768px)' })
-  const isSm = useMediaQuery({ query: '(min-width: 500px)' })
-  const isXS = useMediaQuery({ query: '(min-width: 375px)' })
+  // const isSm = useMediaQuery({ query: '(min-width: 500px)' })
+  // const isXS = useMediaQuery({ query: '(min-width: 375px)' })
 
   const MySwal = withReactContent(Swal)
 

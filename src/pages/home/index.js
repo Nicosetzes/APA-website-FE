@@ -371,7 +371,7 @@ const Home = () => {
                 flexDirection: 'column',
                 flexBasis: '50%',
               }}
-              onClick={() => navigate('./tournaments/65296f319f7070f68fa8ec70')}
+              onClick={() => navigate('./tournaments/6532e14f72b09831c4a5edf6')}
             >
               <div className="tournament-name">
                 SUPERLIGA INTERNACIONAL 2023/24

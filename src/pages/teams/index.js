@@ -1,27 +1,27 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import { useLogin } from './../../context/LoginContext'
 import { StyledTeams } from './styled'
 import TeamCard from '../../components/TeamCard'
+import BreadCrumbsMUI from './../../components/BreadCrumbsMUI'
+import { Oval } from 'react-loader-spinner'
 import { api } from './../../api'
 import axios from 'axios'
 
 const Teams = () => {
   const { tournament } = useParams()
 
-  const login = useLogin()
+  const [tournamentData, setTournamentData] = useState()
 
-  const { loginStatus } = login
+  const getTournamentData = () => {
+    console.log('Traigo la data del torneo')
+    axios
+      .get(`${api}/tournaments/${tournament}`)
+      .then(({ data }) => setTournamentData(data))
+  }
 
   const [teams, setTeams] = useState()
 
   const getTeamsData = async () => {
-    // if (loginStatus.id) {
-    // await axios
-    //   .get(`${api}/tournaments/${tournament}/teams?player=${loginStatus.id}`)
-    //   .then(({ data }) => {
-    //     setTeams(data.teams)
-    //   })
     await axios
       .get(`${api}/tournaments/${tournament}/teams`)
       .then(({ data }) => {
@@ -31,24 +31,53 @@ const Teams = () => {
   }
 
   useEffect(() => {
+    getTournamentData()
     getTeamsData()
   }, [])
 
-  console.log(loginStatus)
-  console.log(teams)
-
-  return (
-    <StyledTeams>
-      {/* {!loginStatus.id && <div>Debe estar logueado</div>} */}
-      {teams ? (
-        teams.map(({ team, player }) => (
-          <TeamCard key={team.id} team={team} player={player} />
-        ))
-      ) : (
-        <div>No hay equipos para mostrar</div>
-      )}
-    </StyledTeams>
-  )
+  if (tournamentData && teams) {
+    const { name } = tournamentData
+    const breadCrumbsLinks = [
+      { name: 'Home', route: '' },
+      { name: 'Torneos', route: 'tournaments' },
+      {
+        name: `${name}`,
+        route: `tournaments/${tournament}`,
+      },
+      {
+        name: 'Jugadores',
+        route: `tournaments/${tournament}/teams`,
+      },
+    ]
+    return (
+      <>
+        <BreadCrumbsMUI links={breadCrumbsLinks} />
+        <StyledTeams>
+          {teams ? (
+            teams.map(({ team, player }) => (
+              <TeamCard key={team.id} team={team} player={player} />
+            ))
+          ) : (
+            <div>No hay equipos para mostrar</div>
+          )}
+        </StyledTeams>
+      </>
+    )
+  } else {
+    return (
+      <div style={{ margin: 'auto', width: '100px' }}>
+        <Oval
+          height="80"
+          width="80"
+          radius="9"
+          color="green"
+          ariaLabel="three-dots-loading"
+          $wrapperStyle
+          $wrapperClass
+        />
+      </div>
+    )
+  }
 }
 
 export default Teams

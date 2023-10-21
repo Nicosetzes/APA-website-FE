@@ -6,6 +6,7 @@ import {
   useSearchParams,
   useNavigate,
 } from 'react-router-dom'
+import BreadCrumbsMUI from './../../components/BreadCrumbsMUI'
 import { StyledPlayers } from './styled'
 import StatsLayout from './components/StatsLayout'
 import PlayerBox from './components/PlayerBox'
@@ -18,18 +19,17 @@ const Players = () => {
 
   const [searchParams, setSearchParams] = useSearchParams()
 
-  const [players, setPlayers] = useState()
+  const [tournamentData, setTournamentData] = useState()
 
-  const getPlayersData = async () => {
-    await axios
-      .get(`${api}/tournaments/${tournament}/players`)
-      .then(({ data }) => {
-        setPlayers(data)
-      })
+  const getTournamentData = () => {
+    console.log('Traigo la data del torneo')
+    axios
+      .get(`${api}/tournaments/${tournament}`)
+      .then(({ data }) => setTournamentData(data))
   }
 
   useEffect(() => {
-    getPlayersData()
+    getTournamentData()
   }, [])
 
   const [playerStats, setPlayerStats] = useState()
@@ -50,12 +50,26 @@ const Players = () => {
     getPlayerStats()
   }, [searchParams])
 
-  console.log(players)
   console.log(playerStats)
 
-  if (players) {
+  if (tournamentData) {
+    const { name, players } = tournamentData
+
+    const breadCrumbsLinks = [
+      { name: 'Home', route: '' },
+      { name: 'Torneos', route: 'tournaments' },
+      {
+        name: `${name}`,
+        route: `tournaments/${tournament}`,
+      },
+      {
+        name: 'Jugadores',
+        route: `tournaments/${tournament}/players`,
+      },
+    ]
     return (
       <StyledPlayers>
+        <BreadCrumbsMUI links={breadCrumbsLinks} />
         <div className="players">
           {players.map(({ id, name }) => (
             <PlayerBox

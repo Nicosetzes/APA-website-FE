@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+// import { Link } from 'react-router-dom'
 import { StyledTeamCard } from './styled'
 import { database } from '../../api'
 
@@ -12,11 +12,11 @@ const TeamCard = ({ team, player }) => {
         </div>
         <div className="header-player">{player.name}</div>
       </div>
-      <div className="body">
+      {/* <div className="body">
         <div className="body-squad">
           <Link to={`${team.id}/squad`}>Ver alineación</Link>
         </div>
-      </div>
+      </div> */}
     </StyledTeamCard>
   )
 }

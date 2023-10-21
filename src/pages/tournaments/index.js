@@ -84,14 +84,16 @@ const Tournaments = () => {
                 <Image cloudName={cloudName} publicId={cloudinary_id} />
                 <div className="container__card-name">
                   <span>{name}</span>
-                  <img
-                    src={`${database}/logos/${outcome.champion.team.id}`}
-                    style={{
-                      alignSelf: 'center',
-                      height: 'auto',
-                      width: '120px',
-                    }}
-                  />
+                  {outcome ? (
+                    <img
+                      src={`${database}/logos/${outcome.champion.team.id}`}
+                      style={{
+                        alignSelf: 'center',
+                        height: 'auto',
+                        width: '120px',
+                      }}
+                    />
+                  ) : null}
                 </div>
               </Link>
             </div>

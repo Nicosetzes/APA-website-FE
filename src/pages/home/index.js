@@ -8,7 +8,6 @@ import presentationDesktop from './../../../src/images/desktop.jpg'
 import presentationMobile from './../../../src/images/mobile.jpg'
 import championBackground from './../../../src/images/desktop-2.jpg'
 import logo from './../../../src/images/sitioapalogo2.png'
-import trophy from './../../../src/images/superliga-italo-española.png'
 import nico from './../../../src/images/nico.png'
 import max from './../../../src/images/max.png'
 import santi from './../../../src/images/santi.png'
@@ -39,9 +38,9 @@ const superliga_inglesa_cloudinary_id = 'tournaments/chemvkybmg1wmvjanwby'
 const copa_america_cloudinary_id = 'tournaments/copa-america_yo28ma'
 const mundial_de_clubes_cloudinary_id = 'tournaments/mundial-de-clubes_zc7sdt'
 const superliga_europea_cloudinary_id = 'tournaments/mbdi22w2xyirjwnrbyiu'
-const superliga_argentina_cloudinary_id = 'tournaments/_wz61rs'
 const copa_argentina_cloudinary_id = 'tournaments/copa-argentina_uf76a1'
 const superliga_internacional_cloudinary_id = 'tournaments/_xqnhmh'
+const superliga_argentina_cloudinary_id = 'tournaments/_wz61rs'
 
 const Home = () => {
   // const isXL = useMediaQuery({ query: '(min-width: 1200px)' })
@@ -304,20 +303,34 @@ const Home = () => {
                   <img src={logoAtleticoMadrid} />
                 </div>
               </div>
+              <div className="tournaments-result">
+                <div className="result-title">SUPERLIGA ARGENTINA</div>
+                <div className="result-year">2023</div>
+                <div className="result-image">
+                  <Image
+                    cloudName={cloudName}
+                    publicId={superliga_argentina_cloudinary_id}
+                  />
+                </div>
+                <div className="result-player">
+                  <div className="player-name">Max</div>
+                  <img src={logoSanLorenzo} />
+                </div>
+              </div>
             </div>
           </div>
           <div className="box__champion">
             <div className="champion-title">CAMPEÓN VIGENTE</div>
-            <div className="champion-player">Leo</div>
+            <div className="champion-player">Max</div>
             <div className="champion-img">
               <Image
                 cloudName={cloudName}
-                publicId={superliga_italo_española_cloudinary_id}
+                publicId={superliga_argentina_cloudinary_id}
               />
             </div>
             <div className="champion-team">
-              <span>ATLÉTICO MADRID</span>
-              <img src={logoAtleticoMadrid} />
+              <span>SAN LORENZO</span>
+              <img src={logoSanLorenzo} />
             </div>
             <button onClick={() => navigate('./hall-of-fame')}>
               SALÓN DE LA FAMA
@@ -345,24 +358,6 @@ const Home = () => {
               margin: '0.5rem 0',
             }}
           >
-            <div
-              style={{
-                alignItems: 'center',
-                cursor: 'pointer',
-                display: 'flex',
-                flexDirection: 'column',
-                flexBasis: '50%',
-              }}
-              onClick={() => navigate('./tournaments/646ff40e2524b3187034f790')}
-            >
-              <div className="tournament-name">SUPERLIGA ARGENTINA 2023</div>
-              <div className="tournament-img">
-                <Image
-                  cloudName={cloudName}
-                  publicId={superliga_argentina_cloudinary_id}
-                />
-              </div>
-            </div>
             <div
               style={{
                 alignItems: 'center',

@@ -28,9 +28,10 @@ import trophyCopaArgentina from './../../../../images/copa-argentina.png'
 import trophyMundialDeClubes from './../../../../images/mundial-de-clubes.png'
 import trophyPremierLeague from './../../../../images/premier-league.png'
 import trophyRandomOne from './../../../../images/superliga-europea.png'
-import trophySuperligaArgentina from './../../../../images/superliga-argentina.png'
+import trophyTorneoArgentino from './../../../../images/torneo-argentino.png'
 import trophySuperligaItaloEspañola from './../../../../images/superliga-italo-española.png'
 import trophyWorldCup from './../../../../images/world-cup.png'
+import trophySuperligaArgentina from './../../../../images/superliga-argentina.png'
 
 const Showcase = () => {
   return (
@@ -43,7 +44,7 @@ const Showcase = () => {
         finalistUser={'Leo'}
         finalistTeam={'San Lorenzo'}
         finalistLogo={logoSanLorenzo}
-        trophy={trophySuperligaArgentina}
+        trophy={trophyTorneoArgentino}
       />
       <ChampionshipBox
         tournament={'Torneo Argentino 2017'}
@@ -53,7 +54,7 @@ const Showcase = () => {
         finalistUser={'Max'}
         finalistTeam={'Rosario Central'}
         finalistLogo={logoRosarioCentral}
-        trophy={trophySuperligaArgentina}
+        trophy={trophyTorneoArgentino}
       />
       <ChampionshipBox
         tournament={'Copa del Mundo 2017'}
@@ -73,7 +74,7 @@ const Showcase = () => {
         finalistUser={'Santi'}
         finalistTeam={'River Plate'}
         finalistLogo={logoRiverPlate}
-        trophy={trophySuperligaArgentina}
+        trophy={trophyTorneoArgentino}
       />
       <ChampionshipBox
         tournament={'Copa del Mundo 2018 (I)'}
@@ -144,7 +145,7 @@ const Showcase = () => {
         finalistUser={'Leo'}
         finalistTeam={'Lanús'}
         finalistLogo={logoLanus}
-        trophy={trophySuperligaArgentina}
+        trophy={trophyTorneoArgentino}
         id={'625e0f191b3f1ce6b5ee4756'}
       />
       <ChampionshipBox
@@ -190,6 +191,17 @@ const Showcase = () => {
         finalistLogo={logoFiorentina}
         trophy={trophySuperligaItaloEspañola}
         id={'6377fb8eb217aa7d3bf61eef'}
+      />
+      <ChampionshipBox
+        tournament={'Superliga Argentina 2023'}
+        championUser={'Max'}
+        championTeam={'San Lorenzo'}
+        championLogo={logoSanLorenzo}
+        finalistUser={'Max'}
+        finalistTeam={'River Plate'}
+        finalistLogo={logoRiverPlate}
+        trophy={trophySuperligaArgentina}
+        id={'646ff40e2524b3187034f790'}
       />
     </StyledShowcase>
   )

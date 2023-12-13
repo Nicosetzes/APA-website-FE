@@ -6,9 +6,10 @@ import trophyCopaArgentina from './../../../../images/copa-argentina.png'
 import trophyMundialDeClubes from './../../../../images/mundial-de-clubes.png'
 import trophyPremierLeague from './../../../../images/premier-league.png'
 import trophyRandomOne from './../../../../images/superliga-europea.png'
-import trophySuperligaArgentina from './../../../../images/superliga-argentina.png'
+import trophyTorneoArgentino from './../../../../images/torneo-argentino.png'
 import trophyWorldCup from './../../../../images/world-cup.png'
 import trophySuperligaItaloEspañola from './../../../../images/superliga-italo-española.png'
+import trophySuperligaArgentina from './../../../../images/superliga-argentina.png'
 
 const Accolades = () => {
   return (
@@ -18,10 +19,10 @@ const Accolades = () => {
           player={'Leo'}
           trophies={[
             trophyWorldCup,
-            trophySuperligaArgentina,
+            trophyTorneoArgentino,
             trophyWorldCup,
             trophyChampions,
-            trophySuperligaArgentina,
+            trophyTorneoArgentino,
             trophyWorldCup,
             trophySuperligaItaloEspañola,
           ]}
@@ -29,11 +30,12 @@ const Accolades = () => {
         <PlayerBox
           player={'Max'}
           trophies={[
-            trophySuperligaArgentina,
-            trophySuperligaArgentina,
+            trophyTorneoArgentino,
+            trophyTorneoArgentino,
             trophyWorldCup,
             trophyMundialDeClubes,
             trophyCopaArgentina,
+            trophySuperligaArgentina,
           ]}
         />
         <PlayerBox

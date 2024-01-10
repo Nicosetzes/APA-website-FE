@@ -145,7 +145,10 @@ const DragAndDropAssignment = ({
   // console.log(assignedTeams)
 
   const handleOnDrag = (e, id, name) => {
-    e.dataTransfer.setData('id', id)
+    e.dataTransfer.setData(
+      'id',
+      id,
+    ) /* I need to check, but I think id is originally a number and because of this gets converted to string */
     e.dataTransfer.setData('name', name)
   }
 

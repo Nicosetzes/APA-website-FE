@@ -19,7 +19,9 @@ const MobileAssignment = ({ players, teams, groups, createTournament }) => {
   // const [unassignedTeams, setUnassignedTeams] = useState(teams)
   const [assignedTeams, setAssignedTeams] = useState(
     teams.map(({ id, name }) => {
-      return { team: { id, name } }
+      return {
+        team: { id: id.toString(), name },
+      } /* If I don't do toString() id is later saved as a number here on mobile, which is not the way I store the ID in the DB */
     }),
   )
 

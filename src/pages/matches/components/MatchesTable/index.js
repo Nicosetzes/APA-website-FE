@@ -93,7 +93,7 @@ const MatchesTable = ({ matches }) => {
                     component="th"
                     scope="row"
                     align="center"
-                  >{`${tournament.name}`}</TableCell>
+                  >{`${tournament.name || '-'}`}</TableCell>
                 </>
               )}
               {isSm && (

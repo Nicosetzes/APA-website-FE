@@ -42,13 +42,13 @@ const Trophies = () => {
             }}
           >
             <TeamRankings
-              title={'Mejores equipos'}
-              subtitle={'(Puntos totales)'}
-              teams={historicalData[2].completeStatsByPoints}
+              title={'Mejores equipos históricos'}
+              subtitle={'Puntos totales'}
+              teams={historicalData[2].completeStatsByTotalPoints}
             />
             <TeamRankings
-              title={'Mejores equipos'}
-              subtitle={'(%Ef) / Mín. 10 partidos'}
+              title={'Mejores equipos por torneo'}
+              subtitle={'% efectividad (mín. 10 partidos)'}
               teams={historicalData[2].completeStatsByEffectiveness}
             />
           </div>

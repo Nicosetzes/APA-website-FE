@@ -378,6 +378,42 @@ const Home = () => {
                 />
               </div>
             </div>
+            <div
+              style={{
+                alignItems: 'center',
+                cursor: 'pointer',
+                display: 'flex',
+                flexDirection: 'column',
+                flexBasis: '50%',
+              }}
+              onClick={() => navigate('./tournaments/659dcf45dd45bf53f0748a0d')}
+            >
+              <div className="tournament-name">SUPERLIGA INGLESA 2024</div>
+              <div className="tournament-img">
+                <Image
+                  cloudName={cloudName}
+                  publicId={superliga_inglesa_cloudinary_id}
+                />
+              </div>
+            </div>
+            <div
+              style={{
+                alignItems: 'center',
+                cursor: 'pointer',
+                display: 'flex',
+                flexDirection: 'column',
+                flexBasis: '50%',
+              }}
+              onClick={() => navigate('./tournaments/664d43458f37f00eba8ea380')}
+            >
+              <div className="tournament-name">CHEMPIONS 2024</div>
+              <div className="tournament-img">
+                <Image
+                  cloudName={cloudName}
+                  publicId={chempions_cloudinary_id}
+                />
+              </div>
+            </div>
           </div>
 
           <button onClick={() => navigate('./tournaments')}>VER TORNEOS</button>

@@ -239,7 +239,7 @@ const StandingsTable = ({ tournament, format, standings, onHandle }) => {
         >
           <i>
             Equipos con asterisco en su nombre (*) han quedado fuera de la pelea
-            por el campeonato.
+            por el campeonato/clasificación.
           </i>
         </div>
       ) : null}

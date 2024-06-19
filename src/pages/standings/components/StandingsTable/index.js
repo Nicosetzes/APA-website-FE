@@ -111,7 +111,9 @@ const StandingsTable = ({ tournament, format, standings, onHandle }) => {
                 scoringDifference,
                 points,
                 streak,
-                chances,
+                directlyQualified,
+                playinQualified,
+                eliminated,
               },
               index,
             ) => (
@@ -137,11 +139,25 @@ const StandingsTable = ({ tournament, format, standings, onHandle }) => {
                           team.name[1] +
                           team.name[2]
                         ).toUpperCase()}
-                    {chances === false && (
-                      <span style={{ fontSize: '1.2rem', fontWeight: 700 }}>
-                        *
+                    {directlyQualified && playinQualified && (
+                      <span style={{ marginLeft: '0.5rem', fontWeight: 700 }}>
+                        {' '}
+                        (C)
                       </span>
                     )}
+                    {!directlyQualified && playinQualified && (
+                      <span style={{ marginLeft: '0.5rem', fontWeight: 700 }}>
+                        {' '}
+                        (P)
+                      </span>
+                    )}
+                    {eliminated && (
+                      <span style={{ marginLeft: '0.5rem', fontWeight: 700 }}>
+                        {' '}
+                        (x)
+                      </span>
+                    )}
+
                     {streak && isM && (
                       <div className="streak">
                         {streak.map(
@@ -227,7 +243,8 @@ const StandingsTable = ({ tournament, format, standings, onHandle }) => {
           )}
         </TableBody>
       </StyledTable>
-      {standings.filter(({ chances }) => chances === false).length ? (
+
+      {format == 'league' && (
         <div
           style={{
             display: 'flex',
@@ -237,12 +254,46 @@ const StandingsTable = ({ tournament, format, standings, onHandle }) => {
             padding: '0 1rem',
           }}
         >
-          <i>
-            Equipos con asterisco en su nombre (*) han quedado fuera de la pelea
-            por el campeonato/clasificación.
-          </i>
+          <i>(x): fuera de la lucha por el título.</i>
         </div>
-      ) : null}
+      )}
+
+      {format == 'league_playin_playoff' && (
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            fontSize: '0.9rem',
+            fontStyle: 'italic',
+            fontWeight: 700,
+            margin: '1rem auto 2rem auto',
+            maxWidth: '1000px',
+            padding: '0 1rem',
+          }}
+        >
+          <span
+            style={{
+              margin: '0.25rem 0',
+            }}
+          >
+            (C): clasificado de manera directa.
+          </span>
+          <span
+            style={{
+              margin: '0.25rem 0',
+            }}
+          >
+            (P): clasificado al playin.
+          </span>
+          <span
+            style={{
+              margin: '0.25rem 0',
+            }}
+          >
+            (x): eliminado.
+          </span>
+        </div>
+      )}
     </>
   )
 }

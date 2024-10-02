@@ -192,25 +192,25 @@ const Playoffs = () => {
                 <MatchPreview
                   teamOne={standings.at(0)}
                   positionOne={'1'}
-                  teamTwo={''}
+                  teamTwo={standings.at(15) || ''}
                   positionTwo={'16'}
                 />
                 <MatchPreview
                   teamOne={standings.at(1)}
                   positionOne={'2'}
-                  teamTwo={''}
+                  teamTwo={standings.at(14) || ''}
                   positionTwo={'15'}
                 />
                 <MatchPreview
                   teamOne={standings.at(2)}
                   positionOne={'3'}
-                  teamTwo={''}
+                  teamTwo={standings.at(13) || ''}
                   positionTwo={'14'}
                 />
                 <MatchPreview
                   teamOne={standings.at(3)}
                   positionOne={'4'}
-                  teamTwo={''}
+                  teamTwo={standings.at(12) || ''}
                   positionTwo={'13'}
                 />
                 <MatchPreview

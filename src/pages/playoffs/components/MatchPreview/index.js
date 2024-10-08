@@ -3,13 +3,19 @@ import { StyledMatchPreview } from './styled'
 import { useMediaQuery } from 'react-responsive'
 import questionMark from './../../../../images/question.svg'
 
-const MatchPreview = ({ teamOne, positionOne, teamTwo, positionTwo }) => {
+const MatchPreview = ({
+  teamOne,
+  positionOne,
+  teamTwo,
+  positionTwo,
+  color,
+}) => {
   //   const isL = useMediaQuery({ query: "(min-width: 992px)" });
   //   const isM = useMediaQuery({ query: '(min-width: 768px)' })
   const isSm = useMediaQuery({ query: '(min-width: 576px)' })
   //   const isXS = useMediaQuery({ query: "(min-width: 400px)" });
   return (
-    <StyledMatchPreview isSm={isSm}>
+    <StyledMatchPreview isSm={isSm} color={color}>
       {teamOne ? (
         <div className="match__team">
           <div>

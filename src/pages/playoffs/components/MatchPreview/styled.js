@@ -5,9 +5,9 @@ export const StyledMatchPreview = styled.div`
   flex-direction: ${(props) => (props.isSm ? 'row' : 'column')};
   /* height: ${(props) => (props.isSm ? '175px' : 'auto')}; */
   justify-content: space-evenly;
-  margin: 0.5rem;
   max-width: ${(props) => (props.isSm ? 'none' : '300px')};
-  outline: #157155 3px solid;
+  outline: 3px solid;
+  outline-color: ${(props) => props.color};
   padding: 0.5rem;
   width: 500px;
   .match__team {

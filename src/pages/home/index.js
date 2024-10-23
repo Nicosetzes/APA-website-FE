@@ -354,6 +354,7 @@ const Home = () => {
             style={{
               alignItems: 'end',
               display: 'flex',
+              flexWrap: 'wrap',
               justifyContent: 'center',
               margin: '0.5rem 0',
             }}

@@ -62,7 +62,9 @@ export const StyledPlayoffMatch = styled.div`
   }
   .match__confirmation {
     display: flex;
-    margin: auto 0.5rem;
+    flex-direction: column;
+    justify-content: space-between;
+    margin: 0.5rem 0.5rem 0.25rem 0.5rem;
     input {
       margin: auto;
     }

@@ -139,6 +139,7 @@ const PlayoffRound = ({ matches, round, getData }) => {
               scoreP2,
               played,
               outcome,
+              valid,
             }) => (
               <PlayoffMatch
                 key={_id}
@@ -154,6 +155,7 @@ const PlayoffRound = ({ matches, round, getData }) => {
                 played={played}
                 outcome={outcome}
                 getData={getData}
+                valid={valid}
               />
             ),
           )

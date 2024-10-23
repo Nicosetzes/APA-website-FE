@@ -25,6 +25,7 @@ const PlayoffMatch = ({
   played,
   outcome,
   getData,
+  valid,
 }) => {
   // const isL = useMediaQuery({ query: '(min-width: 992px)' })
   // const isM = useMediaQuery({ query: '(min-width: 768px)' })
@@ -48,7 +49,9 @@ const PlayoffMatch = ({
     setMatchScore((values) => ({ ...values, [name]: value }))
   }
 
-  const handleMatchSubmit = async () => {
+  const handleMatchSubmit = async (isMatchValid) => {
+    console.log(isMatchValid)
+
     console.log('Cargo partido')
     const { scoreP1, penaltyScoreP1, scoreP2, penaltyScoreP2 } = matchScore
     if (scoreP1 == null || scoreP1 === '' || scoreP2 == null || scoreP2 === '')
@@ -65,6 +68,7 @@ const PlayoffMatch = ({
       seedP2,
       scoreP2, // new value
       penaltyScoreP2, // new value
+      valid: isMatchValid === false ? false : undefined,
     }
 
     axios
@@ -153,7 +157,12 @@ const PlayoffMatch = ({
               {playerP1.name[1].toUpperCase()})
             </div>
             {played ? (
-              <div className="team-score">{scoreP1}</div>
+              <div className="team-score">
+                {valid === false &&
+                  outcome.teamThatWon.id == teamP1.id &&
+                  'W/O'}
+                {valid !== false && scoreP1}
+              </div>
             ) : (
               <div className="team-inputs">
                 <input
@@ -191,7 +200,12 @@ const PlayoffMatch = ({
               {playerP2.name[1].toUpperCase()})
             </div>
             {played ? (
-              <div className="team-score">{scoreP2}</div>
+              <div className="team-score">
+                {valid === false &&
+                  outcome.teamThatWon.id == teamP2.id &&
+                  'W/O'}
+                {valid !== false && scoreP2}
+              </div>
             ) : (
               <div className="team-inputs">
                 <input
@@ -226,11 +240,18 @@ const PlayoffMatch = ({
         <div className="match__confirmation">
           <IconButton
             type="submit"
-            aria-label="delete"
-            color="success"
+            sx={{ color: '#09d514' }}
             onClick={() => handleMatchSubmit()}
           >
             <CheckIcon />
+          </IconButton>
+          <IconButton
+            type="submit"
+            sx={{ color: '#e1dd28', flexDirection: 'column' }}
+            onClick={() => handleMatchSubmit(false)}
+          >
+            <CheckIcon />
+            <span style={{ fontSize: 13 }}>SIM</span>
           </IconButton>
         </div>
       )}

@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { StyledHome } from './styled'
 import { cloudName } from './../../api'
 import { Image } from 'cloudinary-react'
+import MemeCarousel from '../../components/MemeCarousel'
 import presentationDesktop from './../../../src/images/desktop.jpg'
 import presentationMobile from './../../../src/images/mobile.jpg'
 import championBackground from './../../../src/images/desktop-2.jpg'
@@ -73,6 +74,9 @@ const Home = () => {
             <img src={lucho} />
             <img src={leo} />
           </div>
+        </div>
+        <div className="container__memes">
+          <MemeCarousel />
         </div>
         <div className="container__accolades">
           <div className="box__tournaments">

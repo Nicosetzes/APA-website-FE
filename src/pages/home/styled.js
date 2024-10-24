@@ -58,6 +58,12 @@ export const StyledHome = styled.div`
       }
     }
   }
+  .container__memes {
+    background-color: #004a79;
+    display: flex;
+    margin: 0 auto;
+    padding: 2rem 0;
+  }
   .container__accolades {
     align-items: center;
     background-image: ${(props) => `url(${props.championBackground})`};

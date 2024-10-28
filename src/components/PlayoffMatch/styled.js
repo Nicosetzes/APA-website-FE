@@ -5,8 +5,10 @@ export const StyledPlayoffMatch = styled.div`
   display: flex;
   flex-direction: row;
   margin: 0.25rem;
-  padding: 0 0.5rem;
   min-width: 210px;
+  outline: ${(props) =>
+    `${props.isThisTheFinal ? '#cfa420 2px solid' : '#000 2px solid'}`};
+  padding: 0 0.5rem;
   .container__team {
     align-items: center;
     display: flex;

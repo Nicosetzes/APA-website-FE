@@ -42,6 +42,7 @@ import meme_40 from './../../images/memes/40.jpg'
 import meme_41 from './../../images/memes/41.jpg'
 import meme_42 from './../../images/memes/42.jpg'
 import meme_43 from './../../images/memes/43.jpg'
+import meme_44 from './../../images/memes/44.jpeg'
 
 const MemeCarousel = () => {
   const memes = [
@@ -88,6 +89,7 @@ const MemeCarousel = () => {
     meme_41,
     meme_42,
     meme_43,
+    meme_44,
   ]
 
   return (

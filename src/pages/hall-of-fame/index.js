@@ -9,31 +9,32 @@ import axios from 'axios'
 import { Oval } from 'react-loader-spinner'
 
 const Trophies = () => {
-  const [historicalData, setHistoricalData] = useState()
+  const [data, setData] = useState()
 
-  const getHistoricalData = () => {
+  const getData = () => {
     const standings = axios.get(`${api}/statistics/all-time/standings`)
     const faceToFace = axios.get(`${api}/statistics/all-time/face-to-face`)
     const teams = axios.get(`${api}/statistics/all-time/teams`)
+    const tournaments = axios.get(`${api}/tournaments?status=finalized`)
 
-    Promise.all([standings, faceToFace, teams]).then((values) => {
-      const data = values.map((response) => response.data)
-      setHistoricalData(data)
+    Promise.all([standings, faceToFace, teams, tournaments]).then((values) => {
+      const dataFromDB = values.map((response) => response.data)
+      setData(dataFromDB)
     })
   }
 
   useEffect(() => {
-    getHistoricalData()
+    getData()
   }, [])
 
   return (
     <>
       {/* <div style={{ margin: '2rem', textAlign: 'center' }}>Trofeos</div> */}
-      <Showcase />
-      <Accolades />
-      {historicalData ? (
+      {data ? (
         <>
-          <PlayerStatsTable stats={historicalData[0]} />
+          <Showcase tournaments={data[3]} />
+          <Accolades />
+          <PlayerStatsTable stats={data[0]} />
           <div
             style={{
               display: 'flex',
@@ -44,16 +45,16 @@ const Trophies = () => {
             <TeamRankings
               title={'Mejores equipos históricos'}
               subtitle={'Puntos totales'}
-              teams={historicalData[2].completeStatsByTotalPoints}
+              teams={data[2].completeStatsByTotalPoints}
             />
             <TeamRankings
               title={'Mejores equipos por torneo'}
               subtitle={'% efectividad (mín. 10 partidos)'}
-              teams={historicalData[2].completeStatsByEffectiveness}
+              teams={data[2].completeStatsByEffectiveness}
             />
           </div>
 
-          {historicalData[1].map(({ p1, p2 }, index) => (
+          {data[1].map(({ p1, p2 }, index) => (
             <FaceToFaceTable stats={[p1, p2]} key={index} />
           ))}
         </>

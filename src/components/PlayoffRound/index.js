@@ -7,7 +7,7 @@ import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import axios from 'axios'
 
-const PlayoffRound = ({ matches, round, getData }) => {
+const PlayoffRound = ({ matches, round, getData, isThisTheFinal }) => {
   const { tournament } = useParams()
 
   const MySwal = withReactContent(Swal)
@@ -156,6 +156,7 @@ const PlayoffRound = ({ matches, round, getData }) => {
                 outcome={outcome}
                 getData={getData}
                 valid={valid}
+                isThisTheFinal={isThisTheFinal}
               />
             ),
           )

@@ -1,16 +1,18 @@
+import { cloudName, database } from '../../../../api'
 import { StyledChampionshipBox } from './styled'
-import { Link } from 'react-router-dom'
 import { useMediaQuery } from 'react-responsive'
+import { Image } from 'cloudinary-react'
+import { useNavigate } from 'react-router-dom'
 
 const ChampionshipBox = ({
   tournament,
-  championUser,
-  championTeam,
-  championLogo,
-  finalistUser,
-  finalistTeam,
-  finalistLogo,
-  trophy,
+  championUserName,
+  championTeamId,
+  championTeamName,
+  finalistUserName,
+  finalistTeamId,
+  finalistTeamName,
+  cloudinary_id,
   id,
 }) => {
   const isL = useMediaQuery({ query: '(min-width: 992px)' })
@@ -18,73 +20,78 @@ const ChampionshipBox = ({
   const isSm = useMediaQuery({ query: '(min-width: 600px)' })
   const isXS = useMediaQuery({ query: '(min-width: 400px)' })
 
+  const navigate = useNavigate()
+
   return (
     <>
-      <StyledChampionshipBox style={{ width: !isSm && '350px' }}>
-        {id ? (
-          <Link to={`/tournaments/${id}`}>
-            <div className="showcase__header">
-              <div className="showcase__header-title">{tournament}</div>
-            </div>
-            <div
-              className="showcase__body"
-              style={{ justifyContent: !isSm && 'center' }}
-            >
-              <div
-                className="showcase__body-results"
-                style={{ display: 'flex', flexDirection: 'column' }}
-              >
-                <div className="showcase__body-champion">
-                  <img src={championLogo} alt={championTeam} />
-                  <div className="showcase__body-info">
-                    <div className="showcase__body-info-title">Campeón</div>
-                    <div className="showcase__body-info-team">
-                      {championTeam}
-                    </div>
-                    <div className="showcase__body-info-user">
-                      {championUser}
-                    </div>
+      {id ? (
+        <StyledChampionshipBox
+          style={{
+            maxWidth: !isSm ? '425px' : '575px',
+            height: !isSm ? 'auto' : '410px',
+          }}
+          onClick={() => {
+            navigate(`/tournaments/${id}`)
+          }}
+        >
+          <div className="showcase__header">
+            <div className="showcase__header-title">{tournament}</div>
+          </div>
+          <div className="showcase__body">
+            <div className="showcase__body-results">
+              <div className="showcase__body-champion">
+                <img
+                  src={`${database}/logos/small/${championTeamId}`}
+                  alt={championTeamName}
+                />
+                <div className="showcase__body-info">
+                  <div className="showcase__body-info-title">Campeón</div>
+                  <div className="showcase__body-info-team">
+                    {championTeamName}
                   </div>
-                  <div className="circle circle-champion circle-top-right"></div>
-                  <div className="circle circle-champion circle-bottom-right"></div>
-                  <div className="circle circle-champion circle-bottom-left"></div>
-                  <div className="circle  circle-champion circle-top-left"></div>
-                </div>
-                <div className="showcase__body-finalist">
-                  <img src={finalistLogo} alt={finalistTeam} />
-                  <div className="showcase__body-info">
-                    <div className="showcase__body-info-title">Subcampeón</div>
-                    <div className="showcase__body-info-team">
-                      {finalistTeam}
-                    </div>
-                    <div className="showcase__body-info-user">
-                      {finalistUser}
-                    </div>
+                  <div className="showcase__body-info-user">
+                    {championUserName}
                   </div>
-                  <div className="circle circle-finalist circle-top-right"></div>
-                  <div className="circle circle-finalist circle-bottom-right"></div>
-                  <div className="circle circle-finalist circle-bottom-left"></div>
-                  <div className="circle  circle-finalist circle-top-left"></div>
                 </div>
+                <div className="circle circle-champion circle-top-right"></div>
+                <div className="circle circle-champion circle-bottom-right"></div>
+                <div className="circle circle-champion circle-bottom-left"></div>
+                <div className="circle  circle-champion circle-top-left"></div>
               </div>
-              {isSm && (
-                <div
-                  className="showcase__body-trophy"
-                  style={{
-                    display: 'flex',
-                    outline: '#0d8499 3px solid',
-                    width: '215px',
-                  }}
-                >
-                  <img
-                    src={trophy}
-                    style={{ height: '300px', margin: 'auto 0' }}
-                  />
+              <div className="showcase__body-finalist">
+                <img
+                  src={`${database}/logos/small/${finalistTeamId}`}
+                  alt={finalistTeamName}
+                />
+                <div className="showcase__body-info">
+                  <div className="showcase__body-info-title">Subcampeón</div>
+                  <div className="showcase__body-info-team">
+                    {finalistTeamName}
+                  </div>
+                  <div className="showcase__body-info-user">
+                    {finalistUserName}
+                  </div>
                 </div>
-              )}
+                <div className="circle circle-finalist circle-top-right"></div>
+                <div className="circle circle-finalist circle-bottom-right"></div>
+                <div className="circle circle-finalist circle-bottom-left"></div>
+                <div className="circle  circle-finalist circle-top-left"></div>
+              </div>
             </div>
-          </Link>
-        ) : (
+            {isSm && (
+              <div className="showcase__body-trophy">
+                <Image cloudName={cloudName} publicId={cloudinary_id} />
+              </div>
+            )}
+          </div>
+        </StyledChampionshipBox>
+      ) : (
+        <StyledChampionshipBox
+          style={{
+            maxWidth: !isSm ? '425px' : '575px',
+            height: !isSm ? 'auto' : '410px',
+          }}
+        >
           <>
             <div className="showcase__header">
               <div className="showcase__header-title">{tournament}</div>
@@ -93,35 +100,38 @@ const ChampionshipBox = ({
               className="showcase__body"
               style={{ justifyContent: !isSm && 'center' }}
             >
-              <div
-                className="showcase__body-results"
-                style={{ display: 'flex', flexDirection: 'column' }}
-              >
+              <div className="showcase__body-results">
                 <div className="showcase__body-champion">
-                  <img src={championLogo} alt={championTeam} />
+                  <img
+                    src={`${database}/logos/small/${championTeamId}`}
+                    alt={championTeamName}
+                  />
                   <div className="showcase__body-info">
                     <div className="showcase__body-info-title">Campeón</div>
                     <div className="showcase__body-info-team">
-                      {championTeam}
+                      {championTeamName}
                     </div>
                     <div className="showcase__body-info-user">
-                      {championUser}
+                      {championUserName}
                     </div>
                   </div>
                   <div className="circle circle-champion circle-top-right"></div>
                   <div className="circle circle-champion circle-bottom-right"></div>
                   <div className="circle circle-champion circle-bottom-left"></div>
-                  <div className="circle  circle-champion circle-top-left"></div>
+                  <div className="circle circle-champion circle-top-left"></div>
                 </div>
                 <div className="showcase__body-finalist">
-                  <img src={finalistLogo} alt={finalistTeam} />
+                  <img
+                    src={`${database}/logos/small/${finalistTeamId}`}
+                    alt={finalistTeamName}
+                  />
                   <div className="showcase__body-info">
                     <div className="showcase__body-info-title">Subcampeón</div>
                     <div className="showcase__body-info-team">
-                      {finalistTeam}
+                      {finalistTeamName}
                     </div>
                     <div className="showcase__body-info-user">
-                      {finalistUser}
+                      {finalistUserName}
                     </div>
                   </div>
                   <div className="circle circle-finalist circle-top-right"></div>
@@ -132,13 +142,13 @@ const ChampionshipBox = ({
               </div>
               {isSm && (
                 <div className="showcase__body-trophy">
-                  <img src={trophy} />
+                  <Image cloudName={cloudName} publicId={cloudinary_id} />
                 </div>
               )}
-            </div>{' '}
+            </div>
           </>
-        )}
-      </StyledChampionshipBox>
+        </StyledChampionshipBox>
+      )}
     </>
   )
 }

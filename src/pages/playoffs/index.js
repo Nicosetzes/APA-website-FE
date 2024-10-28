@@ -270,6 +270,7 @@ const Playoffs = () => {
               )}
               round={1}
               getData={getPlayoffsData}
+              isThisTheFinal={false}
             />
             <PlayoffRound
               matches={matches.filter(({ playoff_id }) =>
@@ -279,6 +280,7 @@ const Playoffs = () => {
               )}
               round={2}
               getData={getPlayoffsData}
+              isThisTheFinal={false}
             />
             <PlayoffRound
               matches={matches.filter(({ playoff_id }) =>
@@ -288,6 +290,7 @@ const Playoffs = () => {
               )}
               round={3}
               getData={getPlayoffsData}
+              isThisTheFinal={false}
             />
             <PlayoffRound
               matches={matches.filter(({ playoff_id }) =>
@@ -297,6 +300,7 @@ const Playoffs = () => {
               )}
               round={4}
               getData={getPlayoffsData}
+              isThisTheFinal={true}
             />
             {format == 'champions_league'
               ? matches.filter(({ outcome }) => outcome).length == 29 && (

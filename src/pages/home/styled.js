@@ -70,10 +70,8 @@ export const StyledHome = styled.div`
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-    /* background-size: ${(props) => `${props.isXL && 'cover'}`}; */
     display: flex;
     flex-direction: column;
-    /* height: 100vh; */
     isolation: isolate;
     justify-content: center;
     padding: 1.5rem 0;
@@ -85,61 +83,6 @@ export const StyledHome = styled.div`
       position: absolute;
       inset: 0;
       z-index: -1;
-    }
-    .box__tournaments {
-      align-items: center;
-      display: flex;
-      /* flex-direction: column; */
-      flex-wrap: wrap;
-      justify-content: center;
-      margin: 0.5rem auto;
-      .row__tournaments {
-        display: flex;
-        margin: 1.5rem 0;
-        justify-content: center;
-        .tournaments-result {
-          align-items: center;
-          display: flex;
-          flex-direction: column;
-          justify-content: end;
-          margin: 0 0.5rem;
-          .result-title {
-            color: #fff;
-            font-size: 1.1rem;
-            font-weight: 700;
-            max-width: 150px;
-            text-align: center;
-          }
-          .result-year {
-            color: #fff;
-            font-size: 1.1rem;
-            font-weight: 700;
-          }
-          .result-image {
-            height: 175px;
-            margin: 0.5rem 0;
-            max-width: 125px;
-            img {
-              height: 100%;
-              width: 100%;
-            }
-          }
-          .result-player {
-            align-items: center;
-            display: flex;
-            justify-content: center;
-            .player-name {
-              color: #fff;
-              font-size: 1.1rem;
-              font-weight: 700;
-              margin-right: 0.25rem;
-            }
-            img {
-              width: 35px;
-            }
-          }
-        }
-      }
     }
     .box__champion {
       align-items: center;

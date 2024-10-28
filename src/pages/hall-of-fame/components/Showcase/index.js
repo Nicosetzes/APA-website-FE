@@ -1,208 +1,124 @@
 import { StyledShowcase } from './styled'
 import ChampionshipBox from '../ChampionshipBox'
-import banderaAlemania from './../../../../images/alemania-bandera.png'
-import banderaArgentina from './../../../../images/argentina-bandera.png'
-import banderaBelgica from './../../../../images/belgica-bandera.png'
-import banderaFrancia from './../../../../images/francia-bandera.png'
-import banderaPeru from './../../../../images/peru-bandera.png'
-import banderaPortugal from './../../../../images/portugal-bandera.png'
-import banderaBrazil from './../../../../images/brazil-bandera.png'
-import banderaPolonia from './../../../../images/polonia-bandera.png'
-import logoAtleticoMadrid from './../../../../images/atletico-madrid-escudo.png'
-import logoBayern from './../../../../images/bayern-escudo.png'
-import logoEstudiantes from './../../../../images/estudiantes-escudo.png'
-import logoFiorentina from './../../../../images/fiorentina-escudo.png'
-import logoLanus from './../../../../images/lanus-escudo.png'
-import logoLiverpool from './../../../../images/liverpool-escudo.png'
-import logoLokomotiv from './../../../../images/lokomotiv-escudo.png'
-import logoManchesterUnited from './../../../../images/manchester-united-escudo.png'
-import logoRacingClub from './../../../../images/racing-club-escudo.png'
-import logoRealMadrid from './../../../../images/real-madrid-escudo.png'
-import logoRiverPlate from './../../../../images/river-plate-escudo.png'
-import logoRosarioCentral from './../../../../images/rosario-central-escudo.png'
-import logoSanLorenzo from './../../../../images/san-lorenzo-escudo.png'
-import logoTottenhamHotspur from './../../../../images/tottenham-hotspur-escudo.png'
-import trophyChampions from './../../../../images/champions.png'
 import trophyCopaAmerica from './../../../../images/copa-america.png'
 import trophyCopaArgentina from './../../../../images/copa-argentina.png'
 import trophyMundialDeClubes from './../../../../images/mundial-de-clubes.png'
-import trophyPremierLeague from './../../../../images/premier-league.png'
-import trophyRandomOne from './../../../../images/superliga-europea.png'
 import trophyTorneoArgentino from './../../../../images/torneo-argentino.png'
-import trophySuperligaItaloEspañola from './../../../../images/superliga-italo-española.png'
 import trophyWorldCup from './../../../../images/world-cup.png'
-import trophySuperligaArgentina from './../../../../images/superliga-argentina.png'
 
-const Showcase = () => {
+const Showcase = ({ tournaments }) => {
+  console.log(tournaments)
+
   return (
     <StyledShowcase>
       <ChampionshipBox
         tournament={'Torneo Argentino 2016'}
-        championUser={'Max'}
-        championTeam={'Rosario Central'}
-        championLogo={logoRosarioCentral}
-        finalistUser={'Leo'}
-        finalistTeam={'San Lorenzo'}
-        finalistLogo={logoSanLorenzo}
-        trophy={trophyTorneoArgentino}
+        championUserName={'Max'}
+        championTeamId={'437'}
+        championTeamName={'Rosario Central'}
+        finalistUserName={'Leo'}
+        finalistTeamId={'460'}
+        finalistTeamName={'San Lorenzo'}
+        cloudinary_id={'tournaments/rqi862k543ltlmdbgjjm'}
       />
       <ChampionshipBox
         tournament={'Torneo Argentino 2017'}
-        championUser={'Max'}
-        championTeam={'Estudiantes'}
-        championLogo={logoEstudiantes}
-        finalistUser={'Max'}
-        finalistTeam={'Rosario Central'}
-        finalistLogo={logoRosarioCentral}
-        trophy={trophyTorneoArgentino}
+        championUserName={'Max'}
+        championTeamId={'450'}
+        championTeamName={'Estudiantes'}
+        finalistUserName={'Max'}
+        finalistTeamId={'437'}
+        finalistTeamName={'Rosario Central'}
+        cloudinary_id={'tournaments/rqi862k543ltlmdbgjjm'}
       />
       <ChampionshipBox
         tournament={'Copa del Mundo 2017'}
-        championUser={'Leo'}
-        championTeam={'Portugal'}
-        championLogo={banderaPortugal}
-        finalistUser={'Santi'}
-        finalistTeam={'Francia'}
-        finalistLogo={banderaFrancia}
-        trophy={trophyWorldCup}
+        championUserName={'Leo'}
+        championTeamId={'27'}
+        championTeamName={'Portugal'}
+        finalistUserName={'Santi'}
+        finalistTeamId={'2'}
+        finalistTeamName={'Francia'}
+        cloudinary_id={'tournaments/qvkjpzyorvsglzft0ehq'}
       />
       <ChampionshipBox
         tournament={'Torneo Argentino 2018'}
-        championUser={'Leo'}
-        championTeam={'San Lorenzo'}
-        championLogo={logoSanLorenzo}
-        finalistUser={'Santi'}
-        finalistTeam={'River Plate'}
-        finalistLogo={logoRiverPlate}
-        trophy={trophyTorneoArgentino}
+        championUserName={'Leo'}
+        championTeamId={'460'}
+        championTeamName={'San Lorenzo'}
+        finalistUserName={'Santi'}
+        finalistTeamId={'435'}
+        finalistTeamName={'River Plate'}
+        cloudinary_id={'tournaments/rqi862k543ltlmdbgjjm'}
       />
       <ChampionshipBox
         tournament={'Copa del Mundo 2018 (I)'}
-        championUser={'Leo'}
-        championTeam={'Alemania'}
-        championLogo={banderaAlemania}
-        finalistUser={'Santi'}
-        finalistTeam={'Francia'}
-        finalistLogo={banderaFrancia}
-        trophy={trophyWorldCup}
+        championUserName={'Leo'}
+        championTeamId={'25'}
+        championTeamName={'Alemania'}
+        finalistUserName={'Santi'}
+        finalistTeamId={'2'}
+        finalistTeamName={'Francia'}
+        cloudinary_id={'tournaments/qvkjpzyorvsglzft0ehq'}
       />
       <ChampionshipBox
         tournament={'Copa del Mundo 2018 (II)'}
-        championUser={'Max'}
-        championTeam={'Bélgica'}
-        championLogo={banderaBelgica}
-        finalistUser={'Leo'}
-        finalistTeam={'Alemania'}
-        finalistLogo={banderaAlemania}
-        trophy={trophyWorldCup}
+        championUserName={'Max'}
+        championTeamId={'1'}
+        championTeamName={'Bélgica'}
+        finalistUserName={'Leo'}
+        finalistTeamId={'25'}
+        finalistTeamName={'Alemania'}
+        cloudinary_id={'tournaments/qvkjpzyorvsglzft0ehq'}
       />
       <ChampionshipBox
         tournament={'Mundial de Clubes 2018'}
-        championUser={'Max'}
-        championTeam={'Manchester Utd.'}
-        championLogo={logoManchesterUnited}
-        finalistUser={'Max'}
-        finalistTeam={'Atlético Madrid'}
-        finalistLogo={logoAtleticoMadrid}
-        trophy={trophyMundialDeClubes}
+        championUserName={'Max'}
+        championTeamId={'33'}
+        championTeamName={'Manchester Utd.'}
+        finalistUserName={'Max'}
+        finalistTeamId={'530'}
+        finalistTeamName={'Atlético Madrid'}
+        cloudinary_id={'tournaments/mundial-de-clubes_zc7sdt'}
       />
       <ChampionshipBox
         tournament={'Copa Argentina 2018'}
-        championUser={'Max'}
-        championTeam={'Racing'}
-        championLogo={logoRacingClub}
-        finalistUser={'Leo'}
-        finalistTeam={'San Lorenzo'}
-        finalistLogo={logoSanLorenzo}
-        trophy={trophyCopaArgentina}
-      />
-      <ChampionshipBox
-        tournament={'Chempions 2019'}
-        championUser={'Leo'}
-        championTeam={'Real Madrid'}
-        championLogo={logoRealMadrid}
-        finalistUser={'Max'}
-        finalistTeam={'Lokomotiv'}
-        finalistLogo={logoLokomotiv}
-        trophy={trophyChampions}
-        id={'64697ac9d542ff4ada3038d3'}
+        championUserName={'Max'}
+        championTeamId={'436'}
+        championTeamName={'Racing'}
+        finalistUserName={'Leo'}
+        finalistTeamId={'460'}
+        finalistTeamName={'San Lorenzo'}
+        cloudinary_id={'tournaments/copa-argentina_uf76a1'}
       />
       <ChampionshipBox
         tournament={'Copa América 2019'}
-        championUser={'Santi'}
-        championTeam={'Argentina'}
-        championLogo={banderaArgentina}
-        finalistUser={'Max'}
-        finalistTeam={'Perú'}
-        finalistLogo={banderaPeru}
-        trophy={trophyCopaAmerica}
+        championUserName={'Santi'}
+        championTeamId={'26'}
+        championTeamName={'Argentina'}
+        finalistUserName={'Max'}
+        finalistTeamId={'30'}
+        finalistTeamName={'Perú'}
+        cloudinary_id={'tournaments/copa-america_yo28ma'}
       />
-      <ChampionshipBox
-        tournament={'Torneo Argentino 2021/22'}
-        championUser={'Leo'}
-        championTeam={'River Plate'}
-        championLogo={logoRiverPlate}
-        finalistUser={'Leo'}
-        finalistTeam={'Lanús'}
-        finalistLogo={logoLanus}
-        trophy={trophyTorneoArgentino}
-        id={'625e0f191b3f1ce6b5ee4756'}
-      />
-      <ChampionshipBox
-        tournament={'Superliga Europea 2022'}
-        championUser={'Nico'}
-        championTeam={'Liverpool'}
-        championLogo={logoLiverpool}
-        finalistUser={'Nico'}
-        finalistTeam={'Bayern'}
-        finalistLogo={logoBayern}
-        trophy={trophyRandomOne}
-        id={'625f32c9cfe012fb71aae3af'}
-      />
-      <ChampionshipBox
-        tournament={'Superliga Inglesa 2022'}
-        championUser={'Nico'}
-        championTeam={'Tottenham'}
-        championLogo={logoTottenhamHotspur}
-        finalistUser={'Santi'}
-        finalistTeam={'Manchester Utd.'}
-        finalistLogo={logoManchesterUnited}
-        trophy={trophyPremierLeague}
-        id={'6340436678316e185af86762'}
-      />
-      <ChampionshipBox
-        tournament={'Copa del Mundo 2022/23'}
-        championUser={'Leo'}
-        championTeam={'Polonia'}
-        championLogo={banderaPolonia}
-        finalistUser={'Max'}
-        finalistTeam={'Brazil'}
-        finalistLogo={banderaBrazil}
-        trophy={trophyWorldCup}
-        id={'6372f83c88e2408e9cadcc73'}
-      />
-      <ChampionshipBox
-        tournament={'Superliga ítalo-española 2022/23'}
-        championUser={'Leo'}
-        championTeam={'Atlético Madrid'}
-        championLogo={logoAtleticoMadrid}
-        finalistUser={'Nico'}
-        finalistTeam={'Fiorentina'}
-        finalistLogo={logoFiorentina}
-        trophy={trophySuperligaItaloEspañola}
-        id={'6377fb8eb217aa7d3bf61eef'}
-      />
-      <ChampionshipBox
-        tournament={'Superliga Argentina 2023'}
-        championUser={'Max'}
-        championTeam={'San Lorenzo'}
-        championLogo={logoSanLorenzo}
-        finalistUser={'Max'}
-        finalistTeam={'River Plate'}
-        finalistLogo={logoRiverPlate}
-        trophy={trophySuperligaArgentina}
-        id={'646ff40e2524b3187034f790'}
-      />
+      {tournaments
+        ? tournaments.map(
+            ({ _id, name, outcome: { champion, finalist }, cloudinary_id }) => (
+              <ChampionshipBox
+                key={_id}
+                tournament={name}
+                championUserName={champion.player.name}
+                championTeamId={champion.team.id}
+                championTeamName={champion.team.name}
+                finalistUserName={finalist.player.name}
+                finalistTeamId={finalist.team.id}
+                finalistTeamName={finalist.team.name}
+                cloudinary_id={cloudinary_id}
+                id={_id}
+              />
+            ),
+          )
+        : null}
     </StyledShowcase>
   )
 }

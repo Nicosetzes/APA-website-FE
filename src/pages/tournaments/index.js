@@ -34,8 +34,6 @@ const Tournaments = () => {
   }, [])
 
   if (tournaments) {
-    const { activeTournaments, inactiveTournaments } = tournaments
-    console.log(activeTournaments, inactiveTournaments)
     const breadCrumbsLinks = [
       { name: 'Home', route: '' },
       { name: 'Torneos', route: 'tournaments' },
@@ -58,14 +56,16 @@ const Tournaments = () => {
           Torneos activos
         </div>
         <StyledTournamentsContainer>
-          {activeTournaments.map(({ _id, name, cloudinary_id }) => (
-            <div className="container__card" key={_id}>
-              <Link to={`/tournaments/${_id}`}>
-                <Image cloudName={cloudName} publicId={cloudinary_id} />
-                <div className="container__card-name">{name}</div>
-              </Link>
-            </div>
-          ))}
+          {tournaments
+            .filter(({ ongoing }) => ongoing)
+            .map(({ _id, name, cloudinary_id }) => (
+              <div className="container__card" key={_id}>
+                <Link to={`/tournaments/${_id}`}>
+                  <Image cloudName={cloudName} publicId={cloudinary_id} />
+                  <div className="container__card-name">{name}</div>
+                </Link>
+              </div>
+            ))}
         </StyledTournamentsContainer>
         <div
           style={{
@@ -78,26 +78,28 @@ const Tournaments = () => {
           Torneos finalizados
         </div>
         <StyledTournamentsContainer>
-          {inactiveTournaments.map(({ _id, name, cloudinary_id, outcome }) => (
-            <div className="container__card" key={_id}>
-              <Link to={`/tournaments/${_id}`}>
-                <Image cloudName={cloudName} publicId={cloudinary_id} />
-                <div className="container__card-name">
-                  <span>{name}</span>
-                  {outcome ? (
-                    <img
-                      src={`${database}/logos/${outcome.champion.team.id}`}
-                      style={{
-                        alignSelf: 'center',
-                        height: 'auto',
-                        width: '120px',
-                      }}
-                    />
-                  ) : null}
-                </div>
-              </Link>
-            </div>
-          ))}
+          {tournaments
+            .filter(({ ongoing }) => !ongoing)
+            .map(({ _id, name, cloudinary_id, outcome }) => (
+              <div className="container__card" key={_id}>
+                <Link to={`/tournaments/${_id}`}>
+                  <Image cloudName={cloudName} publicId={cloudinary_id} />
+                  <div className="container__card-name">
+                    <span>{name}</span>
+                    {outcome ? (
+                      <img
+                        src={`${database}/logos/${outcome.champion.team.id}`}
+                        style={{
+                          alignSelf: 'center',
+                          height: 'auto',
+                          width: '120px',
+                        }}
+                      />
+                    ) : null}
+                  </div>
+                </Link>
+              </div>
+            ))}
         </StyledTournamentsContainer>
       </motion.div>
     )

@@ -16,7 +16,7 @@ import lucho from './../../../src/images/lucho.png'
 import leo from './../../../src/images/leo.png'
 
 const superliga_inglesa_cloudinary_id = 'tournaments/chemvkybmg1wmvjanwby'
-const mundial_de_clubes_cloudinary_id = 'tournaments/mundial-de-clubes_zc7sdt'
+const mundial_de_clubes_cloudinary_id = 'tournaments/ferraris_ykvwlf'
 
 const Home = () => {
   // const isXL = useMediaQuery({ query: '(min-width: 1200px)' })

@@ -260,13 +260,14 @@ const FixtureId = () => {
         exit={{ opacity: 0 }}
       >
         <BreadCrumbsMUI links={breadCrumbsLinks} />
-        <div style={{ display: 'flex' }}>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
           {groups.length ? (
             <div
               style={{
                 alignItems: 'center',
                 border: 'black 3px solid',
                 display: 'flex',
+                flexDirection: 'column',
                 fontSize: '1.5rem',
                 fontWeight: 700,
                 margin: '0.75rem auto',
@@ -274,29 +275,32 @@ const FixtureId = () => {
                 width: 'fit-content',
               }}
             >
-              Grupos:{' '}
-              {groups.map((group) => (
-                <span
-                  key={group}
-                  onClick={() => onHandleGroupChange(group)}
-                  style={{
-                    color:
-                      (group == 'A' && !searchParams.get('group')) ||
-                      group == searchParams.get('group')
-                        ? 'green'
-                        : 'red',
-                    cursor: 'pointer',
-                    margin: '0 0.5rem',
-                    textDecoration:
-                      (group == 'A' && !searchParams.get('group')) ||
-                      group == searchParams.get('group')
-                        ? 'underline'
-                        : 'none',
-                  }}
-                >
-                  {group}
-                </span>
-              ))}
+              <span style={{ marginBottom: '1rem' }}> Grupos </span>
+
+              <div>
+                {groups.map((group) => (
+                  <span
+                    key={group}
+                    onClick={() => onHandleGroupChange(group)}
+                    style={{
+                      color:
+                        (group == 'A' && !searchParams.get('group')) ||
+                        group == searchParams.get('group')
+                          ? 'green'
+                          : 'red',
+                      cursor: 'pointer',
+                      margin: '0 0.5rem',
+                      textDecoration:
+                        (group == 'A' && !searchParams.get('group')) ||
+                        group == searchParams.get('group')
+                          ? 'underline'
+                          : 'none',
+                    }}
+                  >
+                    {group}
+                  </span>
+                ))}
+              </div>
             </div>
           ) : null}
           <Link
@@ -304,7 +308,7 @@ const FixtureId = () => {
             style={{
               color: '#004a79',
               fontSize: '1.5rem',
-              margin: '1rem 1rem 0 auto',
+              margin: '1rem auto',
             }}
           >
             Ir a Clasificación
@@ -315,10 +319,10 @@ const FixtureId = () => {
           <div style={{ margin: '1.5rem' }}>Filtrar por jugador (máx 2)</div>
           <div
             style={{
+              alignItems: 'center',
               display: 'flex',
-              flexDirection: isSm ? 'column' : 'row',
+              flexDirection: 'column',
               flexWrap: 'wrap',
-              justifyContent: 'center',
               margin: '0 1.5rem',
             }}
           >

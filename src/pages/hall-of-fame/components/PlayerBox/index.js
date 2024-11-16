@@ -1,5 +1,6 @@
-import { StyledPlayerBox } from './styled'
 import { useMediaQuery } from 'react-responsive'
+import StarIcon from '@mui/icons-material/Star'
+import { StyledPlayerBox } from './styled'
 
 const PlayerBox = ({ player, trophies }) => {
   // const isL = useMediaQuery({ query: '(min-width: 992px)' })
@@ -9,13 +10,22 @@ const PlayerBox = ({ player, trophies }) => {
   return (
     <>
       <StyledPlayerBox style={{ width: !isM && '350px' }}>
-        <div className="player-box-name">
-          {player}{' '}
-          <span style={{ fontSize: '2rem' }}>{`(x${trophies.length})`}</span>
-        </div>
-        <div className="player-box-trophies">
-          {trophies &&
-            trophies.map((trophy, index) => <img key={index} src={trophy} />)}
+        <div className="player-box">
+          <div className="player-box__name">{player}</div>
+          <div className="player-box__stars">
+            {trophies &&
+              trophies.map((trophy, index) => (
+                <StarIcon
+                  key={index}
+                  htmlColor={'#ffc30b'}
+                  fontSize={'large'}
+                />
+              ))}
+          </div>
+          <div className="player-box__trophies">
+            {trophies &&
+              trophies.map((trophy, index) => <img key={index} src={trophy} />)}
+          </div>
         </div>
       </StyledPlayerBox>
     </>

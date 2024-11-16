@@ -40,10 +40,9 @@ const Accolades = () => {
         />
         <PlayerBox
           player={'Nico'}
-          trophies={[trophyRandomOne, trophyPremierLeague]}
+          trophies={[trophyRandomOne, trophyPremierLeague, trophyPremierLeague]}
         />
         <PlayerBox player={'Santi'} trophies={[trophyCopaAmerica]} />
-        <PlayerBox player={'Lucho'} trophies={[]} />
       </StyledAccolades>
     </>
   )

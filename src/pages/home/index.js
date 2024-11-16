@@ -15,10 +15,8 @@ import santi from './../../../src/images/santi.png'
 import lucho from './../../../src/images/lucho.png'
 import leo from './../../../src/images/leo.png'
 
-const chempions_cloudinary_id = 'tournaments/5_qyvcdb'
 const superliga_inglesa_cloudinary_id = 'tournaments/chemvkybmg1wmvjanwby'
-const superliga_internacional_cloudinary_id = 'tournaments/_xqnhmh'
-const superliga_argentina_cloudinary_id = 'tournaments/_wz61rs'
+const mundial_de_clubes_cloudinary_id = 'tournaments/mundial-de-clubes_zc7sdt'
 
 const Home = () => {
   // const isXL = useMediaQuery({ query: '(min-width: 1200px)' })
@@ -58,16 +56,15 @@ const Home = () => {
         <div className="container__accolades">
           <div className="box__champion">
             <div className="champion-title">CAMPEÓN VIGENTE</div>
-            <div className="champion-player">Max</div>
+            <div className="champion-player">Nico</div>
             <div className="champion-img">
               <Image
                 cloudName={cloudName}
-                publicId={superliga_argentina_cloudinary_id}
+                publicId={superliga_inglesa_cloudinary_id}
               />
             </div>
             <div className="champion-team">
-              <span>SAN LORENZO</span>
-              {/* <img src={logoSanLorenzo} /> */}
+              <span>SOUTHAMPTON</span>
             </div>
             <button onClick={() => navigate('./hall-of-fame')}>
               SALÓN DE LA FAMA
@@ -103,51 +100,13 @@ const Home = () => {
                 flexDirection: 'column',
                 flexBasis: '50%',
               }}
-              onClick={() => navigate('./tournaments/6532e14f72b09831c4a5edf6')}
+              onClick={() => navigate('./tournaments/6737f0e81d249d13f55ff48c')}
             >
-              <div className="tournament-name">
-                SUPERLIGA INTERNACIONAL 2023/24
-              </div>
+              <div className="tournament-name">Mundial de Ferraris 2024/25</div>
               <div className="tournament-img">
                 <Image
                   cloudName={cloudName}
-                  publicId={superliga_internacional_cloudinary_id}
-                />
-              </div>
-            </div>
-            <div
-              style={{
-                alignItems: 'center',
-                cursor: 'pointer',
-                display: 'flex',
-                flexDirection: 'column',
-                flexBasis: '50%',
-              }}
-              onClick={() => navigate('./tournaments/659dcf45dd45bf53f0748a0d')}
-            >
-              <div className="tournament-name">SUPERLIGA INGLESA 2024</div>
-              <div className="tournament-img">
-                <Image
-                  cloudName={cloudName}
-                  publicId={superliga_inglesa_cloudinary_id}
-                />
-              </div>
-            </div>
-            <div
-              style={{
-                alignItems: 'center',
-                cursor: 'pointer',
-                display: 'flex',
-                flexDirection: 'column',
-                flexBasis: '50%',
-              }}
-              onClick={() => navigate('./tournaments/664d43458f37f00eba8ea380')}
-            >
-              <div className="tournament-name">CHEMPIONS 2024</div>
-              <div className="tournament-img">
-                <Image
-                  cloudName={cloudName}
-                  publicId={chempions_cloudinary_id}
+                  publicId={mundial_de_clubes_cloudinary_id}
                 />
               </div>
             </div>

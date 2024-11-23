@@ -7,7 +7,6 @@ export const StyledMatchBox = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  margin: 1rem;
   max-width: 225px;
   padding: 0.5rem;
   width: 100%;

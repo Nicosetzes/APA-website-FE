@@ -1,15 +1,15 @@
-import { StyledAccolades } from './styled'
-import PlayerBox from '../PlayerBox'
-import trophyChampions from './../../../../images/champions.png'
-import trophyCopaAmerica from './../../../../images/copa-america.png'
-import trophyCopaArgentina from './../../../../images/copa-argentina.png'
-import trophyMundialDeClubes from './../../../../images/mundial-de-clubes.png'
-import trophyPremierLeague from './../../../../images/premier-league.png'
-import trophyRandomOne from './../../../../images/superliga-europea.png'
-import trophyTorneoArgentino from './../../../../images/torneo-argentino.png'
-import trophyWorldCup from './../../../../images/world-cup.png'
 import trophySuperligaItaloEspañola from './../../../../images/superliga-italo-española.png'
 import trophySuperligaArgentina from './../../../../images/superliga-argentina.png'
+import trophySuperligaEuropea from './../../../../images/superliga-europea.png'
+import trophyMundialDeClubes from './../../../../images/mundial-de-clubes.png'
+import trophyTorneoArgentino from './../../../../images/torneo-argentino.png'
+import trophyCopaArgentina from './../../../../images/copa-argentina.png'
+import trophyPremierLeague from './../../../../images/premier-league.png'
+import trophyCopaAmerica from './../../../../images/copa-america.png'
+import trophyChampions from './../../../../images/champions.png'
+import trophyWorldCup from './../../../../images/world-cup.png'
+import { StyledAccolades } from './styled'
+import PlayerBox from '../PlayerBox'
 
 const Accolades = () => {
   return (
@@ -40,7 +40,11 @@ const Accolades = () => {
         />
         <PlayerBox
           player={'Nico'}
-          trophies={[trophyRandomOne, trophyPremierLeague, trophyPremierLeague]}
+          trophies={[
+            trophySuperligaEuropea,
+            trophyPremierLeague,
+            trophyPremierLeague,
+          ]}
         />
         <PlayerBox player={'Santi'} trophies={[trophyCopaAmerica]} />
       </StyledAccolades>

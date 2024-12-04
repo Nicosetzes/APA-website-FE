@@ -90,7 +90,7 @@ const MemeCarousel = () => {
     meme_42,
     meme_43,
     meme_44,
-  ]
+  ].sort(() => 0.5 - Math.random())
 
   return (
     <Carousel

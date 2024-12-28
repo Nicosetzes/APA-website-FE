@@ -3,146 +3,19 @@ import { useMediaQuery } from 'react-responsive'
 import { database } from '../../../../api'
 import { StyledDragAndDropAssignment } from './styled'
 
-const DragAndDropAssignment = ({
+const TagTeamsDragAndDropAssignment = ({
   players,
   teams,
   groups,
   createTournament,
 }) => {
-  // const isXL = useMediaQuery({ query: '(min-width: 1200px)' })
-  // const isL = useMediaQuery({ query: '(min-width: 992px)' })
-  // const isM = useMediaQuery({ query: '(min-width: 768px)' })
   const isSm = useMediaQuery({ query: '(min-width: 576px)' })
-  // const isXS = useMediaQuery({ query: '(min-width: 350px)' })
 
   // Mezclo los colores iniciales, para asignarlos al azar //
   // Utilizo una combinación de .map y .sort  //
 
-  const colors = [
-    '#004a79', // azul oscuro //
-    '#6fc140', // verde //
-    '#ffa4a4', // rosa //
-    '#8e8eed', // lila //
-    '#3dbfb1', // aguamarina //
-    '#b5083b', // fucsia //
-    '#f9d207', // dorado //
-  ]
-    .map((value) => ({ value, sort: Math.random() }))
-    .sort((a, b) => a.sort - b.sort)
-    .map(({ value }) => value)
-
   const [unassignedTeams, setUnassignedTeams] = useState(teams)
   const [assignedTeams, setAssignedTeams] = useState([])
-  const [playersWithAssignedColors, setPlayersWithAssignedColors] = useState(
-    players.map(({ id, name }, index) => {
-      return {
-        id,
-        name,
-        color: colors[index],
-      }
-    }),
-  )
-
-  const regenerateColors = () => {
-    // Vuelvo a mezclar los colores //
-    const randomColors = colors
-      .map((value) => ({ value, sort: Math.random() }))
-      .sort((a, b) => a.sort - b.sort)
-      .map(({ value }) => value)
-    setPlayersWithAssignedColors(
-      players.map(({ id, name }, index) => {
-        return {
-          id,
-          name,
-          color: randomColors[index],
-        }
-      }),
-    )
-    if (assignedTeams.length) {
-      // Si hay al menos 1 equipo asignado a un grupo, elimino todas las asignaciones de jugador //
-      setAssignedTeams(
-        assignedTeams.map(({ team, group }) => {
-          if (group)
-            return {
-              team,
-              group,
-            }
-          else
-            return {
-              team,
-            }
-        }),
-      )
-    } else return
-  }
-
-  const assignPlayer = (id, color) => {
-    let newPlayerAssignmentForTeam
-
-    console.log(color)
-
-    if (!color) {
-      // El equipo no tenía un jugador asignado //
-      newPlayerAssignmentForTeam = {
-        player: {
-          id: playersWithAssignedColors.at(0).id,
-          name: playersWithAssignedColors.at(0).name,
-        },
-        color: playersWithAssignedColors.at(0).color,
-      }
-    } else {
-      // El equipo tenía un jugador (color) asignado //
-      // Averiguo en qué posición (dentro del código de colores) se encuentra el jugador //
-      const arrayPosition = playersWithAssignedColors.findIndex(
-        (player) => player.color == color,
-      )
-      console.log(arrayPosition)
-      // La posición encontrada, es la última? Si es la última, vuelvo al principio //
-      newPlayerAssignmentForTeam =
-        arrayPosition == playersWithAssignedColors.length - 1
-          ? {
-              player: {
-                id: playersWithAssignedColors.at(0).id,
-                name: playersWithAssignedColors.at(0).name,
-              },
-              color: playersWithAssignedColors.at(0).color,
-            }
-          : {
-              player: {
-                id: playersWithAssignedColors.at(arrayPosition + 1).id,
-                name: playersWithAssignedColors.at(arrayPosition + 1).name,
-              },
-              color: playersWithAssignedColors.at(arrayPosition + 1).color,
-            }
-    }
-
-    console.log(newPlayerAssignmentForTeam)
-
-    // Ahora que tengo la nueva asignación de jugador, modifico assignedTeams //
-    // React recomienda modificar el array mediante map //
-    // https://react.dev/learn/updating-arrays-in-state#replacing-items-in-an-array //
-
-    // Busco el index del elemento a modificar
-    const indexOfChangingTeam = assignedTeams.findIndex(
-      ({ team }) => team.id == id,
-    )
-
-    setAssignedTeams(
-      assignedTeams.map((team, index) => {
-        if (indexOfChangingTeam == index)
-          return {
-            ...team,
-            color: newPlayerAssignmentForTeam.color,
-            player: newPlayerAssignmentForTeam.player,
-          }
-        else return team
-      }),
-    )
-  }
-
-  // console.log(playersWithAssignedColors)
-
-  // console.log(assignedTeams)
 
   const handleOnDrag = (e, id, name) => {
     e.dataTransfer.setData(
@@ -201,22 +74,6 @@ const DragAndDropAssignment = ({
 
   return (
     <StyledDragAndDropAssignment>
-      <div className="container__players">
-        {playersWithAssignedColors.map(({ id, name, color }) => (
-          <div
-            key={id}
-            className="players-box"
-            style={{ outline: `${color} 3px solid` }}
-          >
-            {name}
-          </div>
-        ))}
-        <button onClick={() => regenerateColors()}>
-          Generar nuevos colores
-        </button>
-      </div>
-      {/* {groups.length ? ( */}
-      {/* <> */}
       <div className="container__teams">
         {unassignedTeams.map(({ id, name }) => (
           <div
@@ -262,7 +119,6 @@ const DragAndDropAssignment = ({
                             color ? `${color} 3px` : `#000 0px`
                           } solid`,
                         }}
-                        onClick={() => assignPlayer(team.id, color)}
                         draggable
                         onDragStart={(e) => handleOnDrag(e, team.id, team.name)}
                       >
@@ -274,12 +130,6 @@ const DragAndDropAssignment = ({
                       </div>
                     ))}
                 </div>
-                {assignedTeams.filter((team) => team.group == group).length ? (
-                  <div className="groups-box-subtitle bottom">
-                    <span style={{ fontWeight: 700 }}>Clickee</span> sobre cada
-                    equipo para asignarle un jugador
-                  </div>
-                ) : null}
               </div>
             ))}
           </>
@@ -303,7 +153,6 @@ const DragAndDropAssignment = ({
                   style={{
                     outline: `${color ? `${color} 3px` : `#000 0px`} solid`,
                   }}
-                  onClick={() => assignPlayer(team.id, color)}
                 >
                   {index + 1}.{' '}
                   <img
@@ -313,11 +162,6 @@ const DragAndDropAssignment = ({
                 </div>
               ))}
             </div>
-            {assignedTeams.length ? (
-              <div className="groups-box-subtitle bottom">
-                Clickee sobre cada equipo para asignarle un jugador
-              </div>
-            ) : null}
           </div>
         )}
       </div>
@@ -344,4 +188,4 @@ const DragAndDropAssignment = ({
   )
 }
 
-export default DragAndDropAssignment
+export default TagTeamsDragAndDropAssignment

@@ -1,11 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 // import { useMediaQuery } from 'react-responsive'
-import { api, database } from './../../api'
+import { database } from './../../api'
 import { StyledFormatsContainer } from './styled'
 import TournamentSettings from './components/TournamentSettings'
-// import axios from 'axios'
-// import { Oval } from 'react-loader-spinner'
-// import { Link } from 'react-router-dom'
+import tagTeamsImage from './../../images/leo.png'
 
 const CreateTournament = () => {
   // const isXL = useMediaQuery({ query: '(min-width: 1200px)' })
@@ -32,17 +30,24 @@ const CreateTournament = () => {
       <StyledFormatsContainer>
         <div
           className="format__container"
-          onClick={() => setTournamentFormat('world_cup')}
-        >
-          <div className="formats__box-title">Copa del Mundo</div>
-          <img src={`${database}/tournaments/logos/2`} />
-        </div>
-        <div
-          className="format__container"
           onClick={() => setTournamentFormat('league')}
         >
           <div className="formats__box-title">Liga única</div>
           <img src={`${database}/tournaments/logos/1`} />
+        </div>
+        <div
+          className="format__container"
+          onClick={() => setTournamentFormat('league_playin_playoff')}
+        >
+          <div className="formats__box-title">Superliga APA</div>
+          <img src={`${database}/tournaments/logos/8`} />
+        </div>
+        <div
+          className="format__container"
+          onClick={() => setTournamentFormat('world_cup')}
+        >
+          <div className="formats__box-title">Copa del Mundo</div>
+          <img src={`${database}/tournaments/logos/2`} />
         </div>
         <div
           className="format__container"
@@ -53,21 +58,12 @@ const CreateTournament = () => {
           </div>
           <img src={`${database}/tournaments/logos/5`} />
         </div>
-        {/* <div
-          className="format__container"
-          onClick={() => setTournamentFormat('playoff')}
-        >
-          <div className="formats__box-title">Playoffs</div>
-          <img src={`${database}/tournaments/logos/4`} />
-        </div> */}
         <div
           className="format__container"
-          onClick={() => setTournamentFormat('league_playin_playoff')}
+          onClick={() => setTournamentFormat('tag_teams')}
         >
-          <div className="formats__box-title">
-            Liga con grupos + Playin + Playoffs
-          </div>
-          <img src={`${database}/tournaments/logos/8`} />
+          <div className="formats__box-title">Torneo de duplas</div>
+          <img src={tagTeamsImage} />
         </div>
       </StyledFormatsContainer>
       {tournamentFormat && <TournamentSettings format={tournamentFormat} />}

@@ -59,6 +59,8 @@ const FixtureId = () => {
 
   const [tournamentData, setTournamentData] = useState()
 
+  console.log(tournamentData)
+
   const getTournamentData = () => {
     console.log('Traigo la data del torneo')
     axios
@@ -231,7 +233,7 @@ const FixtureId = () => {
   if (tournamentData && fixtureData) {
     console.log(tournamentData)
     console.log(fixtureData)
-    const { name, players, groups } = tournamentData
+    const { format, name, players, groups } = tournamentData
     const {
       matches,
       amountOfNotPlayedMatches,
@@ -411,6 +413,7 @@ const FixtureId = () => {
         {matches.length ? (
           <>
             <FixtureContainer
+              format={format}
               matches={matches}
               getFixtureData={getFixtureData}
             />

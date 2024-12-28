@@ -10,7 +10,7 @@ const TeamCard = ({ team, player }) => {
         <div className="header-logo">
           <img src={`${database}/logos/${team.id}`} />
         </div>
-        <div className="header-player">{player.name}</div>
+        {player && <div className="header-player">{player.name}</div>}
       </div>
       {/* <div className="body">
         <div className="body-squad">

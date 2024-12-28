@@ -1,22 +1,23 @@
-import App from './../../App'
+import TagTeamsGenerator from '../../pages/tag-teams-generator'
 import { Routes, Route, useLocation } from 'react-router-dom'
-import { AnimatePresence } from 'framer-motion'
-import Login from './../../pages/login'
 import RetrievePassword from '../../pages/retrieve-password'
+import CreateTournament from '../../pages/create-tournament'
+import TournamentId from './../../pages/tournament-id'
+import Tournaments from './../../pages/tournaments'
+import Statistics from './../../pages/statistics'
+import HallOfFame from '../../pages/hall-of-fame'
+import FixtureId from './../../pages/fixture-id'
 import Standings from './../../pages/standings'
 import Simulator from './../../pages/simulator'
 import Calculator from '../../pages/calculator'
-import Playin from '../../pages/playin'
+import { AnimatePresence } from 'framer-motion'
 import Playoffs from '../../pages/playoffs'
 import Players from './../../pages/players'
 import Matches from './../../pages/matches'
-import Tournaments from './../../pages/tournaments'
-import TournamentId from './../../pages/tournament-id'
-import FixtureId from './../../pages/fixture-id'
-import Statistics from './../../pages/statistics'
-import CreateTournament from '../../pages/create-tournament'
-import HallOfFame from '../../pages/hall-of-fame'
+import Login from './../../pages/login'
+import Playin from '../../pages/playin'
 import Teams from '../../pages/teams'
+import App from './../../App'
 
 export const AnimatedRoutes = () => {
   const location = useLocation()
@@ -32,6 +33,10 @@ export const AnimatedRoutes = () => {
           <Route path="create-tournament" element={<CreateTournament />} />
           <Route path=":tournament" element={<TournamentId />} />
           <Route path=":tournament/fixture" element={<FixtureId />} />
+          <Route
+            path=":tournament/tag-teams-generator"
+            element={<TagTeamsGenerator />}
+          />
           <Route path=":tournament/standings" element={<Standings />} />
           <Route path=":tournament/simulator" element={<Simulator />} />
           <Route

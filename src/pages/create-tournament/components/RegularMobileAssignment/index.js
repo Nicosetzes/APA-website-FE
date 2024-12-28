@@ -2,7 +2,12 @@ import { useState } from 'react'
 import { StyledMobileAssignment } from './styled'
 import { database } from '../../../../api'
 
-const MobileAssignment = ({ players, teams, groups, createTournament }) => {
+const RegularMobileAssignment = ({
+  players,
+  teams,
+  groups,
+  createTournament,
+}) => {
   const colors = [
     '#004a79', // azul oscuro //
     '#6fc140', // verde //
@@ -242,4 +247,4 @@ const MobileAssignment = ({ players, teams, groups, createTournament }) => {
   )
 }
 
-export default MobileAssignment
+export default RegularMobileAssignment

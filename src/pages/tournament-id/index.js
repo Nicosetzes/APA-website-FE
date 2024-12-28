@@ -8,6 +8,7 @@ import StarIcon from '@mui/icons-material/Star'
 import { motion } from 'framer-motion'
 import { useMediaQuery } from 'react-responsive'
 import { Oval } from 'react-loader-spinner'
+import apaLogo from './../../images/sitioapalogo.jpg'
 
 const TournamentId = () => {
   // const isL = useMediaQuery({ query: '(min-width: 992px)' })
@@ -101,28 +102,12 @@ const TournamentId = () => {
                 margin: '1rem auto',
                 outline: 'black 2px solid',
                 padding: '1rem',
-                width: '250px',
+                width: '300px',
               }}
             >
-              <Link
-                to={`fixture`}
-                state={{ groups: groups }}
-                style={{
-                  color: '#004a79',
-                  fontSize: '2rem',
-                  margin: '1rem',
-                  textDecoration: 'none',
-                }}
-              >
-                Fixture
-              </Link>
-              {(format == 'league' ||
-                format == 'league_playoff' ||
-                format == 'league_playin_playoff' ||
-                format == 'world_cup' ||
-                format == 'champions_league') && (
+              {format !== 'tag_teams' && (
                 <Link
-                  to={`standings`}
+                  to={`fixture`}
                   state={{ groups: groups }}
                   style={{
                     color: '#004a79',
@@ -131,9 +116,38 @@ const TournamentId = () => {
                     textDecoration: 'none',
                   }}
                 >
-                  Clasificación
+                  Fixture
                 </Link>
               )}
+              {format == 'tag_teams' && (
+                <Link
+                  to={`tag-teams-generator`}
+                  style={{
+                    alignItems: 'center',
+                    color: '#004a79',
+                    display: 'flex',
+                    fontSize: '2rem',
+                    gap: '0.5rem',
+                    margin: '1rem',
+                    textAlign: 'center',
+                    textDecoration: 'none',
+                  }}
+                >
+                  Generador <img src={apaLogo} style={{ maxWidth: '50px' }} />
+                </Link>
+              )}
+              <Link
+                to={`standings`}
+                state={{ groups: groups }}
+                style={{
+                  color: '#004a79',
+                  fontSize: '2rem',
+                  margin: '1rem',
+                  textDecoration: 'none',
+                }}
+              >
+                Clasificación
+              </Link>
               {format == 'league' && (
                 <Link
                   to={`simulator`}
@@ -158,17 +172,19 @@ const TournamentId = () => {
               >
                 Equipos
               </Link>
-              <Link
-                to={`players`}
-                style={{
-                  color: '#004a79',
-                  fontSize: '2rem',
-                  margin: '1rem',
-                  textDecoration: 'none',
-                }}
-              >
-                Jugadores
-              </Link>
+              {format !== 'tag_teams' && (
+                <Link
+                  to={`players`}
+                  style={{
+                    color: '#004a79',
+                    fontSize: '2rem',
+                    margin: '1rem',
+                    textDecoration: 'none',
+                  }}
+                >
+                  Jugadores
+                </Link>
+              )}
               {format == 'league_playin_playoff' && (
                 <Link
                   to={`playin`}

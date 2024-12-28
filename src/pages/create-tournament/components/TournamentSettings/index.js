@@ -33,7 +33,9 @@ const TournamentSettings = ({ format }) => {
 
     return (
       <StyledTournamentSettings>
-        <div>Formato elegido: {format}</div>
+        <div style={{ margin: '2rem 0', textAlign: 'center' }}>
+          Formato elegido: {format}
+        </div>
         <div
           style={{
             backgroundColor: '#1f3742',

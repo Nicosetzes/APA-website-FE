@@ -1,13 +1,6 @@
 import { useState } from 'react'
-import {
-  useParams,
-  useSearchParams,
-  useNavigate,
-  createSearchParams,
-} from 'react-router-dom'
-import TeamInformationModal from '../TeamInformationModal'
+import { useParams, useSearchParams, useNavigate } from 'react-router-dom'
 import withReactContent from 'sweetalert2-react-content'
-import BarChartIcon from '@mui/icons-material/BarChart'
 import { useLogin } from '../../context/LoginContext'
 import DeleteIcon from '@mui/icons-material/Delete'
 import IconButton from '@mui/material/IconButton'
@@ -17,7 +10,7 @@ import { StyledMatch } from './styled'
 import Swal from 'sweetalert2'
 import axios from 'axios'
 
-const Match = ({ match, getFixtureData }) => {
+const TagTeamsMatch = ({ getFixtureData, match }) => {
   const MySwal = withReactContent(Swal)
 
   const [searchParams, setSearchParams] = useSearchParams()
@@ -32,6 +25,8 @@ const Match = ({ match, getFixtureData }) => {
   const {
     playerP1,
     playerP2,
+    playerP3,
+    playerP4,
     teamP1,
     teamP2,
     scoreP1,
@@ -40,6 +35,9 @@ const Match = ({ match, getFixtureData }) => {
     _id,
     updatedAt,
   } = match
+
+  console.log(_id)
+
   const [matchScore, setMatchScore] = useState({
     scoreP1: scoreP1,
     scoreP2: scoreP2,
@@ -85,6 +83,8 @@ const Match = ({ match, getFixtureData }) => {
     const data = {
       playerP1,
       playerP2,
+      playerP3,
+      playerP4,
       teamP1,
       teamP2,
       scoreP1,
@@ -93,7 +93,7 @@ const Match = ({ match, getFixtureData }) => {
 
     axios
       .put(
-        `${api}/tournaments/${tournament}/matches/update-game/${_id}`,
+        `${api}/tournaments/${tournament}/matches/update-tag-teams-match/${_id}`,
         data,
         {
           withCredentials: true,
@@ -281,37 +281,6 @@ const Match = ({ match, getFixtureData }) => {
 
   // const [teamInformation, setTeamInformation] = useState()
 
-  const displayExtraInfoFromTeam = (id) => {
-    const group = searchParams.get('group')
-
-    MySwal.fire({
-      background: 'rgba(0,74,121,0.8)',
-      width: 600,
-      showConfirmButton: false,
-      showCloseButton: true,
-      didOpen: () => {
-        // `MySwal` is a subclass of `Swal` with all the same instance & static methods
-        MySwal.showLoading()
-        axios
-          .get(`${api}/tournaments/${tournament}/teams/${id}?group=${group}`)
-          .then(({ data }) => {
-            MySwal.update({
-              html: <TeamInformationModal teamInformation={data} />,
-            })
-          })
-      },
-      didRender: () => {
-        MySwal.hideLoading()
-      },
-    })
-  }
-
-  const onHandleTeamChange = (id) => {
-    const group = searchParams.get('group')
-    if (!group) setSearchParams({ team: id })
-    else setSearchParams({ team: id, group })
-  }
-
   return (
     <StyledMatch
       onSubmit={(e) => {
@@ -323,11 +292,6 @@ const Match = ({ match, getFixtureData }) => {
     >
       <div className="match-view">
         <div className="match-info">
-          <BarChartIcon
-            fontSize="medium"
-            sx={{ cursor: 'pointer' }}
-            onClick={() => displayExtraInfoFromTeam(teamP1.id)}
-          />
           <textarea
             name="teamP1"
             wrap="soft"
@@ -342,14 +306,22 @@ const Match = ({ match, getFixtureData }) => {
             src={`${database}/logos/${teamP1.id}`}
             alt={match.teamP1}
             className="match-info__logo"
-            onClick={() => onHandleTeamChange(teamP1.id)}
           />
-          <input
-            name="playerP1"
-            className="match-info__player"
-            value={playerP1.name}
-            readOnly
-          />
+          <div style={{ display: 'flex' }}>
+            <input
+              name="playerP1"
+              className="match-info__player"
+              value={playerP1.name || ''}
+              readOnly
+            />
+            {'+'}
+            <input
+              name="playerP2"
+              className="match-info__player"
+              value={playerP2.name || ''}
+              readOnly
+            />
+          </div>
         </div>
         <div className="match-score">
           <div className="match__container">
@@ -385,11 +357,6 @@ const Match = ({ match, getFixtureData }) => {
         /> */}
         </div>
         <div className="match-info">
-          <BarChartIcon
-            fontSize="medium"
-            sx={{ cursor: 'pointer' }}
-            onClick={() => displayExtraInfoFromTeam(teamP2.id)}
-          />
           <textarea
             name="teamP2"
             wrap="soft"
@@ -403,14 +370,26 @@ const Match = ({ match, getFixtureData }) => {
             src={`${database}/logos/${teamP2.id}`}
             alt={teamP2.name}
             className="match-info__logo"
-            onClick={() => onHandleTeamChange(teamP2.id)}
           />
-          <input
-            name="playerP2"
-            className="match-info__player"
-            value={playerP2.name}
-            readOnly
-          />
+          <div style={{ display: 'flex' }}>
+            <input
+              name="playerP3"
+              className="match-info__player"
+              value={playerP3.name || ''}
+              readOnly
+            />
+            {playerP4 && (
+              <>
+                {'+'}
+                <input
+                  name="playerP4"
+                  className="match-info__player"
+                  value={playerP4.name || ''}
+                  readOnly
+                />
+              </>
+            )}
+          </div>
         </div>
       </div>
       {updatedAt ? (
@@ -424,4 +403,4 @@ const Match = ({ match, getFixtureData }) => {
   )
 }
 
-export default Match
+export default TagTeamsMatch

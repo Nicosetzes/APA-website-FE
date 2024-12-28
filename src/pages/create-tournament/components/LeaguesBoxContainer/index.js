@@ -9,8 +9,10 @@ import TeamBox from '../TeamBox'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import axios from 'axios'
-import DragAndDropAssignment from './../DragAndDropAssignment'
-import MobileAssignment from './../MobileAssignment'
+import RegularDragAndDropAssignment from '../RegularDragAndDropAssignment'
+import RegularMobileAssignment from '../RegularMobileAssignment'
+import TagTeamsDragAndDropAssignment from './../TagTeamsDragAndDropAssignment'
+import TagTeamsMobileAssignment from './../TagTeamsMobileAssignment'
 
 const LeaguesBoxContainer = ({ format, players, leagues }) => {
   // const isXL = useMediaQuery({ query: '(min-width: 1200px)' })
@@ -156,7 +158,10 @@ const LeaguesBoxContainer = ({ format, players, leagues }) => {
 
     console.log(teamsWithAssignedPlayers)
 
-    if (teamsWithAssignedPlayers.length != assignedTeams.length) {
+    if (
+      teamsWithAssignedPlayers.length != assignedTeams.length &&
+      format !== 'tag_teams'
+    ) {
       MySwal.fire({
         background: `rgba(28, 25, 25, 0.95)`,
         color: `#fff`,
@@ -486,16 +491,32 @@ const LeaguesBoxContainer = ({ format, players, leagues }) => {
           <button onClick={() => confirmTeams()}>Seleccionar equipos</button>
         )}
 
-        {confirmedTeams && isL && (
-          <DragAndDropAssignment
+        {confirmedTeams && isL && format !== 'tag_teams' && (
+          <RegularDragAndDropAssignment
             players={players}
             teams={confirmedTeams}
             groups={groups}
             createTournament={createTournament}
           />
         )}
-        {confirmedTeams && !isL && (
-          <MobileAssignment
+        {confirmedTeams && !isL && format !== 'tag_teams' && (
+          <RegularMobileAssignment
+            players={players}
+            teams={confirmedTeams}
+            groups={groups}
+            createTournament={createTournament}
+          />
+        )}
+        {confirmedTeams && isL && format == 'tag_teams' && (
+          <TagTeamsDragAndDropAssignment
+            players={players}
+            teams={confirmedTeams}
+            groups={groups}
+            createTournament={createTournament}
+          />
+        )}
+        {confirmedTeams && !isL && format == 'tag_teams' && (
+          <TagTeamsMobileAssignment
             players={players}
             teams={confirmedTeams}
             groups={groups}

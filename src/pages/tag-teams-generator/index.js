@@ -6,7 +6,9 @@ import {
   useParams,
   useSearchParams,
 } from 'react-router-dom'
+import TagTeamsStandingsTable from '../../components/TagTeamsStandingsTable'
 import TagTeamsMatchPreview from '../../components/TagTeamsMatchPreview'
+import FixtureContainer from '../../components/FixtureContainer'
 import BreadCrumbsMUI from './../../components/BreadCrumbsMUI'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import { useMediaQuery } from 'react-responsive'
@@ -16,9 +18,7 @@ import { Oval } from 'react-loader-spinner'
 import Switch from '@mui/material/Switch'
 import { motion } from 'framer-motion'
 import { api } from './../../api'
-
 import axios from 'axios'
-import FixtureContainer from '../../components/FixtureContainer'
 
 const TagTeamsGenerator = () => {
   // const isL = useMediaQuery({ query: '(min-width: 992px)' })
@@ -48,21 +48,28 @@ const TagTeamsGenerator = () => {
   const [playerSwitchState, setPlayerSwitchState] = useState([])
 
   const handlePlayerSwitchChange = (event) => {
-    event.target.checked
-      ? setPlayerSwitchState([
-          ...playerSwitchState,
-          { id: event.target.value, name: event.target.name },
-        ])
-      : setPlayerSwitchState((currentState) =>
-          currentState.filter(({ id }) => id !== event.target.value),
-        )
+    if (event.target.checked)
+      setPlayerSwitchState([
+        ...playerSwitchState,
+        { id: event.target.value, name: event.target.name },
+      ])
+    else {
+      setPlayerSwitchState((currentState) =>
+        currentState.filter(({ id }) => id !== event.target.value),
+      )
+      // Me aseguro de reiniciar el formato siempre que saco un jugador
+      setFormatSwitchState([])
+    }
   }
 
   const [formatSwitchState, setFormatSwitchState] = useState([])
 
+  console.log(playerSwitchState)
+  console.log(formatSwitchState)
+
   const handleFormatSwitchChange = (event) => {
     event.target.checked
-      ? setFormatSwitchState([...formatSwitchState, event.target.value])
+      ? setFormatSwitchState([event.target.value])
       : setFormatSwitchState((currentState) =>
           currentState.filter((id) => id !== event.target.value),
         )
@@ -70,13 +77,7 @@ const TagTeamsGenerator = () => {
 
   const [matchSettings, setMatchSettings] = useState()
 
-  const randomizeMatch = (players, teams) => {
-    console.log(playerSwitchState)
-    console.log(formatSwitchState)
-
-    console.log(players)
-    console.log(teams)
-
+  const randomizeMatch = (teams) => {
     const formattedTeams = teams.map(({ team }) => {
       return { id: team.id, name: team.name }
     })
@@ -99,17 +100,13 @@ const TagTeamsGenerator = () => {
       ...playerSwitchState.sort(() => 0.5 - Math.random()),
     ]
 
-    const firstPlayerIndex = Math.floor(
-      Math.random() * playersLottery.sort(() => 0.5 - Math.random()).length,
-    )
+    const firstPlayerIndex = Math.floor(Math.random() * playersLottery.length)
 
     const playerP1 = playersLottery.at(firstPlayerIndex)
 
     playersLottery.splice(firstPlayerIndex, 1)
 
-    const secondPlayerIndex = Math.floor(
-      Math.random() * playersLottery.sort(() => 0.5 - Math.random()).length,
-    )
+    const secondPlayerIndex = Math.floor(Math.random() * playersLottery.length)
 
     const playerP2 = playersLottery.at(secondPlayerIndex)
 
@@ -119,7 +116,7 @@ const TagTeamsGenerator = () => {
 
     let playerP4
 
-    if (playerSwitchState.length == 4 && formatSwitchState == '4') {
+    if (playerSwitchState.length >= 4 && formatSwitchState == '4') {
       playerP4 = playersLottery.at(-1)
     }
 
@@ -138,6 +135,24 @@ const TagTeamsGenerator = () => {
 
   useEffect(() => {
     getFixtureData()
+  }, [])
+
+  const [standingsData, setStandingsData] = useState()
+
+  console.log(standingsData)
+
+  const getStandingsData = () => {
+    console.log('Traigo los standings del torneo')
+
+    axios
+      .get(`${api}/tournaments/${tournament}/tag-teams-standings/table`)
+      .then(({ data }) => {
+        setStandingsData(data)
+      })
+  }
+
+  useEffect(() => {
+    getStandingsData()
   }, [])
 
   if (tournamentData) {
@@ -246,11 +261,7 @@ const TagTeamsGenerator = () => {
                     <Switch
                       checked={formatSwitchState.includes('3')}
                       color="warning"
-                      disabled={
-                        playerSwitchState.length < 3 ||
-                        (formatSwitchState.length === 1 &&
-                          !formatSwitchState.includes('3'))
-                      }
+                      disabled={playerSwitchState.length < 3}
                       onChange={handleFormatSwitchChange}
                       value={'3'}
                     />
@@ -262,11 +273,7 @@ const TagTeamsGenerator = () => {
                     <Switch
                       checked={formatSwitchState.includes('4')}
                       color="warning"
-                      disabled={
-                        playerSwitchState.length < 4 ||
-                        (formatSwitchState.length === 1 &&
-                          !formatSwitchState.includes('4'))
-                      }
+                      disabled={playerSwitchState.length < 4}
                       onChange={handleFormatSwitchChange}
                       value={'4'}
                     />
@@ -278,7 +285,8 @@ const TagTeamsGenerator = () => {
           </FormGroup>
           <button
             className="button-main"
-            onClick={() => randomizeMatch(players, teams)}
+            disabled={!formatSwitchState.length}
+            onClick={() => randomizeMatch(teams)}
             style={{
               marginBottom: '1rem',
             }}
@@ -297,7 +305,11 @@ const TagTeamsGenerator = () => {
             format={format}
             matches={fixtureData.matches}
             getFixtureData={getFixtureData}
+            getStandingsData={getStandingsData}
           />
+        ) : null}
+        {standingsData ? (
+          <TagTeamsStandingsTable standings={standingsData.standings} />
         ) : null}
       </motion.div>
     )

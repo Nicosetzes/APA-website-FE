@@ -2,7 +2,12 @@ import { StyledFixtureContainer } from './styled'
 import TagTeamsMatch from '../TagTeamsMatch'
 import Match from './../Match'
 
-const FixtureContainer = ({ format, getFixtureData, matches }) => {
+const FixtureContainer = ({
+  format,
+  getFixtureData,
+  getStandingsData,
+  matches,
+}) => {
   console.log(format)
 
   console.log(matches)
@@ -15,6 +20,7 @@ const FixtureContainer = ({ format, getFixtureData, matches }) => {
                 key={match._id}
                 match={match}
                 getFixtureData={getFixtureData}
+                getStandingsData={getStandingsData}
               />
             ))
           : matches.map((match) => (

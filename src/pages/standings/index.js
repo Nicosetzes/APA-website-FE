@@ -1,5 +1,3 @@
-import * as React from 'react'
-import { useEffect, useState } from 'react'
 import {
   createSearchParams,
   Link,
@@ -8,15 +6,17 @@ import {
   useParams,
   useSearchParams,
 } from 'react-router-dom'
-import axios from 'axios'
-import { motion } from 'framer-motion'
 import PlayerStatsTable from './../../components/PlayerStatsTable'
-import { api } from './../../api'
-import { Oval } from 'react-loader-spinner'
 import BreadCrumbsMUI from './../../components/BreadCrumbsMUI'
 import TableContainer from '@mui/material/TableContainer'
-import Paper from '@mui/material/Paper'
 import StandingsTable from './components/StandingsTable'
+import { useEffect, useState } from 'react'
+import { Oval } from 'react-loader-spinner'
+import Paper from '@mui/material/Paper'
+import { motion } from 'framer-motion'
+import { api } from './../../api'
+import * as React from 'react'
+import axios from 'axios'
 
 const Standings = () => {
   const [tournamentData, setTournamentData] = useState()

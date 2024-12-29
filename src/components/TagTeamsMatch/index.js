@@ -10,7 +10,7 @@ import { StyledMatch } from './styled'
 import Swal from 'sweetalert2'
 import axios from 'axios'
 
-const TagTeamsMatch = ({ getFixtureData, match }) => {
+const TagTeamsMatch = ({ getFixtureData, getStandingsData, match }) => {
   const MySwal = withReactContent(Swal)
 
   const [searchParams, setSearchParams] = useSearchParams()
@@ -35,8 +35,6 @@ const TagTeamsMatch = ({ getFixtureData, match }) => {
     _id,
     updatedAt,
   } = match
-
-  console.log(_id)
 
   const [matchScore, setMatchScore] = useState({
     scoreP1: scoreP1,
@@ -118,6 +116,8 @@ const TagTeamsMatch = ({ getFixtureData, match }) => {
           didOpen: (toast) => {
             // Vuelvo a traer los partidos del fixture, para mostrar los partidos actualizados sin recargar la página //
             getFixtureData()
+            // Vuelvo a traer los standings, para mostrar la tabla actualizada sin recargar la página //
+            getStandingsData()
             toast.addEventListener('mouseenter', Swal.stopTimer)
             toast.addEventListener('mouseleave', Swal.resumeTimer)
           },
@@ -231,6 +231,8 @@ const TagTeamsMatch = ({ getFixtureData, match }) => {
               didOpen: (toast) => {
                 // Vuelvo a traer los partidos del fixture, para mostrar los partidos actualizados sin recargar la página //
                 getFixtureData()
+                // Vuelvo a traer los standings, para mostrar la tabla actualizada sin recargar la página //
+                getStandingsData()
                 toast.addEventListener('mouseenter', Swal.stopTimer)
                 toast.addEventListener('mouseleave', Swal.resumeTimer)
               },

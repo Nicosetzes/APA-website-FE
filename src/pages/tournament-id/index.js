@@ -136,18 +136,20 @@ const TournamentId = () => {
                   Generador <img src={apaLogo} style={{ maxWidth: '50px' }} />
                 </Link>
               )}
-              <Link
-                to={`standings`}
-                state={{ groups: groups }}
-                style={{
-                  color: '#004a79',
-                  fontSize: '2rem',
-                  margin: '1rem',
-                  textDecoration: 'none',
-                }}
-              >
-                Clasificación
-              </Link>
+              {format !== 'tag_teams' && (
+                <Link
+                  to={`standings`}
+                  state={{ groups: groups }}
+                  style={{
+                    color: '#004a79',
+                    fontSize: '2rem',
+                    margin: '1rem',
+                    textDecoration: 'none',
+                  }}
+                >
+                  Clasificación
+                </Link>
+              )}
               {format == 'league' && (
                 <Link
                   to={`simulator`}

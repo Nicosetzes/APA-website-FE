@@ -16,7 +16,7 @@ import lucho from './../../../src/images/lucho.png'
 import leo from './../../../src/images/leo.png'
 
 const superliga_inglesa_cloudinary_id = 'tournaments/chemvkybmg1wmvjanwby'
-const mundial_de_clubes_cloudinary_id = 'tournaments/ferraris_ykvwlf'
+const mundial_de_ferraris_cloudinary_id = 'tournaments/ferraris_ykvwlf'
 
 const Home = () => {
   // const isXL = useMediaQuery({ query: '(min-width: 1200px)' })
@@ -56,15 +56,15 @@ const Home = () => {
         <div className="container__accolades">
           <div className="box__champion">
             <div className="champion-title">CAMPEÓN VIGENTE</div>
-            <div className="champion-player">Nico</div>
+            <div className="champion-player">Leo</div>
             <div className="champion-img">
               <Image
                 cloudName={cloudName}
-                publicId={superliga_inglesa_cloudinary_id}
+                publicId={mundial_de_ferraris_cloudinary_id}
               />
             </div>
             <div className="champion-team">
-              <span>SOUTHAMPTON</span>
+              <span>ATLÉTICO MADRID</span>
             </div>
             <button onClick={() => navigate('./hall-of-fame')}>
               SALÓN DE LA FAMA
@@ -106,7 +106,7 @@ const Home = () => {
               <div className="tournament-img">
                 <Image
                   cloudName={cloudName}
-                  publicId={mundial_de_clubes_cloudinary_id}
+                  publicId={mundial_de_ferraris_cloudinary_id}
                 />
               </div>
             </div>

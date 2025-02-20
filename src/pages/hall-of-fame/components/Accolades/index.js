@@ -8,6 +8,7 @@ import trophyPremierLeague from './../../../../images/premier-league.png'
 import trophyCopaAmerica from './../../../../images/copa-america.png'
 import trophyChampions from './../../../../images/champions.png'
 import trophyWorldCup from './../../../../images/world-cup.png'
+import trophyFerraris from './../../../../images/ferraris.png'
 import { StyledAccolades } from './styled'
 import PlayerBox from '../PlayerBox'
 
@@ -25,6 +26,7 @@ const Accolades = () => {
             trophyTorneoArgentino,
             trophyWorldCup,
             trophySuperligaItaloEspañola,
+            trophyFerraris,
           ]}
         />
         <PlayerBox

@@ -263,7 +263,7 @@ const FixtureId = () => {
       >
         <BreadCrumbsMUI links={breadCrumbsLinks} />
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          {groups.length ? (
+          {groups?.length ? (
             <div
               style={{
                 alignItems: 'center',

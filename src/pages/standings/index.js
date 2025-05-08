@@ -1,7 +1,6 @@
 import {
   createSearchParams,
   Link,
-  useLocation,
   useNavigate,
   useParams,
   useSearchParams,
@@ -129,7 +128,7 @@ const Standings = () => {
           }}
         >
           <div>{name}</div>
-          {groups.length ? (
+          {groups?.length ? (
             <div
               style={{
                 alignItems: 'center',

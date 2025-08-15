@@ -169,7 +169,7 @@ const PlayoffMatch = ({
               {played ? (
                 <div className="team-score">
                   {valid === false &&
-                    outcome.teamThatWon.id == teamP1.id &&
+                    outcome.teamThatWon?.id == teamP1.id &&
                     'W/O'}
                   {valid !== false && scoreP1}
                 </div>
@@ -212,7 +212,7 @@ const PlayoffMatch = ({
               {played ? (
                 <div className="team-score">
                   {valid === false &&
-                    outcome.teamThatWon.id == teamP2.id &&
+                    outcome.teamThatWon?.id == teamP2.id &&
                     'W/O'}
                   {valid !== false && scoreP2}
                 </div>

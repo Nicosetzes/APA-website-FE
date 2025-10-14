@@ -48,7 +48,7 @@ const StreakBox = ({
           </>
         }
       >
-        <StyledStreakBox color="green">V</StyledStreakBox>
+        <StyledStreakBox color="var(--green-900)">V</StyledStreakBox>
       </HtmlTooltip>
     )
   } else if (result === 'd') {

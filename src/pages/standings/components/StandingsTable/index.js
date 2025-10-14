@@ -13,9 +13,6 @@ const StandingsTable = ({ tournament, format, standings, onHandle }) => {
   const isSm = useMediaQuery({ query: '(min-width: 500px)' })
   const isXS = useMediaQuery({ query: '(min-width: 400px)' })
 
-  console.log(standings)
-  console.log(format)
-
   return (
     <>
       <StyledTable

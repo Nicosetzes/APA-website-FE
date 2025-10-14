@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 export const StyledChampionshipBox = styled.div`
-  background-color: #004a79;
+  background-color: var(--blue-900);
   border: #0d8499 3px solid;
   cursor: pointer;
   display: flex;
@@ -55,7 +55,7 @@ export const StyledChampionshipBox = styled.div`
           margin: 0.5rem 0;
         }
         .showcase__body-info-user {
-          color: #004a79;
+          color: var(--blue-900);
           font-size: 3.5rem;
           font-weight: 700;
           line-height: 2.5rem;

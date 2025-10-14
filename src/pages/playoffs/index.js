@@ -4,8 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useLogin } from '../../context/LoginContext'
 import axios from 'axios'
 import { motion } from 'framer-motion'
-import { api, database } from './../../api'
-import { Oval } from 'react-loader-spinner'
+import { api } from './../../api'
 import StandingsTable from './../standings/components/StandingsTable'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
@@ -14,6 +13,7 @@ import PlayoffRound from '../../components/PlayoffRound'
 import ChampionBox from '../../components/ChampionBox'
 import FinalistBox from './../../components/FinalistBox'
 import MatchPreview from './components/MatchPreview'
+import PageLoader from '../../components/PageLoader'
 
 const Playoffs = () => {
   const { tournament } = useParams()
@@ -333,7 +333,7 @@ const Playoffs = () => {
           <div
             style={{
               alignItems: 'center',
-              border: '#004a79 3px solid',
+              border: 'var(--blue-900) 3px solid',
               display: 'flex',
               flexDirection: 'column',
               margin: '2rem auto',
@@ -353,19 +353,7 @@ const Playoffs = () => {
       </motion.div>
     )
   } else {
-    return (
-      <div style={{ margin: 'auto', width: '100px' }}>
-        <Oval
-          height="80"
-          width="80"
-          radius="9"
-          color="green"
-          ariaLabel="three-dots-loading"
-          $wrapperStyle
-          $wrapperClass
-        />
-      </div>
-    )
+    return <PageLoader />
   }
 }
 

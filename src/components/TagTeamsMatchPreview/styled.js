@@ -7,7 +7,7 @@ export const StyledTagTeamsMatchPreview = styled.form`
   justify-content: space-evenly;
   margin: 0.5rem auto;
   max-width: 400px;
-  outline: #004a79 3px solid;
+  outline: var(--blue-900) 3px solid;
   padding: 1rem 0;
 
   .match-view {

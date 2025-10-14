@@ -1,22 +1,14 @@
 import { useState, useEffect } from 'react'
-// import { useMediaQuery } from 'react-responsive'
 import { motion } from 'framer-motion'
 import { StyledStatistics } from './styled'
 import { api } from './../../api'
 import BarChart from './../../charts/BarChart'
 import DoughnutChart from './../../charts/DoughnutChart'
-import { Oval } from 'react-loader-spinner'
 import axios from 'axios'
 import StreakContainer from './components/StreakContainer'
+import PageLoader from '../../components/PageLoader'
 
 const Statistics = () => {
-  // const isL = useMediaQuery({ query: "(min-width: 992px)" });
-  // const isM = useMediaQuery({ query: '(min-width: 768px)' })
-  // const isSm = useMediaQuery({ query: "(min-width: 500px)" });
-  // const isXS = useMediaQuery({ query: '(min-width: 400px)' })
-
-  // const api = 'http://localhost:5000/api'
-
   const [stats, setStats] = useState()
 
   const flipVariant = {
@@ -248,19 +240,7 @@ const Statistics = () => {
       </motion.div>
     )
   } else {
-    return (
-      <div style={{ margin: 'auto', width: '100px' }}>
-        <Oval
-          height="80"
-          width="80"
-          radius="9"
-          color="green"
-          ariaLabel="three-dots-loading"
-          $wrapperStyle
-          $wrapperClass
-        />
-      </div>
-    )
+    return <PageLoader />
   }
 }
 

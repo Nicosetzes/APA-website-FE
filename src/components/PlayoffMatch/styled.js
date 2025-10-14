@@ -7,7 +7,9 @@ export const StyledPlayoffMatch = styled.div`
   margin: 0.25rem;
   min-width: 210px;
   outline: ${(props) =>
-    `${props.isThisTheFinal ? '#cfa420 2px solid' : '#000 2px solid'}`};
+    `${
+      props.isThisTheFinal ? 'var(--yellow-900) 2px solid' : '#000 2px solid'
+    }`};
   padding: 0 0.5rem;
   .container__team {
     align-items: center;

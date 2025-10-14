@@ -7,12 +7,12 @@ import { useEffect, useState } from 'react'
 import { useLogin } from './../../context/LoginContext'
 import axios from 'axios'
 import { motion } from 'framer-motion'
-import { Oval } from 'react-loader-spinner'
+import PageLoader from '../../components/PageLoader'
 
 const Tournaments = () => {
   const login = useLogin()
 
-  const { loginStatus, setLoginStatus } = login
+  const { loginStatus } = login
 
   console.log(loginStatus)
 
@@ -22,11 +22,6 @@ const Tournaments = () => {
     const tournaments = await axios.get(`${api}/tournaments`)
 
     setTournaments(tournaments.data)
-
-    // Promise.all([tournaments]).then((values) => {
-    //   const data = values.map((response) => response.data)
-    //   setTournaments(data)
-    // })
   }
 
   useEffect(() => {
@@ -104,19 +99,7 @@ const Tournaments = () => {
       </motion.div>
     )
   } else {
-    return (
-      <div style={{ margin: 'auto', width: '100px' }}>
-        <Oval
-          height="80"
-          width="80"
-          radius="9"
-          color="green"
-          ariaLabel="three-dots-loading"
-          $wrapperStyle
-          $wrapperClass
-        />
-      </div>
-    )
+    return <PageLoader />
   }
 }
 

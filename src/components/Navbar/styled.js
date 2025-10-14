@@ -2,7 +2,7 @@ import styled from 'styled-components'
 
 export const StyledNavbar = styled.div`
   align-items: center;
-  background-color: #004a79;
+  background-color: var(--blue-900);
   display: flex;
   height: 110px;
   width: 100%;

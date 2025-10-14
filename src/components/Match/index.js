@@ -1,10 +1,5 @@
 import { useState } from 'react'
-import {
-  useParams,
-  useSearchParams,
-  useNavigate,
-  createSearchParams,
-} from 'react-router-dom'
+import { useParams, useSearchParams, useNavigate } from 'react-router-dom'
 import TeamInformationModal from '../TeamInformationModal'
 import withReactContent from 'sweetalert2-react-content'
 import BarChartIcon from '@mui/icons-material/BarChart'
@@ -39,11 +34,15 @@ const Match = ({ match, getFixtureData }) => {
     played,
     _id,
     updatedAt,
+    createdAt,
   } = match
   const [matchScore, setMatchScore] = useState({
     scoreP1: scoreP1,
     scoreP2: scoreP2,
   })
+
+  console.log(updatedAt)
+  console.log(createdAt)
 
   const onHandleChange = (event) => {
     const name = event.target.name
@@ -65,7 +64,7 @@ const Match = ({ match, getFixtureData }) => {
         background: `rgba(28, 25, 25, 0.95)`,
         color: `#fff`,
         icon: 'error',
-        iconColor: '#b30a0a',
+        iconColor: 'var(--red-900)',
         text: `Resultado incompleto, intente nuevamente`,
         title: '¡Error!',
         toast: true,
@@ -106,7 +105,7 @@ const Match = ({ match, getFixtureData }) => {
           background: `rgba(28, 25, 25, 0.95)`,
           color: `#fff`,
           icon: 'success',
-          iconColor: '#18890e',
+          iconColor: 'var(--green-900)',
           toast: true,
           title: `Partido cargado con éxito`,
           position: 'top-end',
@@ -130,7 +129,7 @@ const Match = ({ match, getFixtureData }) => {
           background: `rgba(28, 25, 25, 0.95)`,
           color: `#fff`,
           icon: 'error',
-          iconColor: '#b30a0a',
+          iconColor: 'var(--red-900)',
           text: message,
           title: '¡Error!',
           toast: true,
@@ -175,7 +174,7 @@ const Match = ({ match, getFixtureData }) => {
         background: `rgba(28, 25, 25, 0.95)`,
         color: `#fff`,
         icon: 'error',
-        iconColor: '#b30a0a',
+        iconColor: 'var(--red-900)',
         title: '¡Error!',
         text: `No puede borrar partidos que no tengan el resultado cargado`,
         toast: true,
@@ -198,7 +197,7 @@ const Match = ({ match, getFixtureData }) => {
       icon: 'warning',
       showCancelButton: true,
       reverseButtons: true,
-      confirmButtonColor: '#d33',
+      confirmButtonColor: 'var(--red-900)',
       cancelButtonColor: '#3085d6',
       confirmButtonText: 'Eliminar',
       cancelButtonText: 'Volver',
@@ -219,7 +218,7 @@ const Match = ({ match, getFixtureData }) => {
               background: `rgba(28, 25, 25, 0.95)`,
               color: `#fff`,
               icon: 'success',
-              iconColor: '#18890e',
+              iconColor: 'var(--green-900)',
               toast: true,
               title: `Partido eliminado con éxito`,
               position: 'top-end',
@@ -243,7 +242,7 @@ const Match = ({ match, getFixtureData }) => {
               background: `rgba(28, 25, 25, 0.95)`,
               color: `#fff`,
               icon: 'error',
-              iconColor: '#b30a0a',
+              iconColor: 'var(--red-900)',
               text: message,
               title: '¡Error!',
               toast: true,
@@ -285,7 +284,7 @@ const Match = ({ match, getFixtureData }) => {
     const group = searchParams.get('group')
 
     MySwal.fire({
-      background: 'rgba(0,74,121,0.8)',
+      background: 'var(--blue-900)',
       width: 600,
       showConfirmButton: false,
       showCloseButton: true,
@@ -318,7 +317,9 @@ const Match = ({ match, getFixtureData }) => {
         handleMatchSubmit(e)
       }}
       style={{
-        outline: played ? '#2aa723 3px solid' : '#dc3545 3px solid',
+        outline: played
+          ? 'var(--green-900) 3px solid'
+          : 'var(--red-900) 3px solid',
       }}
     >
       <div className="match-view">
@@ -379,10 +380,6 @@ const Match = ({ match, getFixtureData }) => {
               <DeleteIcon />
             </IconButton>
           </div>
-          {/* <InputContainer
-          id={_id}
-          isFinished={match.scoreP1 !== undefined ? true : false}
-        /> */}
         </div>
         <div className="match-info">
           <BarChartIcon
@@ -413,12 +410,12 @@ const Match = ({ match, getFixtureData }) => {
           />
         </div>
       </div>
-      {updatedAt ? (
+      {updatedAt && updatedAt !== createdAt ? (
         <div className="match-date">
           Actualizado el: {updatedAt && new Date(updatedAt).toLocaleString()}{' '}
         </div>
       ) : (
-        <div className="match-date">No hay fecha de actualización</div>
+        <div className="match-date">El partido aún no se ha jugado</div>
       )}
     </StyledMatch>
   )

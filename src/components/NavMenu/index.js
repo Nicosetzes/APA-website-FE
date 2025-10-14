@@ -36,61 +36,61 @@ const NavMenu = ({ handleClose, isOpen, anchorEl }) => {
       <MenuList>
         <MenuItem onClick={handleClose}>
           <ListItemIcon>
-            <HomeIcon htmlColor="#004a79" fontSize="small" />
+            <HomeIcon htmlColor="var(--blue-900)" fontSize="small" />
           </ListItemIcon>
           <NavLink to="/">
             <div>INICIO</div>
           </NavLink>
         </MenuItem>
-        <Divider sx={{ borderColor: '#004a79' }} />
+        <Divider sx={{ borderColor: 'var(--blue-900)' }} />
         <MenuItem onClick={handleClose}>
           <ListItemIcon>
-            <CalendarMonthIcon htmlColor="#004a79" fontSize="small" />
+            <CalendarMonthIcon htmlColor="var(--blue-900)" fontSize="small" />
           </ListItemIcon>
           <NavLink to="/tournaments">
             <div>TORNEOS</div>
           </NavLink>
         </MenuItem>
-        <Divider sx={{ borderColor: '#004a79' }} />
+        <Divider sx={{ borderColor: 'var(--blue-900)' }} />
         <MenuItem onClick={handleClose}>
           <ListItemIcon>
-            <CreateIcon htmlColor="#004a79" fontSize="small" />
+            <CreateIcon htmlColor="var(--blue-900)" fontSize="small" />
           </ListItemIcon>
           <NavLink to="/tournaments/create-tournament">
             <div>CREAR TORNEO</div>
           </NavLink>
         </MenuItem>
-        <Divider sx={{ borderColor: '#004a79' }} />
+        <Divider sx={{ borderColor: 'var(--blue-900)' }} />
         <MenuItem onClick={handleClose}>
           <ListItemIcon>
-            <SportsSoccerIcon htmlColor="#004a79" fontSize="small" />
+            <SportsSoccerIcon htmlColor="var(--blue-900)" fontSize="small" />
           </ListItemIcon>
           <NavLink to="/matches">
             <div>ARCHIVO DE PARTIDOS</div>
           </NavLink>
         </MenuItem>
-        <Divider sx={{ borderColor: '#004a79' }} />
+        <Divider sx={{ borderColor: 'var(--blue-900)' }} />
         <MenuItem onClick={handleClose}>
           <ListItemIcon>
-            <BarChartIcon htmlColor="#004a79" fontSize="small" />
+            <BarChartIcon htmlColor="var(--blue-900)" fontSize="small" />
           </ListItemIcon>
           <NavLink to="/statistics">
             <div>STATS</div>
           </NavLink>
         </MenuItem>
-        <Divider sx={{ borderColor: '#004a79' }} />
+        <Divider sx={{ borderColor: 'var(--blue-900)' }} />
         <MenuItem onClick={handleClose}>
           <ListItemIcon>
-            <EmojiEventsIcon htmlColor="#004a79" fontSize="small" />
+            <EmojiEventsIcon htmlColor="var(--blue-900)" fontSize="small" />
           </ListItemIcon>
           <NavLink to="/hall-of-fame">
             <div>SALÓN DE LA FAMA</div>
           </NavLink>
         </MenuItem>
-        <Divider sx={{ borderColor: '#004a79' }} />
+        <Divider sx={{ borderColor: 'var(--blue-900)' }} />
         <MenuItem onClick={handleClose}>
           <ListItemIcon>
-            <AccountCircle htmlColor="#004a79" fontSize="small" />
+            <AccountCircle htmlColor="var(--blue-900)" fontSize="small" />
           </ListItemIcon>
           <NavLink to="users/login">
             <div>{status ? 'MI PERFIL' : 'LOGIN'}</div>

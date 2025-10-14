@@ -20,7 +20,7 @@ export const StyledTournamentsContainer = styled.div`
       max-width: 200px;
     }
     .container__card-name {
-      color: #004a79;
+      color: var(--blue-900);
       display: flex;
       flex-flow: column;
       font-size: 1.25rem;

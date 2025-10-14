@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
 import TeamBox from './components/TeamBox'
 import BreadCrumbsMUI from './../../components/BreadCrumbsMUI'
-import { Link, useParams, useSearchParams, useNavigate } from 'react-router-dom'
-import { api, database, cloudName } from './../../api'
+import { useParams, useNavigate } from 'react-router-dom'
+import { api, database } from './../../api'
 import axios from 'axios'
 import { motion } from 'framer-motion'
-import { Oval } from 'react-loader-spinner'
+import PageLoader from '../../components/PageLoader'
 
 const Simulator = () => {
   const { tournament } = useParams()
@@ -145,19 +145,7 @@ const Simulator = () => {
       </motion.div>
     )
   } else {
-    return (
-      <div style={{ margin: 'auto', width: '100px' }}>
-        <Oval
-          height="80"
-          width="80"
-          radius="9"
-          color="green"
-          ariaLabel="three-dots-loading"
-          $wrapperStyle
-          $wrapperClass
-        />
-      </div>
-    )
+    return <PageLoader />
   }
 }
 

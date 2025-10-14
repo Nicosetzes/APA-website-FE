@@ -1,11 +1,4 @@
-import {
-  createSearchParams,
-  Link,
-  useLocation,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import TagTeamsStandingsTable from '../../components/TagTeamsStandingsTable'
 import TagTeamsMatchPreview from '../../components/TagTeamsMatchPreview'
 import FixtureContainer from '../../components/FixtureContainer'
@@ -14,19 +7,14 @@ import FormControlLabel from '@mui/material/FormControlLabel'
 import { useMediaQuery } from 'react-responsive'
 import FormGroup from '@mui/material/FormGroup'
 import { useEffect, useState } from 'react'
-import { Oval } from 'react-loader-spinner'
 import Switch from '@mui/material/Switch'
 import { motion } from 'framer-motion'
 import { api } from './../../api'
 import axios from 'axios'
+import PageLoader from '../../components/PageLoader'
 
 const TagTeamsGenerator = () => {
-  // const isL = useMediaQuery({ query: '(min-width: 992px)' })
-  // const isM = useMediaQuery({ query: '(min-width: 768px)' })
   const isSm = useMediaQuery({ query: '(min-width: 600px)' })
-  const isXS = useMediaQuery({ query: '(min-width: 375px)' })
-
-  const navigate = useNavigate()
 
   const { tournament } = useParams()
 
@@ -314,19 +302,7 @@ const TagTeamsGenerator = () => {
       </motion.div>
     )
   } else {
-    return (
-      <div style={{ margin: 'auto', width: '100px' }}>
-        <Oval
-          height="80"
-          width="80"
-          radius="9"
-          color="green"
-          ariaLabel="three-dots-loading"
-          $wrapperStyle
-          $wrapperClass
-        />
-      </div>
-    )
+    return <PageLoader />
   }
 }
 

@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import { api, database } from './../../../../api'
 import { StyledTournamentSettings } from './styled'
-import { Oval } from 'react-loader-spinner'
 import axios from 'axios'
 import LeaguesBoxContainer from '../LeaguesBoxContainer'
+import PageLoader from '../../../../components/PageLoader'
 
 const TournamentSettings = ({ format }) => {
   const [data, setData] = useState()
@@ -61,19 +61,7 @@ const TournamentSettings = ({ format }) => {
       </StyledTournamentSettings>
     )
   } else {
-    return (
-      <div style={{ margin: 'auto', width: '100px' }}>
-        <Oval
-          height="80"
-          width="80"
-          radius="9"
-          color="green"
-          ariaLabel="three-dots-loading"
-          $wrapperStyle
-          $wrapperClass
-        />
-      </div>
-    )
+    return <PageLoader />
   }
 }
 

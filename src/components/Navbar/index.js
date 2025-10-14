@@ -45,7 +45,7 @@ const Navbar = () => {
         onClick={toggle}
         style={{
           background: 'none',
-          border: '#cfa420 2px solid',
+          border: 'var(--yellow-900) 2px solid',
           marginLeft: '1rem',
         }}
       >

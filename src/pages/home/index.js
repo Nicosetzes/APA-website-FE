@@ -15,12 +15,10 @@ import santi from './../../../src/images/santi.png'
 import lucho from './../../../src/images/lucho.png'
 import leo from './../../../src/images/leo.png'
 
-const superliga_inglesa_cloudinary_id = 'tournaments/chemvkybmg1wmvjanwby'
+const superliga_internacional_cloudinary_id = 'tournaments/internacional_co4gg7'
 const mundial_de_ferraris_cloudinary_id = 'tournaments/ferraris_ykvwlf'
 
 const Home = () => {
-  // const isXL = useMediaQuery({ query: '(min-width: 1200px)' })
-  // const isL = useMediaQuery({ query: '(min-width: 992px)' })
   const isM = useMediaQuery({ query: '(min-width: 768px)' })
   const isSm = useMediaQuery({ query: '(min-width: 500px)' })
   const isXS = useMediaQuery({ query: '(min-width: 350px)' })
@@ -38,7 +36,6 @@ const Home = () => {
         championBackground={championBackground}
         isXS={isXS && !isSm}
         isM={isM}
-        // isXL={isXL}
       >
         <div className="container__presentation">
           <img className="logo" src={logo} />
@@ -74,7 +71,7 @@ const Home = () => {
         <div className="container__tournament">
           <div
             style={{
-              color: '#004a79',
+              color: 'var(--blue-900)',
               display: 'flex',
               fontSize: '1.5rem',
               fontWeight: 700,
@@ -100,13 +97,15 @@ const Home = () => {
                 flexDirection: 'column',
                 flexBasis: '50%',
               }}
-              onClick={() => navigate('./tournaments/6737f0e81d249d13f55ff48c')}
+              onClick={() => navigate('./tournaments/67bb58104e0e363cd8eecbf1')}
             >
-              <div className="tournament-name">Mundial de Ferraris 2024/25</div>
+              <div className="tournament-name">
+                Superliga Internacional 2025
+              </div>
               <div className="tournament-img">
                 <Image
                   cloudName={cloudName}
-                  publicId={mundial_de_ferraris_cloudinary_id}
+                  publicId={superliga_internacional_cloudinary_id}
                 />
               </div>
             </div>

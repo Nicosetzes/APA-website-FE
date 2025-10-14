@@ -3,7 +3,7 @@ import styled from 'styled-components'
 export const StyledFooter = styled.div`
   align-items: center;
   background-color: #414141;
-  border-top: #cfa420 10px solid;
+  border-top: var(--yellow-900) 10px solid;
   display: flex;
   flex-direction: ${(props) => `${props.isXS ? 'column' : 'row'}`};
   /* height: 110px; */

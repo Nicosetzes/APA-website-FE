@@ -5,10 +5,10 @@ import { StyledUserProfile } from './styled'
 import SignOut from './../SignOut'
 import { api } from '../../../../api'
 import axios from 'axios'
-import { Oval } from 'react-loader-spinner'
 import PlayerInformationModal from '../../../../components/PlayerInformationModal'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+import PageLoader from '../../../../components/PageLoader'
 
 const UserProfile = ({ id }) => {
   const MySwal = withReactContent(Swal)
@@ -99,19 +99,7 @@ const UserProfile = ({ id }) => {
       </>
     )
   } else {
-    return (
-      <div style={{ margin: 'auto', width: '100px' }}>
-        <Oval
-          height="80"
-          width="80"
-          radius="9"
-          color="green"
-          ariaLabel="three-dots-loading"
-          $wrapperStyle
-          $wrapperClass
-        />
-      </div>
-    )
+    return <PageLoader />
   }
 }
 

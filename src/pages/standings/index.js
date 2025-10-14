@@ -1,30 +1,35 @@
 import {
   createSearchParams,
-  Link,
   useNavigate,
   useParams,
   useSearchParams,
 } from 'react-router-dom'
 import PlayerStatsTable from './../../components/PlayerStatsTable'
 import BreadCrumbsMUI from './../../components/BreadCrumbsMUI'
-import TableContainer from '@mui/material/TableContainer'
 import StandingsTable from './components/StandingsTable'
-import { useEffect, useState } from 'react'
-import { Oval } from 'react-loader-spinner'
-import Paper from '@mui/material/Paper'
+import { useEffect, useMemo, useState, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { api } from './../../api'
-import * as React from 'react'
 import axios from 'axios'
+import PageLoader from '../../components/PageLoader'
+import { SpinnerContainer } from './styled'
+import { Oval } from 'react-loader-spinner'
+import {
+  HeaderContainer,
+  Header,
+  Title,
+  FixtureLink,
+  Card,
+  ControlsRow,
+  GroupsTitle,
+  GroupButtons,
+  GroupButton,
+} from './styled'
 
 const Standings = () => {
   const [tournamentData, setTournamentData] = useState()
 
   const [searchParams, setSearchParams] = useSearchParams()
-
-  // const { state } = useLocation()
-
-  const [tournamentGroups, setTournamentGroups] = useState([])
 
   const { tournament } = useParams()
 
@@ -38,65 +43,80 @@ const Standings = () => {
   }
 
   const goToSpecificFixture = (id, params) => {
-    if (isNaN(Number(params)))
-      // El param es de jugador (id) //
+    const group = searchParams.get('group')
+    if (isNaN(Number(params))) {
+      // Navigate by player (state), keep current group context if present
       return navigate(
         {
           pathname: `/tournaments/${id}/fixture`,
+          search: group ? `?${createSearchParams({ group })}` : undefined,
         },
-        { state: playerParams(params) }, // Send information about player id from origin to destination //
+        { state: playerParams(params) },
       )
-    else
+    } else {
+      // Navigate by team (query), also include current group if present
+      const query = group
+        ? createSearchParams({ ...teamParams(params), group }).toString()
+        : createSearchParams(teamParams(params)).toString()
       return navigate({
         pathname: `/tournaments/${id}/fixture`,
-        search: `?${createSearchParams(teamParams(params))}`,
+        search: `?${query}`,
       })
+    }
   }
 
   const onHandleGroupChange = (group) => {
     setSearchParams({ group })
   }
 
-  const getTournamentData = () => {
+  const [loading, setLoading] = useState(false)
+
+  const getTournamentData = useCallback(() => {
+    const controller = new AbortController()
+    setLoading(true)
     const group = searchParams.get('group')
 
-    const tournamentInfo = axios.get(`${api}/tournaments/${tournament}`)
-
-    let standings
-    let playerInfo
-
-    if (group) {
-      // Hay un grupo seleccionado //
-      standings = axios.get(
-        `${api}/tournaments/${tournament}/standings/table?group=${group}`,
-      )
-      playerInfo = axios.get(
-        `${api}/tournaments/${tournament}/standings/player-info?group=${group}`,
-      )
-    } else {
-      // No hay grupos seleccionadps //
-      standings = axios.get(`${api}/tournaments/${tournament}/standings/table`)
-      playerInfo = axios.get(
-        `${api}/tournaments/${tournament}/standings/player-info`,
-      )
-    }
-
-    Promise.all([tournamentInfo, standings, playerInfo]).then((values) => {
-      const data = values.map((response) => response.data)
-      setTournamentData(data)
+    const tournamentInfo = axios.get(`${api}/tournaments/${tournament}`, {
+      signal: controller.signal,
     })
-  }
 
+    const standParams = group
+      ? { params: { group }, signal: controller.signal }
+      : { signal: controller.signal }
+
+    const standingsReq = axios.get(
+      `${api}/tournaments/${tournament}/standings/table`,
+      standParams,
+    )
+    const playerReq = axios.get(
+      `${api}/tournaments/${tournament}/standings/player-info`,
+      standParams,
+    )
+
+    Promise.all([tournamentInfo, standingsReq, playerReq])
+      .then((values) => {
+        const data = values.map((response) => response.data)
+        setTournamentData(data)
+        setLoading(false)
+      })
+      .catch((err) => {
+        if (axios.isCancel?.(err) || err?.name === 'CanceledError') return
+        console.error(err)
+        setLoading(false)
+      })
+
+    return () => controller.abort()
+  }, [api, tournament, searchParams])
+
+  const searchKey = useMemo(() => searchParams.toString(), [searchParams])
   useEffect(() => {
-    console.log('me ejecuté')
-    getTournamentData()
-  }, [searchParams])
-
-  console.log(tournamentData)
+    const cleanup = getTournamentData()
+    return cleanup
+  }, [getTournamentData, searchKey])
 
   if (tournamentData) {
     const { name, format, groups } = tournamentData[0]
-    const { activeGroup, standings } = tournamentData[1] // Index 0 because of the order in which I invoked the promises call in Promise.all //
+    const { standings } = tournamentData[1] // Index 0 because of the order in which I invoked the promises call in Promise.all //
     const playerStats = tournamentData[2]
 
     const breadCrumbsLinks = [
@@ -111,7 +131,6 @@ const Standings = () => {
         route: `tournaments/${tournament}/standings`,
       },
     ]
-
     return (
       <motion.div
         initial={{ opacity: 0 }}
@@ -119,90 +138,63 @@ const Standings = () => {
         exit={{ opacity: 0 }}
       >
         <BreadCrumbsMUI links={breadCrumbsLinks} />
-        <div
-          style={{
-            fontSize: '1.5rem',
-            fontWeight: 700,
-            margin: '1rem 1rem 0 auto',
-            textAlign: 'center',
-          }}
-        >
-          <div>{name}</div>
+        <HeaderContainer>
+          <Header>
+            <Title>Clasificación</Title>
+            <FixtureLink to={`/tournaments/${tournament}/fixture`}>
+              Ir a Fixture
+            </FixtureLink>
+          </Header>
+
           {groups?.length ? (
-            <div
-              style={{
-                alignItems: 'center',
-                border: 'black 2px solid',
-                display: 'flex',
-                margin: '0.75rem auto',
-                padding: '0.5rem 1rem',
-                width: 'fit-content',
-              }}
-            >
-              Grupos:{' '}
-              {groups.map((group) => (
-                <span
-                  key={group}
-                  onClick={() => onHandleGroupChange(group)}
-                  style={{
-                    color:
-                      (group == 'A' && !searchParams.get('group')) ||
-                      group == searchParams.get('group')
-                        ? 'green'
-                        : 'red',
-                    cursor: 'pointer',
-                    fontSize: '1.75rem',
-                    margin: '0 0.5rem',
-                    textDecoration:
-                      (group == 'A' && !searchParams.get('group')) ||
-                      group == searchParams.get('group')
-                        ? 'underline'
-                        : 'none',
-                  }}
-                >
-                  {group}
-                </span>
-              ))}
-            </div>
+            <Card>
+              <ControlsRow>
+                <GroupsTitle>Grupos</GroupsTitle>
+                <GroupButtons>
+                  {groups.map((group) => {
+                    const active =
+                      (group === 'A' && !searchParams.get('group')) ||
+                      group === searchParams.get('group')
+                    return (
+                      <GroupButton
+                        key={group}
+                        $active={active}
+                        onClick={() => onHandleGroupChange(group)}
+                      >
+                        {group}
+                      </GroupButton>
+                    )
+                  })}
+                </GroupButtons>
+              </ControlsRow>
+            </Card>
           ) : null}
-        </div>
-        <div style={{ display: 'flex' }}>
-          <Link
-            to={`/tournaments/${tournament}/fixture`}
-            style={{
-              color: '#004a79',
-              fontSize: '1.5rem',
-              margin: '1rem 1rem 1rem auto',
-            }}
-          >
-            Ir a Fixture
-          </Link>
-        </div>
-        <TableContainer component={Paper}>
-          <StandingsTable
-            tournament={tournament}
-            format={format}
-            standings={standings}
-            onHandle={goToSpecificFixture}
-          />
-          <PlayerStatsTable stats={playerStats} />
-        </TableContainer>
+        </HeaderContainer>
+
+        {loading ? (
+          <SpinnerContainer>
+            <Oval
+              height="80"
+              width="80"
+              color="var(--green-900)"
+              ariaLabel="loading"
+            />
+          </SpinnerContainer>
+        ) : (
+          <>
+            <StandingsTable
+              tournament={tournament}
+              format={format}
+              standings={standings}
+              onHandle={goToSpecificFixture}
+            />
+            <PlayerStatsTable stats={playerStats} />
+          </>
+        )}
       </motion.div>
     )
   } else {
-    return (
-      <div style={{ margin: 'auto', width: '100px' }}>
-        <Oval
-          height="80"
-          width="80"
-          radius="9"
-          color="green"
-          ariaLabel="three-dots-loading"
-          $wrapperStyle
-          $wrapperClass
-        />
-      </div>
-    )
+    return <PageLoader />
   }
 }
 

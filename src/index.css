@@ -1,3 +1,10 @@
+:root {
+  --blue-900: #004a79;
+  --yellow-900: #cfa420;
+  --green-900: #1e9c1e;
+  --red-900: #cf1224;
+}
+
 * {
   box-sizing: border-box;
 }

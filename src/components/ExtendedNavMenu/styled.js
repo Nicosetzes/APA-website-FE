@@ -33,7 +33,7 @@ export const StyledExtendedNavMenu = styled.div`
       width: 150px;
       z-index: 100;
       .dropdown-menu-item {
-        color: #004a79;
+        color: var(--blue-900);
         font-weight: 700;
         margin: 0.75rem 0;
         text-align: center;

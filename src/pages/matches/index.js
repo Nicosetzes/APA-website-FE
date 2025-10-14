@@ -8,7 +8,7 @@ import Pagination from '@mui/material/Pagination'
 import MatchesTable from './components/MatchesTable'
 import Paper from '@mui/material/Paper'
 import { motion } from 'framer-motion'
-import { Oval } from 'react-loader-spinner'
+import PageLoader from '../../components/PageLoader'
 
 const Matches = () => {
   // const isSm = useMediaQuery({ query: '(min-width: 500px)' })
@@ -108,19 +108,7 @@ const Matches = () => {
       </motion.div>
     )
   } else {
-    return (
-      <div style={{ margin: 'auto', width: '100px' }}>
-        <Oval
-          height="80"
-          width="80"
-          radius="9"
-          color="green"
-          ariaLabel="three-dots-loading"
-          $wrapperStyle
-          $wrapperClass
-        />
-      </div>
-    )
+    return <PageLoader />
   }
 }
 

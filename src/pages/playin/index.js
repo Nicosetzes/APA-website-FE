@@ -1,29 +1,16 @@
 import { useState, useEffect } from 'react'
-import { useMediaQuery } from 'react-responsive'
-import {
-  Link,
-  useLocation,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from 'react-router-dom'
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { useLogin } from '../../context/LoginContext'
 import PlayinRound from './../../components/PlayinRound'
-import FixtureContainer from '../../components/FixtureContainer'
 import { api, database } from './../../api'
 import axios from 'axios'
 import { motion } from 'framer-motion'
 import BreadCrumbsMUI from './../../components/BreadCrumbsMUI'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
-import { Oval } from 'react-loader-spinner'
+import PageLoader from '../../components/PageLoader'
 
 const Playin = () => {
-  // const isL = useMediaQuery({ query: '(min-width: 992px)' })
-  // const isM = useMediaQuery({ query: '(min-width: 768px)' })
-  // const isSm = useMediaQuery({ query: '(min-width: 500px)' })
-  // const isXS = useMediaQuery({ query: '(min-width: 375px)' })
-
   const MySwal = withReactContent(Swal)
 
   const [searchParams, setSearchParams] = useSearchParams()
@@ -194,7 +181,7 @@ const Playin = () => {
                 matches.filter(({ outcome }) => outcome).length == 6 && (
                   <div
                     style={{
-                      border: '#cfa420 2px solid',
+                      border: 'var(--yellow-900) 2px solid',
                       display: 'flex',
                       flexDirection: 'column',
                       margin: 'auto',
@@ -249,7 +236,7 @@ const Playin = () => {
           <div
             style={{
               alignItems: 'center',
-              border: '#004a79 3px solid',
+              border: 'var(--blue-900) 3px solid',
               display: 'flex',
               flexDirection: 'column',
               margin: '2rem auto',
@@ -274,7 +261,7 @@ const Playin = () => {
           <div
             style={{
               alignItems: 'center',
-              border: '#004a79 3px solid',
+              border: 'var(--blue-900) 3px solid',
               display: 'flex',
               flexDirection: 'column',
               margin: '2rem auto',
@@ -297,19 +284,7 @@ const Playin = () => {
       </motion.div>
     )
   } else {
-    return (
-      <div style={{ margin: 'auto', width: '100px' }}>
-        <Oval
-          height="80"
-          width="80"
-          radius="9"
-          color="green"
-          ariaLabel="three-dots-loading"
-          $wrapperStyle
-          $wrapperClass
-        />
-      </div>
-    )
+    return <PageLoader />
   }
 }
 

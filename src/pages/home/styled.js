@@ -15,7 +15,7 @@ export const StyledHome = styled.div`
     position: relative;
     &::after {
       content: '';
-      background-color: #004a79;
+      background-color: var(--blue-900);
       mix-blend-mode: hard-light;
       position: absolute;
       inset: 0;
@@ -59,7 +59,7 @@ export const StyledHome = styled.div`
     }
   }
   .container__memes {
-    background-color: #004a79;
+    background-color: var(--blue-900);
     display: flex;
     margin: 0 auto;
     padding: 2rem 0;
@@ -78,7 +78,7 @@ export const StyledHome = styled.div`
     position: relative;
     &::after {
       content: '';
-      background-color: #004a79;
+      background-color: var(--blue-900);
       mix-blend-mode: hard-light;
       position: absolute;
       inset: 0;
@@ -147,7 +147,7 @@ export const StyledHome = styled.div`
     justify-content: center;
     min-height: 500px;
     .tournament-title {
-      color: #004a79;
+      color: var(--blue-900);
       display: flex;
       font-size: 1rem;
       font-weight: 700;
@@ -162,7 +162,7 @@ export const StyledHome = styled.div`
     }
     .tournament-name {
       align-items: center;
-      color: #004a79;
+      color: var(--blue-900);
       display: flex;
       font-size: 1rem;
       font-weight: 700;
@@ -175,7 +175,7 @@ export const StyledHome = styled.div`
       background: none;
       border: #f5d77f 2px solid;
       border-radius: 5px;
-      color: #004a79;
+      color: var(--blue-900);
       cursor: pointer;
       font-size: 0.75rem;
       font-weight: 700;

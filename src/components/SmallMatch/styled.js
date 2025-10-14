@@ -6,14 +6,16 @@ export const StyledSmallMatch = styled.div`
   display: flex;
   flex-direction: column;
   margin: 0.25rem;
+  max-width: 200px;
   padding: 0.75rem;
-  width: 180px;
+  width: 100%;
   .match-info {
     .match-info-team {
       font-size: 0.75rem;
     }
     .match-info-logo {
       img {
+        height: 50px;
         width: 40px;
       }
     }

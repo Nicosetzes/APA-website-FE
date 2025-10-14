@@ -3,7 +3,7 @@ import styled from 'styled-components'
 export const StyledPlayerBox = styled.div`
   align-items: center;
   background-color: #161426;
-  border: #cfa420 3px solid;
+  border: var(--yellow-900) 3px solid;
   border-radius: 10px;
   color: #fff;
   cursor: pointer;

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link, useParams, useSearchParams, useNavigate } from 'react-router-dom'
+import { Link, useParams, useNavigate } from 'react-router-dom'
 import BreadCrumbsMUI from './../../components/BreadCrumbsMUI'
 import { api, database, cloudName } from './../../api'
 import axios from 'axios'
@@ -7,14 +7,11 @@ import { Image } from 'cloudinary-react'
 import StarIcon from '@mui/icons-material/Star'
 import { motion } from 'framer-motion'
 import { useMediaQuery } from 'react-responsive'
-import { Oval } from 'react-loader-spinner'
 import apaLogo from './../../images/sitioapalogo.jpg'
+import PageLoader from '../../components/PageLoader'
 
 const TournamentId = () => {
-  // const isL = useMediaQuery({ query: '(min-width: 992px)' })
-  // const isM = useMediaQuery({ query: '(min-width: 768px)' })
   const isSm = useMediaQuery({ query: '(min-width: 576px)' })
-  // const isXS = useMediaQuery({ query: '(min-width: 400px)' })
 
   const { tournament } = useParams()
 
@@ -110,7 +107,7 @@ const TournamentId = () => {
                   to={`fixture`}
                   state={{ groups: groups }}
                   style={{
-                    color: '#004a79',
+                    color: 'var(--blue-900)',
                     fontSize: '2rem',
                     margin: '1rem',
                     textDecoration: 'none',
@@ -124,7 +121,7 @@ const TournamentId = () => {
                   to={`tag-teams-generator`}
                   style={{
                     alignItems: 'center',
-                    color: '#004a79',
+                    color: 'var(--blue-900)',
                     display: 'flex',
                     fontSize: '2rem',
                     gap: '0.5rem',
@@ -141,7 +138,7 @@ const TournamentId = () => {
                   to={`standings`}
                   state={{ groups: groups }}
                   style={{
-                    color: '#004a79',
+                    color: 'var(--blue-900)',
                     fontSize: '2rem',
                     margin: '1rem',
                     textDecoration: 'none',
@@ -154,7 +151,7 @@ const TournamentId = () => {
                 <Link
                   to={`simulator`}
                   style={{
-                    color: '#004a79',
+                    color: 'var(--blue-900)',
                     fontSize: '2rem',
                     margin: '1rem',
                     textDecoration: 'none',
@@ -166,7 +163,7 @@ const TournamentId = () => {
               <Link
                 to={`teams`}
                 style={{
-                  color: '#004a79',
+                  color: 'var(--blue-900)',
                   fontSize: '2rem',
                   margin: '1rem',
                   textDecoration: 'none',
@@ -178,7 +175,7 @@ const TournamentId = () => {
                 <Link
                   to={`players`}
                   style={{
-                    color: '#004a79',
+                    color: 'var(--blue-900)',
                     fontSize: '2rem',
                     margin: '1rem',
                     textDecoration: 'none',
@@ -192,7 +189,7 @@ const TournamentId = () => {
                   to={`playin`}
                   state={{ groups: groups }}
                   style={{
-                    color: '#004a79',
+                    color: 'var(--blue-900)',
                     fontSize: '2rem',
                     margin: '1rem',
                     textDecoration: 'none',
@@ -210,7 +207,7 @@ const TournamentId = () => {
                   to={`playoffs`}
                   state={{ groups: groups }}
                   style={{
-                    color: '#004a79',
+                    color: 'var(--blue-900)',
                     fontSize: '2rem',
                     margin: '1rem',
                     textDecoration: 'none',
@@ -239,9 +236,9 @@ const TournamentId = () => {
           >
             <div
               style={{
-                backgroundColor: '#004a79',
+                backgroundColor: 'var(--blue-900)',
                 margin: '2rem auto',
-                outline: '#cfa420 4px solid',
+                outline: 'var(--yellow-900) 4px solid',
                 padding: '1.5rem',
               }}
             >
@@ -309,9 +306,9 @@ const TournamentId = () => {
             </div>
             <div
               style={{
-                backgroundColor: '#004a79',
+                backgroundColor: 'var(--blue-900)',
                 margin: '2rem auto',
-                outline: '#cfa420 4px solid',
+                outline: 'var(--yellow-900) 4px solid',
                 padding: '1.5rem',
               }}
             >
@@ -379,19 +376,7 @@ const TournamentId = () => {
       </motion.div>
     )
   } else {
-    return (
-      <div style={{ margin: 'auto', width: '100px' }}>
-        <Oval
-          height="80"
-          width="80"
-          radius="9"
-          color="green"
-          ariaLabel="three-dots-loading"
-          $wrapperStyle
-          $wrapperClass
-        />
-      </div>
-    )
+    return <PageLoader />
   }
 }
 

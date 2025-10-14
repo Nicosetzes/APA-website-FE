@@ -7,8 +7,8 @@ export const StyledMatch = styled.form`
   justify-content: space-evenly;
   margin: 0.5rem;
   max-width: 400px;
-  outline: #dc3545 3px solid;
-  padding: 1rem 0;
+  outline: var(--red-900) 3px solid;
+  padding: 1rem;
 
   .match-view {
     align-items: center;

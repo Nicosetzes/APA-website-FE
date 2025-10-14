@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 export const StyledStatsLayout = styled.div`
-  background-color: #004a79;
+  background-color: var(--blue-900);
   padding: 2.5rem 0;
   .stats__teams {
     align-items: center;
@@ -51,7 +51,7 @@ export const StyledStatsLayout = styled.div`
       .data__card {
         align-items: center;
         background-color: #022f2a;
-        border: #cfa420 3px solid;
+        border: var(--yellow-900) 3px solid;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -71,7 +71,7 @@ export const StyledStatsLayout = styled.div`
     }
     .stats__matches {
       align-content: start;
-      background-color: #004a79;
+      background-color: var(--blue-900);
       display: flex;
       flex-basis: ${(props) => `${props.isXL ? '75%' : 'auto'}`};
       flex-wrap: wrap;

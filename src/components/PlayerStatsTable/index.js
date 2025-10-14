@@ -12,8 +12,6 @@ const PlayerStatsTable = ({ stats }) => {
   const isSm = useMediaQuery({ query: '(min-width: 576px)' })
   const isXS = useMediaQuery({ query: '(min-width: 400px)' })
 
-  console.log(stats)
-
   return (
     <StyledTable
       sx={{ minWidth: 300, maxWidth: 800, margin: '0.5rem auto' }}

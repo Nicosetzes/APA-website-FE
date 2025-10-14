@@ -55,7 +55,7 @@ const ExtendedNavMenu = () => {
               >
                 TORNEOS ACTIVOS
               </NavLink>
-              <Divider sx={{ borderColor: '#004a79' }} />
+              <Divider sx={{ borderColor: 'var(--blue-900)' }} />
               <NavLink
                 to="/tournaments/create-tournament"
                 className="dropdown-menu-item"
@@ -63,7 +63,7 @@ const ExtendedNavMenu = () => {
               >
                 CREAR TORNEO
               </NavLink>
-              <Divider sx={{ borderColor: '#004a79' }} />
+              <Divider sx={{ borderColor: 'var(--blue-900)' }} />
               <NavLink
                 to="/matches"
                 className="dropdown-menu-item"

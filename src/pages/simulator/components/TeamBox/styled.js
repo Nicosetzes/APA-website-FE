@@ -2,7 +2,7 @@ import styled from 'styled-components'
 
 export const StyledTeamBox = styled.div`
   align-items: center;
-  background-color: #004a79;
+  background-color: var(--blue-900);
   color: #fff;
   cursor: pointer;
   justify-content: center;

@@ -2,7 +2,7 @@ import styled from 'styled-components'
 
 export const StyledStreakBox = styled.div`
   background-color: #fff;
-  border: #004a79 2px solid;
+  border: var(--blue-900) 2px solid;
   color: ${(props) => props.color};
   display: flex;
   font-size: 1.25rem;

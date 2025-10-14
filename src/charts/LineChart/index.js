@@ -33,8 +33,8 @@ const LineChart = ({ data, options }) => {
   // 			data: recentMatches[3].goalsFor,
   // 			fill: false,
   // 			lineTension: 0,
-  // 			pointBackgroundColor: "#004a79",
-  // 			borderColor: "#004a79"
+  // 			pointBackgroundColor: "var(--blue-900)",
+  // 			borderColor: "var(--blue-900)"
   // 		},
   // 		{
   // 			label: recentMatches[4].player,

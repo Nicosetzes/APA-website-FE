@@ -3,7 +3,7 @@ import BreadCrumbs from '@mui/material/Breadcrumbs'
 
 export const StyledBreadCrumbsMUI = styled(BreadCrumbs)`
   display: flex;
-  margin: 2.5rem auto !important;
+  margin: 1.75rem auto !important;
   padding: 0 0.75rem;
   width: fit-content;
   ol {
@@ -13,7 +13,7 @@ export const StyledBreadCrumbsMUI = styled(BreadCrumbs)`
       margin: 0.5rem;
     }
     a {
-      color: #004a79;
+      color: var(--blue-900);
       font-weight: 700;
       text-decoration: none;
     }

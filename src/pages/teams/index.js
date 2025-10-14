@@ -3,9 +3,9 @@ import { useParams } from 'react-router-dom'
 import { StyledTeams } from './styled'
 import TeamCard from '../../components/TeamCard'
 import BreadCrumbsMUI from './../../components/BreadCrumbsMUI'
-import { Oval } from 'react-loader-spinner'
 import { api } from './../../api'
 import axios from 'axios'
+import PageLoader from '../../components/PageLoader'
 
 const Teams = () => {
   const { tournament } = useParams()
@@ -64,19 +64,7 @@ const Teams = () => {
       </>
     )
   } else {
-    return (
-      <div style={{ margin: 'auto', width: '100px' }}>
-        <Oval
-          height="80"
-          width="80"
-          radius="9"
-          color="green"
-          ariaLabel="three-dots-loading"
-          $wrapperStyle
-          $wrapperClass
-        />
-      </div>
-    )
+    return <PageLoader />
   }
 }
 

@@ -153,9 +153,16 @@ const FixtureId = () => {
 
   const onHandleGroupChange = useCallback(
     (group) => {
-      setParams({ group, page: 0 })
+      // If changing groups, clear any active team filter since teams are group-specific
+      const currentGroup = searchParams.get('group')
+      if (currentGroup && currentGroup === group) {
+        setParams({ group, page: 0 })
+      } else {
+        // Passing an empty string removes the key in setParams cleaning step
+        setParams({ group, page: 0, team: '' })
+      }
     },
-    [setParams],
+    [setParams, searchParams],
   )
 
   const resetTeamFilter = useCallback(() => {

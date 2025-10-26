@@ -15,15 +15,16 @@ import PageLoader from '../../components/PageLoader'
 import { SpinnerContainer } from './styled'
 import { Oval } from 'react-loader-spinner'
 import {
-  HeaderContainer,
-  Header,
-  Title,
-  FixtureLink,
   Card,
   ControlsRow,
-  GroupsTitle,
-  GroupButtons,
   GroupButton,
+  GroupButtons,
+  GroupsTitle,
+  Header,
+  HeaderContainer,
+  StandingsLink,
+  StandingsLinks,
+  Title,
 } from './styled'
 
 const Standings = () => {
@@ -141,9 +142,18 @@ const Standings = () => {
         <HeaderContainer>
           <Header>
             <Title>Clasificación</Title>
-            <FixtureLink to={`/tournaments/${tournament}/fixture`}>
-              Ir a Fixture
-            </FixtureLink>
+            <StandingsLinks>
+              {(format === 'league_playin_playoff' ||
+                format === 'champions_league' ||
+                format === 'world_cup') && (
+                <StandingsLink to={`/tournaments/${tournament}/playoffs`}>
+                  Ir a Playoffs
+                </StandingsLink>
+              )}
+              <StandingsLink to={`/tournaments/${tournament}/fixture`}>
+                Ir a Fixture
+              </StandingsLink>
+            </StandingsLinks>
           </Header>
 
           {groups?.length ? (

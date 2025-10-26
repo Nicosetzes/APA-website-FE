@@ -1,6 +1,5 @@
 import { database } from './../../../../api'
 import { StyledMatchPreview } from './styled'
-import { useMediaQuery } from 'react-responsive'
 import questionMark from './../../../../images/question.svg'
 
 const MatchPreview = ({
@@ -10,12 +9,8 @@ const MatchPreview = ({
   positionTwo,
   color,
 }) => {
-  //   const isL = useMediaQuery({ query: "(min-width: 992px)" });
-  //   const isM = useMediaQuery({ query: '(min-width: 768px)' })
-  const isSm = useMediaQuery({ query: '(min-width: 576px)' })
-  //   const isXS = useMediaQuery({ query: "(min-width: 400px)" });
   return (
-    <StyledMatchPreview isSm={isSm} color={color}>
+    <StyledMatchPreview color={color}>
       {teamOne ? (
         <div className="match__team">
           <div>
@@ -35,9 +30,9 @@ const MatchPreview = ({
             <span className="team__position">{positionOne}.</span>
           </div>
           <span className="team__name">Pendiente</span>
+          <span className="team__player">(TBA)</span>
         </div>
       )}
-      <span className="match__separator">-</span>
       {teamTwo ? (
         <div className="match__team">
           <div>
@@ -62,6 +57,7 @@ const MatchPreview = ({
             />
           </div>
           <span className="team__name">Pendiente</span>
+          <span className="team__player">(TBA)</span>
         </div>
       )}
     </StyledMatchPreview>

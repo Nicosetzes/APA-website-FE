@@ -14,6 +14,12 @@ import ChampionBox from '../../components/ChampionBox'
 import FinalistBox from './../../components/FinalistBox'
 import MatchPreview from './components/MatchPreview'
 import PageLoader from '../../components/PageLoader'
+import {
+  PlayoffsPreviewContainer,
+  PlayoffsSideContainer,
+  PlayoffsSide,
+  PlayoffsSideHeader,
+} from './styled'
 
 const Playoffs = () => {
   const { tournament } = useParams()
@@ -36,8 +42,6 @@ const Playoffs = () => {
   }
 
   const [playoffsTableData, setPlayoffsTableData] = useState()
-
-  const [showMatchPreviews, setShowMatchPreviews] = useState(false)
 
   const getPlayoffsTableData = () => {
     console.log('Traigo la playoff table del torneo')
@@ -174,81 +178,66 @@ const Playoffs = () => {
             }}
           >
             <StandingsTable standings={standings} />
-            <button
-              onClick={() => setShowMatchPreviews(!showMatchPreviews)}
-              className="button-main"
-            >
-              {showMatchPreviews ? 'Ocultar' : 'Mostrar'} emparejamientos
-            </button>
-            {showMatchPreviews ? (
-              <div
-                style={{
-                  alignItems: 'center',
-                  display: 'flex',
-                  flexFlow: 'row wrap',
-                  gap: '1.5rem',
-                  justifyContent: 'center',
-                  margin: '2rem auto 0 auto',
-                  maxWidth: '1200px',
-                }}
-              >
-                <MatchPreview
-                  teamOne={standings.at(0)}
-                  positionOne={'1'}
-                  teamTwo={standings.at(15) || ''}
-                  positionTwo={'16'}
-                  color={'#ff0000'}
-                />
-                <MatchPreview
-                  teamOne={standings.at(1)}
-                  positionOne={'2'}
-                  teamTwo={standings.at(14) || ''}
-                  positionTwo={'15'}
-                  color={'#35299b'}
-                />
-                <MatchPreview
-                  teamOne={standings.at(2)}
-                  positionOne={'3'}
-                  teamTwo={standings.at(13) || ''}
-                  positionTwo={'14'}
-                  color={'#237e93'}
-                />
-                <MatchPreview
-                  teamOne={standings.at(3)}
-                  positionOne={'4'}
-                  teamTwo={standings.at(12) || ''}
-                  positionTwo={'13'}
-                  color={'#ffa400'}
-                />
-                <MatchPreview
-                  teamOne={standings.at(4)}
-                  positionOne={'5'}
-                  teamTwo={standings.at(11)}
-                  positionTwo={'12'}
-                  color={'#ffa400'}
-                />
-                <MatchPreview
-                  teamOne={standings.at(5)}
-                  positionOne={'6'}
-                  teamTwo={standings.at(10)}
-                  positionTwo={'11'}
-                  color={'#237e93'}
-                />
-                <MatchPreview
-                  teamOne={standings.at(6)}
-                  positionOne={'7'}
-                  teamTwo={standings.at(9)}
-                  positionTwo={'10'}
-                  color={'#35299b'}
-                />
-                <MatchPreview
-                  teamOne={standings.at(7)}
-                  positionOne={'8'}
-                  teamTwo={standings.at(8)}
-                  positionTwo={'9'}
-                  color={'#ff0000'}
-                />
-              </div>
+            {!matches.length ? (
+              <PlayoffsPreviewContainer>
+                <PlayoffsSideContainer>
+                  <PlayoffsSide>
+                    <PlayoffsSideHeader>Lado A</PlayoffsSideHeader>
+                    <MatchPreview
+                      positionOne={'1'}
+                      positionTwo={'16'}
+                      teamOne={standings.at(0)}
+                      teamTwo={standings.at(15) || ''}
+                    />
+                    <MatchPreview
+                      positionOne={'8'}
+                      positionTwo={'9'}
+                      teamOne={standings.at(7)}
+                      teamTwo={standings.at(8) || ''}
+                    />
+                    <MatchPreview
+                      positionOne={'5'}
+                      positionTwo={'12'}
+                      teamOne={standings.at(4)}
+                      teamTwo={standings.at(11) || ''}
+                    />
+                    <MatchPreview
+                      positionOne={'4'}
+                      positionTwo={'13'}
+                      teamOne={standings.at(3)}
+                      teamTwo={standings.at(12) || ''}
+                    />
+                  </PlayoffsSide>
+
+                  <PlayoffsSide>
+                    <PlayoffsSideHeader>Lado B</PlayoffsSideHeader>
+                    <MatchPreview
+                      positionOne={'6'}
+                      positionTwo={'11'}
+                      teamOne={standings.at(5)}
+                      teamTwo={standings.at(10) || ''}
+                    />
+                    <MatchPreview
+                      positionOne={'3'}
+                      positionTwo={'14'}
+                      teamOne={standings.at(2)}
+                      teamTwo={standings.at(13) || ''}
+                    />
+                    <MatchPreview
+                      positionOne={'7'}
+                      positionTwo={'10'}
+                      teamOne={standings.at(6)}
+                      teamTwo={standings.at(9) || ''}
+                    />
+                    <MatchPreview
+                      positionOne={'2'}
+                      positionTwo={'15'}
+                      teamOne={standings.at(1)}
+                      teamTwo={standings.at(14) || ''}
+                    />
+                  </PlayoffsSide>
+                </PlayoffsSideContainer>
+              </PlayoffsPreviewContainer>
             ) : null}
           </div>
         ) : null}

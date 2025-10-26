@@ -29,7 +29,12 @@ export const Title = styled.h1`
   margin: 0;
 `
 
-export const FixtureLink = styled(Link)`
+export const StandingsLinks = styled.div`
+  display: flex;
+  gap: 0.5rem;
+`
+
+export const StandingsLink = styled(Link)`
   border: 1px solid var(--blue-900);
   color: var(--blue-900);
   padding: 6px 12px;

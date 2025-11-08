@@ -19,6 +19,7 @@ import Playin from '../../pages/playin'
 import Teams from '../../pages/teams'
 import App from './../../App'
 import Edits from '../../pages/edits'
+import EditsUpload from '../../pages/edits/upload'
 
 export const AnimatedRoutes = () => {
   const location = useLocation()
@@ -52,7 +53,10 @@ export const AnimatedRoutes = () => {
         <Route path="/matches" element={<Matches />} />
         <Route path="/statistics" element={<Statistics />} />
         <Route path="/hall-of-fame" element={<HallOfFame />} />
-        <Route path="/edits" element={<Edits />} />
+        <Route path="/edits">
+          <Route index element={<Edits />} />
+          <Route path="upload" element={<EditsUpload />} />
+        </Route>
         <Route
           path="*"
           element={

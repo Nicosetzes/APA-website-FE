@@ -1,158 +1,193 @@
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import { useSearchParams, useNavigate } from 'react-router-dom'
+import withReactContent from 'sweetalert2-react-content'
+import DeleteIcon from '@mui/icons-material/Delete'
+import IconButton from '@mui/material/IconButton'
 import { motion } from 'framer-motion'
-import { api } from './../../api'
+import { api } from '../../api'
 import axios from 'axios'
 import { Oval } from 'react-loader-spinner'
+import { Pagination } from '@mui/material'
+import Swal from 'sweetalert2'
 import {
   Container,
   Header,
   Title,
   Subtitle,
-  UploadCard,
-  UploadArea,
-  FileInput,
-  FileLabel,
-  FileName,
-  PreviewImage,
-  PreviewContainer,
-  RemoveButton,
-  UploadButton,
+  UploadButtonLink,
+  EditsGrid,
+  EditCard,
+  EditImage,
+  EditInfo,
+  EditInfoHeader,
+  UserName,
+  Caption,
+  EditDate,
   Message,
   SpinnerContainer,
+  PaginationContainer,
+  PaginationInfo,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalImage,
+  CloseButton,
 } from './styled'
 
 const Edits = () => {
-  const [selectedFiles, setSelectedFiles] = useState([])
-  const [previews, setPreviews] = useState([])
-  const [uploading, setUploading] = useState(false)
-  const [message, setMessage] = useState(null)
+  const MySwal = withReactContent(Swal)
+
+  const [edits, setEdits] = useState([])
+  const [pagination, setPagination] = useState(null)
+  const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [selectedImage, setSelectedImage] = useState(null)
+  const [searchParams, setSearchParams] = useSearchParams()
+  const navigate = useNavigate()
 
-  const MAX_FILES = 10
-  const MAX_FILE_SIZE = 3 * 1024 * 1024 // 3MB
+  const currentPage = parseInt(searchParams.get('page')) || 1
 
-  const handleFileChange = (event) => {
-    const files = Array.from(event.target.files)
+  const fetchEdits = useCallback(
+    async (signal) => {
+      setLoading(true)
+      setError(null)
 
-    if (files.length === 0) return
+      try {
+        const response = await axios.get(`${api}/edits`, {
+          params: { page: currentPage },
+          signal,
+        })
 
-    // Validate total number of files (existing + new)
-    const totalFiles = selectedFiles.length + files.length
-    if (totalFiles > MAX_FILES) {
-      setError(
-        `No puedes agregar más imágenes. Máximo: ${MAX_FILES} imágenes (actualmente tienes ${selectedFiles.length})`,
-      )
-      event.target.value = '' // Reset input
-      return
-    }
-
-    // Validate each file
-    const validFiles = []
-    const newPreviews = []
-    let hasError = false
-
-    for (const file of files) {
-      // Validate file type
-      if (!file.type.startsWith('image/')) {
-        setError(`El archivo "${file.name}" no es una imagen válida`)
-        hasError = true
-        break
-      }
-
-      // Validate file size
-      if (file.size > MAX_FILE_SIZE) {
-        setError(
-          `El archivo "${file.name}" es demasiado grande. Tamaño máximo: 3MB`,
-        )
-        hasError = true
-        break
-      }
-
-      validFiles.push(file)
-    }
-
-    if (hasError) {
-      event.target.value = '' // Reset input
-      return
-    }
-
-    // Append new files to existing ones
-    setSelectedFiles([...selectedFiles, ...validFiles])
-    setError(null)
-    setMessage(null)
-
-    // Create previews for new files
-    validFiles.forEach((file) => {
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        newPreviews.push({ file, preview: reader.result })
-        if (newPreviews.length === validFiles.length) {
-          setPreviews((prev) => [...prev, ...newPreviews])
+        setEdits(response.data.data)
+        setPagination(response.data.pagination)
+      } catch (err) {
+        if (err.name !== 'CanceledError') {
+          console.error(err)
+          setError('Error al cargar los edits')
         }
+      } finally {
+        setLoading(false)
       }
-      reader.readAsDataURL(file)
-    })
+    },
+    [currentPage],
+  )
 
-    // Reset input to allow selecting same file again
-    event.target.value = ''
+  useEffect(() => {
+    const controller = new AbortController()
+    fetchEdits(controller.signal)
+
+    return () => controller.abort()
+  }, [fetchEdits])
+
+  const handlePageChange = (event, value) => {
+    setSearchParams({ page: value })
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-  const handleRemoveImage = (index) => {
-    const newFiles = selectedFiles.filter((_, i) => i !== index)
-    const newPreviews = previews.filter((_, i) => i !== index)
-    setSelectedFiles(newFiles)
-    setPreviews(newPreviews)
-
-    // Reset file input if no files left
-    if (newFiles.length === 0) {
-      document.getElementById('file-input').value = ''
-    }
+  const formatDate = (dateString) => {
+    const date = new Date(dateString)
+    return date.toLocaleDateString('es-AR', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZone: 'America/Argentina/Buenos_Aires',
+    })
   }
 
-  const handleUpload = async () => {
-    if (selectedFiles.length === 0) {
-      setError('Por favor selecciona al menos una imagen')
-      return
-    }
+  const handleImageClick = (edit) => {
+    setSelectedImage(edit)
+  }
 
-    setUploading(true)
-    setError(null)
-    setMessage(null)
+  const handleCloseModal = () => {
+    setSelectedImage(null)
+  }
 
-    const formData = new FormData()
-    selectedFiles.forEach((file) => {
-      formData.append('image', file)
-    })
-
-    try {
-      await axios.post(`${api}/edits`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-        withCredentials: true,
-        credentials: 'include',
-      })
-
-      setMessage(
-        `¡${selectedFiles.length} ${
-          selectedFiles.length === 1 ? 'imagen subida' : 'imágenes subidas'
-        } exitosamente!`,
-      )
-      setSelectedFiles([])
-      setPreviews([])
-      // Reset file input
-      document.getElementById('file-input').value = ''
-    } catch (err) {
-      console.error(err)
-      if (err.response?.status === 401 || err.response?.status === 403) {
-        setError('No estás autorizado. Por favor inicia sesión.')
-      } else {
-        setError(err.response?.data?.message || 'Error al subir las imágenes')
+  const handleDeleteEdit = (editId) => {
+    Swal.fire({
+      title: 'Eliminar edit',
+      html: '¿Está seguro que desea eliminar este edit?',
+      icon: 'warning',
+      showCancelButton: true,
+      reverseButtons: true,
+      confirmButtonColor: 'var(--red-900)',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Eliminar',
+      cancelButtonText: 'Volver',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios
+          .delete(`${api}/edits`, {
+            params: { id: editId },
+            withCredentials: true,
+            credentials: 'include',
+          })
+          .then(() => {
+            MySwal.fire({
+              background: 'rgba(28, 25, 25, 0.95)',
+              color: '#fff',
+              icon: 'success',
+              iconColor: 'var(--green-900)',
+              toast: true,
+              title: 'Edit eliminado con éxito',
+              position: 'top-end',
+              showConfirmButton: false,
+              text: 'Aguarde unos instantes...',
+              timer: 2000,
+              timerProgressBar: true,
+              customClass: { timerProgressBar: 'toast-progress-dark' },
+              didOpen: (toast) => {
+                const controller = new AbortController()
+                fetchEdits(controller.signal)
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+              },
+            })
+          })
+          .catch(({ response }) => {
+            const message =
+              response?.data?.message || 'Error al eliminar el edit'
+            MySwal.fire({
+              background: 'rgba(28, 25, 25, 0.95)',
+              color: '#fff',
+              icon: 'error',
+              iconColor: 'var(--red-900)',
+              text: message,
+              title: '¡Error!',
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 2000,
+              timerProgressBar: true,
+              customClass: { timerProgressBar: 'toast-progress-dark' },
+              didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+              },
+            })
+          })
       }
-    } finally {
-      setUploading(false)
-    }
+    })
   }
+
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') {
+        handleCloseModal()
+      }
+    }
+
+    if (selectedImage) {
+      document.addEventListener('keydown', handleEscape)
+      document.body.style.overflow = 'hidden'
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape)
+      document.body.style.overflow = 'unset'
+    }
+  }, [selectedImage])
 
   return (
     <motion.div
@@ -162,88 +197,91 @@ const Edits = () => {
     >
       <Container>
         <Header>
-          <Title>Subir Edits</Title>
-          <Subtitle>Sube imágenes para la galería de edits</Subtitle>
+          <Title>Galería de Edits</Title>
+          <Subtitle>Explora todos los edits de la comunidad APA</Subtitle>
+          <UploadButtonLink onClick={() => navigate('/edits/upload')}>
+            Subir Edit
+          </UploadButtonLink>
         </Header>
 
-        {message && <Message>{message}</Message>}
         {error && <Message $error>{error}</Message>}
 
-        <UploadCard>
-          <UploadArea>
-            <FileInput
-              id="file-input"
-              type="file"
-              accept="image/*"
-              multiple
-              onChange={handleFileChange}
-              disabled={uploading}
+        {loading ? (
+          <SpinnerContainer>
+            <Oval
+              height="80"
+              width="80"
+              color="var(--blue-900)"
+              ariaLabel="loading"
             />
-            <FileLabel htmlFor="file-input" as="label">
-              {selectedFiles.length > 0
-                ? 'Agregar más imágenes'
-                : 'Seleccionar imágenes'}
-            </FileLabel>
-
-            {selectedFiles.length > 0 && (
-              <>
-                <FileName>
-                  {selectedFiles.length}{' '}
-                  {selectedFiles.length === 1
-                    ? 'imagen seleccionada'
-                    : 'imágenes seleccionadas'}
-                </FileName>
-                <div
-                  style={{
-                    display: 'flex',
-                    flexWrap: 'wrap',
-                    gap: '0.5rem',
-                    justifyContent: 'center',
-                  }}
-                >
-                  {previews.map((preview, idx) => (
-                    <PreviewContainer key={idx}>
-                      <PreviewImage
-                        src={preview.preview}
-                        alt={`Preview ${idx + 1}`}
-                      />
-                      <RemoveButton
-                        onClick={() => handleRemoveImage(idx)}
-                        disabled={uploading}
-                        aria-label="Eliminar imagen"
+          </SpinnerContainer>
+        ) : edits.length === 0 ? (
+          <Message>No hay edits disponibles</Message>
+        ) : (
+          <>
+            <EditsGrid>
+              {edits.map((edit) => (
+                <EditCard key={edit._id}>
+                  <EditImage
+                    src={edit.url}
+                    alt={edit.caption || 'Edit'}
+                    onClick={() => handleImageClick(edit)}
+                  />
+                  <EditInfo>
+                    <EditInfoHeader>
+                      <div>
+                        <UserName>
+                          Subido por: {edit.user.nickname || edit.user.name}
+                        </UserName>
+                        {edit.caption && <Caption>{edit.caption}</Caption>}
+                        <EditDate>{formatDate(edit.createdAt)}</EditDate>
+                      </div>
+                      <IconButton
+                        onClick={() => handleDeleteEdit(edit._id)}
+                        aria-label="delete"
+                        color="error"
+                        size="small"
                       >
-                        ×
-                      </RemoveButton>
-                    </PreviewContainer>
-                  ))}
-                </div>
-              </>
-            )}
+                        <DeleteIcon fontSize="small" />
+                      </IconButton>
+                    </EditInfoHeader>
+                  </EditInfo>
+                </EditCard>
+              ))}
+            </EditsGrid>
 
-            {uploading ? (
-              <SpinnerContainer>
-                <Oval
-                  height="60"
-                  width="60"
-                  color="var(--blue-900)"
-                  ariaLabel="uploading"
+            {pagination && pagination.totalPages > 1 && (
+              <PaginationContainer>
+                <PaginationInfo>
+                  Página {pagination.currentPage} de {pagination.totalPages} (
+                  {pagination.totalEdits} edits en total)
+                </PaginationInfo>
+                <Pagination
+                  count={pagination.totalPages}
+                  page={pagination.currentPage}
+                  onChange={handlePageChange}
+                  color="primary"
+                  size="large"
+                  showFirstButton
+                  showLastButton
                 />
-              </SpinnerContainer>
-            ) : (
-              <UploadButton
-                onClick={handleUpload}
-                disabled={selectedFiles.length === 0 || uploading}
-              >
-                Subir{' '}
-                {selectedFiles.length > 0
-                  ? `${selectedFiles.length} ${
-                      selectedFiles.length === 1 ? 'imagen' : 'imágenes'
-                    }`
-                  : 'imágenes'}
-              </UploadButton>
+              </PaginationContainer>
             )}
-          </UploadArea>
-        </UploadCard>
+          </>
+        )}
+
+        {selectedImage && (
+          <Modal onClick={handleCloseModal}>
+            <ModalOverlay />
+            <ModalContent onClick={(e) => e.stopPropagation()}>
+              <CloseButton onClick={handleCloseModal}>×</CloseButton>
+              <ModalImage
+                src={selectedImage.url}
+                alt={selectedImage.caption || 'Edit'}
+              />
+            </ModalContent>
+          </Modal>
+        )}
       </Container>
     </motion.div>
   )

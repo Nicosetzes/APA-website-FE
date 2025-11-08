@@ -4,14 +4,10 @@ import { useLogin } from './../../context/LoginContext'
 import Divider from '@mui/material/Divider'
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 import ClickAwayListener from '@mui/base/ClickAwayListener'
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 
 const ExtendedNavMenu = () => {
-  //   const isL = useMediaQuery({ query: '(min-width: 992px)' })
-  //   const isM = useMediaQuery({ query: '(min-width: 768px)' })
-  //   const isSm = useMediaQuery({ query: '(min-width: 576px)' })
-
   const login = useLogin()
 
   const { loginStatus } = login
@@ -33,6 +29,9 @@ const ExtendedNavMenu = () => {
       <NavLink to="/" className="nav-link">
         INICIO
       </NavLink>
+      <NavLink to="/edits" className="nav-link">
+        EDITS
+      </NavLink>
       <ClickAwayListener onClickAway={handleMenuCloseWhenClickingOutside}>
         <div className="nav-link container__dropdown">
           <div
@@ -53,7 +52,7 @@ const ExtendedNavMenu = () => {
                 className="dropdown-menu-item"
                 onClick={() => setMenuStatus(!menuStatus)}
               >
-                TORNEOS ACTIVOS
+                VER TORNEOS
               </NavLink>
               <Divider sx={{ borderColor: 'var(--blue-900)' }} />
               <NavLink
@@ -75,9 +74,6 @@ const ExtendedNavMenu = () => {
           )}
         </div>
       </ClickAwayListener>
-      {/* <NavLink to="/matches">Partidos</NavLink>
-      <NavLink to="/tournaments">Torneos</NavLink>
-      <NavLink to="/tournaments/create-tournament">Crear Torneo</NavLink> */}
       <NavLink to="/statistics" className="nav-link">
         STATS
       </NavLink>

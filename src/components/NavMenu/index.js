@@ -12,6 +12,7 @@ import SportsSoccerIcon from '@mui/icons-material/SportsSoccer'
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
 import CreateIcon from '@mui/icons-material/Create'
 import BarChartIcon from '@mui/icons-material/BarChart'
+import ExtensionIcon from '@mui/icons-material/Extension'
 import { StyledMenu } from './styled'
 
 const NavMenu = ({ handleClose, isOpen, anchorEl }) => {
@@ -45,10 +46,19 @@ const NavMenu = ({ handleClose, isOpen, anchorEl }) => {
         <Divider sx={{ borderColor: 'var(--blue-900)' }} />
         <MenuItem onClick={handleClose}>
           <ListItemIcon>
+            <ExtensionIcon htmlColor="var(--blue-900)" fontSize="small" />
+          </ListItemIcon>
+          <NavLink to="/edits">
+            <div>EDITS</div>
+          </NavLink>
+        </MenuItem>
+        <Divider sx={{ borderColor: 'var(--blue-900)' }} />
+        <MenuItem onClick={handleClose}>
+          <ListItemIcon>
             <CalendarMonthIcon htmlColor="var(--blue-900)" fontSize="small" />
           </ListItemIcon>
           <NavLink to="/tournaments">
-            <div>TORNEOS</div>
+            <div>VER TORNEOS</div>
           </NavLink>
         </MenuItem>
         <Divider sx={{ borderColor: 'var(--blue-900)' }} />

@@ -14,53 +14,104 @@ import {
   FileLabel,
   FileName,
   PreviewImage,
+  PreviewContainer,
+  RemoveButton,
   UploadButton,
   Message,
   SpinnerContainer,
 } from './styled'
 
 const Edits = () => {
-  const [selectedFile, setSelectedFile] = useState(null)
-  const [preview, setPreview] = useState(null)
+  const [selectedFiles, setSelectedFiles] = useState([])
+  const [previews, setPreviews] = useState([])
   const [uploading, setUploading] = useState(false)
   const [message, setMessage] = useState(null)
   const [error, setError] = useState(null)
 
+  const MAX_FILES = 10
+  const MAX_FILE_SIZE = 3 * 1024 * 1024 // 3MB
+
   const handleFileChange = (event) => {
-    const file = event.target.files[0]
-    if (file) {
+    const files = Array.from(event.target.files)
+
+    if (files.length === 0) return
+
+    // Validate total number of files (existing + new)
+    const totalFiles = selectedFiles.length + files.length
+    if (totalFiles > MAX_FILES) {
+      setError(
+        `No puedes agregar más imágenes. Máximo: ${MAX_FILES} imágenes (actualmente tienes ${selectedFiles.length})`,
+      )
+      event.target.value = '' // Reset input
+      return
+    }
+
+    // Validate each file
+    const validFiles = []
+    const newPreviews = []
+    let hasError = false
+
+    for (const file of files) {
       // Validate file type
       if (!file.type.startsWith('image/')) {
-        setError('Por favor selecciona un archivo de imagen válido')
-        setSelectedFile(null)
-        setPreview(null)
-        return
+        setError(`El archivo "${file.name}" no es una imagen válida`)
+        hasError = true
+        break
       }
 
-      // Validate file size (e.g., max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        setError('El archivo es demasiado grande. Tamaño máximo: 5MB')
-        setSelectedFile(null)
-        setPreview(null)
-        return
+      // Validate file size
+      if (file.size > MAX_FILE_SIZE) {
+        setError(
+          `El archivo "${file.name}" es demasiado grande. Tamaño máximo: 3MB`,
+        )
+        hasError = true
+        break
       }
 
-      setSelectedFile(file)
-      setError(null)
-      setMessage(null)
+      validFiles.push(file)
+    }
 
-      // Create preview
+    if (hasError) {
+      event.target.value = '' // Reset input
+      return
+    }
+
+    // Append new files to existing ones
+    setSelectedFiles([...selectedFiles, ...validFiles])
+    setError(null)
+    setMessage(null)
+
+    // Create previews for new files
+    validFiles.forEach((file) => {
       const reader = new FileReader()
       reader.onloadend = () => {
-        setPreview(reader.result)
+        newPreviews.push({ file, preview: reader.result })
+        if (newPreviews.length === validFiles.length) {
+          setPreviews((prev) => [...prev, ...newPreviews])
+        }
       }
       reader.readAsDataURL(file)
+    })
+
+    // Reset input to allow selecting same file again
+    event.target.value = ''
+  }
+
+  const handleRemoveImage = (index) => {
+    const newFiles = selectedFiles.filter((_, i) => i !== index)
+    const newPreviews = previews.filter((_, i) => i !== index)
+    setSelectedFiles(newFiles)
+    setPreviews(newPreviews)
+
+    // Reset file input if no files left
+    if (newFiles.length === 0) {
+      document.getElementById('file-input').value = ''
     }
   }
 
   const handleUpload = async () => {
-    if (!selectedFile) {
-      setError('Por favor selecciona una imagen primero')
+    if (selectedFiles.length === 0) {
+      setError('Por favor selecciona al menos una imagen')
       return
     }
 
@@ -69,7 +120,9 @@ const Edits = () => {
     setMessage(null)
 
     const formData = new FormData()
-    formData.append('image', selectedFile)
+    selectedFiles.forEach((file) => {
+      formData.append('image', file)
+    })
 
     try {
       await axios.post(`${api}/edits`, formData, {
@@ -80,9 +133,13 @@ const Edits = () => {
         credentials: 'include',
       })
 
-      setMessage('¡Imagen subida exitosamente!')
-      setSelectedFile(null)
-      setPreview(null)
+      setMessage(
+        `¡${selectedFiles.length} ${
+          selectedFiles.length === 1 ? 'imagen subida' : 'imágenes subidas'
+        } exitosamente!`,
+      )
+      setSelectedFiles([])
+      setPreviews([])
       // Reset file input
       document.getElementById('file-input').value = ''
     } catch (err) {
@@ -90,7 +147,7 @@ const Edits = () => {
       if (err.response?.status === 401 || err.response?.status === 403) {
         setError('No estás autorizado. Por favor inicia sesión.')
       } else {
-        setError(err.response?.data?.message || 'Error al subir la imagen')
+        setError(err.response?.data?.message || 'Error al subir las imágenes')
       }
     } finally {
       setUploading(false)
@@ -118,17 +175,48 @@ const Edits = () => {
               id="file-input"
               type="file"
               accept="image/*"
+              multiple
               onChange={handleFileChange}
               disabled={uploading}
             />
             <FileLabel htmlFor="file-input" as="label">
-              {selectedFile ? 'Cambiar imagen' : 'Seleccionar imagen'}
+              {selectedFiles.length > 0
+                ? 'Agregar más imágenes'
+                : 'Seleccionar imágenes'}
             </FileLabel>
 
-            {selectedFile && (
+            {selectedFiles.length > 0 && (
               <>
-                <FileName>{selectedFile.name}</FileName>
-                {preview && <PreviewImage src={preview} alt="Preview" />}
+                <FileName>
+                  {selectedFiles.length}{' '}
+                  {selectedFiles.length === 1
+                    ? 'imagen seleccionada'
+                    : 'imágenes seleccionadas'}
+                </FileName>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    gap: '0.5rem',
+                    justifyContent: 'center',
+                  }}
+                >
+                  {previews.map((preview, idx) => (
+                    <PreviewContainer key={idx}>
+                      <PreviewImage
+                        src={preview.preview}
+                        alt={`Preview ${idx + 1}`}
+                      />
+                      <RemoveButton
+                        onClick={() => handleRemoveImage(idx)}
+                        disabled={uploading}
+                        aria-label="Eliminar imagen"
+                      >
+                        ×
+                      </RemoveButton>
+                    </PreviewContainer>
+                  ))}
+                </div>
               </>
             )}
 
@@ -144,9 +232,14 @@ const Edits = () => {
             ) : (
               <UploadButton
                 onClick={handleUpload}
-                disabled={!selectedFile || uploading}
+                disabled={selectedFiles.length === 0 || uploading}
               >
-                Subir imagen
+                Subir{' '}
+                {selectedFiles.length > 0
+                  ? `${selectedFiles.length} ${
+                      selectedFiles.length === 1 ? 'imagen' : 'imágenes'
+                    }`
+                  : 'imágenes'}
               </UploadButton>
             )}
           </UploadArea>

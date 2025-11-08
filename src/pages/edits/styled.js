@@ -5,6 +5,7 @@ export const Container = styled.div`
   flex-direction: column;
   margin: 0 auto;
   max-width: 800px;
+  min-height: 100vh;
   padding: 2rem 1rem;
   width: 100%;
 `
@@ -86,9 +87,45 @@ export const FileName = styled.div`
 
 export const PreviewImage = styled.img`
   border-radius: 8px;
-  max-height: 300px;
-  max-width: 100%;
+  max-height: 200px;
+  max-width: 150px;
   object-fit: contain;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`
+
+export const PreviewContainer = styled.div`
+  position: relative;
+  display: inline-block;
+`
+
+export const RemoveButton = styled.button`
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #b30a0a;
+  border: 2px solid white;
+  border-radius: 50%;
+  color: white;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 700;
+  height: 28px;
+  width: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: opacity 0.3s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
 `
 
 export const UploadButton = styled.button`

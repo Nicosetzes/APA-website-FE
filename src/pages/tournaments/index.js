@@ -4,18 +4,11 @@ import { StyledTournamentsContainer } from './styled'
 import { api, database, cloudName } from './../../api'
 import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import { useLogin } from './../../context/LoginContext'
 import axios from 'axios'
 import { motion } from 'framer-motion'
 import PageLoader from '../../components/PageLoader'
 
 const Tournaments = () => {
-  const login = useLogin()
-
-  const { loginStatus } = login
-
-  console.log(loginStatus)
-
   const [tournaments, setTournaments] = useState()
 
   const getTournamentsData = async () => {

@@ -2,8 +2,10 @@ import styled from 'styled-components'
 export const StyledTournamentsContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 1rem;
   justify-content: center;
+  margin: 0 auto;
+  max-width: 1200px;
   .container__card {
     align-items: center;
     display: flex;

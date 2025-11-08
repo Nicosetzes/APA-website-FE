@@ -15,11 +15,7 @@ import TagTeamsDragAndDropAssignment from './../TagTeamsDragAndDropAssignment'
 import TagTeamsMobileAssignment from './../TagTeamsMobileAssignment'
 
 const LeaguesBoxContainer = ({ format, players, leagues }) => {
-  // const isXL = useMediaQuery({ query: '(min-width: 1200px)' })
   const isL = useMediaQuery({ query: '(min-width: 992px)' })
-  // const isM = useMediaQuery({ query: '(min-width: 768px)' })
-  // const isSm = useMediaQuery({ query: '(min-width: 500px)' })
-  // const isXS = useMediaQuery({ query: '(min-width: 350px)' })
 
   const MySwal = withReactContent(Swal)
 
@@ -32,7 +28,6 @@ const LeaguesBoxContainer = ({ format, players, leagues }) => {
   const { setLoginStatus } = login
 
   const [tournamentName, setTournamentName] = useState('')
-  const [tournamentImg, setTournamentImg] = useState(null)
   const [selectedLeagues, setSelectedLeagues] = useState([])
   const [availableTeams, setAvailableTeams] = useState([])
   const [selectedTeams, setSelectedTeams] = useState([])
@@ -48,11 +43,6 @@ const LeaguesBoxContainer = ({ format, players, leagues }) => {
   const onChangeTitle = (e) => {
     console.log(e.target.value)
     setTournamentName(e.target.value)
-  }
-
-  const onChangeTournamentImg = (e) => {
-    setTournamentImg(e.target.files[0])
-    console.log(e.target.files)
   }
 
   const updateAvailableTeams = (id) => {
@@ -214,7 +204,7 @@ const LeaguesBoxContainer = ({ format, players, leagues }) => {
                   justifyContent: 'space-evenly',
                 }}
               >
-                {players.map(({ name, id }, index) => (
+                {players.map(({ name, id }) => (
                   <span
                     key={id}
                     style={{ fontWeight: 700, margin: '0 0.25rem' }}
@@ -281,25 +271,10 @@ const LeaguesBoxContainer = ({ format, players, leagues }) => {
       reverseButtons: true,
     }).then((result) => {
       if (result.isConfirmed) {
-        // Cargo la imagen a Cloudinary //
-
-        // const formData = new FormData()
-
-        // formData.append('file', tournamentImg)
-        // formData.append('upload_preset', 'tournaments')
-
-        // axios
-        //   .post(
-        //     'https://api.cloudinary.com/v1_1/apa-images-repository/image/upload',
-        //     formData,
-        //   )
-        //   .then(({ data }) => {
-        // const cloudinaryId = data.public_id
         const name = tournamentName
         const teams = assignedTeams.map(({ team, player, group }) => {
           return { team, player, group }
         })
-        // const teams = definitiveTeamsForTournament
         axios
           .post(
             `${api}/tournaments`,
@@ -308,7 +283,6 @@ const LeaguesBoxContainer = ({ format, players, leagues }) => {
               format,
               players,
               teams,
-              // cloudinaryId,
             },
             {
               withCredentials: true,
@@ -401,29 +375,7 @@ const LeaguesBoxContainer = ({ format, players, leagues }) => {
               value={tournamentName}
               onChange={onChangeTitle}
             />
-          </div>{' '}
-          {tournamentImg ? (
-            <div>
-              <p>Nombre del archivo: {tournamentImg.name}</p>
-
-              <p>Tipo de Archivo: {tournamentImg.type}</p>
-
-              <p>
-                Última modificación:{' '}
-                {tournamentImg.lastModifiedDate.toDateString()}
-              </p>
-
-              {/* <button onClick={uploadTournamentImg}>Upload!</button> */}
-            </div>
-          ) : (
-            <div>
-              <input
-                name="files"
-                type="file"
-                onChange={onChangeTournamentImg}
-              />
-            </div>
-          )}
+          </div>
         </div>
         <div className="leagues-box-title">Ligas</div>
         <div>

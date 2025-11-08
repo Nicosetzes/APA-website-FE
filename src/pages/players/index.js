@@ -21,17 +21,22 @@ const Players = () => {
     setTournamentData(undefined)
     axios
       .get(`${api}/tournaments/${tournament}`, { signal: controller.signal })
-      .then(({ data }) => setTournamentData(data))
+      .then(({ data }) => {
+        setTournamentData(data)
+        // Set first player as active if no player is selected
+        if (!searchParams.get('player') && data.players?.length > 0) {
+          setSearchParams({ player: data.players[0].id })
+        }
+      })
       .catch((err) => {
         if (axios.isCancel?.(err) || err?.name === 'CanceledError') return
         console.error(err)
         setTournamentError('No se pudo cargar el torneo')
       })
     return () => controller.abort()
-  }, [tournament])
+  }, [tournament, searchParams, setSearchParams])
 
   const [playerStats, setPlayerStats] = useState()
-  const [playerLoading, setPlayerLoading] = useState(false)
   const [playerError, setPlayerError] = useState(null)
   const playerCacheRef = useRef({})
   const currentRequestRef = useRef(null)
@@ -40,8 +45,7 @@ const Players = () => {
     playerCacheRef.current = {}
     setPlayerStats(undefined)
     setPlayerError(null)
-    setPlayerLoading(false)
-    // Abort any in-flight
+
     if (currentRequestRef.current) {
       currentRequestRef.current.abort()
       currentRequestRef.current = null
@@ -54,7 +58,6 @@ const Players = () => {
     if (!playerId) {
       setPlayerStats(undefined)
       setPlayerError(null)
-      setPlayerLoading(false)
       return
     }
 
@@ -63,7 +66,6 @@ const Players = () => {
     if (cached) {
       setPlayerStats(cached)
       setPlayerError(null)
-      setPlayerLoading(false)
       return
     }
 
@@ -73,7 +75,6 @@ const Players = () => {
     }
     const controller = new AbortController()
     currentRequestRef.current = controller
-    setPlayerLoading(true)
     setPlayerError(null)
     axios
       .get(`${api}/tournaments/${tournament}/players/info?player=${playerId}`, {
@@ -93,7 +94,6 @@ const Players = () => {
         if (currentRequestRef.current === controller) {
           currentRequestRef.current = null
         }
-        setPlayerLoading(false)
       })
   }, [playerId, tournament])
 
@@ -121,28 +121,20 @@ const Players = () => {
               key={id}
               id={id}
               name={name}
+              isActive={playerId === id}
               handler={() => setSearchParams({ player: id })}
             />
           ))}
         </div>
         {playerId ? (
-          playerLoading ? (
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'center',
-                padding: '0.5rem',
-              }}
-            >
-              Cargando jugador...
-            </div>
-          ) : playerError ? (
+          playerError ? (
             <div
               style={{
                 color: 'crimson',
                 display: 'flex',
                 justifyContent: 'center',
-                padding: '0.5rem',
+                padding: '2rem',
+                fontSize: '1.1rem',
               }}
             >
               {playerError}

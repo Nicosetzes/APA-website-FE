@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import { StyledHome } from './styled'
 import { api, cloudName } from './../../api'
 import { Image } from 'cloudinary-react'
-import MemeCarousel from '../../components/MemeCarousel'
+import { Oval } from 'react-loader-spinner'
 import axios from 'axios'
 import presentationDesktop from './../../../src/images/desktop.jpg'
 import presentationMobile from './../../../src/images/mobile.jpg'
@@ -17,7 +17,6 @@ import santi from './../../../src/images/santi.png'
 import lucho from './../../../src/images/lucho.png'
 import leo from './../../../src/images/leo.png'
 
-const superliga_internacional_cloudinary_id = 'tournaments/internacional_co4gg7'
 const mundial_de_ferraris_cloudinary_id = 'tournaments/ferraris_ykvwlf'
 
 const Home = () => {
@@ -31,6 +30,9 @@ const Home = () => {
   const [recap, setRecap] = useState(null)
   const [recapLoading, setRecapLoading] = useState(false)
   const [recapError, setRecapError] = useState(null)
+  const [activeTournaments, setActiveTournaments] = useState([])
+  const [tournamentsLoading, setTournamentsLoading] = useState(false)
+  const [tournamentsError, setTournamentsError] = useState(null)
 
   console.log(recap)
 
@@ -65,6 +67,28 @@ const Home = () => {
         setRecapError('No se pudo cargar el recap diario')
       })
       .finally(() => setRecapLoading(false))
+
+    return () => controller.abort()
+  }, [])
+
+  useEffect(() => {
+    const controller = new AbortController()
+    setTournamentsLoading(true)
+    setTournamentsError(null)
+    axios
+      .get(`${api}/tournaments`, {
+        params: { status: 'active' },
+        signal: controller.signal,
+      })
+      .then(({ data }) => {
+        setActiveTournaments(data || [])
+      })
+      .catch((err) => {
+        if (axios.isCancel?.(err) || err?.name === 'CanceledError') return
+        console.error(err)
+        setTournamentsError('No se pudieron cargar los torneos activos')
+      })
+      .finally(() => setTournamentsLoading(false))
 
     return () => controller.abort()
   }, [])
@@ -150,9 +174,6 @@ const Home = () => {
             {recapError}
           </div>
         ) : null}
-        <div className="container__memes">
-          <MemeCarousel />
-        </div>
         <div className="container__accolades">
           <div className="box__champion">
             <div className="champion-title">CAMPEÓN VIGENTE</div>
@@ -183,36 +204,78 @@ const Home = () => {
           >
             TORNEOS ACTIVOS
           </div>
-          <div
-            style={{
-              alignItems: 'end',
-              display: 'flex',
-              flexWrap: 'wrap',
-              justifyContent: 'center',
-              margin: '0.5rem 0',
-            }}
-          >
+          {tournamentsLoading ? (
             <div
               style={{
-                alignItems: 'center',
-                cursor: 'pointer',
                 display: 'flex',
-                flexDirection: 'column',
-                flexBasis: '50%',
+                justifyContent: 'center',
+                padding: '2rem',
               }}
-              onClick={() => navigate('./tournaments/67bb58104e0e363cd8eecbf1')}
             >
-              <div className="tournament-name">
-                Superliga Internacional 2025
-              </div>
-              <div className="tournament-img">
-                <Image
-                  cloudName={cloudName}
-                  publicId={superliga_internacional_cloudinary_id}
-                />
-              </div>
+              <Oval
+                height="60"
+                width="60"
+                color="var(--blue-900)"
+                ariaLabel="loading"
+              />
             </div>
-          </div>
+          ) : tournamentsError ? (
+            <div
+              style={{
+                color: 'crimson',
+                display: 'flex',
+                justifyContent: 'center',
+                padding: '1rem',
+              }}
+            >
+              {tournamentsError}
+            </div>
+          ) : activeTournaments.length === 0 ? (
+            <div
+              style={{
+                color: 'var(--blue-900)',
+                display: 'flex',
+                justifyContent: 'center',
+                padding: '1rem',
+              }}
+            >
+              No hay torneos activos
+            </div>
+          ) : (
+            <div
+              style={{
+                alignItems: 'end',
+                display: 'flex',
+                flexWrap: 'wrap',
+                justifyContent: 'center',
+                margin: '0.5rem 0',
+                gap: '1rem',
+              }}
+            >
+              {activeTournaments.map((tournament) => (
+                <div
+                  key={tournament._id}
+                  style={{
+                    alignItems: 'center',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    flexBasis: activeTournaments.length === 1 ? '100%' : '45%',
+                    minWidth: '200px',
+                  }}
+                  onClick={() => navigate(`./tournaments/${tournament._id}`)}
+                >
+                  <div className="tournament-name">{tournament.name}</div>
+                  <div className="tournament-img">
+                    <Image
+                      cloudName={cloudName}
+                      publicId={tournament.cloudinary_id}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
 
           <button onClick={() => navigate('./tournaments')}>VER TORNEOS</button>
         </div>

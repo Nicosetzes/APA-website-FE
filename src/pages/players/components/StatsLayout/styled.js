@@ -50,7 +50,7 @@ export const StyledStatsLayout = styled.div`
       margin: 2rem auto;
       .data__card {
         align-items: center;
-        background-color: #022f2a;
+        background-color: var(--green-300);
         border: var(--yellow-900) 3px solid;
         display: flex;
         flex-direction: column;

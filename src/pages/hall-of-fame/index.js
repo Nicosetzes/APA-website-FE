@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import Accolades from './components/Accolades'
 import Showcase from './components/Showcase'
-import PlayerStatsTable from './../../components/PlayerStatsTable'
 import FaceToFaceTable from './../../components/FaceToFaceTable'
 import TeamRankings from './components/TeamRankings'
 import { api } from './../../api'
@@ -10,14 +9,10 @@ import { Oval } from 'react-loader-spinner'
 
 const Trophies = () => {
   const [tournamentsData, setTournamentsData] = useState(null)
-  const [playerStandingsData, setPlayerStandingsData] = useState(null)
   const [teamsData, setTeamsData] = useState(null)
   const [faceToFaceData, setFaceToFaceData] = useState(null)
-  const [playerStandingsLoading, setPlayerStandingsLoading] = useState(false)
   const [teamsStatsLoading, setTeamsStatsLoading] = useState(false)
   const [faceToFaceLoading, setFaceToFaceLoading] = useState(false)
-  const [playerStandingsButtonState, setPlayerStandingsButtonState] =
-    useState(true)
   const [teamsStatsButtonState, setTeamsStatsButtonState] = useState(true)
   const [faceToFaceButtonState, setFaceToFaceButtonState] = useState(true)
 
@@ -25,21 +20,6 @@ const Trophies = () => {
     axios.get(`${api}/tournaments?status=finalized`).then((response) => {
       setTournamentsData(response.data)
     })
-  }
-
-  const getPlayerStandings = () => {
-    setPlayerStandingsButtonState(false)
-    setPlayerStandingsLoading(true)
-    axios
-      .get(`${api}/statistics/all-time/standings`)
-      .then((response) => {
-        setPlayerStandingsData(response.data) // Guardamos los datos de equipos
-        setPlayerStandingsLoading(false) // Dejamos de mostrar el loading
-      })
-      .catch(() => {
-        setPlayerStandingsLoading(false) // Si ocurre un error, dejamos de mostrar el loading
-        setPlayerStandingsButtonState(true)
-      })
   }
 
   const getTeamsStats = () => {
@@ -97,33 +77,6 @@ const Trophies = () => {
         </div>
       )}
       <Accolades />
-      {playerStandingsButtonState && (
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            margin: '2rem 0 2.5rem 0',
-          }}
-        >
-          <button className="button-main" onClick={getPlayerStandings}>
-            Mostrar stats históricas (jugadores)
-          </button>
-        </div>
-      )}
-      {playerStandingsLoading && (
-        <div style={{ margin: 'auto', width: '100px' }}>
-          <Oval
-            height="80"
-            width="80"
-            radius="9"
-            color="var(--green-900)"
-            ariaLabel="three-dots-loading"
-            $wrapperStyle
-            $wrapperClass
-          />
-        </div>
-      )}
-      {playerStandingsData && <PlayerStatsTable stats={playerStandingsData} />}
       {teamsStatsButtonState && (
         <div
           style={{

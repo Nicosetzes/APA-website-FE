@@ -1,17 +1,10 @@
 import { useState } from 'react'
-// import { useMediaQuery } from 'react-responsive'
 import { database } from './../../api'
 import { StyledFormatsContainer } from './styled'
 import TournamentSettings from './components/TournamentSettings'
 import tagTeamsImage from './../../images/leo.png'
 
 const CreateTournament = () => {
-  // const isXL = useMediaQuery({ query: '(min-width: 1200px)' })
-  // const isL = useMediaQuery({ query: '(min-width: 992px)' })
-  // const isM = useMediaQuery({ query: '(min-width: 768px)' })
-  // const isSm = useMediaQuery({ query: '(min-width: 500px)' })
-  // const isXS = useMediaQuery({ query: '(min-width: 350px)' })
-
   const [tournamentFormat, setTournamentFormat] = useState()
 
   return (

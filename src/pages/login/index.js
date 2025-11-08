@@ -1,11 +1,8 @@
 import { useEffect } from 'react'
 import { useLogin } from '../../context/LoginContext'
 import SignIn from './components/SignIn'
-import SignUp from './components/SignUp'
-// import RetrievePassword from './components/RetrievePassword'
 import SolicitatePassword from './components/SolicitatePassword'
 import 'react-toastify/dist/ReactToastify.css'
-// import { useNavigate } from 'react-router-dom'
 import UserProfile from './components/UserProfile'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
@@ -93,22 +90,11 @@ const Login = () => {
     areUserCredentialsActive()
   }, [])
 
-  // const navigate = useNavigate()
-
-  // return (
-  //   <>
-  //     <SignIn />
-  //     <SignUp />
-  //   </>
-  // )
-
   return !status ? (
     <>
       <SignIn />
-      <SignUp />
       <div>
         <SolicitatePassword />
-        {/* <RetrievePassword /> */}
       </div>
     </>
   ) : (

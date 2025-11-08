@@ -1,10 +1,5 @@
 import { StyledShowcase } from './styled'
 import ChampionshipBox from '../ChampionshipBox'
-import trophyCopaAmerica from './../../../../images/copa-america.png'
-import trophyCopaArgentina from './../../../../images/copa-argentina.png'
-import trophyMundialDeClubes from './../../../../images/mundial-de-clubes.png'
-import trophyTorneoArgentino from './../../../../images/torneo-argentino.png'
-import trophyWorldCup from './../../../../images/world-cup.png'
 
 const Showcase = ({ tournaments }) => {
   console.log(tournaments)

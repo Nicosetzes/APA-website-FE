@@ -63,7 +63,7 @@ const Simulator = () => {
   }
 
   if (currentTournament) {
-    const { name, players, teams, format, groups } = currentTournament
+    const { name, teams } = currentTournament
 
     const breadCrumbsLinks = [
       { name: 'Home', route: '' },

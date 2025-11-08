@@ -8,7 +8,6 @@ import CheckIcon from '@mui/icons-material/Check'
 import IconButton from '@mui/material/IconButton'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
-import { useMediaQuery } from 'react-responsive'
 import CelebrationAnimation from './../CelebrationAnimation'
 
 const PlayoffMatch = ({
@@ -27,11 +26,6 @@ const PlayoffMatch = ({
   valid,
   isThisTheFinal,
 }) => {
-  // const isL = useMediaQuery({ query: '(min-width: 992px)' })
-  // const isM = useMediaQuery({ query: '(min-width: 768px)' })
-  const isSm = useMediaQuery({ query: '(min-width: 500px)' })
-  const isXS = useMediaQuery({ query: '(min-width: 375px)' })
-
   // Valor que cambiará a true cuando se cargue el partido de la final
 
   const [showAnimation, setShowAnimation] = useState(false)

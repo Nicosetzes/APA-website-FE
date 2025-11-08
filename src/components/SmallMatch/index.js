@@ -1,6 +1,5 @@
-import { useState } from 'react'
 import { StyledSmallMatch } from './styled'
-import { api, database } from './../../api'
+import { database } from './../../api'
 
 const SmallMatch = ({
   playerP1,

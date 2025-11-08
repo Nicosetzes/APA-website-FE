@@ -1,4 +1,4 @@
-import { useParams, useSearchParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import withReactContent from 'sweetalert2-react-content'
 import { useLogin } from '../../context/LoginContext'
 import { StyledTagTeamsMatchPreview } from './styled'
@@ -12,8 +12,6 @@ import axios from 'axios'
 
 const TagTeamsMatchPreview = ({ getFixtureData, match }) => {
   const MySwal = withReactContent(Swal)
-
-  const [searchParams, setSearchParams] = useSearchParams()
 
   const navigate = useNavigate()
 

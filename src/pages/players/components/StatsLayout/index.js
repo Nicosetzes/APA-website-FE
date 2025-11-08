@@ -5,14 +5,9 @@ import MatchBox from './../MatchBox'
 
 const StatsLayout = ({ playerStats }) => {
   const isXL = useMediaQuery({ query: '(min-width: 1200px)' })
-  // const isL = useMediaQuery({ query: '(min-width: 992px)' })
-  // const isM = useMediaQuery({ query: '(min-width: 768px)' })
-  // const isSm = useMediaQuery({ query: '(min-width: 500px)' })
-  // const isXS = useMediaQuery({ query: '(min-width: 350px)' })
 
   const {
     matches,
-    player,
     stats: {
       played,
       wins,

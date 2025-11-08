@@ -15,10 +15,7 @@ const ChampionshipBox = ({
   cloudinary_id,
   id,
 }) => {
-  const isL = useMediaQuery({ query: '(min-width: 992px)' })
-  const isM = useMediaQuery({ query: '(min-width: 768px)' })
   const isSm = useMediaQuery({ query: '(min-width: 600px)' })
-  const isXS = useMediaQuery({ query: '(min-width: 400px)' })
 
   const navigate = useNavigate()
 

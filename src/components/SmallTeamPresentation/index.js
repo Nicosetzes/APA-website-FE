@@ -1,6 +1,5 @@
-import { useState } from 'react'
 import { StyledSmallTeamPresentation } from './styled'
-import { api, database } from './../../api'
+import { database } from './../../api'
 
 const SmallTeamPresentation = ({ team, player }) => {
   return (

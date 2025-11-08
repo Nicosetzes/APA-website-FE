@@ -3,12 +3,7 @@ import { useMediaQuery } from 'react-responsive'
 import { database } from '../../../../api'
 import { StyledDragAndDropAssignment } from './styled'
 
-const TagTeamsDragAndDropAssignment = ({
-  players,
-  teams,
-  groups,
-  createTournament,
-}) => {
+const TagTeamsDragAndDropAssignment = ({ teams, groups, createTournament }) => {
   const isSm = useMediaQuery({ query: '(min-width: 576px)' })
 
   // Mezclo los colores iniciales, para asignarlos al azar //

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useParams, useSearchParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import withReactContent from 'sweetalert2-react-content'
 import { useLogin } from '../../context/LoginContext'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -12,8 +12,6 @@ import axios from 'axios'
 
 const TagTeamsMatch = ({ getFixtureData, getStandingsData, match }) => {
   const MySwal = withReactContent(Swal)
-
-  const [searchParams, setSearchParams] = useSearchParams()
 
   const navigate = useNavigate()
 

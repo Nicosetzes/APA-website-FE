@@ -8,9 +8,7 @@ import { database } from './../../api'
 
 const FaceToFaceTable = ({ stats }) => {
   const isL = useMediaQuery({ query: '(min-width: 992px)' })
-  const isM = useMediaQuery({ query: '(min-width: 768px)' })
   const isSm = useMediaQuery({ query: '(min-width: 500px)' })
-  const isXS = useMediaQuery({ query: '(min-width: 400px)' })
 
   return (
     <StyledFaceToFaceTable

@@ -71,7 +71,7 @@ const Matches = () => {
 
   if (data) {
     console.log(data)
-    const { matches, totalPages, currentPage } = data
+    const { matches, totalPages } = data
 
     return (
       <motion.div

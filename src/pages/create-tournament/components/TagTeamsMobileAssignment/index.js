@@ -2,12 +2,7 @@ import { useState } from 'react'
 import { StyledMobileAssignment } from './styled'
 import { database } from '../../../../api'
 
-const TagTeamsMobileAssignment = ({
-  players,
-  teams,
-  groups,
-  createTournament,
-}) => {
+const TagTeamsMobileAssignment = ({ teams, createTournament }) => {
   // const [unassignedTeams, setUnassignedTeams] = useState(teams)
   const [assignedTeams, setAssignedTeams] = useState(
     teams.map(({ id, name }) => {

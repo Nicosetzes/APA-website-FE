@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useLogin } from '../../context/LoginContext'
 import PlayinRound from './../../components/PlayinRound'
 import { api, database } from './../../api'
@@ -12,8 +12,6 @@ import PageLoader from '../../components/PageLoader'
 
 const Playin = () => {
   const MySwal = withReactContent(Swal)
-
-  const [searchParams, setSearchParams] = useSearchParams()
 
   const navigate = useNavigate()
 
@@ -130,8 +128,7 @@ const Playin = () => {
   }
 
   if (tournamentData && playinData) {
-    // console.log(playinData)
-    const { name, players } = tournamentData
+    const { name } = tournamentData
     const { matches } = playinData
 
     console.log(matches)

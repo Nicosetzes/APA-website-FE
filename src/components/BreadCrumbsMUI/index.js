@@ -5,9 +5,7 @@ import EastIcon from '@mui/icons-material/East'
 import SouthIcon from '@mui/icons-material/South'
 
 const BreadCrumbsMUI = ({ links }) => {
-  const isL = useMediaQuery({ query: '(min-width: 992px)' })
   const isM = useMediaQuery({ query: '(min-width: 768px)' })
-  const isSm = useMediaQuery({ query: '(min-width: 576px)' })
 
   return (
     <StyledBreadCrumbsMUI

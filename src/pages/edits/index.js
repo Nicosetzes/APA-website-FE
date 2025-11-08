@@ -118,8 +118,7 @@ const Edits = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .delete(`${api}/edits`, {
-            params: { id: editId },
+          .delete(`${api}/edits/${editId}`, {
             withCredentials: true,
             credentials: 'include',
           })

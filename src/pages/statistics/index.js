@@ -102,6 +102,14 @@ const Statistics = () => {
       effectiveness: 'Efectividad',
       goalsFor: 'Goles a favor',
       cleanSheets: 'Vallas invictas',
+      winsPerMatch: 'Victorias por partido',
+      lossesPerMatch: 'Derrotas por partido',
+      goalsForPerMatch: 'Goles a favor por partido',
+      goalsAgainstPerMatch: 'Goles en contra por partido',
+      cleanSheetsPerMatch: 'Vallas invictas por partido',
+      penaltyWins: 'Victorias por penales',
+      winsWithUniqueTeams: 'Victorias con equipos únicos',
+      matchesScoring3PlusGoals: 'Partidos convirtiendo +3 goles',
     }
     return labels[key] || key
   }
@@ -242,28 +250,50 @@ ${formatDate(match.date)}`}
             <SectionTitle>Clasificaciones</SectionTitle>
             <LeaderboardsGrid>
               {leaderboards &&
-                Object.entries(leaderboards).map(([key, board]) => (
-                  <LeaderboardCard key={key}>
-                    <LeaderboardTitle>
-                      {getLeaderboardLabel(key)}
-                    </LeaderboardTitle>
-                    {board.map((item, idx) => (
-                      <LeaderboardItem key={item.player.id} $rank={idx + 1}>
-                        <Rank $rank={idx + 1}>{idx + 1}</Rank>
-                        <LeaderboardPlayerName>
-                          {item.player.name}
-                        </LeaderboardPlayerName>
-                        <LeaderboardValue>
-                          {item[key] !== undefined
-                            ? key === 'effectiveness'
-                              ? `${item[key].toFixed(2)}%`
-                              : item[key]
-                            : '-'}
-                        </LeaderboardValue>
-                      </LeaderboardItem>
-                    ))}
-                  </LeaderboardCard>
-                ))}
+                [
+                  'wins',
+                  'effectiveness',
+                  'goalsFor',
+                  'winsWithUniqueTeams',
+                  'winsPerMatch',
+                  'lossesPerMatch',
+                  'goalsForPerMatch',
+                  'goalsAgainstPerMatch',
+                  'cleanSheets',
+                  'cleanSheetsPerMatch',
+                  'matchesScoring3PlusGoals',
+                  'penaltyWins',
+                ]
+                  .filter((key) => leaderboards[key])
+                  .map((key) => {
+                    const board = leaderboards[key]
+                    return (
+                      <LeaderboardCard key={key}>
+                        <LeaderboardTitle>
+                          {getLeaderboardLabel(key)}
+                        </LeaderboardTitle>
+                        {board.map((item, idx) => (
+                          <LeaderboardItem key={item.player.id} $rank={idx + 1}>
+                            <Rank $rank={idx + 1}>{idx + 1}</Rank>
+                            <LeaderboardPlayerName>
+                              {item.player.name}
+                            </LeaderboardPlayerName>
+                            <LeaderboardValue>
+                              {item[key] !== undefined
+                                ? key === 'effectiveness' ||
+                                  key.includes('PerMatch')
+                                  ? typeof item[key] === 'number'
+                                    ? item[key].toFixed(2)
+                                    : item[key]
+                                  : item[key]
+                                : '-'}
+                              {key === 'effectiveness' ? '%' : ''}
+                            </LeaderboardValue>
+                          </LeaderboardItem>
+                        ))}
+                      </LeaderboardCard>
+                    )
+                  })}
             </LeaderboardsGrid>
           </Section>
 

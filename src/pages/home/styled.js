@@ -152,6 +152,7 @@ export const StyledHome = styled.div`
       margin: 0.75rem auto;
       img {
         height: 250px;
+        max-width: 100%;
       }
     }
     .tournament-name {

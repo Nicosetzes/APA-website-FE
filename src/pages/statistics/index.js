@@ -102,11 +102,11 @@ const Statistics = () => {
       effectiveness: 'Efectividad',
       goalsFor: 'Goles a favor',
       cleanSheets: 'Vallas invictas',
-      winsPerMatch: 'Victorias por partido',
-      lossesPerMatch: 'Derrotas por partido',
+      winPercentage: 'Victorias (%)',
+      lossPercentage: 'Derrotas (%)',
       goalsForPerMatch: 'Goles a favor por partido',
       goalsAgainstPerMatch: 'Goles en contra por partido',
-      cleanSheetsPerMatch: 'Vallas invictas por partido',
+      cleanSheetsPercentage: 'Vallas invictas (%)',
       penaltyWins: 'Victorias por penales',
       winsWithUniqueTeams: 'Victorias con equipos únicos',
       matchesScoring3PlusGoals: 'Partidos convirtiendo +3 goles',
@@ -255,12 +255,12 @@ ${formatDate(match.date)}`}
                   'effectiveness',
                   'goalsFor',
                   'winsWithUniqueTeams',
-                  'winsPerMatch',
-                  'lossesPerMatch',
+                  'winPercentage',
+                  'lossPercentage',
                   'goalsForPerMatch',
                   'goalsAgainstPerMatch',
                   'cleanSheets',
-                  'cleanSheetsPerMatch',
+                  'cleanSheetsPercentage',
                   'matchesScoring3PlusGoals',
                   'penaltyWins',
                 ]
@@ -287,7 +287,10 @@ ${formatDate(match.date)}`}
                                     : item[key]
                                   : item[key]
                                 : '-'}
-                              {key === 'effectiveness' ? '%' : ''}
+                              {key === 'effectiveness' ||
+                              key.includes('Percentage')
+                                ? '%'
+                                : ''}
                             </LeaderboardValue>
                           </LeaderboardItem>
                         ))}

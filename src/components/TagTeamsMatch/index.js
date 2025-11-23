@@ -9,6 +9,7 @@ import { api, database } from './../../api'
 import { StyledMatch } from './styled'
 import Swal from 'sweetalert2'
 import axios from 'axios'
+import { format, parseISO } from 'date-fns'
 
 const TagTeamsMatch = ({ getFixtureData, getStandingsData, match }) => {
   const MySwal = withReactContent(Swal)
@@ -394,7 +395,8 @@ const TagTeamsMatch = ({ getFixtureData, getStandingsData, match }) => {
       </div>
       {updatedAt ? (
         <div className="match-date">
-          Actualizado el: {updatedAt && new Date(updatedAt).toLocaleString()}{' '}
+          Actualizado el:{' '}
+          {updatedAt && format(parseISO(updatedAt), 'dd/MM/yyyy hh:mm:ss a')}{' '}
         </div>
       ) : (
         <div className="match-date">No hay fecha de actualización</div>

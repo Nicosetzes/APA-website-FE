@@ -9,6 +9,7 @@ import IconButton from '@mui/material/IconButton'
 import EditIcon from '@mui/icons-material/Edit'
 import { api, database } from './../../api'
 import { StyledMatch } from './styled'
+import { format, parseISO } from 'date-fns'
 import Swal from 'sweetalert2'
 import axios from 'axios'
 
@@ -412,7 +413,8 @@ const Match = ({ match, getFixtureData }) => {
       </div>
       {updatedAt && updatedAt !== createdAt ? (
         <div className="match-date">
-          Actualizado el: {updatedAt && new Date(updatedAt).toLocaleString()}{' '}
+          Actualizado el:{' '}
+          {updatedAt && format(parseISO(updatedAt), 'dd/MM/yyyy hh:mm:ss a')}{' '}
         </div>
       ) : (
         <div className="match-date">El partido aún no se ha jugado</div>

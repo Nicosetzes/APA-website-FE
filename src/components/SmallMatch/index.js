@@ -1,5 +1,6 @@
 import { StyledSmallMatch } from './styled'
 import { database } from './../../api'
+import { format, parseISO } from 'date-fns'
 
 const SmallMatch = ({
   playerP1,
@@ -47,7 +48,7 @@ const SmallMatch = ({
             margin: '0.5rem 0',
           }}
         >
-          {new Date(updatedAt).toLocaleString()}
+          {format(parseISO(updatedAt), 'dd/MM/yyyy hh:mm:ss a')}
         </div>
       </StyledSmallMatch>
     </>

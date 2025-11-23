@@ -4,6 +4,7 @@ import { api } from './../../api'
 import axios from 'axios'
 import PageLoader from '../../components/PageLoader'
 import { Oval } from 'react-loader-spinner'
+import { format, parseISO } from 'date-fns'
 import {
   HeaderContainer,
   Header,
@@ -65,15 +66,6 @@ const Statistics = () => {
     const cleanup = getStatistics()
     return cleanup
   }, [getStatistics])
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString('es-AR', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    })
-  }
 
   const getStreakLabel = (type) => {
     if (type === 'W') return 'Victorias'
@@ -235,7 +227,7 @@ const Statistics = () => {
                             match.playerP2.name
                           } (${match.teamP2.name})
 ${match.tournament}
-${formatDate(match.date)}`}
+${format(parseISO(match.date), 'dd/MM/yyyy')}`}
                         />
                       ))}
                     </RecentMatches>
@@ -346,7 +338,7 @@ ${formatDate(match.date)}`}
                             {record.match.tournament}
                           </div>
                           <div style={{ fontSize: '0.8rem', opacity: 0.7 }}>
-                            {formatDate(record.match.date)}
+                            {format(parseISO(record.match.date), 'dd/MM/yyyy')}
                           </div>
                         </RecordDetail>
                       )}
@@ -395,7 +387,7 @@ ${formatDate(match.date)}`}
                               marginTop: '0.25rem',
                             }}
                           >
-                            {formatDate(oldestHolder.date)}
+                            {format(parseISO(oldestHolder.date), 'dd/MM/yyyy')}
                             {record.players.length > 1 &&
                               ` (${oldestHolder.name})`}
                           </div>

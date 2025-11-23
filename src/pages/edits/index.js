@@ -9,6 +9,7 @@ import axios from 'axios'
 import { Oval } from 'react-loader-spinner'
 import { Pagination } from '@mui/material'
 import Swal from 'sweetalert2'
+import { format, parseISO } from 'date-fns'
 import {
   Container,
   Header,
@@ -82,18 +83,6 @@ const Edits = () => {
   const handlePageChange = (event, value) => {
     setSearchParams({ page: value })
     window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString('es-AR', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      timeZone: 'America/Argentina/Buenos_Aires',
-    })
   }
 
   const handleImageClick = (edit) => {
@@ -233,7 +222,12 @@ const Edits = () => {
                           Subido por: {edit.user.nickname || edit.user.name}
                         </UserName>
                         {edit.caption && <Caption>{edit.caption}</Caption>}
-                        <EditDate>{formatDate(edit.createdAt)}</EditDate>
+                        <EditDate>
+                          {format(
+                            parseISO(edit.createdAt),
+                            'dd/MM/yyyy hh:mm:ss a',
+                          )}
+                        </EditDate>
                       </div>
                       <IconButton
                         onClick={() => handleDeleteEdit(edit._id)}

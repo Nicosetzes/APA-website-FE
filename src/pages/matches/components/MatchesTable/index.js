@@ -4,12 +4,11 @@ import TableCell from '@mui/material/TableCell'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import { StyledTable } from './styled'
+import { format, parseISO } from 'date-fns'
 
 const MatchesTable = ({ matches }) => {
-  //   const isL = useMediaQuery({ query: "(min-width: 992px)" });
   const isM = useMediaQuery({ query: '(min-width: 768px)' })
   const isSm = useMediaQuery({ query: '(min-width: 500px)' })
-  //   const isXS = useMediaQuery({ query: "(min-width: 400px)" });
 
   return (
     <StyledTable sx={{ minWidth: 300 }} size="small" aria-label="a dense table">
@@ -79,10 +78,11 @@ const MatchesTable = ({ matches }) => {
                     updatedAt !== '2023-03-30T23:22:00.005Z' &&
                     updatedAt !== '2023-03-30T23:21:44.961Z' &&
                     updatedAt !== '2023-03-30T22:51:17.806Z'
-                      ? new Date(updatedAt).toLocaleString()
-                      : new Date(
-                          parseInt(_id.substring(0, 8), 16) * 1000,
-                        ).toLocaleString()}
+                      ? format(parseISO(updatedAt), 'dd/MM/yyyy hh:mm:ss a')
+                      : format(
+                          new Date(parseInt(_id.substring(0, 8), 16) * 1000),
+                          'dd/MM/yyyy hh:mm:ss a',
+                        )}
                   </TableCell>
                 </>
               )}

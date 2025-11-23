@@ -7,6 +7,7 @@ import { api, cloudName } from './../../api'
 import { Image } from 'cloudinary-react'
 import { Oval } from 'react-loader-spinner'
 import axios from 'axios'
+import { format, parseISO } from 'date-fns'
 import presentationDesktop from './../../../src/images/desktop.jpg'
 import presentationMobile from './../../../src/images/mobile.jpg'
 import championBackground from './../../../src/images/desktop-2.jpg'
@@ -34,21 +35,7 @@ const Home = () => {
   const [tournamentsLoading, setTournamentsLoading] = useState(false)
   const [tournamentsError, setTournamentsError] = useState(null)
 
-  console.log(recap)
-
   // Format a date string safely without timezone shifts for date-only values (YYYY-MM-DD)
-  const formatRecapDate = (dateStr) => {
-    if (!dateStr) return ''
-    // If it's a plain date (YYYY-MM-DD), build a local Date to avoid UTC -> previous day shift
-    if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
-      const [y, m, d] = dateStr.split('-').map(Number)
-      const localDate = new Date(y, m - 1, d)
-      return localDate.toLocaleDateString()
-    }
-    // Otherwise, fall back to native parsing
-    const parsed = new Date(dateStr)
-    return isNaN(parsed) ? dateStr : parsed.toLocaleDateString()
-  }
 
   useEffect(() => {
     const controller = new AbortController()
@@ -155,7 +142,7 @@ const Home = () => {
                 {recap?.tournament?.name || 'Torneo'} — Recap diario
               </div>
               <div style={{ opacity: 0.8, fontSize: '0.9rem' }}>
-                {recap?.date ? formatRecapDate(recap.date) : ''}
+                {recap?.date ? format(parseISO(recap.date), 'dd/MM/yyyy') : ''}
               </div>
             </div>
             <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.35 }}>

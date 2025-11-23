@@ -1,6 +1,7 @@
 import { StyledMatchBox } from './styled'
 import { useSearchParams } from 'react-router-dom'
 import { database } from '../../../../api'
+import { format, parseISO } from 'date-fns'
 
 const MatchBox = ({
   outcome,
@@ -12,7 +13,7 @@ const MatchBox = ({
   scoreP2,
   updatedAt,
 }) => {
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [searchParams] = useSearchParams()
 
   const establishOutcomeColor = (outcome) => {
     const player = searchParams.get('player')
@@ -52,7 +53,7 @@ const MatchBox = ({
           </div>
         </div>
         <div className="match__date">
-          {new Date(updatedAt).toLocaleDateString()}
+          {format(parseISO(updatedAt), 'dd/MM/yyyy')}
         </div>
       </StyledMatchBox>
     </>

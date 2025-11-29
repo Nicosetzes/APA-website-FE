@@ -11,8 +11,6 @@ import withReactContent from 'sweetalert2-react-content'
 import axios from 'axios'
 import RegularDragAndDropAssignment from '../RegularDragAndDropAssignment'
 import RegularMobileAssignment from '../RegularMobileAssignment'
-import TagTeamsDragAndDropAssignment from './../TagTeamsDragAndDropAssignment'
-import TagTeamsMobileAssignment from './../TagTeamsMobileAssignment'
 
 const LeaguesBoxContainer = ({ format, players, leagues }) => {
   const isL = useMediaQuery({ query: '(min-width: 992px)' })
@@ -453,22 +451,6 @@ const LeaguesBoxContainer = ({ format, players, leagues }) => {
         )}
         {confirmedTeams && !isL && format !== 'tag_teams' && (
           <RegularMobileAssignment
-            players={players}
-            teams={confirmedTeams}
-            groups={groups}
-            createTournament={createTournament}
-          />
-        )}
-        {confirmedTeams && isL && format == 'tag_teams' && (
-          <TagTeamsDragAndDropAssignment
-            players={players}
-            teams={confirmedTeams}
-            groups={groups}
-            createTournament={createTournament}
-          />
-        )}
-        {confirmedTeams && !isL && format == 'tag_teams' && (
-          <TagTeamsMobileAssignment
             players={players}
             teams={confirmedTeams}
             groups={groups}

@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { database } from './../../api'
 import { StyledFormatsContainer } from './styled'
 import TournamentSettings from './components/TournamentSettings'
-import tagTeamsImage from './../../images/leo.png'
 
 const CreateTournament = () => {
   const [tournamentFormat, setTournamentFormat] = useState()
@@ -50,13 +49,6 @@ const CreateTournament = () => {
             <i>Chempions</i>
           </div>
           <img src={`${database}/tournaments/logos/5`} />
-        </div>
-        <div
-          className="format__container"
-          onClick={() => setTournamentFormat('tag_teams')}
-        >
-          <div className="formats__box-title">Torneo de duplas</div>
-          <img src={tagTeamsImage} />
         </div>
       </StyledFormatsContainer>
       {tournamentFormat && <TournamentSettings format={tournamentFormat} />}

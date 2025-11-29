@@ -1,4 +1,3 @@
-import TagTeamsGenerator from '../../pages/tag-teams-generator'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import RetrievePassword from '../../pages/retrieve-password'
 import CreateTournament from '../../pages/create-tournament'
@@ -35,10 +34,6 @@ export const AnimatedRoutes = () => {
           <Route path="create-tournament" element={<CreateTournament />} />
           <Route path=":tournament" element={<TournamentId />} />
           <Route path=":tournament/fixture" element={<FixtureId />} />
-          <Route
-            path=":tournament/tag-teams-generator"
-            element={<TagTeamsGenerator />}
-          />
           <Route path=":tournament/standings" element={<Standings />} />
           <Route path=":tournament/simulator" element={<Simulator />} />
           <Route

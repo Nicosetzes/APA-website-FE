@@ -322,6 +322,9 @@ export const ConfirmationSection = styled.div`
   border-radius: 10px;
   padding: 2rem;
   margin-bottom: 2rem;
+  @media (max-width: 575px) {
+    padding: 2rem 1rem;
+  }
 `
 
 export const ConfirmationItem = styled.div`

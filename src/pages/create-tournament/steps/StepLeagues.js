@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useFormContext, Controller } from 'react-hook-form'
+import styled from 'styled-components'
 import axios from 'axios'
 import { database } from '../../../api'
 import {
@@ -18,6 +19,29 @@ import {
   ErrorMessage,
   Badge,
 } from './styled'
+
+const SelectAllButton = styled.button`
+  padding: 0.5rem 1rem;
+  background: var(--blue-900);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #0d2b3a;
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+  }
+`
 
 const StepLeagues = ({ leagues }) => {
   const {
@@ -62,6 +86,41 @@ const StepLeagues = ({ leagues }) => {
     )
     setValue('teamsData', selectedTeamsData)
   }, [selectedTeams, availableTeams, setValue])
+
+  const selectAllTeamsFromLeague = (leagueId) => {
+    const teamsFromLeague = availableTeams
+      .filter(({ league }) => league.id === leagueId)
+      .map(({ team }) => team.id)
+
+    const newSelectedTeams = [
+      ...new Set([...selectedTeams, ...teamsFromLeague]),
+    ]
+    setValue('selectedTeams', newSelectedTeams)
+  }
+
+  const deselectAllTeamsFromLeague = (leagueId) => {
+    const teamsFromLeague = availableTeams
+      .filter(({ league }) => league.id === leagueId)
+      .map(({ team }) => team.id)
+
+    const newSelectedTeams = selectedTeams.filter(
+      (teamId) => !teamsFromLeague.includes(teamId),
+    )
+    setValue('selectedTeams', newSelectedTeams)
+  }
+
+  const getLeagueTeamsCount = (leagueId) => {
+    return availableTeams.filter(({ league }) => league.id === leagueId).length
+  }
+
+  const getSelectedLeagueTeamsCount = (leagueId) => {
+    const teamsFromLeague = availableTeams
+      .filter(({ league }) => league.id === leagueId)
+      .map(({ team }) => team.id)
+
+    return teamsFromLeague.filter((teamId) => selectedTeams.includes(teamId))
+      .length
+  }
 
   return (
     <StepContainer>
@@ -169,39 +228,97 @@ const StepLeagues = ({ leagues }) => {
                 if (format === 'champions_league' && value.length < 32) {
                   return `Champions League requiere 32 equipos (4 por cada uno de los 8 grupos). Actualmente: ${value.length} equipos`
                 }
+                if (format === 'playoff' && value.length !== 32) {
+                  return `Playoffs requiere exactamente 32 equipos. Actualmente: ${value.length} equipos`
+                }
                 return true
               },
             }}
             render={({ field }) => (
-              <TeamsGrid>
-                {availableTeams
-                  .sort((a, b) => (a.team.name > b.team.name ? 1 : -1))
-                  .map(({ team }) => {
-                    const isSelected = field.value?.includes(team.id)
-                    return (
-                      <TeamCard
-                        key={team.id}
-                        $selected={isSelected}
-                        onClick={() => {
-                          const currentValue = field.value || []
-                          if (isSelected) {
-                            field.onChange(
-                              currentValue.filter((id) => id !== team.id),
-                            )
-                          } else {
-                            field.onChange([...currentValue, team.id])
-                          }
+              <>
+                {selectedLeagues.map((leagueId) => {
+                  const league = leagues.find((l) => l.id === leagueId)
+                  const leagueTeams = availableTeams
+                    .filter(({ league }) => league.id === leagueId)
+                    .sort((a, b) => (a.team.name > b.team.name ? 1 : -1))
+
+                  const allSelected =
+                    getSelectedLeagueTeamsCount(leagueId) ===
+                    getLeagueTeamsCount(leagueId)
+
+                  if (leagueTeams.length === 0) return null
+
+                  return (
+                    <div key={leagueId} style={{ marginBottom: '2rem' }}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          marginBottom: '1rem',
                         }}
                       >
-                        <TeamImage
-                          src={`${database}/logos/${team.id}`}
-                          alt={team.name}
-                        />
-                        <TeamName>{team.name}</TeamName>
-                      </TeamCard>
-                    )
-                  })}
-              </TeamsGrid>
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '1rem',
+                          }}
+                        >
+                          <h4 style={{ margin: 0, color: 'var(--blue-900)' }}>
+                            {league?.name || 'Liga'}
+                          </h4>
+                          <Badge>
+                            {getSelectedLeagueTeamsCount(leagueId)} /{' '}
+                            {getLeagueTeamsCount(leagueId)}
+                          </Badge>
+                        </div>
+                        <SelectAllButton
+                          type="button"
+                          onClick={() => {
+                            if (allSelected) {
+                              deselectAllTeamsFromLeague(leagueId)
+                            } else {
+                              selectAllTeamsFromLeague(leagueId)
+                            }
+                          }}
+                        >
+                          {allSelected
+                            ? 'Deseleccionar Todos'
+                            : 'Seleccionar Todos'}
+                        </SelectAllButton>
+                      </div>
+                      <TeamsGrid>
+                        {leagueTeams.map(({ team }) => {
+                          const isSelected = field.value?.includes(team.id)
+                          return (
+                            <TeamCard
+                              key={team.id}
+                              $selected={isSelected}
+                              onClick={() => {
+                                const currentValue = field.value || []
+                                if (isSelected) {
+                                  field.onChange(
+                                    currentValue.filter((id) => id !== team.id),
+                                  )
+                                } else {
+                                  field.onChange([...currentValue, team.id])
+                                }
+                              }}
+                            >
+                              <TeamImage
+                                src={`${database}/logos/${team.id}`}
+                                alt={team.name}
+                              />
+                              <TeamName>{team.name}</TeamName>
+                            </TeamCard>
+                          )
+                        })}
+                      </TeamsGrid>
+                    </div>
+                  )
+                })}
+              </>
             )}
           />
           {errors.selectedTeams && (

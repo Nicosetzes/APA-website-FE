@@ -7,7 +7,6 @@ import { Image } from 'cloudinary-react'
 import StarIcon from '@mui/icons-material/Star'
 import { motion } from 'framer-motion'
 import { useMediaQuery } from 'react-responsive'
-import apaLogo from './../../images/sitioapalogo.jpg'
 import PageLoader from '../../components/PageLoader'
 
 const TournamentId = () => {
@@ -103,7 +102,7 @@ const TournamentId = () => {
                 width: '300px',
               }}
             >
-              {format !== 'tag_teams' && (
+              {format !== 'playoff' && (
                 <Link
                   to={`fixture`}
                   state={{ groups: groups }}
@@ -117,24 +116,7 @@ const TournamentId = () => {
                   Fixture
                 </Link>
               )}
-              {format == 'tag_teams' && (
-                <Link
-                  to={`tag-teams-generator`}
-                  style={{
-                    alignItems: 'center',
-                    color: 'var(--blue-900)',
-                    display: 'flex',
-                    fontSize: '2rem',
-                    gap: '0.5rem',
-                    margin: '1rem',
-                    textAlign: 'center',
-                    textDecoration: 'none',
-                  }}
-                >
-                  Generador <img src={apaLogo} style={{ maxWidth: '50px' }} />
-                </Link>
-              )}
-              {format !== 'tag_teams' && (
+              {format !== 'playoff' && (
                 <Link
                   to={`standings`}
                   state={{ groups: groups }}
@@ -148,7 +130,7 @@ const TournamentId = () => {
                   Clasificación
                 </Link>
               )}
-              {format == 'league' && (
+              {format === 'league' && (
                 <Link
                   to={`simulator`}
                   style={{
@@ -172,20 +154,18 @@ const TournamentId = () => {
               >
                 Equipos
               </Link>
-              {format !== 'tag_teams' && (
-                <Link
-                  to={`players`}
-                  style={{
-                    color: 'var(--blue-900)',
-                    fontSize: '2rem',
-                    margin: '1rem',
-                    textDecoration: 'none',
-                  }}
-                >
-                  Estadísticas
-                </Link>
-              )}
-              {format == 'league_playin_playoff' && (
+              <Link
+                to={`players`}
+                style={{
+                  color: 'var(--blue-900)',
+                  fontSize: '2rem',
+                  margin: '1rem',
+                  textDecoration: 'none',
+                }}
+              >
+                Estadísticas
+              </Link>
+              {format === 'league_playin_playoff' && (
                 <Link
                   to={`playin`}
                   state={{ groups: groups }}
@@ -199,11 +179,7 @@ const TournamentId = () => {
                   Playin
                 </Link>
               )}
-              {(format == 'playoff' ||
-                format == 'league_playoff' ||
-                format == 'league_playin_playoff' ||
-                format == 'world_cup' ||
-                format == 'champions_league') && (
+              {format !== 'league' && (
                 <Link
                   to={`playoffs`}
                   state={{ groups: groups }}

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
+import styled from 'styled-components'
 import axios from 'axios'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
@@ -20,11 +21,99 @@ import {
 
 const MySwal = withReactContent(Swal)
 
+const BracketPreview = styled.div`
+  display: flex;
+  overflow-x: auto;
+  padding: 1.5rem 0.5rem;
+  background: rgba(245, 248, 250, 0.5);
+  border-radius: 8px;
+  margin-top: 1rem;
+  justify-content: center;
+  @media (max-width: 768px) {
+    justify-content: start;
+    gap: 1rem;
+  }
+`
+
+const BracketColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 280px;
+
+  @media (max-width: 768px) {
+    min-width: 280px;
+  }
+`
+
+const BracketColumnTitle = styled.h4`
+  color: var(--blue-900);
+  font-size: 1rem;
+  font-weight: 700;
+  text-align: center;
+  margin: 0 0 0.75rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--blue-900);
+`
+
+const BracketMatchPreview = styled.div`
+  background: white;
+  border: 1px solid rgba(26, 61, 77, 0.2);
+  border-radius: 6px;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+`
+
+const BracketTeamPreview = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background: rgba(26, 61, 77, 0.05);
+  border-radius: 4px;
+`
+
+const BracketTeamLogo = styled.img`
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+`
+
+const BracketTeamInfo = styled.div`
+  flex: 1;
+  min-width: 0;
+`
+
+const BracketTeamName = styled.div`
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--blue-900);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`
+
+const BracketPlayerName = styled.div`
+  font-size: 0.75rem;
+  color: #666;
+`
+
+const MatchNumber = styled.div`
+  font-size: 0.75rem;
+  color: #999;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 0.25rem;
+`
+
 const FORMATS = {
   champions_league: 'Chempions',
   league: 'Liga Única',
   league_playin_playoff: 'Superliga APA',
   world_cup: 'Copa del Mundo',
+  playoff: 'Playoffs',
 }
 
 const StepConfirmation = ({ players }) => {
@@ -37,11 +126,14 @@ const StepConfirmation = ({ players }) => {
   const selectedPlayers = watch('selectedPlayers') || []
   const selectedTeams = watch('selectedTeams') || []
   const teamAssignments = watch('teamAssignments') || []
+  const playoffBracket = watch('playoffBracket') || []
 
   const hasGroups =
     format === 'league_playin_playoff' ||
     format === 'world_cup' ||
     format === 'champions_league'
+
+  const isPlayoffs = format === 'playoff'
 
   const getPlayerName = (playerId) => {
     return players.find((p) => p.id === playerId)?.name || 'Desconocido'
@@ -85,14 +177,48 @@ const StepConfirmation = ({ players }) => {
       const tournamentPlayers = players.filter((p) =>
         selectedPlayers.includes(p.id),
       )
-      const teams = teamAssignments.map((assignment) => ({
-        team: {
-          id: assignment.teamId,
-          name: assignment.teamName,
-        },
-        player: assignment.playerId, // Already contains { id, name }
-        group: assignment.group,
-      }))
+
+      let teams
+
+      if (isPlayoffs) {
+        teams = playoffBracket.flatMap((match) => {
+          const teamsInMatch = []
+
+          if (match.slot1) {
+            teamsInMatch.push({
+              team: {
+                id: match.slot1.teamId,
+                name: match.slot1.teamName,
+              },
+              player: match.slot1.playerId,
+              playoff_id: match.playoff_id,
+            })
+          }
+
+          if (match.slot2) {
+            teamsInMatch.push({
+              team: {
+                id: match.slot2.teamId,
+                name: match.slot2.teamName,
+              },
+              player: match.slot2.playerId,
+              playoff_id: match.playoff_id,
+            })
+          }
+
+          return teamsInMatch
+        })
+      } else {
+        // For other formats, use team assignments
+        teams = teamAssignments.map((assignment) => ({
+          team: {
+            id: assignment.teamId,
+            name: assignment.teamName,
+          },
+          player: assignment.playerId, // Already contains { id, name }
+          group: assignment.group,
+        }))
+      }
 
       const response = await axios.post(
         `${api}/tournaments`,
@@ -120,7 +246,8 @@ const StepConfirmation = ({ players }) => {
         timer: 3000,
         timerProgressBar: true,
       }).then(() => {
-        navigate(`/tournaments/${response.data._id}`)
+        // navigate(`/tournaments/${response.data._id}`)
+        console.log(response)
       })
     } catch (error) {
       console.error('Error creating tournament:', error)
@@ -174,7 +301,93 @@ const StepConfirmation = ({ players }) => {
           <ConfirmationLabel>
             Equipos ({selectedTeams.length}):
           </ConfirmationLabel>
-          {hasGroups ? (
+          {isPlayoffs ? (
+            <BracketPreview>
+              {/* Left side - Matches 1-8 */}
+              <BracketColumn>
+                <BracketColumnTitle>Enfrentamientos 1-8</BracketColumnTitle>
+                {playoffBracket.slice(0, 8).map((match) => (
+                  <BracketMatchPreview key={match.playoff_id}>
+                    <MatchNumber>Match {match.playoff_id}</MatchNumber>
+                    {match.slot1 && (
+                      <BracketTeamPreview>
+                        <BracketTeamLogo
+                          src={`${database}/logos/${match.slot1.teamId}`}
+                          alt={match.slot1.teamName}
+                        />
+                        <BracketTeamInfo>
+                          <BracketTeamName>
+                            {match.slot1.teamName}
+                          </BracketTeamName>
+                          <BracketPlayerName>
+                            {match.slot1.playerId?.name || 'Sin jugador'}
+                          </BracketPlayerName>
+                        </BracketTeamInfo>
+                      </BracketTeamPreview>
+                    )}
+                    {match.slot2 && (
+                      <BracketTeamPreview>
+                        <BracketTeamLogo
+                          src={`${database}/logos/${match.slot2.teamId}`}
+                          alt={match.slot2.teamName}
+                        />
+                        <BracketTeamInfo>
+                          <BracketTeamName>
+                            {match.slot2.teamName}
+                          </BracketTeamName>
+                          <BracketPlayerName>
+                            {match.slot2.playerId?.name || 'Sin jugador'}
+                          </BracketPlayerName>
+                        </BracketTeamInfo>
+                      </BracketTeamPreview>
+                    )}
+                  </BracketMatchPreview>
+                ))}
+              </BracketColumn>
+
+              {/* Right side - Matches 9-16 */}
+              <BracketColumn>
+                <BracketColumnTitle>Enfrentamientos 9-16</BracketColumnTitle>
+                {playoffBracket.slice(8, 16).map((match) => (
+                  <BracketMatchPreview key={match.playoff_id}>
+                    <MatchNumber>Match {match.playoff_id}</MatchNumber>
+                    {match.slot1 && (
+                      <BracketTeamPreview>
+                        <BracketTeamLogo
+                          src={`${database}/logos/${match.slot1.teamId}`}
+                          alt={match.slot1.teamName}
+                        />
+                        <BracketTeamInfo>
+                          <BracketTeamName>
+                            {match.slot1.teamName}
+                          </BracketTeamName>
+                          <BracketPlayerName>
+                            {match.slot1.playerId?.name || 'Sin jugador'}
+                          </BracketPlayerName>
+                        </BracketTeamInfo>
+                      </BracketTeamPreview>
+                    )}
+                    {match.slot2 && (
+                      <BracketTeamPreview>
+                        <BracketTeamLogo
+                          src={`${database}/logos/${match.slot2.teamId}`}
+                          alt={match.slot2.teamName}
+                        />
+                        <BracketTeamInfo>
+                          <BracketTeamName>
+                            {match.slot2.teamName}
+                          </BracketTeamName>
+                          <BracketPlayerName>
+                            {match.slot2.playerId?.name || 'Sin jugador'}
+                          </BracketPlayerName>
+                        </BracketTeamInfo>
+                      </BracketTeamPreview>
+                    )}
+                  </BracketMatchPreview>
+                ))}
+              </BracketColumn>
+            </BracketPreview>
+          ) : hasGroups ? (
             <div style={{ marginTop: '1rem' }}>
               {getTeamsByGroup()?.map(({ group, teams }) => (
                 <div key={group} style={{ marginBottom: '1.5rem' }}>

@@ -1,4 +1,3 @@
-import * as React from 'react'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useLogin } from '../../context/LoginContext'
@@ -251,48 +250,84 @@ const Playoffs = () => {
               padding: '0.5rem',
             }}
           >
+            {/* Round of 32 - Only for playoff format */}
+            {format === 'playoff' && (
+              <PlayoffRound
+                matches={matches.filter(
+                  ({ playoff_id }) => playoff_id >= 1 && playoff_id <= 16,
+                )}
+                round={1}
+                getData={getPlayoffsData}
+                isThisTheFinal={false}
+              />
+            )}
+            {/* Round of 16 */}
             <PlayoffRound
               matches={matches.filter(({ playoff_id }) =>
-                format == 'champions_league'
+                format === 'champions_league'
                   ? playoff_id <= 16
+                  : format === 'playoff'
+                  ? playoff_id > 16 && playoff_id <= 24
                   : playoff_id <= 8,
               )}
-              round={1}
+              round={format === 'playoff' ? 2 : 1}
               getData={getPlayoffsData}
               isThisTheFinal={false}
             />
+            {/* Quarterfinals */}
             <PlayoffRound
               matches={matches.filter(({ playoff_id }) =>
-                format == 'champions_league'
+                format === 'champions_league'
                   ? playoff_id > 16 && playoff_id <= 24
+                  : format === 'playoff'
+                  ? playoff_id > 24 && playoff_id <= 28
                   : playoff_id > 8 && playoff_id <= 12,
               )}
-              round={2}
+              round={format === 'playoff' ? 3 : 2}
               getData={getPlayoffsData}
               isThisTheFinal={false}
             />
+            {/* Semifinals */}
             <PlayoffRound
               matches={matches.filter(({ playoff_id }) =>
-                format == 'champions_league'
+                format === 'champions_league'
                   ? playoff_id > 24 && playoff_id <= 28
+                  : format === 'playoff'
+                  ? playoff_id > 28 && playoff_id <= 30
                   : playoff_id > 12 && playoff_id <= 14,
               )}
-              round={3}
+              round={format === 'playoff' ? 4 : 3}
               getData={getPlayoffsData}
               isThisTheFinal={false}
             />
+            {/* Final */}
             <PlayoffRound
               matches={matches.filter(({ playoff_id }) =>
-                format == 'champions_league'
+                format === 'champions_league'
                   ? playoff_id == 29
+                  : format === 'playoff'
+                  ? playoff_id == 31
                   : playoff_id == 15,
               )}
-              round={4}
+              round={format === 'playoff' ? 5 : 4}
               getData={getPlayoffsData}
               isThisTheFinal={true}
             />
             {format == 'champions_league'
               ? matches.filter(({ outcome }) => outcome).length == 29 && (
+                  <div
+                    style={{
+                      alignItems: 'space-around',
+                      display: 'flex',
+                      flexDirection: 'column',
+                    }}
+                  >
+                    <ChampionBox match={matches.at(-1)} />
+                    <FinalistBox match={matches.at(-1)} />
+                  </div>
+                )
+              : format === 'playoff'
+              ? matches.filter(({ outcome }) => outcome).length == 31 && (
                   <div
                     style={{
                       alignItems: 'space-around',

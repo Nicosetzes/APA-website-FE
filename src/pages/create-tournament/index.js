@@ -19,16 +19,9 @@ import StepFormat from './steps/StepFormat'
 import StepPlayers from './steps/StepPlayers'
 import StepLeagues from './steps/StepLeagues'
 import StepAssignments from './steps/StepAssignments'
+import StepPlayoffBracket from './steps/StepPlayoffBracket'
 import StepConfirmation from './steps/StepConfirmation'
 import PageLoader from '../../components/PageLoader'
-
-const STEPS = [
-  { id: 1, label: 'Formato', component: StepFormat },
-  { id: 2, label: 'Jugadores', component: StepPlayers },
-  { id: 3, label: 'Ligas', component: StepLeagues },
-  { id: 4, label: 'Asignaciones', component: StepAssignments },
-  { id: 5, label: 'Confirmar', component: StepConfirmation },
-]
 
 const CreateTournament = () => {
   const [currentStep, setCurrentStep] = useState(1)
@@ -46,11 +39,37 @@ const CreateTournament = () => {
       selectedTeams: [],
       teamsData: [],
       teamAssignments: [],
+      playoffBracket: [],
     },
   })
 
   const { watch, trigger } = methods
   const watchedFormat = watch('format')
+
+  // Dynamic steps based on format
+  const getSteps = () => {
+    const baseSteps = [
+      { id: 1, label: 'Formato', component: StepFormat },
+      { id: 2, label: 'Jugadores', component: StepPlayers },
+      { id: 3, label: 'Ligas', component: StepLeagues },
+    ]
+
+    if (watchedFormat === 'playoff') {
+      return [
+        ...baseSteps,
+        { id: 4, label: 'Bracket', component: StepPlayoffBracket },
+        { id: 5, label: 'Confirmar', component: StepConfirmation },
+      ]
+    }
+
+    return [
+      ...baseSteps,
+      { id: 4, label: 'Asignaciones', component: StepAssignments },
+      { id: 5, label: 'Confirmar', component: StepConfirmation },
+    ]
+  }
+
+  const STEPS = getSteps()
 
   useEffect(() => {
     const fetchData = async () => {

@@ -84,7 +84,7 @@ const Showcase = ({ tournaments }) => {
         finalistUserName={'Leo'}
         finalistTeamId={'460'}
         finalistTeamName={'San Lorenzo'}
-        cloudinary_id={'tournaments/copa-argentina_uf76a1'}
+        cloudinary_id={'tournaments/_wz61rs'}
       />
       <ChampionshipBox
         tournament={'Copa América 2019'}

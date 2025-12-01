@@ -18,6 +18,7 @@ const FORMATS = [
   { id: 'league_playin_playoff', name: 'Superliga APA', logo: 8 },
   { id: 'world_cup', name: 'Copa del Mundo', logo: 2 },
   { id: 'champions_league', name: 'Chempions', logo: 5 },
+  { id: 'playoff', name: 'Playoffs', logo: 10 },
 ]
 
 const StepFormat = () => {

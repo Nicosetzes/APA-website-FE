@@ -197,6 +197,12 @@ export const LeagueName = styled.div`
   color: #333;
 `
 
+export const CountryName = styled.div`
+  font-size: 0.875rem;
+  text-align: center;
+  color: #333;
+`
+
 export const TeamsSection = styled.div`
   margin-top: 2rem;
   padding-top: 2rem;

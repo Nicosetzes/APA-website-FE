@@ -10,6 +10,7 @@ import {
   LeaguesGrid,
   LeagueCard,
   LeagueName,
+  CountryName,
   TeamsSection,
   TeamsSectionTitle,
   TeamsGrid,
@@ -188,6 +189,9 @@ const StepLeagues = ({ leagues }) => {
                     }}
                   >
                     <LeagueName>{league.name}</LeagueName>
+                    <CountryName>
+                      {league.country} {`(${league.year})`}
+                    </CountryName>
                   </LeagueCard>
                 )
               })}

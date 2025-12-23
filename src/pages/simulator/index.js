@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react'
 import TeamBox from './components/TeamBox'
-import BreadCrumbsMUI from './../../components/BreadCrumbsMUI'
+import { BreadCrumbsMUI, PageLoader } from 'views/components'
 import { useParams, useNavigate } from 'react-router-dom'
-import { api, database } from './../../api'
+import { api, database } from 'api'
 import axios from 'axios'
 import { motion } from 'framer-motion'
-import PageLoader from '../../components/PageLoader'
 
 const Simulator = () => {
   const { tournament } = useParams()

@@ -4,14 +4,12 @@ import {
   useParams,
   useSearchParams,
 } from 'react-router-dom'
-import PlayerStatsTable from './../../components/PlayerStatsTable'
-import BreadCrumbsMUI from './../../components/BreadCrumbsMUI'
+import { PlayerStatsTable, BreadCrumbsMUI, PageLoader } from 'views/components'
 import StandingsTable from './components/StandingsTable'
 import { useEffect, useMemo, useState, useCallback } from 'react'
 import { motion } from 'framer-motion'
-import { api } from './../../api'
+import { api } from 'api'
 import axios from 'axios'
-import PageLoader from '../../components/PageLoader'
 import { SpinnerContainer } from './styled'
 import { Oval } from 'react-loader-spinner'
 import {

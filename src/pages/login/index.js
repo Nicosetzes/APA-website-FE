@@ -1,12 +1,12 @@
 import { useEffect } from 'react'
-import { useLogin } from '../../context/LoginContext'
+import { useLogin } from 'context/LoginContext'
 import SignIn from './components/SignIn'
 import SolicitatePassword from './components/SolicitatePassword'
 import 'react-toastify/dist/ReactToastify.css'
 import UserProfile from './components/UserProfile'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
-import { api } from './../../api'
+import { api } from 'api'
 import axios from 'axios'
 
 const Login = () => {

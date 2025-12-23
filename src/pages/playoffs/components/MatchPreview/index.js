@@ -1,6 +1,6 @@
-import { database } from './../../../../api'
+import { database } from 'api'
 import { StyledMatchPreview } from './styled'
-import questionMark from './../../../../images/question.svg'
+import questionMark from 'images/question.svg'
 
 const MatchPreview = ({
   teamOne,

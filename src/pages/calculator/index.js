@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
-import { api, database } from './../../api'
+import { api, database } from 'api'
 import axios from 'axios'
 import CalculatorStandingsTable from './components/CalculatorStandingsTable'
 import IconButton from '@mui/material/IconButton'
 import ClearIcon from '@mui/icons-material/Clear'
-import PageLoader from '../../components/PageLoader'
+import { PageLoader } from 'views/components'
 
 const Calculator = () => {
   const { tournament } = useParams()

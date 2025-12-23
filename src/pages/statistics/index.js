@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
-import { api } from './../../api'
+import { api } from 'api'
 import axios from 'axios'
-import PageLoader from '../../components/PageLoader'
+import { PageLoader } from 'views/components'
 import { Oval } from 'react-loader-spinner'
 import { format, parseISO } from 'date-fns'
 import {

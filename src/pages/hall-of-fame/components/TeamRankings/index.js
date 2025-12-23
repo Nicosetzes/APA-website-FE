@@ -1,6 +1,6 @@
 import { StyledTeamRankings } from './styled'
 import { useMediaQuery } from 'react-responsive'
-import { database } from '../../../../api'
+import { database } from 'api'
 
 const TeamRankings = ({ title, subtitle, teams }) => {
   // const isL = useMediaQuery({ query: '(min-width: 992px)' })

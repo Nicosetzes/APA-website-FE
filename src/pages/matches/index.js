@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import { useSearchParams } from 'react-router-dom'
 import axios from 'axios'
-import { api } from './../../api'
+import { api } from 'api'
 import TableContainer from '@mui/material/TableContainer'
 import Pagination from '@mui/material/Pagination'
 import MatchesTable from './components/MatchesTable'
 import Paper from '@mui/material/Paper'
 import { motion } from 'framer-motion'
-import PageLoader from '../../components/PageLoader'
+import { PageLoader } from 'views/components'
 
 const Matches = () => {
   // const isSm = useMediaQuery({ query: '(min-width: 500px)' })

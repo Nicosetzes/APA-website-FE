@@ -1,10 +1,9 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useLocation, useParams, useSearchParams } from 'react-router-dom'
-import FixtureContainer from './../../components/FixtureContainer'
-import { api, database } from './../../api'
+import { BreadCrumbsMUI, FixtureContainer, PageLoader } from 'views/components'
+import { api, database } from 'api'
 import axios from 'axios'
 import { motion } from 'framer-motion'
-import BreadCrumbsMUI from './../../components/BreadCrumbsMUI'
 import {
   Header,
   HeaderContainer,
@@ -28,7 +27,6 @@ import {
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import { Oval } from 'react-loader-spinner'
-import PageLoader from './../../components/PageLoader'
 import Pagination from '@mui/material/Pagination'
 import { useMediaQuery } from 'react-responsive'
 

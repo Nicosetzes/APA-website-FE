@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import Accolades from './components/Accolades'
 import Showcase from './components/Showcase'
-import FaceToFaceTable from './../../components/FaceToFaceTable'
+import { FaceToFaceTable } from 'views/components'
 import TeamRankings from './components/TeamRankings'
-import { api } from './../../api'
+import { api } from 'api'
 import axios from 'axios'
 import { Oval } from 'react-loader-spinner'
 

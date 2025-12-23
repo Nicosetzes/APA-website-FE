@@ -1,5 +1,5 @@
 import { StyledTeamBox } from './styled'
-import { database } from './../../../../api'
+import { database } from 'api'
 
 const TeamBox = ({ team, player, handler, selectedTeams }) => {
   return (

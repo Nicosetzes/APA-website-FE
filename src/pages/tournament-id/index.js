@@ -1,13 +1,12 @@
 import { useState, useEffect } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
-import BreadCrumbsMUI from './../../components/BreadCrumbsMUI'
-import { api, database, cloudName } from './../../api'
+import { BreadCrumbsMUI, PageLoader } from 'views/components'
+import { api, database, cloudName } from 'api'
 import axios from 'axios'
 import { Image } from 'cloudinary-react'
 import StarIcon from '@mui/icons-material/Star'
 import { motion } from 'framer-motion'
 import { useMediaQuery } from 'react-responsive'
-import PageLoader from '../../components/PageLoader'
 
 const TournamentId = () => {
   const isSm = useMediaQuery({ query: '(min-width: 576px)' })

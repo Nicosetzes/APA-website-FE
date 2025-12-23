@@ -1,14 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { useLogin } from '../../../../context/LoginContext'
+import { useLogin } from 'context/LoginContext'
 import { StyledUserProfile } from './styled'
 import SignOut from './../SignOut'
-import { api } from '../../../../api'
+import { api } from 'api'
 import axios from 'axios'
-import PlayerInformationModal from '../../../../components/PlayerInformationModal'
+import { PageLoader, PlayerInformationModal } from 'views/components'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
-import PageLoader from '../../../../components/PageLoader'
 
 const UserProfile = ({ id }) => {
   const MySwal = withReactContent(Swal)

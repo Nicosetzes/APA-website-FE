@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useFormContext, Controller } from 'react-hook-form'
 import styled from 'styled-components'
 import axios from 'axios'
-import { database } from '../../../api'
+import { database } from 'api'
 import {
   StepContainer,
   StepTitle,

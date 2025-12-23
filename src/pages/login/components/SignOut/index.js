@@ -1,5 +1,5 @@
-import { useLogin } from '../../../../context/LoginContext'
-import { api } from './../../../../api'
+import { useLogin } from 'context/LoginContext'
+import { api } from 'api'
 import { StyledSignOut } from './styled'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'

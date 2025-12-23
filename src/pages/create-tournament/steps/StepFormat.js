@@ -1,5 +1,5 @@
 import { useFormContext, Controller } from 'react-hook-form'
-import { database } from '../../../api'
+import { database } from 'api'
 import {
   StepContainer,
   StepTitle,

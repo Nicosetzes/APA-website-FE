@@ -1,12 +1,11 @@
+import { BreadCrumbsMUI, PageLoader } from 'views/components'
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { useParams, useSearchParams } from 'react-router-dom'
-import BreadCrumbsMUI from './../../components/BreadCrumbsMUI'
 import { StyledPlayers } from './styled'
 import StatsLayout from './components/StatsLayout'
 import PlayerBox from './components/PlayerBox'
-import { api } from './../../api'
+import { api } from 'api'
 import axios from 'axios'
-import PageLoader from '../../components/PageLoader'
 
 const Players = () => {
   const { tournament } = useParams()

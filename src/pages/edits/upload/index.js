@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { api } from '../../../api'
+import { api } from 'api'
 import axios from 'axios'
 import { Oval } from 'react-loader-spinner'
 import {

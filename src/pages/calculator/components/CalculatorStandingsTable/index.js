@@ -4,7 +4,7 @@ import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
-import { database } from './../../../../api'
+import { database } from 'api'
 
 const CalculatorStandingsTable = ({ standings, calculatorTeams }) => {
   const isL = useMediaQuery({ query: '(min-width: 992px)' })

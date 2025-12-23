@@ -1,18 +1,20 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { useLogin } from '../../context/LoginContext'
+import { useLogin } from 'context/LoginContext'
 import axios from 'axios'
 import { motion } from 'framer-motion'
-import { api } from './../../api'
+import { api } from 'api'
 import StandingsTable from './../standings/components/StandingsTable'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
-import BreadCrumbsMUI from './../../components/BreadCrumbsMUI'
-import PlayoffRound from '../../components/PlayoffRound'
-import ChampionBox from '../../components/ChampionBox'
-import FinalistBox from './../../components/FinalistBox'
+import {
+  BreadCrumbsMUI,
+  ChampionBox,
+  FinalistBox,
+  PageLoader,
+  PlayoffRound,
+} from 'views/components'
 import MatchPreview from './components/MatchPreview'
-import PageLoader from '../../components/PageLoader'
 import {
   PlayoffsPreviewContainer,
   PlayoffsSideContainer,

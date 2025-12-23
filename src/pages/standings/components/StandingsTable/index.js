@@ -1,11 +1,11 @@
+import { ScoreBox } from 'views/components'
 import { useMediaQuery } from 'react-responsive'
 import { StyledTable } from './styled'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
-import ScoreBox from './../../../../components/ScoreBox'
-import { database } from './../../../../api'
+import { database } from 'api'
 
 const StandingsTable = ({ tournament, format, standings, onHandle }) => {
   const isL = useMediaQuery({ query: '(min-width: 992px)' })

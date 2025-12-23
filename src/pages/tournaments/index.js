@@ -1,12 +1,12 @@
-import BreadCrumbsMUI from './../../components/BreadCrumbsMUI'
+import BreadCrumbsMUI from 'views/components/BreadCrumbsMUI'
 import { Image } from 'cloudinary-react'
 import { StyledTournamentsContainer } from './styled'
-import { api, database, cloudName } from './../../api'
+import { api, database, cloudName } from 'api'
 import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { motion } from 'framer-motion'
-import PageLoader from '../../components/PageLoader'
+import { PageLoader } from 'views/components'
 
 const Tournaments = () => {
   const [tournaments, setTournaments] = useState()

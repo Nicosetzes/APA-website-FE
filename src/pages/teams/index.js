@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { StyledTeams } from './styled'
-import TeamCard from '../../components/TeamCard'
-import BreadCrumbsMUI from './../../components/BreadCrumbsMUI'
-import { api } from './../../api'
+import { TeamCard, BreadCrumbsMUI, PageLoader } from 'views/components'
+import { api } from 'api'
 import axios from 'axios'
-import PageLoader from '../../components/PageLoader'
 
 const Teams = () => {
   const { tournament } = useParams()

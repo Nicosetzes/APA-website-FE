@@ -1,6 +1,6 @@
 import { useMediaQuery } from 'react-responsive'
 import { StyledStatsLayout } from './styled'
-import { database } from '../../../../api'
+import { database } from 'api'
 import MatchBox from './../MatchBox'
 
 const StatsLayout = ({ playerStats }) => {

@@ -1,6 +1,6 @@
 import { StyledMatchBox } from './styled'
 import { useSearchParams } from 'react-router-dom'
-import { database } from '../../../../api'
+import { database } from 'api'
 import { format, parseISO } from 'date-fns'
 
 const MatchBox = ({

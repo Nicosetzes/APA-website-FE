@@ -1,4 +1,4 @@
-import { cloudName, database } from '../../../../api'
+import { cloudName, database } from 'api'
 import { StyledChampionshipBox } from './styled'
 import { useMediaQuery } from 'react-responsive'
 import { Image } from 'cloudinary-react'

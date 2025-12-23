@@ -1,14 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { useLogin } from '../../context/LoginContext'
-import PlayinRound from './../../components/PlayinRound'
-import { api, database } from './../../api'
+import { useLogin } from 'context/LoginContext'
+import { BreadCrumbsMUI, PlayinRound } from 'views/components'
+import { api, database } from 'api'
 import axios from 'axios'
 import { motion } from 'framer-motion'
-import BreadCrumbsMUI from './../../components/BreadCrumbsMUI'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
-import PageLoader from '../../components/PageLoader'
+import { PageLoader } from 'views/components'
 
 const Playin = () => {
   const MySwal = withReactContent(Swal)

@@ -4,8 +4,8 @@ import { BrowserRouter } from 'react-router-dom'
 import './index.css'
 import reportWebVitals from './reportWebVitals'
 import { LoginProvider } from './context/LoginContext'
-import Navbar from './components/Navbar'
-import Footer from './components/Footer'
+import Navbar from './views/components/Navbar'
+import Footer from './views/components/Footer'
 import AnimatedRoutes from './routes/AnimatedRoutes'
 
 ReactDOM.render(

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useForm, FormProvider } from 'react-hook-form'
 import { motion, AnimatePresence } from 'framer-motion'
-import { api, database } from './../../api'
+import { api, database } from 'api'
 import axios from 'axios'
 import {
   WizardContainer,
@@ -21,7 +21,7 @@ import StepLeagues from './steps/StepLeagues'
 import StepAssignments from './steps/StepAssignments'
 import StepPlayoffBracket from './steps/StepPlayoffBracket'
 import StepConfirmation from './steps/StepConfirmation'
-import PageLoader from '../../components/PageLoader'
+import { PageLoader } from 'views/components'
 
 const CreateTournament = () => {
   const [currentStep, setCurrentStep] = useState(1)

@@ -1,14 +1,3 @@
-import trophySuperligaItaloEspañola from 'images/superliga-italo-española.png'
-import trophySuperligaArgentina from 'images/superliga-argentina.png'
-import trophySuperligaEuropea from 'images/superliga-europea.png'
-import trophyMundialDeClubes from 'images/mundial-de-clubes.png'
-import trophyTorneoArgentino from 'images/torneo-argentino.png'
-import trophyCopaArgentina from 'images/copa-argentina.png'
-import trophySuperligaInglesa from 'images/superliga-inglesa.png'
-import trophyCopaAmerica from 'images/copa-america.png'
-import trophyChampions from 'images/champions.png'
-import trophyWorldCup from 'images/world-cup.png'
-import trophyFerraris from 'images/ferraris.png'
 import { StyledAccolades } from './styled'
 import PlayerBox from '../PlayerBox'
 
@@ -19,36 +8,36 @@ const Accolades = () => {
         <PlayerBox
           player={'Leo'}
           trophies={[
-            trophyWorldCup,
-            trophyTorneoArgentino,
-            trophyWorldCup,
-            trophyChampions,
-            trophyTorneoArgentino,
-            trophyWorldCup,
-            trophySuperligaItaloEspañola,
-            trophyFerraris,
+            '/images/world-cup.png',
+            '/images/torneo-argentino.png',
+            '/images/world-cup.png',
+            '/images/champions.png',
+            '/images/torneo-argentino.png',
+            '/images/world-cup.png',
+            '/images/superliga-italo-española.png',
+            '/images/ferraris.png',
           ]}
         />
         <PlayerBox
           player={'Max'}
           trophies={[
-            trophyTorneoArgentino,
-            trophyTorneoArgentino,
-            trophyWorldCup,
-            trophyMundialDeClubes,
-            trophyCopaArgentina,
-            trophySuperligaArgentina,
+            '/images/torneo-argentino.png',
+            '/images/torneo-argentino.png',
+            '/images/world-cup.png',
+            '/images/mundial-de-clubes.png',
+            '/images/copa-argentina.png',
+            '/images/superliga-argentina.png',
           ]}
         />
         <PlayerBox
           player={'Nico'}
           trophies={[
-            trophySuperligaEuropea,
-            trophySuperligaInglesa,
-            trophySuperligaInglesa,
+            '/images/superliga-europea.png',
+            '/images/superliga-inglesa.png',
+            '/images/superliga-inglesa.png',
           ]}
         />
-        <PlayerBox player={'Santi'} trophies={[trophyCopaAmerica]} />
+        <PlayerBox player={'Santi'} trophies={['/images/copa-america.png']} />
       </StyledAccolades>
     </>
   )

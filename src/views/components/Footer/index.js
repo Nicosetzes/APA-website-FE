@@ -1,9 +1,6 @@
 import { StyledFooter } from './styled'
 import { Link } from 'react-router-dom'
 import { useMediaQuery } from 'react-responsive'
-import logo from 'images/sitioapalogo2.png'
-import youtube from 'images/youtube.png'
-import twitch from 'images/twitch.png'
 import { useLogin } from 'context/LoginContext'
 
 const Footer = () => {
@@ -20,7 +17,7 @@ const Footer = () => {
   return (
     <StyledFooter isXS={!isXS} isSm={!isSm}>
       <div className="footer__img">
-        <img src={logo} />
+        <img src="/images/sitioapalogo2.png" />
       </div>
       <div className="footer__social">
         {/* <YouTubeIcon sx={{ color: 'red', fontSize: '3rem' }} /> */}
@@ -29,14 +26,14 @@ const Footer = () => {
           rel="noreferrer"
           target="_blank"
         >
-          <img src={youtube} />
+          <img src="/images/youtube.png" />
         </a>
         <a
           href={'https://www.twitch.tv/apa_oficial'}
           rel="noreferrer"
           target="_blank"
         >
-          <img src={twitch} />
+          <img src="/images/twitch.png" />
         </a>
       </div>
       <div className="footer__menu">

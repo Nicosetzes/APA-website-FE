@@ -8,15 +8,6 @@ import { Image } from 'cloudinary-react'
 import { Oval } from 'react-loader-spinner'
 import axios from 'axios'
 import { format, parseISO } from 'date-fns'
-import presentationDesktop from 'images/desktop.jpg'
-import presentationMobile from 'images/mobile.jpg'
-import championBackground from 'images/desktop-2.jpg'
-import logo from 'images/sitioapalogo2.png'
-import nico from 'images/nico.png'
-import max from 'images/max.png'
-import santi from 'images/santi.png'
-import lucho from 'images/lucho.png'
-import leo from 'images/leo.png'
 
 const mundial_de_ferraris_cloudinary_id = 'tournaments/ferraris_ykvwlf'
 
@@ -87,19 +78,21 @@ const Home = () => {
       exit={{ opacity: 0 }}
     >
       <StyledHome
-        presentationBackground={isSm ? presentationDesktop : presentationMobile}
-        championBackground={championBackground}
+        presentationBackground={
+          isSm ? '/images/desktop.jpg' : '/images/mobile.jpg'
+        }
+        championBackground="/images/desktop-2.jpg"
         isXS={isXS && !isSm}
         isM={isM}
       >
         <div className="container__presentation">
-          <img className="logo" src={logo} />
+          <img className="logo" src="/images/sitioapalogo2.png" />
           <div className="container__coaches">
-            <img src={nico} />
-            <img src={max} />
-            <img src={santi} />
-            <img src={lucho} />
-            <img src={leo} />
+            <img src="/images/nico.png" />
+            <img src="/images/max.png" />
+            <img src="/images/santi.png" />
+            <img src="/images/lucho.png" />
+            <img src="/images/leo.png" />
           </div>
         </div>
         {/* Daily recap section */}

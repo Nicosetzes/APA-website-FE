@@ -1,6 +1,5 @@
 import { database } from 'api'
 import { StyledMatchPreview } from './styled'
-import questionMark from 'images/question.svg'
 
 const MatchPreview = ({
   teamOne,
@@ -51,7 +50,7 @@ const MatchPreview = ({
           <div>
             <span className="team__position">{positionTwo}.</span>
             <img
-              src={questionMark}
+              src="/images/question.svg"
               alt={'Signo de pregunta'}
               className="team__image small"
             />

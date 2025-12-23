@@ -4,8 +4,6 @@ import { Link } from 'react-router-dom'
 import ExtendedNavMenu from '../ExtendedNavMenu'
 import MenuWrapper from '../MenuWrapper'
 import { StyledNavbar } from './styled'
-import logo from 'images/logo.webp'
-import boca from 'audio/boca.wav'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import StopIcon from '@mui/icons-material/Stop'
 
@@ -34,12 +32,12 @@ const Navbar = () => {
     return [playing, toggle]
   }
 
-  const [playing, toggle] = useAudio(boca)
+  const [playing, toggle] = useAudio('/audio/boca.wav')
 
   return (
     <StyledNavbar>
       <Link to="/">
-        <img className="logo" src={logo} alt="logo" />
+        <img className="logo" src="/images/logo.webp" alt="logo" />
       </Link>
       <button
         onClick={toggle}

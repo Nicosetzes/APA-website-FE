@@ -1,12 +1,11 @@
+import './index.css'
+import AnimatedRoutes from 'routes/AnimatedRoutes'
+import { BrowserRouter } from 'react-router-dom'
+import { LoginProvider } from 'context/LoginContext'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { BrowserRouter } from 'react-router-dom'
-import './index.css'
 import reportWebVitals from './reportWebVitals'
-import { LoginProvider } from './context/LoginContext'
-import Navbar from './views/components/Navbar'
-import Footer from './views/components/Footer'
-import AnimatedRoutes from './routes/AnimatedRoutes'
+import { Navbar, Footer } from 'views/components'
 
 ReactDOM.render(
   <React.StrictMode>

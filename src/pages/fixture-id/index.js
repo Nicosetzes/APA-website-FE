@@ -1,37 +1,36 @@
-import { useState, useEffect, useMemo, useCallback } from 'react'
-import { useLocation, useParams, useSearchParams } from 'react-router-dom'
-import { BreadCrumbsMUI, FixtureContainer, PageLoader } from 'views/components'
-import { api, database } from 'api'
-import axios from 'axios'
-import { motion } from 'framer-motion'
-import {
-  Header,
-  HeaderContainer,
-  Title,
-  StandingsLink,
-  Card,
-  ControlsRow,
-  GroupsTitle,
-  GroupButtons,
-  GroupButton,
-  Divider,
-  FiltersContainer,
-  FiltersTitle,
-  PlayerToggle,
-  StatusRow,
-  StatusChip,
-  TeamInfoRow,
-  ClearButton,
-  SpinnerContainer,
-} from './styled'
-import Swal from 'sweetalert2'
-import withReactContent from 'sweetalert2-react-content'
 import { Oval } from 'react-loader-spinner'
 import Pagination from '@mui/material/Pagination'
+import Swal from 'sweetalert2'
+import { apiClient } from 'api/axiosConfig'
+import { motion } from 'framer-motion'
 import { useMediaQuery } from 'react-responsive'
+import withReactContent from 'sweetalert2-react-content'
+import { BreadCrumbsMUI, FixtureContainer, PageLoader } from 'views/components'
+import {
+  Card,
+  ClearButton,
+  ControlsRow,
+  Divider,
+  GroupsTitle,
+  FiltersContainer,
+  FiltersTitle,
+  GroupButton,
+  GroupButtons,
+  Header,
+  HeaderContainer,
+  PlayerToggle,
+  SpinnerContainer,
+  StandingsLink,
+  StatusChip,
+  StatusRow,
+  TeamInfoRow,
+  Title,
+} from './styled'
+import { api, database } from 'api'
+import { useLocation, useParams, useSearchParams } from 'react-router-dom'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 
 const FixtureId = () => {
-  // const isSm = useMediaQuery({ query: '(min-width: 600px)' })
   const isXS = useMediaQuery({ query: '(min-width: 375px)' })
 
   const MySwal = withReactContent(Swal)
@@ -84,11 +83,11 @@ const FixtureId = () => {
 
   const getTournamentData = useCallback(() => {
     const controller = new AbortController()
-    axios
+    apiClient
       .get(`${api}/tournaments/${tournament}`, { signal: controller.signal })
       .then(({ data }) => setTournamentData(data))
       .catch((err) => {
-        if (axios.isCancel?.(err) || err?.name === 'CanceledError') return
+        if (apiClient.isCancel?.(err) || err?.name === 'CanceledError') return
         console.error(err)
       })
     return () => controller.abort()
@@ -117,7 +116,7 @@ const FixtureId = () => {
       ...(switchState.length ? { players: JSON.stringify(switchState) } : {}),
     }
 
-    axios
+    apiClient
       .get(`${api}/tournaments/${tournament}/fixture`, {
         params,
         signal: controller.signal,
@@ -127,7 +126,7 @@ const FixtureId = () => {
         setFixtureLoading(false)
       })
       .catch((err) => {
-        if (axios.isCancel?.(err) || err?.name === 'CanceledError') return
+        if (apiClient.isCancel?.(err) || err?.name === 'CanceledError') return
         console.error(err)
         setFixtureLoading(false)
       })
@@ -171,17 +170,10 @@ const FixtureId = () => {
   }, [searchParams, setSearchParams])
 
   const fixtureGeneration = (group = null) => {
-    axios
-      .post(
-        `${api}/tournaments/${tournament}/fixture`,
-        {
-          group,
-        },
-        {
-          withCredentials: true,
-          credentials: 'include',
-        } /* Importante, sirve para incluir la cookie alojada en el navegador */,
-      )
+    apiClient
+      .post(`${api}/tournaments/${tournament}/fixture`, {
+        group,
+      })
       .then(({ data }) => {
         console.log(data)
         MySwal.fire({

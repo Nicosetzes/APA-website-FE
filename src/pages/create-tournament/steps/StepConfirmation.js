@@ -1,11 +1,10 @@
-import { useState } from 'react'
-import { useFormContext } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
-import styled from 'styled-components'
-import axios from 'axios'
 import Swal from 'sweetalert2'
+import { apiClient } from 'api/axiosConfig'
+import styled from 'styled-components'
+import { useFormContext } from 'react-hook-form'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import withReactContent from 'sweetalert2-react-content'
-import { api, database } from 'api'
 import {
   StepContainer,
   StepTitle,
@@ -18,6 +17,7 @@ import {
   TeamImage,
   SubmitButton,
 } from './styled'
+import { api, database } from 'api'
 
 const MySwal = withReactContent(Swal)
 
@@ -220,19 +220,12 @@ const StepConfirmation = ({ players }) => {
         }))
       }
 
-      const response = await axios.post(
-        `${api}/tournaments`,
-        {
-          name: tournamentName,
-          format,
-          players: tournamentPlayers,
-          teams,
-        },
-        {
-          withCredentials: true,
-          credentials: 'include',
-        },
-      )
+      const response = await apiClient.post(`${api}/tournaments`, {
+        name: tournamentName,
+        format,
+        players: tournamentPlayers,
+        teams,
+      })
 
       MySwal.fire({
         background: 'rgba(28, 25, 25, 0.95)',
@@ -246,8 +239,7 @@ const StepConfirmation = ({ players }) => {
         timer: 3000,
         timerProgressBar: true,
       }).then(() => {
-        // navigate(`/tournaments/${response.data._id}`)
-        console.log(response)
+        navigate(`/tournaments/${response.data._id}`)
       })
     } catch (error) {
       console.error('Error creating tournament:', error)

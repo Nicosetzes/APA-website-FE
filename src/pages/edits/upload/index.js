@@ -1,26 +1,26 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import { api } from 'api'
-import axios from 'axios'
 import { Oval } from 'react-loader-spinner'
+import { api } from 'api'
+import { motion } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+import { apiClient } from 'api/axiosConfig'
 import {
-  Container,
-  Header,
-  Title,
-  Subtitle,
   BackButton,
-  UploadCard,
-  UploadArea,
+  Container,
   FileInput,
   FileLabel,
   FileName,
-  PreviewImage,
-  PreviewContainer,
-  RemoveButton,
-  UploadButton,
+  Header,
   Message,
+  PreviewContainer,
+  PreviewImage,
+  RemoveButton,
   SpinnerContainer,
+  Subtitle,
+  Title,
+  UploadArea,
+  UploadButton,
+  UploadCard,
 } from './styled'
 
 const EditsUpload = () => {
@@ -128,12 +128,10 @@ const EditsUpload = () => {
     })
 
     try {
-      await axios.post(`${api}/edits`, formData, {
+      await apiClient.post(`${api}/edits`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
-        withCredentials: true,
-        credentials: 'include',
       })
 
       setMessage(

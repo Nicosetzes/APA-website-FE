@@ -1,17 +1,17 @@
-import { useState } from 'react'
-import { useParams, useSearchParams, useNavigate } from 'react-router-dom'
-import TeamInformationModal from '../TeamInformationModal'
-import withReactContent from 'sweetalert2-react-content'
 import BarChartIcon from '@mui/icons-material/BarChart'
-import { useLogin } from 'context/LoginContext'
 import DeleteIcon from '@mui/icons-material/Delete'
-import IconButton from '@mui/material/IconButton'
 import EditIcon from '@mui/icons-material/Edit'
-import { api, database } from 'api'
+import IconButton from '@mui/material/IconButton'
 import { StyledMatch } from './styled'
-import { format, parseISO } from 'date-fns'
 import Swal from 'sweetalert2'
-import axios from 'axios'
+import TeamInformationModal from '../TeamInformationModal'
+import { apiClient } from 'api/axiosConfig'
+import { useLogin } from 'context/LoginContext'
+import { useState } from 'react'
+import withReactContent from 'sweetalert2-react-content'
+import { api, database } from 'api'
+import { format, parseISO } from 'date-fns'
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
 const Match = ({ match, getFixtureData }) => {
   const MySwal = withReactContent(Swal)
@@ -60,7 +60,6 @@ const Match = ({ match, getFixtureData }) => {
       scoreP2 == null ||
       scoreP2 === ''
     ) {
-      // The comparison with == checks for both null and undefined //
       MySwal.fire({
         background: `rgba(28, 25, 25, 0.95)`,
         color: `#fff`,
@@ -91,15 +90,8 @@ const Match = ({ match, getFixtureData }) => {
       scoreP2,
     }
 
-    axios
-      .put(
-        `${api}/tournaments/${tournament}/matches/update-game/${_id}`,
-        data,
-        {
-          withCredentials: true,
-          credentials: 'include',
-        } /* Importante, sirve para incluir la cookie alojada en el navegador */,
-      )
+    apiClient
+      .put(`${api}/tournaments/${tournament}/matches/update-game/${_id}`, data)
       .then(({ data }) => {
         // ¿Debería hacer algo con data? //
         MySwal.fire({
@@ -204,14 +196,10 @@ const Match = ({ match, getFixtureData }) => {
       cancelButtonText: 'Volver',
     }).then((result) => {
       if (result.isConfirmed) {
-        axios
+        apiClient
           .put(
             `${api}/tournaments/${tournament}/matches/delete-game/${_id}`,
-            {} /* Importante, adjunto {} a la request porque sino no toma el objeto de configuración de abajo (y por ende, no viaja la cookie) */,
-            {
-              withCredentials: true,
-              credentials: 'include',
-            } /* Importante, sirve para incluir la cookie alojada en el navegador */,
+            {},
           )
           .then(({ data }) => {
             console.log(data)
@@ -227,9 +215,8 @@ const Match = ({ match, getFixtureData }) => {
               text: 'Aguarde unos instantes...',
               timer: 2000,
               timerProgressBar: true,
-              customClass: { timerProgressBar: 'toast-progress-dark' }, // Definido en index.css //
+              customClass: { timerProgressBar: 'toast-progress-dark' },
               didOpen: (toast) => {
-                // Vuelvo a traer los partidos del fixture, para mostrar los partidos actualizados sin recargar la página //
                 getFixtureData()
                 toast.addEventListener('mouseenter', Swal.stopTimer)
                 toast.addEventListener('mouseleave', Swal.resumeTimer)
@@ -290,9 +277,8 @@ const Match = ({ match, getFixtureData }) => {
       showConfirmButton: false,
       showCloseButton: true,
       didOpen: () => {
-        // `MySwal` is a subclass of `Swal` with all the same instance & static methods
         MySwal.showLoading()
-        axios
+        apiClient
           .get(`${api}/tournaments/${tournament}/teams/${id}?group=${group}`)
           .then(({ data }) => {
             MySwal.update({

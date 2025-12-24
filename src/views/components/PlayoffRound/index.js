@@ -1,11 +1,11 @@
-import { useParams, useNavigate } from 'react-router-dom'
-import { useLogin } from 'context/LoginContext'
 import PlayoffMatch from '../PlayoffMatch'
 import { StyledPlayoffRound } from './styled'
-import { api } from 'api'
 import Swal from 'sweetalert2'
+import { api } from 'api'
+import { apiClient } from 'api/axiosConfig'
+import { useLogin } from 'context/LoginContext'
 import withReactContent from 'sweetalert2-react-content'
-import axios from 'axios'
+import { useNavigate, useParams } from 'react-router-dom'
 
 const PlayoffRound = ({ matches, round, getData, isThisTheFinal }) => {
   const { tournament } = useParams()
@@ -18,17 +18,10 @@ const PlayoffRound = ({ matches, round, getData, isThisTheFinal }) => {
   const { setLoginStatus } = login
 
   const checkForNewPlayoffMatches = (round) => {
-    axios
-      .post(
-        `${api}/tournaments/${tournament}/playoff/update`,
-        {
-          round,
-        },
-        {
-          withCredentials: true,
-          credentials: 'include',
-        } /* Importante, sirve para incluir la cookie alojada en el navegador */,
-      )
+    apiClient
+      .post(`${api}/tournaments/${tournament}/playoff/update`, {
+        round,
+      })
       .then(({ data }) => {
         console.log(data)
         const { matches, message } = data
@@ -45,9 +38,8 @@ const PlayoffRound = ({ matches, round, getData, isThisTheFinal }) => {
               text: message,
               timer: 2000,
               timerProgressBar: true,
-              customClass: { timerProgressBar: 'toast-progress-dark' }, // Definido en index.css //
+              customClass: { timerProgressBar: 'toast-progress-dark' },
               didOpen: (toast) => {
-                // Vuelvo a traer la data de Playoffs, para mostrar la vista actualizada //
                 getData()
                 toast.addEventListener('mouseenter', Swal.stopTimer)
                 toast.addEventListener('mouseleave', Swal.resumeTimer)
@@ -65,7 +57,7 @@ const PlayoffRound = ({ matches, round, getData, isThisTheFinal }) => {
               showConfirmButton: false,
               timer: 1500,
               timerProgressBar: true,
-              customClass: { timerProgressBar: 'toast-progress-dark' }, // Definido en index.css //
+              customClass: { timerProgressBar: 'toast-progress-dark' },
               didOpen: (toast) => {
                 toast.addEventListener('mouseenter', Swal.stopTimer)
                 toast.addEventListener('mouseleave', Swal.resumeTimer)
@@ -87,7 +79,7 @@ const PlayoffRound = ({ matches, round, getData, isThisTheFinal }) => {
           showConfirmButton: false,
           timer: 2000,
           timerProgressBar: true,
-          customClass: { timerProgressBar: 'toast-progress-dark' }, // Definido en index.css //
+          customClass: { timerProgressBar: 'toast-progress-dark' },
           didOpen: (toast) => {
             toast.addEventListener('mouseenter', Swal.stopTimer)
             toast.addEventListener('mouseleave', Swal.resumeTimer)
@@ -97,8 +89,6 @@ const PlayoffRound = ({ matches, round, getData, isThisTheFinal }) => {
               ...loginStatus,
               status: auth,
             }))
-            /* auth ==== false solo cuando el endpoint del BE corra el middleware isAuth() y este falle */
-            /* Por lo tanto, redirijo a /users/login */
             auth === false &&
               navigate(
                 {
@@ -106,7 +96,7 @@ const PlayoffRound = ({ matches, round, getData, isThisTheFinal }) => {
                 },
                 {
                   state: { url: location.pathname },
-                } /* Adjunto info de la ruta actual, para luego volver a ella en caso de login exitoso */,
+                },
               )
           },
         })

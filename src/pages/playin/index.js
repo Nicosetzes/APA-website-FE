@@ -1,13 +1,13 @@
-import { useState, useEffect } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { PageLoader } from 'views/components'
+import Swal from 'sweetalert2'
+import { apiClient } from 'api/axiosConfig'
+import { motion } from 'framer-motion'
 import { useLogin } from 'context/LoginContext'
+import withReactContent from 'sweetalert2-react-content'
 import { BreadCrumbsMUI, PlayinRound } from 'views/components'
 import { api, database } from 'api'
-import axios from 'axios'
-import { motion } from 'framer-motion'
-import Swal from 'sweetalert2'
-import withReactContent from 'sweetalert2-react-content'
-import { PageLoader } from 'views/components'
+import { useNavigate, useParams } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 
 const Playin = () => {
   const MySwal = withReactContent(Swal)
@@ -24,7 +24,7 @@ const Playin = () => {
 
   const getTournamentData = () => {
     console.log('Traigo la data del torneo')
-    axios
+    apiClient
       .get(`${api}/tournaments/${tournament}`)
       .then(({ data }) => setTournamentData(data))
   }
@@ -37,7 +37,7 @@ const Playin = () => {
 
   const getPlayinData = () => {
     console.log('Traigo data del playin')
-    axios
+    apiClient
       .get(`${api}/tournaments/${tournament}/playin/matches`)
       .then(({ data }) => setPlayinData(data))
   }
@@ -49,15 +49,8 @@ const Playin = () => {
 
   const playinGeneration = (group) => {
     console.log(tournament)
-    axios
-      .post(
-        `${api}/tournaments/${tournament}/playin`,
-        { group },
-        {
-          withCredentials: true,
-          credentials: 'include',
-        } /* Importante, sirve para incluir la cookie alojada en el navegador */,
-      )
+    apiClient
+      .post(`${api}/tournaments/${tournament}/playin`, { group })
       .then(({ data }) => {
         console.log(data)
         MySwal.fire({

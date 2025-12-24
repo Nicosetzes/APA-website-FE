@@ -1,12 +1,13 @@
-import { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
-import { useLogin } from 'context/LoginContext'
-import axios from 'axios'
-import { motion } from 'framer-motion'
-import { api } from 'api'
+import MatchPreview from './components/MatchPreview'
 import StandingsTable from './../standings/components/StandingsTable'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+import { api } from 'api'
+import { apiClient } from 'api/axiosConfig'
+import { motion } from 'framer-motion'
+import { useLogin } from 'context/LoginContext'
+import { useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import {
   BreadCrumbsMUI,
   ChampionBox,
@@ -14,7 +15,6 @@ import {
   PageLoader,
   PlayoffRound,
 } from 'views/components'
-import MatchPreview from './components/MatchPreview'
 import {
   PlayoffsPreviewContainer,
   PlayoffsSideContainer,
@@ -37,7 +37,7 @@ const Playoffs = () => {
 
   const getTournamentData = () => {
     console.log('Traigo la data del torneo')
-    axios
+    apiClient
       .get(`${api}/tournaments/${tournament}`)
       .then(({ data }) => setTournamentData(data))
   }
@@ -46,7 +46,7 @@ const Playoffs = () => {
 
   const getPlayoffsTableData = () => {
     console.log('Traigo la playoff table del torneo')
-    axios
+    apiClient
       .get(`${api}/tournaments/${tournament}/playoffs/table`)
       .then(({ data }) => setPlayoffsTableData(data))
   }
@@ -54,7 +54,7 @@ const Playoffs = () => {
   const [playoffData, setPlayoffData] = useState()
 
   const getPlayoffsData = () => {
-    axios
+    apiClient
       .get(`${api}/tournaments/${tournament}/playoff/matches`)
       .then(({ data }) => setPlayoffData(data))
   }
@@ -66,15 +66,8 @@ const Playoffs = () => {
   }, [])
 
   const playoffGeneration = () => {
-    axios
-      .post(
-        `${api}/tournaments/${tournament}/playoff`,
-        tournament /* Importante, debo adjuntar algo en la request, sino no toma la configuración de abajo (y por ende no incluye la cookie) */,
-        {
-          withCredentials: true,
-          credentials: 'include',
-        } /* Importante, sirve para incluir la cookie alojada en el navegador */,
-      )
+    apiClient
+      .post(`${api}/tournaments/${tournament}/playoff`, tournament)
       .then(({ data }) => {
         console.log(data)
         MySwal.fire({
@@ -144,10 +137,6 @@ const Playoffs = () => {
     const { name, format } = tournamentData
     const { standings } = playoffsTableData
     const { matches } = playoffData
-
-    console.log(matches)
-
-    console.log(playoffsTableData)
 
     const breadCrumbsLinks = [
       { name: 'Home', route: '' },

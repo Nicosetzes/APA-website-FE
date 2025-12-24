@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react'
-import { Link, useParams, useNavigate } from 'react-router-dom'
-import { BreadCrumbsMUI, PageLoader } from 'views/components'
-import { api, database, cloudName } from 'api'
-import axios from 'axios'
 import { Image } from 'cloudinary-react'
 import StarIcon from '@mui/icons-material/Star'
+import { apiClient } from 'api/axiosConfig'
 import { motion } from 'framer-motion'
 import { useMediaQuery } from 'react-responsive'
+import { BreadCrumbsMUI, PageLoader } from 'views/components'
+import { Link, useParams, useNavigate } from 'react-router-dom'
+import { api, database, cloudName } from 'api'
+import { useEffect, useState } from 'react'
 
 const TournamentId = () => {
   const isSm = useMediaQuery({ query: '(min-width: 576px)' })
@@ -19,11 +19,8 @@ const TournamentId = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      await axios
-        .get(`${api}/tournaments/${tournament}`, {
-          withCredentials: true,
-          credentials: 'include',
-        })
+      await apiClient
+        .get(`${api}/tournaments/${tournament}`)
         .then(({ data }) => {
           console.log(data)
           setCurrentTournament(data)

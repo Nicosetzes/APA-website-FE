@@ -1,17 +1,16 @@
-import { useEffect, useState } from 'react'
+import MatchesTable from './components/MatchesTable'
+import { PageLoader } from 'views/components'
+import Pagination from '@mui/material/Pagination'
+import Paper from '@mui/material/Paper'
+import TableContainer from '@mui/material/TableContainer'
+import { api } from 'api'
+import { apiClient } from 'api/axiosConfig'
+import { motion } from 'framer-motion'
 import { useMediaQuery } from 'react-responsive'
 import { useSearchParams } from 'react-router-dom'
-import axios from 'axios'
-import { api } from 'api'
-import TableContainer from '@mui/material/TableContainer'
-import Pagination from '@mui/material/Pagination'
-import MatchesTable from './components/MatchesTable'
-import Paper from '@mui/material/Paper'
-import { motion } from 'framer-motion'
-import { PageLoader } from 'views/components'
+import { useEffect, useState } from 'react'
 
 const Matches = () => {
-  // const isSm = useMediaQuery({ query: '(min-width: 500px)' })
   const isXS = useMediaQuery({ query: '(min-width: 375px)' })
 
   const [searchParams, setSearchParams] = useSearchParams()
@@ -39,29 +38,16 @@ const Matches = () => {
     const fetchData = async () => {
       const page = searchParams.get('page')
       if (!page && !teamName)
-        axios
-          .get(`${api}/matches`, {
-            withCredentials: true,
-            credentials: 'include',
-          })
-          .then(({ data }) => {
-            setData(data)
-          })
+        apiClient.get(`${api}/matches`).then(({ data }) => {
+          setData(data)
+        })
       else if (page && !teamName)
-        axios
-          .get(`${api}/matches?page=${page}`, {
-            withCredentials: true,
-            credentials: 'include',
-          })
-          .then(({ data }) => {
-            setData(data)
-          })
+        apiClient.get(`${api}/matches?page=${page}`).then(({ data }) => {
+          setData(data)
+        })
       else
-        axios
-          .get(`${api}/matches?page=${page}&teamName=${teamName}`, {
-            withCredentials: true,
-            credentials: 'include',
-          })
+        apiClient
+          .get(`${api}/matches?page=${page}&teamName=${teamName}`)
           .then(({ data }) => {
             setData(data)
           })

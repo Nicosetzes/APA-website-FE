@@ -1,28 +1,50 @@
 import * as React from 'react'
-import { NavLink } from 'react-router-dom'
-import { useLogin } from 'context/LoginContext'
-import Divider from '@mui/material/Divider'
-import MenuList from '@mui/material/MenuList'
-import MenuItem from '@mui/material/MenuItem'
-import HomeIcon from '@mui/icons-material/Home'
-import ListItemIcon from '@mui/material/ListItemIcon'
 import AccountCircle from '@mui/icons-material/AccountCircle'
-import EmojiEventsIcon from '@mui/icons-material/EmojiEvents'
-import SportsSoccerIcon from '@mui/icons-material/SportsSoccer'
+import BarChartIcon from '@mui/icons-material/BarChart'
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
 import CreateIcon from '@mui/icons-material/Create'
-import BarChartIcon from '@mui/icons-material/BarChart'
+import Divider from '@mui/material/Divider'
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents'
 import ExtensionIcon from '@mui/icons-material/Extension'
+import HomeIcon from '@mui/icons-material/Home'
+import ListItemIcon from '@mui/material/ListItemIcon'
+import MenuList from '@mui/material/MenuList'
+import MenuItem from '@mui/material/MenuItem'
+import { NavLink } from 'react-router-dom'
+import SportsSoccerIcon from '@mui/icons-material/SportsSoccer'
 import { StyledMenu } from './styled'
+import Swal from 'sweetalert2'
+import { removeAuthToken } from 'utils/auth'
+import { useLogin } from 'context/LoginContext'
+import withReactContent from 'sweetalert2-react-content'
 
 const NavMenu = ({ handleClose, isOpen, anchorEl }) => {
-  const login = useLogin()
-
-  const { loginStatus } = login
-
-  console.log(loginStatus)
+  const MySwal = withReactContent(Swal)
+  const { loginStatus, setLoginStatus } = useLogin()
 
   const { status } = loginStatus
+
+  const handleLogout = () => {
+    handleClose()
+    MySwal.fire({
+      background: `rgba(28, 25, 25, 0.95)`,
+      color: `#fff`,
+      icon: 'info',
+      iconColor: '#0a15d1',
+      toast: true,
+      title: 'Cerrando sesión...',
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 1500,
+      timerProgressBar: true,
+      customClass: { timerProgressBar: 'toast-progress-dark' },
+      didClose: () => {
+        removeAuthToken()
+        setLoginStatus({})
+        window.location.href = '/'
+      },
+    })
+  }
 
   return (
     <StyledMenu
@@ -98,14 +120,23 @@ const NavMenu = ({ handleClose, isOpen, anchorEl }) => {
           </NavLink>
         </MenuItem>
         <Divider sx={{ borderColor: 'var(--blue-900)' }} />
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <AccountCircle htmlColor="var(--blue-900)" fontSize="small" />
-          </ListItemIcon>
-          <NavLink to="users/login">
-            <div>{status ? 'MI PERFIL' : 'LOGIN'}</div>
-          </NavLink>
-        </MenuItem>
+        {status ? (
+          <MenuItem onClick={handleLogout}>
+            <ListItemIcon>
+              <AccountCircle htmlColor="var(--blue-900)" fontSize="small" />
+            </ListItemIcon>
+            <div>CERRAR SESIÓN</div>
+          </MenuItem>
+        ) : (
+          <MenuItem onClick={handleClose}>
+            <ListItemIcon>
+              <AccountCircle htmlColor="var(--blue-900)" fontSize="small" />
+            </ListItemIcon>
+            <NavLink to="/users/login">
+              <div>LOGIN</div>
+            </NavLink>
+          </MenuItem>
+        )}
       </MenuList>
     </StyledMenu>
   )

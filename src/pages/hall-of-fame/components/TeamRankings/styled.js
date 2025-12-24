@@ -24,7 +24,7 @@ export const StyledTeamRankings = styled.div`
     flex-direction: column;
     .rankings__row {
       align-items: center;
-      border-top: #d8a711 2px solid;
+      border-top: var(--yellow-900) 2px solid;
       display: flex;
       flex-wrap: wrap;
       justify-content: space-evenly;

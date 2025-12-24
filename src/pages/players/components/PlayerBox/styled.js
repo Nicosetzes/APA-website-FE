@@ -19,7 +19,7 @@ export const StyledPlayerBox = styled.div`
   margin: 1rem;
   max-width: 200px;
   outline: ${(props) =>
-      props.$isActive ? 'var(--yellow-900)' : 'var(--yellow-900)'}
+      props.$isActive ? 'var(--orange-900)' : 'var(--orange-900)'}
     2px solid;
   padding: 2.75rem 1.25rem;
   width: 100%;

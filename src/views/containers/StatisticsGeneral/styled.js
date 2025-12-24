@@ -1,38 +1,18 @@
 import styled from 'styled-components'
 
-export const HeaderContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin: 0 auto;
-  max-width: 1400px;
-  padding: 1rem;
-  width: 100%;
-`
-
-export const Header = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-  padding: 0.5rem 0;
-`
-
-export const Title = styled.h1`
-  color: var(--blue-900);
-  font-size: 2rem;
-  font-weight: 800;
-  margin: 0;
-`
-
 export const Section = styled.section`
   margin: 2rem 0;
+  padding: 0 1rem;
 `
 
 export const SectionTitle = styled.h2`
+  align-items: center;
   color: var(--blue-900);
+  display: flex;
   font-size: 1.5rem;
   font-weight: 700;
-  margin: 0 0 1rem 0;
+  justify-content: center;
+  margin-bottom: 2rem;
   text-align: center;
 `
 
@@ -53,16 +33,25 @@ export const Card = styled.div`
 `
 
 export const PlayersGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  align-items: center;
+  display: flex;
+  flex-direction: column;
   gap: 1rem;
   margin-bottom: 2rem;
+
+  @media (min-width: 800px) {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
 `
 
 export const PlayerCard = styled(Card)`
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  max-width: 250px;
+  width: 100%;
 `
 
 export const PlayerName = styled.h3`
@@ -143,7 +132,8 @@ export const LeaderboardsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 1rem;
-  margin-bottom: 2rem;
+  margin: 0 auto;
+  max-width: 1200px;
 
   @media (min-width: 1200px) {
     grid-template-columns: repeat(4, 1fr);
@@ -221,6 +211,8 @@ export const RecordsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(275px, 1fr));
   gap: 1rem;
+  margin: 0 auto;
+  max-width: 1200px;
 `
 
 export const RecordCard = styled(Card)`

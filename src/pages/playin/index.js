@@ -170,7 +170,7 @@ const Playin = () => {
                 matches.filter(({ outcome }) => outcome).length == 6 && (
                   <div
                     style={{
-                      border: 'var(--yellow-900) 2px solid',
+                      border: 'var(--orange-900) 2px solid',
                       display: 'flex',
                       flexDirection: 'column',
                       margin: 'auto',

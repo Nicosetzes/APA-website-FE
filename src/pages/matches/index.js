@@ -65,7 +65,13 @@ const Matches = () => {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
-        <div style={{ padding: '2rem 0 0 0' }}>
+        <div
+          style={{
+            maxWidth: '1200px',
+            margin: '0 auto',
+            padding: '2rem 0 0 0',
+          }}
+        >
           <span>Realizar búsqueda de partidos</span>
           <input
             className="search"
@@ -73,7 +79,7 @@ const Matches = () => {
             onChange={(e) => handleTeamNameChange(e)}
             style={{ margin: '1rem' }}
           />
-          <TableContainer component={Paper} sx={{ padding: '3rem 0' }}>
+          <TableContainer component={Paper} style={{ margin: '1rem auto' }}>
             <MatchesTable matches={matches} />
           </TableContainer>
           <Pagination

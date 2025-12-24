@@ -12,7 +12,7 @@ const Hamburger = ({ handleClick, isOpen }) => {
       aria-expanded={isOpen ? 'true' : undefined}
       onClick={handleClick}
     >
-      <MenuIcon />
+      <MenuIcon sx={{ color: 'var(--orange-900)' }} />
     </StyledHamburger>
   )
 }

@@ -80,7 +80,7 @@ const NavMenu = ({ handleClose, isOpen, anchorEl }) => {
             <CalendarMonthIcon htmlColor="var(--blue-900)" fontSize="small" />
           </ListItemIcon>
           <NavLink to="/tournaments">
-            <div>VER TORNEOS</div>
+            <div>TORNEOS</div>
           </NavLink>
         </MenuItem>
         <Divider sx={{ borderColor: 'var(--blue-900)' }} />
@@ -98,7 +98,7 @@ const NavMenu = ({ handleClose, isOpen, anchorEl }) => {
             <SportsSoccerIcon htmlColor="var(--blue-900)" fontSize="small" />
           </ListItemIcon>
           <NavLink to="/matches">
-            <div>ARCHIVO DE PARTIDOS</div>
+            <div>PARTIDOS</div>
           </NavLink>
         </MenuItem>
         <Divider sx={{ borderColor: 'var(--blue-900)' }} />

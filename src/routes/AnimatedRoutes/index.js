@@ -4,8 +4,6 @@ import { ROUTES } from '../routesConfig'
 import {
   Calculator,
   CreateTournament,
-  Edits,
-  EditsUpload,
   FixtureId,
   HallOfFame,
   Home,
@@ -16,11 +14,11 @@ import {
   Playoffs,
   Simulator,
   Standings,
-  Statistics,
   Teams,
   TournamentId,
   Tournaments,
 } from 'pages'
+import { Edits, EditsUpload, StatisticsGeneral } from 'views/containers'
 import { Route, Routes, useLocation } from 'react-router-dom'
 
 export const AnimatedRoutes = () => {
@@ -70,7 +68,7 @@ export const AnimatedRoutes = () => {
         </Route>
 
         <Route path={ROUTES.MATCHES.path} element={<Matches />} />
-        <Route path={ROUTES.STATISTICS.path} element={<Statistics />} />
+        <Route path={ROUTES.STATISTICS.path} element={<StatisticsGeneral />} />
         <Route path={ROUTES.HALL_OF_FAME.path} element={<HallOfFame />} />
 
         <Route path="/edits">
@@ -85,7 +83,6 @@ export const AnimatedRoutes = () => {
           />
         </Route>
 
-        {/* 404 fallback */}
         <Route
           path="*"
           element={

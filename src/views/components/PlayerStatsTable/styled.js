@@ -3,7 +3,7 @@ import Table from '@mui/material/Table'
 
 export const StyledTable = styled(Table)`
   background-color: var(--blue-900);
-  border: #d8a711 3px solid;
+  border: var(--orange-900) 3px solid;
   .MuiTableHead-root {
     background-color: #1a1a2c;
   }

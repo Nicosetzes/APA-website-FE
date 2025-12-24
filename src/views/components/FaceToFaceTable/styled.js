@@ -3,7 +3,6 @@ import Table from '@mui/material/Table'
 
 export const StyledFaceToFaceTable = styled(Table)`
   background-color: #212529;
-
   .MuiTableBody-root {
     .MuiTableRow-root {
       &:nth-child(1),
@@ -13,6 +12,7 @@ export const StyledFaceToFaceTable = styled(Table)`
           align-items: center;
           display: flex;
           justify-content: center;
+          min-width: 125px;
           img {
             height: 25px;
             margin: 0 0.25rem;

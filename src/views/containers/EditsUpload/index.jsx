@@ -1,9 +1,9 @@
 import { Oval } from 'react-loader-spinner'
 import { api } from 'api'
+import { apiClient } from 'api/axiosConfig'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
-import { apiClient } from 'api/axiosConfig'
 import {
   BackButton,
   Container,

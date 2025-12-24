@@ -2,7 +2,7 @@ import styled from 'styled-components'
 
 export const StyledFooter = styled.div`
   align-items: center;
-  background-color: #414141;
+  background-color: var(--blue-900);
   border-top: var(--yellow-900) 10px solid;
   display: flex;
   flex-direction: ${(props) => `${props.isXS ? 'column' : 'row'}`};

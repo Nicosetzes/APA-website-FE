@@ -211,7 +211,7 @@ const TournamentId = () => {
               style={{
                 backgroundColor: 'var(--blue-900)',
                 margin: '2rem auto',
-                outline: 'var(--yellow-900) 4px solid',
+                outline: 'var(--orange-900) 4px solid',
                 padding: '1.5rem',
               }}
             >
@@ -281,7 +281,7 @@ const TournamentId = () => {
               style={{
                 backgroundColor: 'var(--blue-900)',
                 margin: '2rem auto',
-                outline: 'var(--yellow-900) 4px solid',
+                outline: 'var(--orange-900) 4px solid',
                 padding: '1.5rem',
               }}
             >

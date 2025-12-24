@@ -14,12 +14,12 @@ export const StyledExtendedNavMenu = styled.div`
     text-decoration: none;
   }
   .nav-link.login {
-    border: #f5d87f 1px solid;
+    border: var(--orange-900) 1px solid;
     padding: 0.5rem 0.75rem;
   }
   .nav-link.logout-button {
     background: transparent;
-    border: #f5d87f 1px solid;
+    border: var(--orange-900) 1px solid;
     padding: 0.5rem 0.75rem;
     transition: all 0.2s ease;
     font-size: 1rem;

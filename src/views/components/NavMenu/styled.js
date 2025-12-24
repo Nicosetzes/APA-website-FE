@@ -11,5 +11,9 @@ export const StyledMenu = styled(Menu)`
         font-weight: 700;
       }
     }
+    div {
+      color: var(--blue-900);
+      font-weight: 700;
+    }
   }
 `

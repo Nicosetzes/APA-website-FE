@@ -51,7 +51,7 @@ export const StyledStatsLayout = styled.div`
       .data__card {
         align-items: center;
         background-color: var(--green-300);
-        border: var(--yellow-900) 3px solid;
+        border: var(--orange-900) 3px solid;
         display: flex;
         flex-direction: column;
         justify-content: center;

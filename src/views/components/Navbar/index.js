@@ -1,16 +1,14 @@
-import { useMediaQuery } from 'react-responsive'
-import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
 import ExtendedNavMenu from '../ExtendedNavMenu'
+import { Link } from 'react-router-dom'
 import MenuWrapper from '../MenuWrapper'
-import { StyledNavbar } from './styled'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import StopIcon from '@mui/icons-material/Stop'
+import { StyledNavbar } from './styled'
+import { useMediaQuery } from 'react-responsive'
+import { useEffect, useState } from 'react'
 
 const Navbar = () => {
-  const isL = useMediaQuery({ query: '(min-width: 992px)' })
-  // const isM = useMediaQuery({ query: '(min-width: 768px)' })
-  // const isSm = useMediaQuery({ query: '(min-width: 576px)' })
+  const isXl = useMediaQuery({ query: '(min-width: 1200px)' })
 
   const useAudio = (file) => {
     const [audio] = useState(new Audio(file))
@@ -43,7 +41,8 @@ const Navbar = () => {
         onClick={toggle}
         style={{
           background: 'none',
-          border: 'var(--yellow-900) 2px solid',
+          border: 'none',
+          cursor: 'pointer',
           marginLeft: '1rem',
         }}
       >
@@ -53,8 +52,7 @@ const Navbar = () => {
           <PlayArrowIcon sx={{ color: '#fff' }} />
         )}{' '}
       </button>
-      {/* <Login loginStatus={loginStatus} /> */}
-      {!isL ? <MenuWrapper /> : <ExtendedNavMenu />}
+      {!isXl ? <MenuWrapper /> : <ExtendedNavMenu />}
     </StyledNavbar>
   )
 }

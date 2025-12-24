@@ -2,21 +2,7 @@ import { StyledScoreBox } from './styled'
 import DoneIcon from '@mui/icons-material/Done'
 import HorizontalRuleIcon from '@mui/icons-material/HorizontalRule'
 import CloseIcon from '@mui/icons-material/Close'
-import { styled } from '@mui/material/styles'
-import Tooltip, { tooltipClasses } from '@mui/material/Tooltip'
-
-const HtmlTooltip = styled(({ className, ...props }) => (
-  <Tooltip {...props} classes={{ popper: className }} />
-))(({ theme }) => ({
-  [`& .${tooltipClasses.tooltip}`]: {
-    backgroundColor: '#f5f5f9',
-    border: '1px solid #dadde9',
-    color: 'rgba(0, 0, 0, 0.87)',
-    fontSize: theme.typography.pxToRem(12),
-    maxWidth: 275,
-    padding: '0.75 1rem',
-  },
-}))
+import Tooltip from '../Tooltip'
 
 const ScoreBox = ({
   result,
@@ -30,7 +16,7 @@ const ScoreBox = ({
 }) => {
   if (result == 'w')
     return (
-      <HtmlTooltip
+      <Tooltip
         title={
           <>
             <div style={{ fontSize: '0.75rem', fontWeight: 700 }}>
@@ -52,11 +38,11 @@ const ScoreBox = ({
         <StyledScoreBox color="#2cad2c">
           <DoneIcon sx={{ fontSize: '0.5rem' }} />
         </StyledScoreBox>
-      </HtmlTooltip>
+      </Tooltip>
     )
   if (result == 'd')
     return (
-      <HtmlTooltip
+      <Tooltip
         title={
           <>
             <div style={{ fontSize: '0.75rem', fontWeight: 700 }}>
@@ -78,11 +64,11 @@ const ScoreBox = ({
         <StyledScoreBox color="#8e8e8f">
           <HorizontalRuleIcon sx={{ fontSize: '0.5rem' }} />
         </StyledScoreBox>
-      </HtmlTooltip>
+      </Tooltip>
     )
   if (result == 'l')
     return (
-      <HtmlTooltip
+      <Tooltip
         title={
           <>
             <div style={{ fontSize: '0.75rem', fontWeight: 700 }}>
@@ -104,7 +90,7 @@ const ScoreBox = ({
         <StyledScoreBox color="#af1111">
           <CloseIcon sx={{ fontSize: '0.5rem' }} />
         </StyledScoreBox>
-      </HtmlTooltip>
+      </Tooltip>
     )
 }
 

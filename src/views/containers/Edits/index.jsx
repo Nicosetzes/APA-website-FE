@@ -7,7 +7,6 @@ import { api } from 'api'
 import { apiClient } from 'api/axiosConfig'
 import { motion } from 'framer-motion'
 import withReactContent from 'sweetalert2-react-content'
-
 import {
   Caption,
   CloseButton,

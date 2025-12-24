@@ -1,9 +1,10 @@
 :root {
   --blue-900: #004a79;
-  --yellow-900: #cfa420;
   --green-300: #022f2a; 
   --green-900: #1e9c1e;
+  --orange-900: #ff8c1a;
   --red-900: #cf1224;
+  --yellow-900: #d8a711;
 }
 
 * {

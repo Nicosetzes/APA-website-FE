@@ -9,7 +9,7 @@ export const StyledChampionBox = styled.div`
   width: 200px;
   .title {
     align-items: center;
-    color: var(--yellow-900);
+    color: var(--orange-900);
     display: flex;
     font-size: 1.5rem;
     font-weight: 700;

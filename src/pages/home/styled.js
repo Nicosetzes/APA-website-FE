@@ -123,7 +123,7 @@ export const StyledHome = styled.div`
       }
       button {
         background: none;
-        border: #f5d77f 2px solid;
+        border: var(--orange-900) 2px solid;
         border-radius: 5px;
         color: #fff;
         cursor: pointer;
@@ -168,7 +168,7 @@ export const StyledHome = styled.div`
     }
     button {
       background: none;
-      border: #f5d77f 2px solid;
+      border: var(--orange-900) 2px solid;
       border-radius: 5px;
       color: var(--blue-900);
       cursor: pointer;

@@ -3,7 +3,7 @@ import Table from '@mui/material/Table'
 
 export const StyledCalculatorStandingsTable = styled(Table)`
   background-color: rgba(0, 74, 121, 1);
-  border: #d8a711 3px solid;
+  border: var(--yellow-900) 3px solid;
 
   .MuiTableBody-root {
     .MuiTableRow-root {

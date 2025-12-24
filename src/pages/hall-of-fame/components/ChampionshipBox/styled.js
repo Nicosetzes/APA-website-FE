@@ -10,7 +10,7 @@ export const StyledChampionshipBox = styled.div`
   max-width: 575px;
   width: 100%;
   &:hover {
-    border: #d8a711 3px solid;
+    border: var(--orange-900) 3px solid;
   }
   .showcase__header {
     display: flex;

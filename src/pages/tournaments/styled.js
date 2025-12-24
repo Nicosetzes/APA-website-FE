@@ -10,7 +10,7 @@ export const StyledTournamentsContainer = styled.div`
     align-items: center;
     display: flex;
     justify-content: center;
-    outline: #d8a711 2px solid;
+    outline: var(--yellow-900) 2px solid;
     padding: 1rem 0.25rem;
     width: 350px;
     a {

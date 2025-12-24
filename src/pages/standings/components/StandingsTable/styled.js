@@ -3,7 +3,7 @@ import Table from '@mui/material/Table'
 
 export const StyledTable = styled(Table)`
   background-color: rgba(0, 74, 121, 1);
-  border: #d8a711 3px solid;
+  border: var(--yellow-900) 3px solid;
 
   .MuiTableBody-root {
     .MuiTableRow-root {
@@ -53,6 +53,7 @@ export const StyledTable = styled(Table)`
             cursor: pointer;
             display: flex;
             height: 100%;
+            min-width: 160px;
             img {
               height: 25px;
               margin-right: 0.5rem;
@@ -64,13 +65,14 @@ export const StyledTable = styled(Table)`
               color: #fff;
               text-decoration: none;
             }
-            .streak {
-              align-items: center;
-              display: flex;
-              margin: 0 0.5rem;
-            }
           }
         }
+      }
+      .streak {
+        align-items: center;
+        display: flex;
+        justify-content: center;
+        margin: 0 0.5rem;
       }
     }
   }

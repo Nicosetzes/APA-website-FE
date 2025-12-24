@@ -1,13 +1,8 @@
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
-import ClickAwayListener from '@mui/base/ClickAwayListener'
-import Divider from '@mui/material/Divider'
 import { NavLink } from 'react-router-dom'
 import { StyledExtendedNavMenu } from './styled'
 import Swal from 'sweetalert2'
-import { motion } from 'framer-motion'
 import { removeAuthToken } from 'utils/auth'
 import { useLogin } from 'context/LoginContext'
-import { useState } from 'react'
 import withReactContent from 'sweetalert2-react-content'
 
 const ExtendedNavMenu = () => {
@@ -15,8 +10,6 @@ const ExtendedNavMenu = () => {
   const { loginStatus, setLoginStatus } = useLogin()
 
   const { status } = loginStatus
-
-  const [menuStatus, setMenuStatus] = useState(false)
 
   const handleLogout = () => {
     MySwal.fire({
@@ -39,10 +32,6 @@ const ExtendedNavMenu = () => {
     })
   }
 
-  const handleMenuCloseWhenClickingOutside = () => {
-    menuStatus && setMenuStatus(false)
-  }
-
   return (
     <StyledExtendedNavMenu>
       <NavLink to="/" className="nav-link">
@@ -51,48 +40,15 @@ const ExtendedNavMenu = () => {
       <NavLink to="/edits" className="nav-link">
         EDITS
       </NavLink>
-      <ClickAwayListener onClickAway={handleMenuCloseWhenClickingOutside}>
-        <div className="nav-link container__dropdown">
-          <div
-            className="dropdown-link"
-            onClick={() => setMenuStatus(!menuStatus)}
-          >
-            TORNEOS <ArrowDropDownIcon />
-          </div>
-          {menuStatus && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="dropdown-menu"
-            >
-              <NavLink
-                to="/tournaments"
-                className="dropdown-menu-item"
-                onClick={() => setMenuStatus(!menuStatus)}
-              >
-                VER TORNEOS
-              </NavLink>
-              <Divider sx={{ borderColor: 'var(--blue-900)' }} />
-              <NavLink
-                to="/tournaments/create-tournament"
-                className="dropdown-menu-item"
-                onClick={() => setMenuStatus(!menuStatus)}
-              >
-                CREAR TORNEO
-              </NavLink>
-              <Divider sx={{ borderColor: 'var(--blue-900)' }} />
-              <NavLink
-                to="/matches"
-                className="dropdown-menu-item"
-                onClick={() => setMenuStatus(!menuStatus)}
-              >
-                ARCHIVO DE PARTIDOS
-              </NavLink>
-            </motion.div>
-          )}
-        </div>
-      </ClickAwayListener>
+      <NavLink to="/tournaments" className="nav-link">
+        TORNEOS
+      </NavLink>
+      <NavLink to="/tournaments/create-tournament" className="nav-link">
+        CREAR TORNEO
+      </NavLink>
+      <NavLink to="/matches" className="nav-link">
+        PARTIDOS
+      </NavLink>
       <NavLink to="/statistics" className="nav-link">
         STATS
       </NavLink>

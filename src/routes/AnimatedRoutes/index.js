@@ -1,24 +1,27 @@
-import { Routes, Route, useLocation } from 'react-router-dom'
-import RetrievePassword from '../../pages/retrieve-password'
-import CreateTournament from '../../pages/create-tournament'
-import TournamentId from './../../pages/tournament-id'
-import Tournaments from './../../pages/tournaments'
-import Statistics from './../../pages/statistics'
-import HallOfFame from '../../pages/hall-of-fame'
-import FixtureId from './../../pages/fixture-id'
-import Standings from './../../pages/standings'
-import Simulator from './../../pages/simulator'
-import Calculator from '../../pages/calculator'
 import { AnimatePresence } from 'framer-motion'
-import Playoffs from '../../pages/playoffs'
-import Players from './../../pages/players'
-import Matches from './../../pages/matches'
-import Login from './../../pages/login'
-import Playin from '../../pages/playin'
-import Teams from '../../pages/teams'
-import App from './../../App'
-import Edits from '../../pages/edits'
-import EditsUpload from '../../pages/edits/upload'
+import ProtectedRoute from '../ProtectedRoute'
+import { ROUTES } from '../routesConfig'
+import {
+  Calculator,
+  CreateTournament,
+  Edits,
+  EditsUpload,
+  FixtureId,
+  HallOfFame,
+  Home,
+  Login,
+  Matches,
+  Players,
+  Playin,
+  Playoffs,
+  Simulator,
+  Standings,
+  Statistics,
+  Teams,
+  TournamentId,
+  Tournaments,
+} from 'pages'
+import { Route, Routes, useLocation } from 'react-router-dom'
 
 export const AnimatedRoutes = () => {
   const location = useLocation()
@@ -26,32 +29,63 @@ export const AnimatedRoutes = () => {
   return (
     <AnimatePresence>
       <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<App />} />
-        <Route path="/users/login" element={<Login />} />
-        <Route path="/users/retrieve-password" element={<RetrievePassword />} />
+        <Route path={ROUTES.HOME.path} element={<Home />} />
+        <Route path={ROUTES.LOGIN.path} element={<Login />} />
+
         <Route path="/tournaments">
           <Route index element={<Tournaments />} />
-          <Route path="create-tournament" element={<CreateTournament />} />
+          <Route
+            path="create-tournament"
+            element={
+              <ProtectedRoute
+                requiredRole={ROUTES.CREATE_TOURNAMENT.requiredRole}
+              >
+                <CreateTournament />
+              </ProtectedRoute>
+            }
+          />
           <Route path=":tournament" element={<TournamentId />} />
           <Route path=":tournament/fixture" element={<FixtureId />} />
           <Route path=":tournament/standings" element={<Standings />} />
-          <Route path=":tournament/simulator" element={<Simulator />} />
+          <Route
+            path=":tournament/simulator"
+            element={
+              <ProtectedRoute>
+                <Simulator />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path=":tournament/simulator/calculator"
-            element={<Calculator />}
+            element={
+              <ProtectedRoute>
+                <Calculator />
+              </ProtectedRoute>
+            }
           />
           <Route path=":tournament/playin" element={<Playin />} />
           <Route path=":tournament/playoffs" element={<Playoffs />} />
           <Route path=":tournament/players" element={<Players />} />
           <Route path=":tournament/teams" element={<Teams />} />
         </Route>
-        <Route path="/matches" element={<Matches />} />
-        <Route path="/statistics" element={<Statistics />} />
-        <Route path="/hall-of-fame" element={<HallOfFame />} />
+
+        <Route path={ROUTES.MATCHES.path} element={<Matches />} />
+        <Route path={ROUTES.STATISTICS.path} element={<Statistics />} />
+        <Route path={ROUTES.HALL_OF_FAME.path} element={<HallOfFame />} />
+
         <Route path="/edits">
           <Route index element={<Edits />} />
-          <Route path="upload" element={<EditsUpload />} />
+          <Route
+            path="upload"
+            element={
+              <ProtectedRoute requiredRole={ROUTES.EDITS_UPLOAD.requiredRole}>
+                <EditsUpload />
+              </ProtectedRoute>
+            }
+          />
         </Route>
+
+        {/* 404 fallback */}
         <Route
           path="*"
           element={

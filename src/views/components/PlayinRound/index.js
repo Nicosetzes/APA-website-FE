@@ -1,11 +1,11 @@
+import { apiClient } from 'api/axiosConfig'
 import PlayoffMatch from '../PlayoffMatch'
-import { useParams, useNavigate } from 'react-router-dom'
-import { useLogin } from 'context/LoginContext'
 import { StyledPlayinRound } from './styled'
-import { api } from 'api'
 import Swal from 'sweetalert2'
+import { api } from 'api'
+import { useLogin } from 'context/LoginContext'
 import withReactContent from 'sweetalert2-react-content'
-import axios from 'axios'
+import { useNavigate, useParams } from 'react-router-dom'
 
 const PlayinRound = ({ matches, round, getData }) => {
   const { tournament } = useParams()
@@ -18,17 +18,10 @@ const PlayinRound = ({ matches, round, getData }) => {
   const { setLoginStatus } = login
 
   const checkForNewPlayinMatches = (round) => {
-    axios
-      .post(
-        `${api}/tournaments/${tournament}/playin/update`,
-        {
-          round,
-        },
-        {
-          withCredentials: true,
-          credentials: 'include',
-        } /* Importante, sirve para incluir la cookie alojada en el navegador */,
-      )
+    apiClient
+      .post(`${api}/tournaments/${tournament}/playin/update`, {
+        round,
+      })
       .then(({ data }) =>
         MySwal.fire({
           background: `rgba(28, 25, 25, 0.95)`,
@@ -76,8 +69,6 @@ const PlayinRound = ({ matches, round, getData }) => {
               ...loginStatus,
               status: auth,
             }))
-            /* auth ==== false solo cuando el endpoint del BE corra el middleware isAuth() y este falle */
-            /* Por lo tanto, redirijo a /users/login */
             auth === false &&
               navigate(
                 {
@@ -85,7 +76,7 @@ const PlayinRound = ({ matches, round, getData }) => {
                 },
                 {
                   state: { url: location.pathname },
-                } /* Adjunto info de la ruta actual, para luego volver a ella en caso de login exitoso */,
+                },
               )
           },
         })

@@ -1,14 +1,14 @@
-import { useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
-import { useLogin } from 'context/LoginContext'
-import axios from 'axios'
-import { api, database } from 'api'
-import { StyledPlayoffMatch } from './styled'
+import CelebrationAnimation from './../CelebrationAnimation'
 import CheckIcon from '@mui/icons-material/Check'
 import IconButton from '@mui/material/IconButton'
+import { StyledPlayoffMatch } from './styled'
 import Swal from 'sweetalert2'
+import { apiClient } from 'api/axiosConfig'
+import { useLogin } from 'context/LoginContext'
+import { useState } from 'react'
 import withReactContent from 'sweetalert2-react-content'
-import CelebrationAnimation from './../CelebrationAnimation'
+import { api, database } from 'api'
+import { useParams, useNavigate } from 'react-router-dom'
 
 const PlayoffMatch = ({
   id,
@@ -26,8 +26,6 @@ const PlayoffMatch = ({
   valid,
   isThisTheFinal,
 }) => {
-  // Valor que cambiará a true cuando se cargue el partido de la final
-
   const [showAnimation, setShowAnimation] = useState(false)
 
   const MySwal = withReactContent(Swal)
@@ -57,29 +55,21 @@ const PlayoffMatch = ({
       playerP1,
       teamP1,
       seedP1,
-      scoreP1, // new value
-      penaltyScoreP1, // new value
+      scoreP1,
+      penaltyScoreP1,
       playerP2,
       teamP2,
       seedP2,
-      scoreP2, // new value
-      penaltyScoreP2, // new value
+      scoreP2,
+      penaltyScoreP2,
       valid: isMatchValid === false ? false : undefined,
       isThisTheFinal,
     }
 
-    axios
-      .put(
-        `${api}/tournaments/${tournament}/matches/update-game/${id}`,
-        update,
-        {
-          withCredentials: true,
-          credentials: 'include',
-        } /* Importante, sirve para incluir la cookie alojada en el navegador */,
-      )
+    apiClient
+      .put(`${api}/tournaments/${tournament}/matches/update-game/${id}`, update)
       .then(({ data }) => {
         console.log(data)
-        // Celebración cuando se carga el resultado de la final
         if (isThisTheFinal) {
           setShowAnimation(true)
         }
@@ -96,9 +86,8 @@ const PlayoffMatch = ({
           text: 'Resultado cargado con éxito',
           timer: 2000,
           timerProgressBar: true,
-          customClass: { timerProgressBar: 'toast-progress-dark' }, // Definido en index.css //
+          customClass: { timerProgressBar: 'toast-progress-dark' },
           didOpen: (toast) => {
-            // Vuelvo a traer la data de los partidos, para mostrar los partidos actualizados //
             getData()
             toast.addEventListener('mouseenter', Swal.stopTimer)
             toast.addEventListener('mouseleave', Swal.resumeTimer)
@@ -120,7 +109,7 @@ const PlayoffMatch = ({
           showConfirmButton: false,
           timer: 2000,
           timerProgressBar: true,
-          customClass: { timerProgressBar: 'toast-progress-dark' }, // Definido en index.css //
+          customClass: { timerProgressBar: 'toast-progress-dark' },
           didOpen: (toast) => {
             toast.addEventListener('mouseenter', Swal.stopTimer)
             toast.addEventListener('mouseleave', Swal.resumeTimer)
@@ -130,8 +119,6 @@ const PlayoffMatch = ({
               ...loginStatus,
               status: auth,
             }))
-            /* auth ==== false solo cuando el endpoint del BE corra el middleware isAuth() y este falle */
-            /* Por lo tanto, redirijo a /users/login */
             auth === false &&
               navigate(
                 {
@@ -139,7 +126,7 @@ const PlayoffMatch = ({
                 },
                 {
                   state: { url: location.pathname },
-                } /* Adjunto info de la ruta actual, para luego volver a ella en caso de login exitoso */,
+                },
               )
           },
         })

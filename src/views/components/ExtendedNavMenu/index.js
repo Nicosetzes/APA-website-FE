@@ -1,24 +1,43 @@
-import { StyledExtendedNavMenu } from './styled'
-import { NavLink } from 'react-router-dom'
-import { useLogin } from 'context/LoginContext'
-import Divider from '@mui/material/Divider'
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 import ClickAwayListener from '@mui/base/ClickAwayListener'
-import { useState } from 'react'
+import Divider from '@mui/material/Divider'
+import { NavLink } from 'react-router-dom'
+import { StyledExtendedNavMenu } from './styled'
+import Swal from 'sweetalert2'
 import { motion } from 'framer-motion'
+import { removeAuthToken } from 'utils/auth'
+import { useLogin } from 'context/LoginContext'
+import { useState } from 'react'
+import withReactContent from 'sweetalert2-react-content'
 
 const ExtendedNavMenu = () => {
-  const login = useLogin()
-
-  const { loginStatus } = login
-
-  console.log(loginStatus)
+  const MySwal = withReactContent(Swal)
+  const { loginStatus, setLoginStatus } = useLogin()
 
   const { status } = loginStatus
 
   const [menuStatus, setMenuStatus] = useState(false)
 
-  console.log(menuStatus)
+  const handleLogout = () => {
+    MySwal.fire({
+      background: `rgba(28, 25, 25, 0.95)`,
+      color: `#fff`,
+      icon: 'info',
+      iconColor: '#0a15d1',
+      toast: true,
+      title: 'Cerrando sesión...',
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 1500,
+      timerProgressBar: true,
+      customClass: { timerProgressBar: 'toast-progress-dark' },
+      didClose: () => {
+        removeAuthToken()
+        setLoginStatus({})
+        window.location.href = '/'
+      },
+    })
+  }
 
   const handleMenuCloseWhenClickingOutside = () => {
     menuStatus && setMenuStatus(false)
@@ -80,9 +99,15 @@ const ExtendedNavMenu = () => {
       <NavLink to="/hall-of-fame" className="nav-link">
         SALÓN DE LA FAMA
       </NavLink>
-      <NavLink to="/users/login" className="nav-link login">
-        {status ? 'MI PERFIL' : 'LOGIN'}
-      </NavLink>
+      {status ? (
+        <button onClick={handleLogout} className="nav-link logout-button">
+          CERRAR SESIÓN
+        </button>
+      ) : (
+        <NavLink to="/users/login" className="nav-link login">
+          LOGIN
+        </NavLink>
+      )}
     </StyledExtendedNavMenu>
   )
 }

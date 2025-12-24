@@ -1,39 +1,40 @@
-import { useState, useEffect, useCallback } from 'react'
-import { useSearchParams, useNavigate } from 'react-router-dom'
-import withReactContent from 'sweetalert2-react-content'
 import DeleteIcon from '@mui/icons-material/Delete'
 import IconButton from '@mui/material/IconButton'
-import { motion } from 'framer-motion'
-import { api } from 'api'
-import axios from 'axios'
 import { Oval } from 'react-loader-spinner'
 import { Pagination } from '@mui/material'
 import Swal from 'sweetalert2'
-import { format, parseISO } from 'date-fns'
+import { api } from 'api'
+import { apiClient } from 'api/axiosConfig'
+import { motion } from 'framer-motion'
+import withReactContent from 'sweetalert2-react-content'
+
 import {
+  Caption,
+  CloseButton,
   Container,
-  Header,
-  Title,
-  Subtitle,
-  UploadButtonLink,
-  EditsGrid,
   EditCard,
+  EditDate,
+  EditsGrid,
   EditImage,
   EditInfo,
   EditInfoHeader,
-  UserName,
-  Caption,
-  EditDate,
+  Header,
   Message,
+  Modal,
+  ModalContent,
+  ModalOverlay,
+  ModalImage,
   SpinnerContainer,
+  Subtitle,
+  Title,
+  UploadButtonLink,
+  UserName,
   PaginationContainer,
   PaginationInfo,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalImage,
-  CloseButton,
 } from './styled'
+import { format, parseISO } from 'date-fns'
+import { useCallback, useEffect, useState } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 
 const Edits = () => {
   const MySwal = withReactContent(Swal)
@@ -54,7 +55,7 @@ const Edits = () => {
       setError(null)
 
       try {
-        const response = await axios.get(`${api}/edits`, {
+        const response = await apiClient.get(`${api}/edits`, {
           params: { page: currentPage },
           signal,
         })
@@ -106,11 +107,8 @@ const Edits = () => {
       cancelButtonText: 'Volver',
     }).then((result) => {
       if (result.isConfirmed) {
-        axios
-          .delete(`${api}/edits/${editId}`, {
-            withCredentials: true,
-            credentials: 'include',
-          })
+        apiClient
+          .delete(`${api}/edits/${editId}`)
           .then(() => {
             MySwal.fire({
               background: 'rgba(28, 25, 25, 0.95)',

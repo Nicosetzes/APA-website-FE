@@ -3,7 +3,7 @@ import TeamBox from './components/TeamBox'
 import { BreadCrumbsMUI, PageLoader } from 'views/components'
 import { useParams, useNavigate } from 'react-router-dom'
 import { api, database } from 'api'
-import axios from 'axios'
+import { apiClient } from 'api/axiosConfig'
 import { motion } from 'framer-motion'
 
 const Simulator = () => {
@@ -15,11 +15,8 @@ const Simulator = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      await axios
-        .get(`${api}/tournaments/${tournament}`, {
-          withCredentials: true,
-          credentials: 'include',
-        })
+      await apiClient
+        .get(`${api}/tournaments/${tournament}`)
         .then(({ data }) => {
           console.log(data)
           setCurrentTournament(data)

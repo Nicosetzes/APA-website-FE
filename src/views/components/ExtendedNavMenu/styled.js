@@ -17,6 +17,20 @@ export const StyledExtendedNavMenu = styled.div`
     border: #f5d87f 1px solid;
     padding: 0.5rem 0.75rem;
   }
+  .nav-link.logout-button {
+    background: transparent;
+    border: #f5d87f 1px solid;
+    padding: 0.5rem 0.75rem;
+    transition: all 0.2s ease;
+    font-size: 1rem;
+    font-weight: 700;
+    font-family: inherit;
+
+    &:hover {
+      background: #f5d87f;
+      color: var(--blue-900);
+    }
+  }
   .container__dropdown {
     position: relative;
     .dropdown-link {

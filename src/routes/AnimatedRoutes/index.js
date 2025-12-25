@@ -1,24 +1,28 @@
 import { AnimatePresence } from 'framer-motion'
 import ProtectedRoute from '../ProtectedRoute'
 import { ROUTES } from '../routesConfig'
-import TournamentLayout from 'pages/tournament-id/TournamentLayout'
+import { TournamentLayout } from 'views/containers/Tournament/layout'
 import {
   Calculator,
-  CreateTournament,
-  FixtureId,
   HallOfFame,
-  Home,
   Login,
   Matches,
   Players,
+  Simulator,
+} from 'pages'
+import {
+  EditListing,
+  EditUpload,
+  Fixture,
+  Home,
   Playin,
   Playoffs,
-  Simulator,
   Standings,
-  TournamentId,
-  Tournaments,
-} from 'pages'
-import { Edits, EditsUpload, StatisticsGeneral } from 'views/containers'
+  StatisticsGeneral,
+  Tournament,
+  TournamentCreation,
+  TournamentListing,
+} from 'views/containers'
 import { Route, Routes, useLocation } from 'react-router-dom'
 
 export const AnimatedRoutes = () => {
@@ -31,20 +35,20 @@ export const AnimatedRoutes = () => {
         <Route path={ROUTES.LOGIN.path} element={<Login />} />
 
         <Route path="/tournaments">
-          <Route index element={<Tournaments />} />
+          <Route index element={<TournamentListing />} />
           <Route
             path="create-tournament"
             element={
               <ProtectedRoute
                 requiredRole={ROUTES.CREATE_TOURNAMENT.requiredRole}
               >
-                <CreateTournament />
+                <TournamentCreation />
               </ProtectedRoute>
             }
           />
           <Route path=":tournament" element={<TournamentLayout />}>
-            <Route index element={<TournamentId />} />
-            <Route path="fixture" element={<FixtureId />} />
+            <Route index element={<Tournament />} />
+            <Route path="fixture" element={<Fixture />} />
             <Route path="standings" element={<Standings />} />
             <Route
               path="simulator"
@@ -73,12 +77,12 @@ export const AnimatedRoutes = () => {
         <Route path={ROUTES.HALL_OF_FAME.path} element={<HallOfFame />} />
 
         <Route path="/edits">
-          <Route index element={<Edits />} />
+          <Route index element={<EditListing />} />
           <Route
             path="upload"
             element={
               <ProtectedRoute requiredRole={ROUTES.EDITS_UPLOAD.requiredRole}>
-                <EditsUpload />
+                <EditUpload />
               </ProtectedRoute>
             }
           />

@@ -21,6 +21,7 @@ export const StyledExtendedNavMenu = styled.div`
   .nav-link.logout-button {
     background: transparent;
     border: var(--orange-900) 1px solid;
+    margin-right: 0;
     padding: 0.5rem 0.75rem;
     transition: all 0.2s ease;
     font-size: 1rem;

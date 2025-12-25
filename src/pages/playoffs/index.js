@@ -1,15 +1,13 @@
 import MatchPreview from './components/MatchPreview'
 import StandingsTable from './../standings/components/StandingsTable'
 import Swal from 'sweetalert2'
-import withReactContent from 'sweetalert2-react-content'
 import { api } from 'api'
 import { apiClient } from 'api/axiosConfig'
 import { motion } from 'framer-motion'
 import { useLogin } from 'context/LoginContext'
-import { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useOutletContext } from 'react-router-dom'
+import withReactContent from 'sweetalert2-react-content'
 import {
-  BreadCrumbsMUI,
   ChampionBox,
   FinalistBox,
   PageLoader,
@@ -21,10 +19,10 @@ import {
   PlayoffsSide,
   PlayoffsSideHeader,
 } from './styled'
+import { useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 
 const Playoffs = () => {
-  const { tournament } = useParams()
-
   const navigate = useNavigate()
 
   const login = useLogin()
@@ -33,16 +31,11 @@ const Playoffs = () => {
 
   const MySwal = withReactContent(Swal)
 
-  const [tournamentData, setTournamentData] = useState()
-
-  const getTournamentData = () => {
-    console.log('Traigo la data del torneo')
-    apiClient
-      .get(`${api}/tournaments/${tournament}`)
-      .then(({ data }) => setTournamentData(data))
-  }
+  const { tournament } = useParams()
+  const { tournamentSummary } = useOutletContext()
 
   const [playoffsTableData, setPlayoffsTableData] = useState()
+  const [playoffData, setPlayoffData] = useState()
 
   const getPlayoffsTableData = () => {
     console.log('Traigo la playoff table del torneo')
@@ -51,17 +44,18 @@ const Playoffs = () => {
       .then(({ data }) => setPlayoffsTableData(data))
   }
 
-  const [playoffData, setPlayoffData] = useState()
-
   const getPlayoffsData = () => {
     apiClient
       .get(`${api}/tournaments/${tournament}/playoff/matches`)
-      .then(({ data }) => setPlayoffData(data))
+      .then(({ data }) => {
+        setPlayoffData(data)
+        if (!data.matches || data.matches.length === 0) {
+          getPlayoffsTableData()
+        }
+      })
   }
 
   useEffect(() => {
-    getTournamentData()
-    getPlayoffsTableData()
     getPlayoffsData()
   }, [])
 
@@ -82,9 +76,8 @@ const Playoffs = () => {
           text: `Playoff creado con éxito`,
           timer: 2000,
           timerProgressBar: true,
-          customClass: { timerProgressBar: 'toast-progress-dark' }, // Definido en index.css //
+          customClass: { timerProgressBar: 'toast-progress-dark' },
           didOpen: (toast) => {
-            // Vuelvo a traer la data de Playoffs, para mostrar la vista actualizada //
             getPlayoffsData()
             toast.addEventListener('mouseenter', Swal.stopTimer)
             toast.addEventListener('mouseleave', Swal.resumeTimer)
@@ -106,7 +99,7 @@ const Playoffs = () => {
           showConfirmButton: false,
           timer: 2000,
           timerProgressBar: true,
-          customClass: { timerProgressBar: 'toast-progress-dark' }, // Definido en index.css //
+          customClass: { timerProgressBar: 'toast-progress-dark' },
           didOpen: (toast) => {
             toast.addEventListener('mouseenter', Swal.stopTimer)
             toast.addEventListener('mouseleave', Swal.resumeTimer)
@@ -123,7 +116,7 @@ const Playoffs = () => {
                   },
                   {
                     state: { url: location.pathname },
-                  } /* Adjunto info de la ruta actual, para luego volver a ella en caso de login exitoso */,
+                  },
                 )
               : navigate({
                   pathname: `/tournaments/${tournament}/playin`,
@@ -133,23 +126,10 @@ const Playoffs = () => {
       })
   }
 
-  if (tournamentData && playoffsTableData && playoffData) {
-    const { name, format } = tournamentData
-    const { standings } = playoffsTableData
+  if (tournamentSummary && playoffData) {
+    const { format } = tournamentSummary
     const { matches } = playoffData
-
-    const breadCrumbsLinks = [
-      { name: 'Home', route: '' },
-      { name: 'Torneos', route: 'tournaments' },
-      {
-        name: `${name}`,
-        route: `tournaments/${tournament}`,
-      },
-      {
-        name: 'Playoffs',
-        route: `tournaments/${tournament}/playoffs`,
-      },
-    ]
+    const standings = playoffsTableData?.standings || []
 
     return (
       <motion.div
@@ -157,7 +137,6 @@ const Playoffs = () => {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
-        <BreadCrumbsMUI links={breadCrumbsLinks} />
         {standings.length ? (
           <div
             style={{

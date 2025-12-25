@@ -1,39 +1,26 @@
-import { BreadCrumbsMUI, PageLoader } from 'views/components'
-import { useState, useEffect, useMemo, useRef } from 'react'
-import { useParams, useSearchParams } from 'react-router-dom'
-import { StyledPlayers } from './styled'
-import StatsLayout from './components/StatsLayout'
+import { PageLoader } from 'views/components'
 import PlayerBox from './components/PlayerBox'
+import StatsLayout from './components/StatsLayout'
+import { StyledPlayers } from './styled'
 import { api } from 'api'
 import axios from 'axios'
+import { useOutletContext } from 'react-router-dom'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { useParams, useSearchParams } from 'react-router-dom'
 
 const Players = () => {
   const { tournament } = useParams()
 
   const [searchParams, setSearchParams] = useSearchParams()
 
-  const [tournamentData, setTournamentData] = useState()
-  const [tournamentError, setTournamentError] = useState(null)
+  const { tournamentSummary } = useOutletContext()
+
+  // Set first player as active if no player is selected
   useEffect(() => {
-    const controller = new AbortController()
-    setTournamentError(null)
-    setTournamentData(undefined)
-    axios
-      .get(`${api}/tournaments/${tournament}`, { signal: controller.signal })
-      .then(({ data }) => {
-        setTournamentData(data)
-        // Set first player as active if no player is selected
-        if (!searchParams.get('player') && data.players?.length > 0) {
-          setSearchParams({ player: data.players[0].id })
-        }
-      })
-      .catch((err) => {
-        if (axios.isCancel?.(err) || err?.name === 'CanceledError') return
-        console.error(err)
-        setTournamentError('No se pudo cargar el torneo')
-      })
-    return () => controller.abort()
-  }, [tournament, searchParams, setSearchParams])
+    if (!searchParams.get('player') && tournamentSummary?.players?.length > 0) {
+      setSearchParams({ player: tournamentSummary.players[0].id })
+    }
+  }, [tournamentSummary, searchParams, setSearchParams])
 
   const [playerStats, setPlayerStats] = useState()
   const [playerError, setPlayerError] = useState(null)
@@ -96,70 +83,44 @@ const Players = () => {
       })
   }, [playerId, tournament])
 
-  if (tournamentData) {
-    const { name, players } = tournamentData
-
-    const breadCrumbsLinks = [
-      { name: 'Home', route: '' },
-      { name: 'Torneos', route: 'tournaments' },
-      {
-        name: `${name}`,
-        route: `tournaments/${tournament}`,
-      },
-      {
-        name: 'Jugadores',
-        route: `tournaments/${tournament}/players`,
-      },
-    ]
-    return (
-      <StyledPlayers>
-        <BreadCrumbsMUI links={breadCrumbsLinks} />
-        <div className="players">
-          {players.map(({ id, name }) => (
-            <PlayerBox
-              key={id}
-              id={id}
-              name={name}
-              isActive={playerId === id}
-              handler={() => setSearchParams({ player: id })}
-            />
-          ))}
-        </div>
-        {playerId ? (
-          playerError ? (
-            <div
-              style={{
-                color: 'crimson',
-                display: 'flex',
-                justifyContent: 'center',
-                padding: '2rem',
-                fontSize: '1.1rem',
-              }}
-            >
-              {playerError}
-            </div>
-          ) : playerStats ? (
-            <StatsLayout playerStats={playerStats} />
-          ) : null
-        ) : null}
-      </StyledPlayers>
-    )
-  } else {
-    return tournamentError ? (
-      <div
-        style={{
-          color: 'crimson',
-          display: 'flex',
-          justifyContent: 'center',
-          padding: '0.5rem',
-        }}
-      >
-        {tournamentError}
-      </div>
-    ) : (
-      <PageLoader />
-    )
+  if (!tournamentSummary) {
+    return <PageLoader />
   }
+
+  const { players } = tournamentSummary
+
+  return (
+    <StyledPlayers>
+      <div className="players">
+        {players.map(({ id, name }) => (
+          <PlayerBox
+            key={id}
+            id={id}
+            name={name}
+            isActive={playerId === id}
+            handler={() => setSearchParams({ player: id })}
+          />
+        ))}
+      </div>
+      {playerId ? (
+        playerError ? (
+          <div
+            style={{
+              color: 'crimson',
+              display: 'flex',
+              justifyContent: 'center',
+              padding: '2rem',
+              fontSize: '1.1rem',
+            }}
+          >
+            {playerError}
+          </div>
+        ) : playerStats ? (
+          <StatsLayout playerStats={playerStats} />
+        ) : null
+      ) : null}
+    </StyledPlayers>
+  )
 }
 
 export default Players

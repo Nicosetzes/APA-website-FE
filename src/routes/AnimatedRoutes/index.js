@@ -1,6 +1,7 @@
 import { AnimatePresence } from 'framer-motion'
 import ProtectedRoute from '../ProtectedRoute'
 import { ROUTES } from '../routesConfig'
+import TournamentLayout from 'pages/tournament-id/TournamentLayout'
 import {
   Calculator,
   CreateTournament,
@@ -14,7 +15,6 @@ import {
   Playoffs,
   Simulator,
   Standings,
-  Teams,
   TournamentId,
   Tournaments,
 } from 'pages'
@@ -26,7 +26,7 @@ export const AnimatedRoutes = () => {
 
   return (
     <AnimatePresence>
-      <Routes location={location} key={location.pathname}>
+      <Routes location={location}>
         <Route path={ROUTES.HOME.path} element={<Home />} />
         <Route path={ROUTES.LOGIN.path} element={<Login />} />
 
@@ -42,29 +42,30 @@ export const AnimatedRoutes = () => {
               </ProtectedRoute>
             }
           />
-          <Route path=":tournament" element={<TournamentId />} />
-          <Route path=":tournament/fixture" element={<FixtureId />} />
-          <Route path=":tournament/standings" element={<Standings />} />
-          <Route
-            path=":tournament/simulator"
-            element={
-              <ProtectedRoute>
-                <Simulator />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path=":tournament/simulator/calculator"
-            element={
-              <ProtectedRoute>
-                <Calculator />
-              </ProtectedRoute>
-            }
-          />
-          <Route path=":tournament/playin" element={<Playin />} />
-          <Route path=":tournament/playoffs" element={<Playoffs />} />
-          <Route path=":tournament/players" element={<Players />} />
-          <Route path=":tournament/teams" element={<Teams />} />
+          <Route path=":tournament" element={<TournamentLayout />}>
+            <Route index element={<TournamentId />} />
+            <Route path="fixture" element={<FixtureId />} />
+            <Route path="standings" element={<Standings />} />
+            <Route
+              path="simulator"
+              element={
+                <ProtectedRoute>
+                  <Simulator />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="simulator/calculator"
+              element={
+                <ProtectedRoute>
+                  <Calculator />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="playin" element={<Playin />} />
+            <Route path="playoffs" element={<Playoffs />} />
+            <Route path="stats" element={<Players />} />
+          </Route>
         </Route>
 
         <Route path={ROUTES.MATCHES.path} element={<Matches />} />

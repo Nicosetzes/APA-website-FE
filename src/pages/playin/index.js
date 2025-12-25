@@ -1,13 +1,14 @@
 import { PageLoader } from 'views/components'
+import { PlayinRound } from 'views/components'
 import Swal from 'sweetalert2'
 import { apiClient } from 'api/axiosConfig'
 import { motion } from 'framer-motion'
 import { useLogin } from 'context/LoginContext'
+import { useOutletContext } from 'react-router-dom'
 import withReactContent from 'sweetalert2-react-content'
-import { BreadCrumbsMUI, PlayinRound } from 'views/components'
 import { api, database } from 'api'
 import { useNavigate, useParams } from 'react-router-dom'
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 const Playin = () => {
   const MySwal = withReactContent(Swal)
@@ -15,44 +16,26 @@ const Playin = () => {
   const navigate = useNavigate()
 
   const login = useLogin()
-
   const { setLoginStatus } = login
 
   const { tournament } = useParams()
-
-  const [tournamentData, setTournamentData] = useState()
-
-  const getTournamentData = () => {
-    console.log('Traigo la data del torneo')
-    apiClient
-      .get(`${api}/tournaments/${tournament}`)
-      .then(({ data }) => setTournamentData(data))
-  }
-
-  useEffect(() => {
-    getTournamentData()
-  }, [])
-
+  const { tournamentSummary } = useOutletContext()
   const [playinData, setPlayinData] = useState()
 
   const getPlayinData = () => {
-    console.log('Traigo data del playin')
     apiClient
       .get(`${api}/tournaments/${tournament}/playin/matches`)
       .then(({ data }) => setPlayinData(data))
   }
 
   useEffect(() => {
-    console.log('me ejecuto')
     getPlayinData()
   }, [])
 
   const playinGeneration = (group) => {
-    console.log(tournament)
     apiClient
       .post(`${api}/tournaments/${tournament}/playin`, { group })
       .then(({ data }) => {
-        console.log(data)
         MySwal.fire({
           background: `rgba(28, 25, 25, 0.95)`,
           color: `#fff`,
@@ -65,9 +48,8 @@ const Playin = () => {
           text: `Playin de la zona ${group} creado con éxito`,
           timer: 2000,
           timerProgressBar: true,
-          customClass: { timerProgressBar: 'toast-progress-dark' }, // Definido en index.css //
+          customClass: { timerProgressBar: 'toast-progress-dark' },
           didOpen: (toast) => {
-            // Vuelvo a traer la data de Playin, para mostrar la vista actualizada //
             getPlayinData()
             toast.addEventListener('mouseenter', Swal.stopTimer)
             toast.addEventListener('mouseleave', Swal.resumeTimer)
@@ -95,12 +77,6 @@ const Playin = () => {
             toast.addEventListener('mouseleave', Swal.resumeTimer)
           },
           didClose: () => {
-            // setLoginStatus((loginStatus) => ({
-            //   ...loginStatus,
-            //   status: auth,
-            // }))
-            /* auth ==== false solo cuando el endpoint del BE corra el middleware isAuth() y este falle */
-            /* Por lo tanto, redirijo a /users/login */
             setLoginStatus((loginStatus) => ({
               ...loginStatus,
               status: auth,
@@ -112,31 +88,15 @@ const Playin = () => {
                 },
                 {
                   state: { url: location.pathname },
-                } /* Adjunto info de la ruta actual, para luego volver a ella en caso de login exitoso */,
+                },
               )
           },
         })
       })
   }
 
-  if (tournamentData && playinData) {
-    const { name } = tournamentData
+  if (tournamentSummary && playinData) {
     const { matches } = playinData
-
-    console.log(matches)
-
-    const breadCrumbsLinks = [
-      { name: 'Home', route: '' },
-      { name: 'Torneos', route: 'tournaments' },
-      {
-        name: `${name}`,
-        route: `tournaments/${tournament}`,
-      },
-      {
-        name: 'Playin',
-        route: `tournaments/${tournament}/playin`,
-      },
-    ]
 
     return (
       <motion.div
@@ -144,16 +104,15 @@ const Playin = () => {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
-        <BreadCrumbsMUI links={breadCrumbsLinks} />
         {matches.length && (
           <>
             <div
               style={{
-                alignContent: 'center',
                 backgroundColor: '#003545',
                 display: 'flex',
+                height: '100%',
                 overflowX: 'auto',
-                padding: '0.5rem',
+                padding: '2rem 0.5rem 0.5rem 0.5rem',
               }}
             >
               <PlayinRound

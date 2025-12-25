@@ -2,7 +2,7 @@ import styled from 'styled-components'
 
 export const StyledExtendedNavMenu = styled.div`
   display: flex;
-  margin: auto 2rem auto auto;
+  margin-left: auto;
   .nav-link {
     align-items: center;
     color: #fff;
@@ -15,6 +15,7 @@ export const StyledExtendedNavMenu = styled.div`
   }
   .nav-link.login {
     border: var(--orange-900) 1px solid;
+    margin-right: 0;
     padding: 0.5rem 0.75rem;
   }
   .nav-link.logout-button {

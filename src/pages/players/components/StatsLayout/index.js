@@ -1,7 +1,7 @@
-import { useMediaQuery } from 'react-responsive'
+import MatchBox from './../MatchBox'
 import { StyledStatsLayout } from './styled'
 import { database } from 'api'
-import MatchBox from './../MatchBox'
+import { useMediaQuery } from 'react-responsive'
 
 const StatsLayout = ({ playerStats }) => {
   const isXL = useMediaQuery({ query: '(min-width: 1200px)' })
@@ -20,12 +20,9 @@ const StatsLayout = ({ playerStats }) => {
     },
     teams,
   } = playerStats
-  console.log(played)
 
   return (
     <StyledStatsLayout isXL={isXL}>
-      {/* <div className="">Cantidad de partidos: {matches.length}</div> */}
-      {/* <div className="stats__player">Jugador: {player.name}</div> */}
       <div className="stats__teams">
         <span>Equipos</span>
         <div>

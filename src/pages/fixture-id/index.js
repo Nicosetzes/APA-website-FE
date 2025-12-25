@@ -4,8 +4,8 @@ import Swal from 'sweetalert2'
 import { apiClient } from 'api/axiosConfig'
 import { motion } from 'framer-motion'
 import { useMediaQuery } from 'react-responsive'
+import { useOutletContext } from 'react-router-dom'
 import withReactContent from 'sweetalert2-react-content'
-import { BreadCrumbsMUI, FixtureContainer, PageLoader } from 'views/components'
 import {
   Card,
   ClearButton,
@@ -26,9 +26,10 @@ import {
   TeamInfoRow,
   Title,
 } from './styled'
+import { FixtureContainer, PageLoader } from 'views/components'
 import { api, database } from 'api'
 import { useLocation, useParams, useSearchParams } from 'react-router-dom'
-import { useState, useEffect, useMemo, useCallback } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 const FixtureId = () => {
   const isXS = useMediaQuery({ query: '(min-width: 375px)' })
@@ -36,6 +37,8 @@ const FixtureId = () => {
   const MySwal = withReactContent(Swal)
 
   const { tournament } = useParams()
+
+  const { tournamentSummary } = useOutletContext()
 
   const [searchParams, setSearchParams] = useSearchParams()
 
@@ -47,7 +50,6 @@ const FixtureId = () => {
     initialPlayer ? [initialPlayer] : [],
   )
 
-  // Utility: merge into current search params
   const setParams = useCallback(
     (next) => {
       const current = Object.fromEntries(searchParams.entries())
@@ -76,27 +78,6 @@ const FixtureId = () => {
     },
     [setParams],
   )
-
-  const [tournamentData, setTournamentData] = useState()
-
-  console.log(tournamentData)
-
-  const getTournamentData = useCallback(() => {
-    const controller = new AbortController()
-    apiClient
-      .get(`${api}/tournaments/${tournament}`, { signal: controller.signal })
-      .then(({ data }) => setTournamentData(data))
-      .catch((err) => {
-        if (apiClient.isCancel?.(err) || err?.name === 'CanceledError') return
-        console.error(err)
-      })
-    return () => controller.abort()
-  }, [api, tournament])
-
-  useEffect(() => {
-    const cleanup = getTournamentData()
-    return cleanup
-  }, [getTournamentData])
 
   const [fixtureData, setFixtureData] = useState()
   const [fixtureLoading, setFixtureLoading] = useState(false)
@@ -175,7 +156,6 @@ const FixtureId = () => {
         group,
       })
       .then(({ data }) => {
-        console.log(data)
         MySwal.fire({
           background: `rgba(28, 25, 25, 0.95)`,
           color: `#fff`,
@@ -190,9 +170,8 @@ const FixtureId = () => {
           text: 'Aguarde unos instantes...',
           timer: 1500,
           timerProgressBar: true,
-          customClass: { timerProgressBar: 'toast-progress-dark' }, // Definido en index.css //
+          customClass: { timerProgressBar: 'toast-progress-dark' },
           didOpen: (toast) => {
-            // Traigo nuevamente la data, para mostrarla sin necesidad de refrescar la página //
             getFixtureData()
             toast.addEventListener('mouseenter', Swal.stopTimer)
             toast.addEventListener('mouseleave', Swal.resumeTimer)
@@ -204,10 +183,8 @@ const FixtureId = () => {
       })
   }
 
-  if (tournamentData && fixtureData) {
-    console.log(tournamentData)
-    console.log(fixtureData)
-    const { format, name, players, groups } = tournamentData
+  if (tournamentSummary && fixtureData) {
+    const { format, name, players, groups } = tournamentSummary
     const {
       matches,
       amountOfNotPlayedMatches,
@@ -215,26 +192,12 @@ const FixtureId = () => {
       totalPages,
     } = fixtureData
 
-    const breadCrumbsLinks = [
-      { name: 'Home', route: '' },
-      { name: 'Torneos', route: 'tournaments' },
-      {
-        name: `${name}`,
-        route: `tournaments/${tournament}`,
-      },
-      {
-        name: 'Fixture',
-        route: `tournaments/${tournament}/fixture`,
-      },
-    ]
-
     return (
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
-        <BreadCrumbsMUI links={breadCrumbsLinks} />
         <HeaderContainer>
           <Header>
             <Title>Fixture</Title>

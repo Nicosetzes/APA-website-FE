@@ -1,12 +1,11 @@
-import BreadCrumbsMUI from 'views/components/BreadCrumbsMUI'
 import { Image } from 'cloudinary-react'
-import { StyledTournamentsContainer } from './styled'
-import { api, database, cloudName } from 'api'
 import { Link } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { PageLoader } from 'views/components'
+import { StyledTournamentsContainer } from './styled'
 import axios from 'axios'
 import { motion } from 'framer-motion'
-import { PageLoader } from 'views/components'
+import { api, database, cloudName } from 'api'
+import { useEffect, useState } from 'react'
 
 const Tournaments = () => {
   const [tournaments, setTournaments] = useState()
@@ -22,17 +21,12 @@ const Tournaments = () => {
   }, [])
 
   if (tournaments) {
-    const breadCrumbsLinks = [
-      { name: 'Home', route: '' },
-      { name: 'Torneos', route: 'tournaments' },
-    ]
     return (
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
-        <BreadCrumbsMUI links={breadCrumbsLinks} />
         <div
           style={{
             fontSize: '1.75rem',

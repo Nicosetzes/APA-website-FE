@@ -42,9 +42,6 @@ const Match = ({ match, getFixtureData }) => {
     scoreP2: scoreP2,
   })
 
-  console.log(updatedAt)
-  console.log(createdAt)
-
   const onHandleChange = (event) => {
     const name = event.target.name
     const value = event.target.value
@@ -136,12 +133,6 @@ const Match = ({ match, getFixtureData }) => {
             toast.addEventListener('mouseleave', Swal.resumeTimer)
           },
           didClose: () => {
-            // setLoginStatus((loginStatus) => ({
-            //   ...loginStatus,
-            //   status: auth,
-            // }))
-            /* auth ==== false solo cuando el endpoint del BE corra el middleware isAuth() y este falle */
-            /* Por lo tanto, redirijo a /users/login */
             setLoginStatus((loginStatus) => ({
               ...loginStatus,
               status: auth,
@@ -153,7 +144,7 @@ const Match = ({ match, getFixtureData }) => {
                 },
                 {
                   state: { url: location.pathname },
-                } /* Adjunto info de la ruta actual, para luego volver a ella en caso de login exitoso */,
+                },
               )
           },
         })
@@ -162,7 +153,6 @@ const Match = ({ match, getFixtureData }) => {
 
   const handleMatchRemoval = async () => {
     if (scoreP1 == null || scoreP2 == null) {
-      // The comparison with == checks for both null and undefined //
       MySwal.fire({
         background: `rgba(28, 25, 25, 0.95)`,
         color: `#fff`,

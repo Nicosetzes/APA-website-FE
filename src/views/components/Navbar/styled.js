@@ -5,10 +5,10 @@ export const StyledNavbar = styled.div`
   background-color: var(--blue-900);
   display: flex;
   height: 110px;
+  padding-inline: 1rem;
   width: 100%;
   .logo {
     height: 80px;
-    margin: 0 1rem;
     width: 125px;
   }
 `

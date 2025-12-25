@@ -1,17 +1,10 @@
-import {
-  createSearchParams,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from 'react-router-dom'
-import { PlayerStatsTable, BreadCrumbsMUI, PageLoader } from 'views/components'
+import { Oval } from 'react-loader-spinner'
+import { SpinnerContainer } from './styled'
 import StandingsTable from './components/StandingsTable'
-import { useEffect, useMemo, useState, useCallback } from 'react'
-import { motion } from 'framer-motion'
 import { api } from 'api'
 import axios from 'axios'
-import { SpinnerContainer } from './styled'
-import { Oval } from 'react-loader-spinner'
+import { motion } from 'framer-motion'
+import { useOutletContext } from 'react-router-dom'
 import {
   Card,
   ControlsRow,
@@ -24,9 +17,19 @@ import {
   StandingsLinks,
   Title,
 } from './styled'
+import { PageLoader, PlayerStatsTable } from 'views/components'
+import {
+  createSearchParams,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from 'react-router-dom'
+import { useCallback, useEffect, useState } from 'react'
 
 const Standings = () => {
   const [tournamentData, setTournamentData] = useState()
+
+  const { tournamentSummary } = useOutletContext()
 
   const [searchParams, setSearchParams] = useSearchParams()
 
@@ -75,10 +78,6 @@ const Standings = () => {
     setLoading(true)
     const group = searchParams.get('group')
 
-    const tournamentInfo = axios.get(`${api}/tournaments/${tournament}`, {
-      signal: controller.signal,
-    })
-
     const standParams = group
       ? { params: { group }, signal: controller.signal }
       : { signal: controller.signal }
@@ -92,51 +91,31 @@ const Standings = () => {
       standParams,
     )
 
-    Promise.all([tournamentInfo, standingsReq, playerReq])
-      .then((values) => {
-        const data = values.map((response) => response.data)
-        setTournamentData(data)
-        setLoading(false)
-      })
-      .catch((err) => {
-        if (axios.isCancel?.(err) || err?.name === 'CanceledError') return
-        console.error(err)
-        setLoading(false)
-      })
+    Promise.all([standingsReq, playerReq]).then((values) => {
+      const data = values.map((response) => response.data)
+      setTournamentData(data)
+      setLoading(false)
+    })
 
     return () => controller.abort()
   }, [api, tournament, searchParams])
 
-  const searchKey = useMemo(() => searchParams.toString(), [searchParams])
   useEffect(() => {
     const cleanup = getTournamentData()
     return cleanup
-  }, [getTournamentData, searchKey])
+  }, [getTournamentData])
 
-  if (tournamentData) {
-    const { name, format, groups } = tournamentData[0]
-    const { standings } = tournamentData[1] // Index 0 because of the order in which I invoked the promises call in Promise.all //
-    const playerStats = tournamentData[2]
+  if (tournamentSummary && tournamentData) {
+    const { format, groups } = tournamentSummary
+    const { standings } = tournamentData[0]
+    const playerStats = tournamentData[1]
 
-    const breadCrumbsLinks = [
-      { name: 'Home', route: '' },
-      { name: 'Torneos', route: 'tournaments' },
-      {
-        name: `${name}`,
-        route: `tournaments/${tournament}`,
-      },
-      {
-        name: 'Clasificación',
-        route: `tournaments/${tournament}/standings`,
-      },
-    ]
     return (
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
-        <BreadCrumbsMUI links={breadCrumbsLinks} />
         <HeaderContainer>
           <Header>
             <Title>Clasificación</Title>

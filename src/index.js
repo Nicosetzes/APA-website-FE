@@ -5,14 +5,16 @@ import { LoginProvider } from 'context/LoginContext'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import reportWebVitals from './reportWebVitals'
-import { Navbar, Footer } from 'views/components'
+import { Navbar, Footer, PageWrapper } from 'views/components'
 
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
       <LoginProvider>
         <Navbar />
-        <AnimatedRoutes />
+        <PageWrapper>
+          <AnimatedRoutes />
+        </PageWrapper>
         <Footer />
       </LoginProvider>
     </BrowserRouter>

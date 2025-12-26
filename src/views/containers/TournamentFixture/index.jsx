@@ -26,7 +26,7 @@ import {
   TeamInfoRow,
   Title,
 } from './styled'
-import { FixtureContainer, PageLoader } from 'views/components'
+import { FixtureContainer, PageLoader, PrimaryLink } from 'views/components'
 import { api, database } from 'api'
 import { useLocation, useParams, useSearchParams } from 'react-router-dom'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -343,14 +343,13 @@ const TournamentFixture = () => {
                   aun no cuenta con partidos
                 </div>
                 <div style={{ margin: '0.5rem auto' }}>¿Desea generarlos?</div>
-                <button
-                  className="button-main"
+                <PrimaryLink
+                  asButton
+                  text="Generar partidos"
                   onClick={() =>
                     fixtureGeneration(searchParams.get('group') || 'A')
                   }
-                >
-                  Generar partidos
-                </button>
+                />
               </>
             ) : (
               <>
@@ -362,12 +361,11 @@ const TournamentFixture = () => {
                   aun no cuenta con partidos
                 </div>
                 <div style={{ margin: '0.5rem auto' }}>¿Desea generarlos?</div>
-                <button
-                  className="button-main"
+                <PrimaryLink
+                  asButton
                   onClick={() => fixtureGeneration()}
-                >
-                  Generar partidos
-                </button>
+                  text="Generar partidos"
+                />
               </>
             )}
           </div>

@@ -61,7 +61,7 @@ const Match = ({ match, getFixtureData }) => {
         background: `rgba(28, 25, 25, 0.95)`,
         color: `#fff`,
         icon: 'error',
-        iconColor: 'var(--red-900)',
+        iconColor: 'var(--red-700)',
         text: `Resultado incompleto, intente nuevamente`,
         title: '¡Error!',
         toast: true,
@@ -119,7 +119,7 @@ const Match = ({ match, getFixtureData }) => {
           background: `rgba(28, 25, 25, 0.95)`,
           color: `#fff`,
           icon: 'error',
-          iconColor: 'var(--red-900)',
+          iconColor: 'var(--red-700)',
           text: message,
           title: '¡Error!',
           toast: true,
@@ -157,7 +157,7 @@ const Match = ({ match, getFixtureData }) => {
         background: `rgba(28, 25, 25, 0.95)`,
         color: `#fff`,
         icon: 'error',
-        iconColor: 'var(--red-900)',
+        iconColor: 'var(--red-700)',
         title: '¡Error!',
         text: `No puede borrar partidos que no tengan el resultado cargado`,
         toast: true,
@@ -180,7 +180,7 @@ const Match = ({ match, getFixtureData }) => {
       icon: 'warning',
       showCancelButton: true,
       reverseButtons: true,
-      confirmButtonColor: 'var(--red-900)',
+      confirmButtonColor: 'var(--red-700)',
       cancelButtonColor: '#3085d6',
       confirmButtonText: 'Eliminar',
       cancelButtonText: 'Volver',
@@ -220,7 +220,7 @@ const Match = ({ match, getFixtureData }) => {
               background: `rgba(28, 25, 25, 0.95)`,
               color: `#fff`,
               icon: 'error',
-              iconColor: 'var(--red-900)',
+              iconColor: 'var(--red-700)',
               text: message,
               title: '¡Error!',
               toast: true,
@@ -296,7 +296,7 @@ const Match = ({ match, getFixtureData }) => {
       style={{
         outline: played
           ? 'var(--green-900) 3px solid'
-          : 'var(--red-900) 3px solid',
+          : 'var(--red-700) 3px solid',
       }}
     >
       <div className="match-view">

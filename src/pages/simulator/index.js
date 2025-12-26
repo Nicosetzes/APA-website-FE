@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react'
 import TeamBox from './components/TeamBox'
-import { BreadCrumbsMUI, PageLoader } from 'views/components'
-import { useParams, useNavigate } from 'react-router-dom'
-import { api, database } from 'api'
 import { apiClient } from 'api/axiosConfig'
 import { motion } from 'framer-motion'
+import { api, database } from 'api'
+import { BreadCrumbsMUI, PageLoader, PrimaryLink } from 'views/components'
+import { useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 
 const Simulator = () => {
   const { tournament } = useParams()
@@ -76,6 +76,7 @@ const Simulator = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
+        style={{ padding: '1rem' }}
       >
         <BreadCrumbsMUI links={breadCrumbsLinks} />
         <div
@@ -130,13 +131,11 @@ const Simulator = () => {
           ))}
         </div>
         <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <button
-            className="button-main"
+          <PrimaryLink
+            asButton
+            text="Confirmar"
             onClick={() => navigateToCalculator()}
-            style={{ margin: '2rem 0 1rem 0' }}
-          >
-            Confirmar
-          </button>
+          />
         </div>
       </motion.div>
     )

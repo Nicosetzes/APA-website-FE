@@ -4,19 +4,18 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { api, database } from 'api'
 import axios from 'axios'
 import {
+  StepDot,
+  StepIndicator,
+  StepLabel,
+  StepLine,
+  WizardActions,
   WizardContainer,
+  WizardContent,
   WizardHeader,
   WizardTitle,
-  StepIndicator,
-  StepDot,
-  StepLine,
-  StepLabel,
-  WizardContent,
-  WizardActions,
-  WizardButton,
 } from './styled'
 import { Assignments, Confirmation, Format, Leagues, Players, PlayoffBracket } from './steps'
-import { PageLoader } from 'views/components'
+import { PageLoader, PrimaryLink } from 'views/components'
 
 const TournamentCreation = () => {
   const [currentStep, setCurrentStep] = useState(1)
@@ -159,14 +158,10 @@ const TournamentCreation = () => {
 
         <WizardActions>
           {currentStep > 1 && (
-            <WizardButton type="button" onClick={prevStep} $variant="secondary">
-              Anterior
-            </WizardButton>
+            <PrimaryLink asButton text={"Anterior"} type="button" onClick={prevStep} />
           )}
           {currentStep < STEPS.length && (
-            <WizardButton type="button" onClick={nextStep} $variant="primary">
-              Siguiente
-            </WizardButton>
+            <PrimaryLink asButton text={"Siguiente"} type="button" onClick={nextStep} />
           )}
         </WizardActions>
       </WizardContainer>

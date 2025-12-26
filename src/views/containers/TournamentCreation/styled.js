@@ -120,47 +120,6 @@ export const WizardActions = styled.div`
   }
 `
 
-export const WizardButton = styled.button`
-  padding: 0.75rem 2rem;
-  font-size: 1rem;
-  font-weight: 600;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  min-width: 120px;
-
-  background: ${({ $variant }) =>
-    $variant === 'primary'
-      ? 'var(--green-900)'
-      : $variant === 'secondary'
-      ? 'var(--blue-900)'
-      : '#6c757d'};
-  color: #fff;
-
-  &:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    background: ${({ $variant }) =>
-      $variant === 'primary'
-        ? '#16a085'
-        : $variant === 'secondary'
-        ? '#1a3d4d'
-        : '#5a6268'};
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  @media (max-width: 768px) {
-    padding: 0.625rem 1.5rem;
-    font-size: 0.875rem;
-    min-width: 100px;
-  }
-`
-
 // Legacy styles for backwards compatibility
 export const StyledFormatsContainer = styled.div`
   display: flex;

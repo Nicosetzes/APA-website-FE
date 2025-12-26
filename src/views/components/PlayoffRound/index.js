@@ -1,10 +1,10 @@
-import PlayoffMatch from '../PlayoffMatch'
-import { StyledPlayoffRound } from './styled'
 import Swal from 'sweetalert2'
 import { api } from 'api'
 import { apiClient } from 'api/axiosConfig'
 import { useLogin } from 'context/LoginContext'
 import withReactContent from 'sweetalert2-react-content'
+import { PlayoffMatch, PrimaryLink } from 'views/components'
+import { PlayoffRoundContainer, RoundMatches, RoundName } from './styled'
 import { useNavigate, useParams } from 'react-router-dom'
 
 const PlayoffRound = ({ matches, round, getData, isThisTheFinal }) => {
@@ -23,7 +23,6 @@ const PlayoffRound = ({ matches, round, getData, isThisTheFinal }) => {
         round,
       })
       .then(({ data }) => {
-        console.log(data)
         const { matches, message } = data
         matches.length
           ? MySwal.fire({
@@ -103,63 +102,62 @@ const PlayoffRound = ({ matches, round, getData, isThisTheFinal }) => {
       })
   }
 
+  let firstRoundMatchesCount = 0
+
+  if (round === 1) {
+    firstRoundMatchesCount = matches.length
+  }
+
   return (
-    <StyledPlayoffRound>
-      <div
-        style={{
-          color: '#fff',
-          display: 'flex',
-          fontWeight: 700,
-          justifyContent: 'center',
-        }}
-      >
-        Ronda {round}
-      </div>
-      {matches.length
-        ? matches.map(
-            ({
-              _id,
-              playerP1,
-              teamP1,
-              seedP1,
-              scoreP1,
-              playerP2,
-              teamP2,
-              seedP2,
-              scoreP2,
-              played,
-              outcome,
-              valid,
-            }) => (
-              <PlayoffMatch
-                key={_id}
-                id={_id}
-                playerP1={playerP1}
-                teamP1={teamP1}
-                seedP1={seedP1}
-                scoreP1={scoreP1}
-                playerP2={playerP2}
-                teamP2={teamP2}
-                seedP2={seedP2}
-                scoreP2={scoreP2}
-                played={played}
-                outcome={outcome}
-                getData={getData}
-                valid={valid}
-                isThisTheFinal={isThisTheFinal}
-              />
-            ),
-          )
-        : null}
-      {round != 1 && (
-        <button
-          className="button-main"
-          onClick={() => checkForNewPlayoffMatches(round)}
-        >
-          Actualizar partidos
-        </button>
-      )}
-    </StyledPlayoffRound>
+    <PlayoffRoundContainer
+      firstRoundMatchesCount={round === 1 ? firstRoundMatchesCount : null}
+    >
+      <RoundName>Ronda {round}</RoundName>
+      <RoundMatches spread={round !== 1}>
+        {matches.length
+          ? matches.map(
+              ({
+                _id,
+                playerP1,
+                teamP1,
+                seedP1,
+                scoreP1,
+                playerP2,
+                teamP2,
+                seedP2,
+                scoreP2,
+                played,
+                outcome,
+                valid,
+              }) => (
+                <PlayoffMatch
+                  key={_id}
+                  id={_id}
+                  playerP1={playerP1}
+                  teamP1={teamP1}
+                  seedP1={seedP1}
+                  scoreP1={scoreP1}
+                  playerP2={playerP2}
+                  teamP2={teamP2}
+                  seedP2={seedP2}
+                  scoreP2={scoreP2}
+                  played={played}
+                  outcome={outcome}
+                  getData={getData}
+                  valid={valid}
+                  isThisTheFinal={isThisTheFinal}
+                />
+              ),
+            )
+          : null}
+      </RoundMatches>
+      <PrimaryLink
+        asButton
+        text="Actualizar partidos"
+        disabled={round === 1}
+        onClick={() => checkForNewPlayoffMatches(round)}
+      />
+    </PlayoffRoundContainer>
   )
 }
 

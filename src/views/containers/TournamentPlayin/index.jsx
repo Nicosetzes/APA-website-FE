@@ -1,11 +1,10 @@
-import { PageLoader } from 'views/components'
-import { PlayinRound } from 'views/components'
 import Swal from 'sweetalert2'
 import { apiClient } from 'api/axiosConfig'
 import { motion } from 'framer-motion'
 import { useLogin } from 'context/LoginContext'
 import { useOutletContext } from 'react-router-dom'
 import withReactContent from 'sweetalert2-react-content'
+import { PageLoader, PlayinRound, PrimaryLink } from 'views/components'
 import { api, database } from 'api'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
@@ -110,6 +109,7 @@ const TournamentPlayin = () => {
               style={{
                 backgroundColor: '#003545',
                 display: 'flex',
+                gap: '1rem',
                 height: '100%',
                 overflowX: 'auto',
                 padding: '2rem 0.5rem',
@@ -196,12 +196,11 @@ const TournamentPlayin = () => {
               La zona A no posee partidos programados para el Playin
             </div>
             <div style={{ margin: '0.5rem auto' }}>¿Desea generarlos?</div>
-            <button
-              className="button-main"
+            <PrimaryLink
+              asButton
+              text="Generar partidos Zona A"
               onClick={() => playinGeneration('A')}
-            >
-              Generar partidos Zona A
-            </button>
+            />
           </div>
         )}
         {(!matches.length ||
@@ -221,12 +220,11 @@ const TournamentPlayin = () => {
               La zona B no posee partidos programados para el Playin
             </div>
             <div style={{ margin: '0.5rem auto' }}>¿Desea generarlos?</div>
-            <button
-              className="button-main"
+            <PrimaryLink
+              asButton
+              text="Generar partidos Zona B"
               onClick={() => playinGeneration('B')}
-            >
-              Generar partidos Zona B
-            </button>
+            />
           </div>
         )}
       </motion.div>

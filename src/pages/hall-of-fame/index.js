@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react'
 import Accolades from './components/Accolades'
+import { Oval } from 'react-loader-spinner'
 import Showcase from './components/Showcase'
-import { FaceToFaceTable } from 'views/components'
 import TeamRankings from './components/TeamRankings'
 import { api } from 'api'
 import axios from 'axios'
-import { Oval } from 'react-loader-spinner'
+import { FaceToFaceTable, PrimaryLink } from 'views/components'
+import { useState, useEffect } from 'react'
 
 const Trophies = () => {
   const [tournamentsData, setTournamentsData] = useState(null)
@@ -85,9 +85,11 @@ const Trophies = () => {
             margin: '2rem 0 2.5rem 0',
           }}
         >
-          <button className="button-main" onClick={getTeamsStats}>
-            Mostrar stats históricas (equipos)
-          </button>
+          <PrimaryLink
+            asButton
+            text={'Mostrar stats históricas (equipos)'}
+            onClick={getTeamsStats}
+          />
         </div>
       )}
       {teamsStatsLoading && (
@@ -133,9 +135,11 @@ const Trophies = () => {
             margin: '2rem 0 2.5rem 0',
           }}
         >
-          <button className="button-main" onClick={getFaceToFaceStats}>
-            Mostrar historial APA
-          </button>
+          <PrimaryLink
+            asButton
+            text={'Mostrar historial APA'}
+            onClick={getFaceToFaceStats}
+          />
         </div>
       )}
       {faceToFaceLoading && (

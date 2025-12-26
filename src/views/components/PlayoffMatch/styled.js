@@ -4,13 +4,14 @@ export const StyledPlayoffMatch = styled.div`
   background-color: rgb(0, 26, 42);
   display: flex;
   flex-direction: row;
-  margin: 0.25rem;
-  min-width: 210px;
+  height: 115px;
+  max-width: 325px;
   outline: ${(props) =>
     `${
       props.isThisTheFinal ? 'var(--orange-900) 2px solid' : '#000 2px solid'
     }`};
   padding: 0 0.5rem;
+  width: 100%;
   .container__team {
     align-items: center;
     display: flex;

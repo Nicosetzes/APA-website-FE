@@ -12,6 +12,7 @@ import {
   FinalistBox,
   PageLoader,
   PlayoffRound,
+  PrimaryLink,
 } from 'views/components'
 import {
   PlayoffsPreviewContainer,
@@ -213,9 +214,9 @@ const TournamentPlayoffs = () => {
         {matches.length ? (
           <div
             style={{
-              alignContent: 'center',
               backgroundColor: '#003545',
               display: 'flex',
+              gap: '1rem',
               overflowX: 'auto',
               padding: '2rem 0.5rem',
             }}
@@ -339,9 +340,7 @@ const TournamentPlayoffs = () => {
               No existen partidos programados para el Playoff
             </div>
             <div style={{ margin: '0.5rem auto' }}>¿Desea generarlos?</div>
-            <button className="button-main" onClick={() => playoffGeneration()}>
-              Generar Playoff
-            </button>
+            <PrimaryLink asButton text={"Generar Playoff"} onClick={() => playoffGeneration()} />
           </div>
         )}
       </motion.div>

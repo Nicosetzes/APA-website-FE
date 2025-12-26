@@ -7,7 +7,7 @@ export const StyledMatch = styled.form`
   justify-content: space-evenly;
   margin: 0.5rem;
   max-width: 400px;
-  outline: var(--red-900) 3px solid;
+  outline: var(--red-700) 3px solid;
   padding: 1rem;
 
   .match-view {

@@ -13,14 +13,14 @@ const Players = () => {
 
   const [searchParams, setSearchParams] = useSearchParams()
 
-  const { tournamentSummary } = useOutletContext()
+  const { tournamentData } = useOutletContext()
 
   // Set first player as active if no player is selected
   useEffect(() => {
-    if (!searchParams.get('player') && tournamentSummary?.players?.length > 0) {
-      setSearchParams({ player: tournamentSummary.players[0].id })
+    if (!searchParams.get('player') && tournamentData?.players?.length > 0) {
+      setSearchParams({ player: tournamentData.players[0].id })
     }
-  }, [tournamentSummary, searchParams, setSearchParams])
+  }, [tournamentData, searchParams, setSearchParams])
 
   const [playerStats, setPlayerStats] = useState()
   const [playerError, setPlayerError] = useState(null)
@@ -83,11 +83,11 @@ const Players = () => {
       })
   }, [playerId, tournament])
 
-  if (!tournamentSummary) {
+  if (!tournamentData) {
     return <PageLoader />
   }
 
-  const { players } = tournamentSummary
+  const { players } = tournamentData
 
   return (
     <StyledPlayers>

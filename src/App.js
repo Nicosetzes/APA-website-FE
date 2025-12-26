@@ -1,4 +1,4 @@
-import Home from './pages/home'
+import { Home } from './views/containers'
 import { StylesProvider } from '@mui/styles'
 
 function App() {

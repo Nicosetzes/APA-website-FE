@@ -13,15 +13,15 @@ import {
 import {
   EditListing,
   EditUpload,
-  Fixture,
   Home,
-  Playin,
-  Playoffs,
-  Standings,
-  StatisticsGeneral,
   Tournament,
   TournamentCreation,
+  TournamentFixture,
   TournamentListing,
+  TournamentPlayin,
+  TournamentPlayoffs,
+  TournamentStandings,
+  StatisticsGeneral,
 } from 'views/containers'
 import { Route, Routes, useLocation } from 'react-router-dom'
 
@@ -48,8 +48,8 @@ export const AnimatedRoutes = () => {
           />
           <Route path=":tournament" element={<TournamentLayout />}>
             <Route index element={<Tournament />} />
-            <Route path="fixture" element={<Fixture />} />
-            <Route path="standings" element={<Standings />} />
+            <Route path="fixture" element={<TournamentFixture />} />
+            <Route path="standings" element={<TournamentStandings />} />
             <Route
               path="simulator"
               element={
@@ -66,8 +66,8 @@ export const AnimatedRoutes = () => {
                 </ProtectedRoute>
               }
             />
-            <Route path="playin" element={<Playin />} />
-            <Route path="playoffs" element={<Playoffs />} />
+            <Route path="playin" element={<TournamentPlayin />} />
+            <Route path="playoffs" element={<TournamentPlayoffs />} />
             <Route path="stats" element={<Players />} />
           </Route>
         </Route>

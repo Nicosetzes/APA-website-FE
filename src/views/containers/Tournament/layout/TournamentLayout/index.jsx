@@ -2,20 +2,20 @@ import { PageLoader } from 'views/components'
 import TournamentTabs from '../../components/TournamentTabs'
 import { api } from 'api'
 import { apiClient } from 'api/axiosConfig'
-import { Outlet, useParams, useNavigate } from 'react-router-dom'
+import { Outlet, useNavigate , useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 
 const TournamentLayout = () => {
   const { tournament } = useParams()
   const navigate = useNavigate()
-  const [tournamentSummary, setTournamentSummary] = useState(null)
+  const [tournamentData, setTournamentData] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const fetchTournament = async () => {
       try {
         const { data } = await apiClient.get(`${api}/tournaments/${tournament}`)
-        setTournamentSummary(data)
+        setTournamentData(data)
         setLoading(false)
       } catch (err) {
         console.error(err)
@@ -29,18 +29,18 @@ const TournamentLayout = () => {
     <div
       style={{ display: 'flex', flexDirection: 'column', minHeight: '100%' }}
     >
-      {tournamentSummary && (
+      {tournamentData && (
         <TournamentTabs
-          name={tournamentSummary.name}
-          format={tournamentSummary.format}
+          cloudinary_id={tournamentData.cloudinary_id}
+          format={tournamentData.format}
+          name={tournamentData.name}
           tournamentId={tournament}
-          cloudinary_id={tournamentSummary.cloudinary_id}
         />
       )}
-      {loading || !tournamentSummary ? (
+      {loading || !tournamentData ? (
         <PageLoader />
       ) : (
-        <Outlet context={{ tournamentSummary }} />
+        <Outlet context={{ tournamentData }} />
       )}
     </div>
   )

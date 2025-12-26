@@ -1,4 +1,5 @@
 import { Oval } from 'react-loader-spinner'
+import { PageLoader } from 'views/components'
 import { SpinnerContainer } from './styled'
 import StandingsTable from './components/StandingsTable'
 import { api } from 'api'
@@ -17,7 +18,6 @@ import {
   StandingsLinks,
   Title,
 } from './styled'
-import { PageLoader, PlayerStatsTable } from 'views/components'
 import {
   createSearchParams,
   useNavigate,
@@ -26,14 +26,14 @@ import {
 } from 'react-router-dom'
 import { useCallback, useEffect, useState } from 'react'
 
-const Standings = () => {
-  const [tournamentData, setTournamentData] = useState()
-
-  const { tournamentSummary } = useOutletContext()
+const TournamentStandings = () => {
 
   const [searchParams, setSearchParams] = useSearchParams()
 
   const { tournament } = useParams()
+
+  const { tournamentData } = useOutletContext()
+  const [standingsData, setStandingsData] = useState()
 
   const navigate = useNavigate()
 
@@ -86,14 +86,10 @@ const Standings = () => {
       `${api}/tournaments/${tournament}/standings/table`,
       standParams,
     )
-    const playerReq = axios.get(
-      `${api}/tournaments/${tournament}/standings/player-info`,
-      standParams,
-    )
 
-    Promise.all([standingsReq, playerReq]).then((values) => {
+    Promise.all([standingsReq]).then((values) => {
       const data = values.map((response) => response.data)
-      setTournamentData(data)
+      setStandingsData(data)
       setLoading(false)
     })
 
@@ -105,10 +101,9 @@ const Standings = () => {
     return cleanup
   }, [getTournamentData])
 
-  if (tournamentSummary && tournamentData) {
-    const { format, groups } = tournamentSummary
-    const { standings } = tournamentData[0]
-    const playerStats = tournamentData[1]
+  if (tournamentData && standingsData) {
+    const { format, groups } = tournamentData
+    const { standings } = standingsData[0]
 
     return (
       <motion.div
@@ -175,7 +170,6 @@ const Standings = () => {
               standings={standings}
               onHandle={goToSpecificFixture}
             />
-            <PlayerStatsTable stats={playerStats} />
           </>
         )}
       </motion.div>
@@ -185,4 +179,4 @@ const Standings = () => {
   }
 }
 
-export default Standings
+export default TournamentStandings

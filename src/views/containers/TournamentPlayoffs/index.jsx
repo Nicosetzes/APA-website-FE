@@ -1,5 +1,5 @@
 import { MatchPreview } from './components'
-import StandingsTable from '../Standings/components/StandingsTable'
+import StandingsTable from '../TournamentStandings/components/StandingsTable'
 import Swal from 'sweetalert2'
 import { api } from 'api'
 import { apiClient } from 'api/axiosConfig'
@@ -22,7 +22,7 @@ import {
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
-const Playoffs = () => {
+const TournamentPlayoffs = () => {
   const navigate = useNavigate()
 
   const login = useLogin()
@@ -32,7 +32,7 @@ const Playoffs = () => {
   const MySwal = withReactContent(Swal)
 
   const { tournament } = useParams()
-  const { tournamentSummary } = useOutletContext()
+  const { tournamentData } = useOutletContext()
 
   const [playoffsTableData, setPlayoffsTableData] = useState()
   const [playoffData, setPlayoffData] = useState()
@@ -126,8 +126,8 @@ const Playoffs = () => {
       })
   }
 
-  if (tournamentSummary && playoffData) {
-    const { format } = tournamentSummary
+  if (tournamentData && playoffData) {
+    const { format } = tournamentData
     const { matches } = playoffData
     const standings = playoffsTableData?.standings || []
 
@@ -351,4 +351,4 @@ const Playoffs = () => {
   }
 }
 
-export default Playoffs
+export default TournamentPlayoffs

@@ -31,14 +31,14 @@ import { api, database } from 'api'
 import { useLocation, useParams, useSearchParams } from 'react-router-dom'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
-const Fixture = () => {
+const TournamentFixture = () => {
   const isXS = useMediaQuery({ query: '(min-width: 375px)' })
 
   const MySwal = withReactContent(Swal)
 
   const { tournament } = useParams()
 
-  const { tournamentSummary } = useOutletContext()
+  const { tournamentData } = useOutletContext()
 
   const [searchParams, setSearchParams] = useSearchParams()
 
@@ -183,8 +183,8 @@ const Fixture = () => {
       })
   }
 
-  if (tournamentSummary && fixtureData) {
-    const { format, name, players, groups } = tournamentSummary
+  if (tournamentData && fixtureData) {
+    const { format, name, players, groups } = tournamentData
     const {
       matches,
       amountOfNotPlayedMatches,
@@ -379,4 +379,4 @@ const Fixture = () => {
   }
 }
 
-export default Fixture
+export default TournamentFixture

@@ -18,7 +18,7 @@ import {
 import { Assignments, Confirmation, Format, Leagues, Players, PlayoffBracket } from './steps'
 import { PageLoader } from 'views/components'
 
-const CreateTournament = () => {
+const TournamentCreation = () => {
   const [currentStep, setCurrentStep] = useState(1)
   const [players, setPlayers] = useState([])
   const [leagues, setLeagues] = useState([])
@@ -174,4 +174,4 @@ const CreateTournament = () => {
   )
 }
 
-export default CreateTournament
+export default TournamentCreation

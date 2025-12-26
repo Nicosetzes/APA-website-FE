@@ -7,7 +7,7 @@ import { motion } from 'framer-motion'
 import { api, database, cloudName } from 'api'
 import { useEffect, useState } from 'react'
 
-const Tournaments = () => {
+const TournamentListing = () => {
   const [tournaments, setTournaments] = useState()
 
   const getTournamentsData = async () => {
@@ -90,4 +90,4 @@ const Tournaments = () => {
   }
 }
 
-export default Tournaments
+export default TournamentListing

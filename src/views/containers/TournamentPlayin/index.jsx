@@ -10,7 +10,7 @@ import { api, database } from 'api'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 
-const Playin = () => {
+const TournamentPlayin = () => {
   const MySwal = withReactContent(Swal)
 
   const navigate = useNavigate()
@@ -19,7 +19,7 @@ const Playin = () => {
   const { setLoginStatus } = login
 
   const { tournament } = useParams()
-  const { tournamentSummary } = useOutletContext()
+  const { tournamentData } = useOutletContext()
   const [playinData, setPlayinData] = useState()
 
   const getPlayinData = () => {
@@ -95,7 +95,7 @@ const Playin = () => {
       })
   }
 
-  if (tournamentSummary && playinData) {
+  if (tournamentData && playinData) {
     const { matches } = playinData
 
     return (
@@ -236,4 +236,4 @@ const Playin = () => {
   }
 }
 
-export default Playin
+export default TournamentPlayin

@@ -158,16 +158,27 @@ export const MatchCard = styled.div`
   align-items: center;
   background: #ffffff;
   border-radius: 0.5rem;
+  border: ${(props) =>
+    props.color ? `${props.color} 2px solid` : 'var(--blue-900) 2px solid'};
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
   display: flex;
   flex-direction: column;
-  gap: 1rem;
   max-width: 300px;
   padding: 1rem;
   width: 100%;
   @media (min-width: 1200px) {
     max-width: 350px;
   }
+`
+
+export const MatchType = styled.div`
+  background-color: var(--blue-100);
+  border-radius: 0.25rem;
+  color: ${(props) => props.color};
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
+  width: fit-content;
 `
 
 export const MatchContainer = styled.div`
@@ -197,6 +208,7 @@ export const MatchScore = styled.p`
 export const MatchDate = styled.div`
   color: #b3b3b3;
   font-size: 0.85rem;
+  margin-top: 0.75rem;
   text-align: center;
 `
 

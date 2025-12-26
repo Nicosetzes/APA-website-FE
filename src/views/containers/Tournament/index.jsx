@@ -19,6 +19,7 @@ import {
   MatchList,
   MatchScore,
   MatchTeam,
+  MatchType,
   OutcomeCard,
   OutcomeContent,
   OutcomeHeader,
@@ -63,11 +64,43 @@ const Tournament = () => {
 
   if (statsLoading) return <PageLoader />
 
-  console.log(tournamentSummary)
-
-  const { teams, format, cloudinary_id, outcome } = tournamentData
+  const { cloudinary_id, format, name, ongoing, outcome, teams } = tournamentData
   const champion = outcome?.champion
   const finalist = outcome?.finalist
+
+  const parseMatchType = (type) => {
+    switch (type) {
+      case 'regular':
+        return 'Fase Regular'
+      case 'playin':
+        return 'Play-in'
+      case 'playoff':
+        return 'Playoff'
+      default:
+        return type
+    }
+  }
+
+  const parseMatchTypeColor = (type) => {
+    switch (type) {
+      case 'group':
+        return 'var(--blue-900)'
+      case 'playin':
+        return 'var(--red-900)'
+      case 'playoff':
+        return 'var(--green-900)'
+      default:
+        return 'var(--blue-900)'
+    }
+  }
+
+  const parseStreak = (streak) => {
+    const amount = Number(streak.slice(0, 1))
+    if (streak.includes('W')) return `${streak.split('W')[0]} ${amount > 1 ? 'victorias' : 'victoria'}`
+    if (streak.includes('L')) return `${streak.split('L')[0]} ${amount > 1 ? 'derrotas' : 'derrota'}`
+    if (streak.includes('D')) return `${streak.split('D')[0]} ${amount > 1 ? 'empates' : 'empate'}`
+    else return '-'
+  }
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} style={{backgroundColor: '#f6f8fb'}}>
@@ -81,7 +114,7 @@ const Tournament = () => {
               <InfoTitle>Información del Torneo</InfoTitle>
               <InfoText>
                 <strong>Nombre:</strong>{' '}
-                {tournamentData.name}
+                {name}
               </InfoText>
               <InfoText>
                 <strong>Formato:</strong>{' '}
@@ -92,6 +125,9 @@ const Tournament = () => {
               </InfoText>
               <InfoText>
                 <strong>Partidos jugados:</strong> {tournamentSummary?.matches?.totalPlayed || 0}
+              </InfoText>
+              <InfoText>
+                <strong>Estado:</strong> {ongoing ? <span style={{ color: 'var(--green-900)', fontWeight: 'bold' }}>En curso</span> : <span style={{ color: 'var(--red-700)', fontWeight: 'bold' }}>Finalizado</span>}
               </InfoText>
             </InfoCard>
           </InfoSection>
@@ -139,7 +175,8 @@ const Tournament = () => {
             <h2 style={{margin: '0 0 1rem 0'}}>Partidos Recientes</h2>
             <MatchList>
             {tournamentSummary.matches.recent.map((match) => (
-              <MatchCard key={match.id}>
+              <MatchCard color={parseMatchTypeColor(match.type)} key={match.id}>
+                <MatchType color={parseMatchTypeColor(match.type)}>{parseMatchType(match.type)}</MatchType>
                 <MatchContainer>
                   <MatchTeam>
                     <TeamLogo src={`${database}/logos/${match.teamP1.id}`} alt={match.teamP1.name} />
@@ -195,7 +232,7 @@ const Tournament = () => {
                     <TableCell>{participant.goalsAgainst}</TableCell>
                     <TableCell>{participant.scoringDifference}</TableCell>
                     <TableCell>{participant.effectiveness}%</TableCell>
-                    <TableCell>{participant.streak ?? "-"}</TableCell>
+                    <TableCell>{parseStreak(participant.streak)}</TableCell>
                   </TableRow>
                 ))}
               </tbody>

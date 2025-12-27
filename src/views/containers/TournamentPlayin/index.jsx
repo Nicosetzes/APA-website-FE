@@ -31,6 +31,38 @@ const TournamentPlayin = () => {
     getPlayinData()
   }, [])
 
+  const getPlayinMatchesForRound = (matches = [], componentRound) => {
+    if (!Array.isArray(matches)) return []
+
+    const expectedIds = componentRound === 1 ? [1, 2, 3, 4] : componentRound === 2 ? [5, 6] : []
+
+    const matchById = new Map()
+    matches.forEach((m) => {
+      matchById.set(Number(m.playoff_id), m)
+    })
+
+    return expectedIds.map((playoffId) => {
+      const existing = matchById.get(playoffId)
+      if (existing) return existing
+
+      return {
+        _id: `preview-${playoffId}`,
+        playoff_id: playoffId,
+        playerP1: null,
+        teamP1: null,
+        seedP1: '?',
+        scoreP1: null,
+        playerP2: null,
+        teamP2: null,
+        seedP2: '?',
+        scoreP2: null,
+        played: false,
+        outcome: null,
+        valid: false,
+      }
+    })
+  }
+
   const playinGeneration = (group) => {
     apiClient
       .post(`${api}/tournaments/${tournament}/playin`, { group })
@@ -116,12 +148,12 @@ const TournamentPlayin = () => {
               }}
             >
               <PlayinRound
-                matches={matches.filter(({ playoff_id }) => playoff_id <= 4)}
+                matches={getPlayinMatchesForRound(matches, 1)}
                 round={1}
                 getData={getPlayinData}
               />
               <PlayinRound
-                matches={matches.filter(({ playoff_id }) => playoff_id > 4)}
+                matches={getPlayinMatchesForRound(matches, 2)}
                 round={2}
                 getData={getPlayinData}
               />

@@ -1,14 +1,16 @@
 import CelebrationAnimation from './../CelebrationAnimation'
 import CheckIcon from '@mui/icons-material/Check'
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
 import IconButton from '@mui/material/IconButton'
 import { StyledPlayoffMatch } from './styled'
 import Swal from 'sweetalert2'
+import Tooltip from '../Tooltip'
 import { apiClient } from 'api/axiosConfig'
 import { useLogin } from 'context/LoginContext'
 import { useState } from 'react'
 import withReactContent from 'sweetalert2-react-content'
 import { api, database } from 'api'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 const PlayoffMatch = ({
   id,
@@ -140,17 +142,50 @@ const PlayoffMatch = ({
             <div className="container__team">
               <div className="team-seed">{seedP1}.</div>
               <div className="team-logo">
-                <img src={`${database}/logos/${teamP1.id}`} />
+                <img
+                  src={
+                    teamP1?.id
+                      ? `${database}/logos/${teamP1.id}`
+                      : '/images/sitioapalogo.png'
+                  }
+                  alt={teamP1?.name || 'sitioapa logo'}
+                />
               </div>
               <div className="team-name">
-                {teamP1.name} ({playerP1.name[0]}
-                {playerP1.name[1].toUpperCase()})
+                {teamP1?.name}{' '}
+                {playerP1?.name ? (
+                  `(${playerP1?.name[0]}${playerP1?.name[1].toUpperCase()})`
+                ) : (
+                  <>
+                    <span>TBD</span>
+                    <Tooltip title={'TBD = To Be Determined (pendiente)'}>
+                      <HelpOutlineIcon
+                        sx={{
+                          fontSize: '1rem',
+                          marginLeft: '0.25rem',
+                          cursor: 'help',
+                        }}
+                      />
+                    </Tooltip>
+                  </>
+                )}
               </div>
               {played ? (
                 <div className="team-score">
-                  {valid === false &&
-                    outcome.teamThatWon?.id == teamP1.id &&
-                    'W/O'}
+                  {valid === false && outcome.teamThatWon?.id == teamP1.id && (
+                    <>
+                      <span>W/O</span>
+                      <Tooltip title={'W/O = Walk Over (victoria automática)'}>
+                        <HelpOutlineIcon
+                          sx={{
+                            fontSize: '1rem',
+                            marginLeft: '0.25rem',
+                            cursor: 'help',
+                          }}
+                        />
+                      </Tooltip>
+                    </>
+                  )}
                   {valid !== false && scoreP1}
                 </div>
               ) : (
@@ -183,17 +218,54 @@ const PlayoffMatch = ({
             <div className="container__team">
               <div className="team-seed">{seedP2}.</div>
               <div className="team-logo">
-                <img src={`${database}/logos/${teamP2.id}`} />
+                <img
+                  src={
+                    teamP2?.id
+                      ? `${database}/logos/${teamP2.id}`
+                      : '/images/sitioapalogo.png'
+                  }
+                  alt={teamP2?.name || 'sitioapa logo'}
+                />
               </div>
               <div className="team-name">
-                {teamP2.name} ({playerP2.name[0]}
-                {playerP2.name[1].toUpperCase()})
+                {teamP2?.name}{' '}
+                {playerP2?.name ? (
+                  `(${playerP2?.name[0]}${playerP2?.name[1].toUpperCase()})`
+                ) : (
+                  <>
+                    <span>TBD</span>
+                    <Tooltip title={'TBD = To Be Determined (pendiente)'}>
+                      <HelpOutlineIcon
+                        sx={{
+                          fontSize: '1rem',
+                          marginLeft: '0.25rem',
+                          cursor: 'help',
+                        }}
+                      />
+                    </Tooltip>
+                  </>
+                )}
               </div>
               {played ? (
                 <div className="team-score">
-                  {valid === false &&
-                    outcome.teamThatWon?.id == teamP2.id &&
-                    'W/O'}
+                  {valid === false && outcome.teamThatWon?.id == teamP2.id && (
+                    <>
+                      <span>W/O</span>
+                      <Tooltip
+                        title={
+                          'W/O = Walk Over (victoria sin jugarse el partido)'
+                        }
+                      >
+                        <HelpOutlineIcon
+                          sx={{
+                            fontSize: '1rem',
+                            marginLeft: '0.25rem',
+                            cursor: 'help',
+                          }}
+                        />
+                      </Tooltip>
+                    </>
+                  )}
                   {valid !== false && scoreP2}
                 </div>
               ) : (

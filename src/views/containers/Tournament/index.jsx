@@ -95,10 +95,10 @@ const Tournament = () => {
   }
 
   const parseStreak = (streak) => {
-    const amount = Number(streak.slice(0, 1))
-    if (streak.includes('W')) return `${streak.split('W')[0]} ${amount > 1 ? 'victorias' : 'victoria'}`
-    if (streak.includes('L')) return `${streak.split('L')[0]} ${amount > 1 ? 'derrotas' : 'derrota'}`
-    if (streak.includes('D')) return `${streak.split('D')[0]} ${amount > 1 ? 'empates' : 'empate'}`
+    const amount = Number(streak?.slice(0, 1))
+    if (streak?.includes('W')) return `${streak.split('W')[0]} ${amount > 1 ? 'victorias' : 'victoria'}`
+    if (streak?.includes('L')) return `${streak.split('L')[0]} ${amount > 1 ? 'derrotas' : 'derrota'}`
+    if (streak?.includes('D')) return `${streak.split('D')[0]} ${amount > 1 ? 'empates' : 'empate'}`
     else return '-'
   }
 

@@ -251,11 +251,7 @@ const PlayoffMatch = ({
                   {valid === false && outcome.teamThatWon?.id == teamP2.id && (
                     <>
                       <span>W/O</span>
-                      <Tooltip
-                        title={
-                          'W/O = Walk Over (victoria sin jugarse el partido)'
-                        }
-                      >
+                      <Tooltip title={'W/O = Walk Over (victoria automática)'}>
                         <HelpOutlineIcon
                           sx={{
                             fontSize: '1rem',

@@ -52,6 +52,8 @@ export const StyledPlayoffMatch = styled.div`
       font-weight: 700;
     }
     .team-score {
+      align-items: center;
+      display: flex;
       margin: 0 0 0 0.5rem;
     }
     .team-penalties {

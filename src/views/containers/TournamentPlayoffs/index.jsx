@@ -60,6 +60,100 @@ const TournamentPlayoffs = () => {
     getPlayoffsData()
   }, [])
 
+  const getMatchesForRound = (format, matches = [], componentRound) => {
+    if (!Array.isArray(matches)) return []
+
+    let expectedIds = []
+    const range = (min, max) => {
+      const arr = []
+      for (let i = min; i <= max; i++) arr.push(i)
+      return arr
+    }
+
+    if (format === 'playoff') {
+      switch (componentRound) {
+        case 1:
+          expectedIds = range(1, 16)
+          break
+        case 2:
+          expectedIds = range(17, 24)
+          break
+        case 3:
+          expectedIds = range(25, 28)
+          break
+        case 4:
+          expectedIds = range(29, 30)
+          break
+        case 5:
+          expectedIds = [31]
+          break
+        default:
+          expectedIds = []
+      }
+    } else if (format === 'champions_league') {
+      switch (componentRound) {
+        case 1:
+          expectedIds = range(1, 16)
+          break
+        case 2:
+          expectedIds = range(17, 24)
+          break
+        case 3:
+          expectedIds = range(25, 28)
+          break
+        case 4:
+          expectedIds = [29]
+          break
+        default:
+          expectedIds = []
+      }
+    } else {
+      // league_playin_playoff format
+      switch (componentRound) {
+        case 1:
+          expectedIds = range(1, 8)
+          break
+        case 2:
+          expectedIds = range(9, 12)
+          break
+        case 3:
+          expectedIds = range(13, 14)
+          break
+        case 4:
+          expectedIds = [15]
+          break
+        default:
+          expectedIds = []
+      }
+    }
+
+    const matchById = new Map()
+    matches.forEach((m) => {
+      matchById.set(Number(m.playoff_id), m)
+    })
+
+    return expectedIds.map((playoffId) => {
+      const existing = matchById.get(playoffId)
+      if (existing) return existing
+
+      return {
+        _id: `preview-${playoffId}`,
+        playoff_id: playoffId,
+        playerP1: null,
+        teamP1: null,
+        seedP1: '?',
+        scoreP1: null,
+        playerP2: null,
+        teamP2: null,
+        seedP2: '?',
+        scoreP2: null,
+        played: false,
+        outcome: null,
+        valid: false,
+      }
+    })
+  }
+
   const playoffGeneration = () => {
     apiClient
       .post(`${api}/tournaments/${tournament}/playoff`, tournament)
@@ -224,9 +318,7 @@ const TournamentPlayoffs = () => {
             {/* Round of 32 - Only for playoff format */}
             {format === 'playoff' && (
               <PlayoffRound
-                matches={matches.filter(
-                  ({ playoff_id }) => playoff_id >= 1 && playoff_id <= 16,
-                )}
+                matches={getMatchesForRound(format, matches, 1)}
                 round={1}
                 getData={getPlayoffsData}
                 isThisTheFinal={false}
@@ -234,12 +326,10 @@ const TournamentPlayoffs = () => {
             )}
             {/* Round of 16 */}
             <PlayoffRound
-              matches={matches.filter(({ playoff_id }) =>
-                format === 'champions_league'
-                  ? playoff_id <= 16
-                  : format === 'playoff'
-                  ? playoff_id > 16 && playoff_id <= 24
-                  : playoff_id <= 8,
+              matches={getMatchesForRound(
+                format,
+                matches,
+                format === 'playoff' ? 2 : 1,
               )}
               round={format === 'playoff' ? 2 : 1}
               getData={getPlayoffsData}
@@ -247,12 +337,10 @@ const TournamentPlayoffs = () => {
             />
             {/* Quarterfinals */}
             <PlayoffRound
-              matches={matches.filter(({ playoff_id }) =>
-                format === 'champions_league'
-                  ? playoff_id > 16 && playoff_id <= 24
-                  : format === 'playoff'
-                  ? playoff_id > 24 && playoff_id <= 28
-                  : playoff_id > 8 && playoff_id <= 12,
+              matches={getMatchesForRound(
+                format,
+                matches,
+                format === 'playoff' ? 3 : 2,
               )}
               round={format === 'playoff' ? 3 : 2}
               getData={getPlayoffsData}
@@ -260,12 +348,10 @@ const TournamentPlayoffs = () => {
             />
             {/* Semifinals */}
             <PlayoffRound
-              matches={matches.filter(({ playoff_id }) =>
-                format === 'champions_league'
-                  ? playoff_id > 24 && playoff_id <= 28
-                  : format === 'playoff'
-                  ? playoff_id > 28 && playoff_id <= 30
-                  : playoff_id > 12 && playoff_id <= 14,
+              matches={getMatchesForRound(
+                format,
+                matches,
+                format === 'playoff' ? 4 : 3,
               )}
               round={format === 'playoff' ? 4 : 3}
               getData={getPlayoffsData}
@@ -273,12 +359,10 @@ const TournamentPlayoffs = () => {
             />
             {/* Final */}
             <PlayoffRound
-              matches={matches.filter(({ playoff_id }) =>
-                format === 'champions_league'
-                  ? playoff_id == 29
-                  : format === 'playoff'
-                  ? playoff_id == 31
-                  : playoff_id == 15,
+              matches={getMatchesForRound(
+                format,
+                matches,
+                format === 'playoff' ? 5 : 4,
               )}
               round={format === 'playoff' ? 5 : 4}
               getData={getPlayoffsData}

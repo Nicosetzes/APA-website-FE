@@ -9,7 +9,7 @@ import { Oval } from 'react-loader-spinner'
 import axios from 'axios'
 import { format, parseISO } from 'date-fns'
 
-const mundial_de_ferraris_cloudinary_id = 'tournaments/ferraris_ykvwlf'
+const superliga_internacional_cloudinary_id = 'tournaments/internacional_co4gg7'
 
 const Home = () => {
   const isM = useMediaQuery({ query: '(min-width: 768px)' })
@@ -157,15 +157,15 @@ const Home = () => {
         <div className="container__accolades">
           <div className="box__champion">
             <div className="champion-title">CAMPEÓN VIGENTE</div>
-            <div className="champion-player">Leo</div>
+            <div className="champion-player">Nico</div>
             <div className="champion-img">
               <Image
                 cloudName={cloudName}
-                publicId={mundial_de_ferraris_cloudinary_id}
+                publicId={superliga_internacional_cloudinary_id}
               />
             </div>
             <div className="champion-team">
-              <span>ATLÉTICO MADRID</span>
+              <span>ITALIA</span>
             </div>
             <button onClick={() => navigate('./hall-of-fame')}>
               SALÓN DE LA FAMA

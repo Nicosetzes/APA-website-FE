@@ -1,14 +1,9 @@
-import { useMediaQuery } from 'react-responsive'
 import StarIcon from '@mui/icons-material/Star'
 import { StyledPlayerBox } from './styled'
+import { useMediaQuery } from 'react-responsive'
 
 const PlayerBox = ({ player, trophies }) => {
-  // const isL = useMediaQuery({ query: '(min-width: 992px)' })
   const isM = useMediaQuery({ query: '(min-width: 768px)' })
-  // const isSm = useMediaQuery({ query: '(min-width: 576px)' })
-  // const isXS = useMediaQuery({ query: '(min-width: 400px)' })
-
-  console.log({ player, trophies })
 
   return (
     <>

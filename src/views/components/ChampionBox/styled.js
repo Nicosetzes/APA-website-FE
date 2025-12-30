@@ -9,7 +9,7 @@ export const StyledChampionBox = styled.div`
   width: 200px;
   .title {
     align-items: center;
-    color: var(--orange-900);
+    color: var(--yellow-900);
     display: flex;
     font-size: 1.5rem;
     font-weight: 700;
@@ -21,6 +21,8 @@ export const StyledChampionBox = styled.div`
   }
   .team {
     margin: 0.5rem auto;
+    max-height: 200px;
+    max-width: 200px;
   }
   .player {
     color: #fff;

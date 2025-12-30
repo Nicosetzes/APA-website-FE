@@ -22,7 +22,7 @@ export const ContentWrapper = styled.div`
   flex-direction: column;
   gap: 1rem;
   margin: 0 auto;
-  max-width: 300px;
+  max-width: 400px;
   width: 100%;
 
   @media (min-width: 992px) {
@@ -73,8 +73,8 @@ export const InfoText = styled.p`
 
 export const TeamLogo = styled(Image)`
   height: 60px;
-  object-fit: contain;
   width: 60px;
+  object-fit: contain;
 `
 
 export const TeamInfo = styled.div`
@@ -213,9 +213,16 @@ export const MatchDate = styled.div`
 `
 
 export const OutcomeWrapper = styled.div`
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 2rem;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  margin: 0 auto;
+  max-width: 400px;
+  width: 100%;
+  @media (min-width: 992px) {
+    flex-direction: row;
+    max-width: none;
+  }
 `
 
 export const OutcomeCard = styled.div`
@@ -223,7 +230,15 @@ export const OutcomeCard = styled.div`
   border: var(--blue-900) 2px solid;
   border-radius: 0.5rem;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
-  padding: 2rem;
+  max-width: 400px;
+  padding: 1rem;
+  width: 100%;
+  @media (min-width: 576px) {
+    padding: 2rem;
+  }
+  @media (min-width: 992px) {
+    max-width: none;
+  }
 `
 
 export const OutcomeTitle = styled.span`
@@ -237,6 +252,25 @@ export const OutcomeContent = styled.div`
   align-items: center;
   gap: 1.25rem;
   margin-top: 1rem;
+`
+
+export const OutcomeTeamLogo = styled(Image)`
+  height: 150px;
+  width: 150px;
+  object-fit: contain;
+`
+
+export const OutcomeTeamName = styled.h3`
+  color: #000;
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 0;
+`
+
+export const OutcomePlayerName = styled.p`
+  color: #b3b3b3;
+  font-size: 1.25rem;
+  margin: 0;
 `
 
 export const OutcomeHeader = styled.div`

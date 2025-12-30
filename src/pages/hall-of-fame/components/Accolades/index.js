@@ -35,6 +35,7 @@ const Accolades = () => {
             '/images/superliga-europea.png',
             '/images/superliga-inglesa.png',
             '/images/superliga-inglesa.png',
+            '/images/internacional_co4gg7.png',
           ]}
         />
         <PlayerBox player={'Santi'} trophies={['/images/copa-america.png']} />

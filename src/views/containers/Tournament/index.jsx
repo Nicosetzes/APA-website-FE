@@ -23,6 +23,9 @@ import {
   OutcomeCard,
   OutcomeContent,
   OutcomeHeader,
+  OutcomePlayerName,
+  OutcomeTeamLogo,
+  OutcomeTeamName,
   OutcomeTitle,
   OutcomeWrapper,
   ParticipantsTable,
@@ -141,13 +144,13 @@ const Tournament = () => {
                 <StarIcon htmlColor={'#ffc30b'} fontSize={'large'} />
               </OutcomeHeader>
               <OutcomeContent $centered={!isSm}>
-                <TeamLogo
+                <OutcomeTeamLogo
                   src={`${database}/logos/${champion.team.id}`}
                   alt={champion.team.name}
                 />
                 <TeamInfo>
-                  <TeamName>{champion.team.name}</TeamName>
-                  <PlayerName>({champion.player.name})</PlayerName>
+                  <OutcomeTeamName>{champion.team.name}</OutcomeTeamName>
+                  <OutcomePlayerName>({champion.player.name})</OutcomePlayerName>
                 </TeamInfo>
               </OutcomeContent>
             </OutcomeCard>
@@ -157,13 +160,13 @@ const Tournament = () => {
                 <StarIcon htmlColor={'#b3b3b3'} fontSize={'large'} />
               </OutcomeHeader>
               <OutcomeContent $centered={!isSm}>
-                <TeamLogo
+                <OutcomeTeamLogo
                   src={`${database}/logos/${finalist.team.id}`}
                   alt={finalist.team.name}
                 />
                 <TeamInfo>
-                  <TeamName>{finalist.team.name}</TeamName>
-                  <PlayerName>({finalist.player.name})</PlayerName>
+                  <OutcomeTeamName>{finalist.team.name}</OutcomeTeamName>
+                  <OutcomePlayerName>({finalist.player.name})</OutcomePlayerName>
                 </TeamInfo>
               </OutcomeContent>
             </OutcomeCard>

@@ -47,7 +47,8 @@ export const StyledTeamRankings = styled.div`
           }
         }
         & > img {
-          width: 100px;
+          max-height: 100px;
+          max-width: 100px;
         }
       }
       .row__stats {

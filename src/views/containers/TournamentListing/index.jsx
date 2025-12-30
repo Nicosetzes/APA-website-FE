@@ -74,7 +74,8 @@ const TournamentListing = () => {
                         style={{
                           alignSelf: 'center',
                           height: 'auto',
-                          width: '120px',
+                          maxHeight: '120px',
+                          maxWidth: '120px',
                         }}
                       />
                     ) : null}

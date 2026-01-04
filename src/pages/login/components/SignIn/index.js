@@ -22,7 +22,7 @@ const SignIn = () => {
 
   const navigate = useNavigate()
 
-  const previousUrl = location?.state?.url
+  const previousUrl = location?.state?.from?.pathname || location?.state?.url
 
   const login = useLogin()
 
@@ -141,12 +141,7 @@ const SignIn = () => {
           onChange={handleLoginChange}
         />
       </Box>
-      <Button
-        type="submit"
-        sx={{
-          mt: 1, // margin top
-        }}
-      >
+      <Button type="submit" sx={{ mt: 1 }}>
         Iniciar sesión
       </Button>
     </StyledSignIn>

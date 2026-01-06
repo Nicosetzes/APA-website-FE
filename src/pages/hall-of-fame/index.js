@@ -76,7 +76,7 @@ const Trophies = () => {
           />
         </div>
       )}
-      <Accolades />
+      <Accolades tournaments={tournamentsData} />
       {teamsStatsButtonState && (
         <div
           style={{

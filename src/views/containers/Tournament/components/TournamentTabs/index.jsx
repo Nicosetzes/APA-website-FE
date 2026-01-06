@@ -88,7 +88,7 @@ const TournamentImage = styled.div`
   height: 50px;
 `
 
-const TournamentTabs = ({ name, format, tournamentId, cloudinary_id }) => {
+const TournamentTabs = ({ cloudinary_id, format, legacy, name, tournamentId }) => {
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -109,7 +109,9 @@ const TournamentTabs = ({ name, format, tournamentId, cloudinary_id }) => {
       { id: 'resumen', label: 'Resumen', path: `/tournaments/${tournamentId}` },
     ]
 
-    if (format !== 'playoff') {
+    if (!legacy) {
+
+      if (format !== 'playoff') {
       tabsArray.push({
         id: 'fixture',
         label: 'Fixture',
@@ -151,6 +153,7 @@ const TournamentTabs = ({ name, format, tournamentId, cloudinary_id }) => {
         path: `/tournaments/${tournamentId}/playoffs`,
       })
     }
+  }
 
     return tabsArray
   }, [format, tournamentId])

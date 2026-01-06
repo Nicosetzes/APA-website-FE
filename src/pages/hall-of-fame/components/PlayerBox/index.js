@@ -1,5 +1,7 @@
+import { Image } from 'cloudinary-react'
 import StarIcon from '@mui/icons-material/Star'
 import { StyledPlayerBox } from './styled'
+import { cloudName } from 'api'
 import { useMediaQuery } from 'react-responsive'
 
 const PlayerBox = ({ player, trophies }) => {
@@ -22,7 +24,14 @@ const PlayerBox = ({ player, trophies }) => {
           </div>
           <div className="player-box__trophies">
             {trophies &&
-              trophies.map((trophy, index) => <img key={index} src={trophy} />)}
+              trophies.map((trophy, index) => (
+                <Image
+                  key={index}
+                  cloudName={cloudName}
+                  publicId={trophy}
+                  style={{ maxHeight: '100%', objectFit: 'contain' }}
+                />
+              ))}
           </div>
         </div>
       </StyledPlayerBox>

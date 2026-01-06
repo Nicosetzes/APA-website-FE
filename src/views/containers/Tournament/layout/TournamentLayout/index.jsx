@@ -33,6 +33,7 @@ const TournamentLayout = () => {
         <TournamentTabs
           cloudinary_id={tournamentData.cloudinary_id}
           format={tournamentData.format}
+          legacy={tournamentData.legacy}
           name={tournamentData.name}
           tournamentId={tournament}
         />

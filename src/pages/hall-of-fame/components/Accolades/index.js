@@ -1,44 +1,38 @@
-import { StyledAccolades } from './styled'
 import PlayerBox from '../PlayerBox'
+import { StyledAccolades } from './styled'
+import { useMemo } from 'react'
 
-const Accolades = () => {
+const Accolades = ({ tournaments }) => {
+  const playerTrophies = useMemo(() => {
+    if (!tournaments) return {}
+
+    const trophiesByPlayer = {}
+
+    tournaments.forEach((tournament) => {
+      if (tournament.outcome?.champion) {
+        const playerName = tournament.outcome.champion.player.name
+        if (!trophiesByPlayer[playerName]) {
+          trophiesByPlayer[playerName] = []
+        }
+        trophiesByPlayer[playerName].push(tournament.cloudinary_id)
+      }
+    })
+
+    return trophiesByPlayer
+  }, [tournaments])
+
+  const sortedPlayers = useMemo(() => {
+    return Object.entries(playerTrophies)
+      .sort(([, a], [, b]) => b.length - a.length)
+      .map(([player, trophies]) => ({ player, trophies }))
+  }, [playerTrophies])
+
   return (
     <>
       <StyledAccolades>
-        <PlayerBox
-          player={'Leo'}
-          trophies={[
-            '/images/world-cup.png',
-            '/images/torneo-argentino.png',
-            '/images/world-cup.png',
-            '/images/champions.png',
-            '/images/torneo-argentino.png',
-            '/images/world-cup.png',
-            '/images/superliga-italo-española.png',
-            '/images/ferraris.png',
-          ]}
-        />
-        <PlayerBox
-          player={'Max'}
-          trophies={[
-            '/images/torneo-argentino.png',
-            '/images/torneo-argentino.png',
-            '/images/world-cup.png',
-            '/images/mundial-de-clubes.png',
-            '/images/copa-argentina.png',
-            '/images/superliga-argentina.png',
-          ]}
-        />
-        <PlayerBox
-          player={'Nico'}
-          trophies={[
-            '/images/superliga-europea.png',
-            '/images/superliga-inglesa.png',
-            '/images/superliga-inglesa.png',
-            '/images/internacional_co4gg7.png',
-          ]}
-        />
-        <PlayerBox player={'Santi'} trophies={['/images/copa-america.png']} />
+        {sortedPlayers.map(({ player, trophies }) => (
+          <PlayerBox key={player} player={player} trophies={trophies} />
+        ))}
       </StyledAccolades>
     </>
   )

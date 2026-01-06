@@ -1,9 +1,11 @@
 import { Image } from 'cloudinary-react'
-import { PageLoader } from 'views/components'
 import StarIcon from '@mui/icons-material/Star'
 import { api } from 'api'
+import { apiClient } from 'api/axiosConfig'
 import axios from 'axios'
 import { motion } from 'framer-motion'
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
 import { useMediaQuery } from 'react-responsive'
 import {
   Container,
@@ -38,6 +40,7 @@ import {
   TableHeader,
   TableRow,
 } from './styled'
+import { PageLoader, PrimaryLink } from 'views/components'
 import { cloudName, database } from 'api'
 import { format as formatDate, parseISO } from 'date-fns'
 import { useEffect, useState } from 'react'
@@ -50,6 +53,8 @@ const Tournament = () => {
   const { tournament } = useParams()
   const [tournamentSummary, setTournamentSummary] = useState(null)
   const [statsLoading, setStatsLoading] = useState(true)
+
+  const MySwal = withReactContent(Swal)
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -67,9 +72,59 @@ const Tournament = () => {
 
   if (statsLoading) return <PageLoader />
 
-  const { cloudinary_id, format, name, ongoing, outcome, teams } = tournamentData
+  const { cloudinary_id, format, legacy, name, ongoing, outcome, teams } = tournamentData
   const champion = outcome?.champion
   const finalist = outcome?.finalist
+
+  const handleFinishTournament = async () => {
+    const result = await MySwal.fire({
+      title: '¿Finalizar torneo?',
+      text: '¿Estás seguro de que quieres finalizar este torneo?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: 'var(--red-700)',
+      cancelButtonColor: 'var(--blue-900)',
+      confirmButtonText: 'Sí, finalizar',
+      cancelButtonText: 'Cancelar',
+      background: 'rgba(28, 25, 25, 0.95)',
+      color: '#fff',
+    })
+
+    if (!result.isConfirmed) {
+      return
+    }
+
+    try {
+      await apiClient.put(`/tournaments/${tournament}/complete`)
+      
+      MySwal.fire({
+        background: 'rgba(28, 25, 25, 0.95)',
+        color: '#fff',
+        icon: 'success',
+        iconColor: '#18890e',
+        toast: true,
+        title: 'Torneo finalizado con éxito',
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 1500,
+        timerProgressBar: true,
+        customClass: { timerProgressBar: 'toast-progress-dark' },
+      })
+      
+      // Refresh page to show updated data
+      setTimeout(() => window.location.reload(), 1500)
+    } catch (err) {
+      console.error('Error finishing tournament:', err)
+      MySwal.fire({
+        title: 'Error',
+        text: 'Error al finalizar el torneo',
+        icon: 'error',
+        background: 'rgba(28, 25, 25, 0.95)',
+        color: '#fff',
+        confirmButtonColor: 'var(--red-700)',
+      })
+    }
+  }
 
   const parseMatchType = (type) => {
     switch (type) {
@@ -100,13 +155,23 @@ const Tournament = () => {
   const parseStreak = (streak) => {
     const amount = Number(streak?.slice(0, 1))
     if (streak?.includes('W')) return `${streak.split('W')[0]} ${amount > 1 ? 'victorias' : 'victoria'}`
-    if (streak?.includes('L')) return `${streak.split('L')[0]} ${amount > 1 ? 'derrotas' : 'derrota'}`
-    if (streak?.includes('D')) return `${streak.split('D')[0]} ${amount > 1 ? 'empates' : 'empate'}`
+    else if (streak?.includes('L')) return `${streak.split('L')[0]} ${amount > 1 ? 'derrotas' : 'derrota'}`
+    else if (streak?.includes('D')) return `${streak.split('D')[0]} ${amount > 1 ? 'empates' : 'empate'}`
     else return '-'
   }
 
+  const parseTournamentFormat = (format) => {
+    if (format === 'club_world_cup') return 'Mundial de clubes'
+    else if (format === 'league') return 'Torneo largo'
+    else if (format === 'league_playin_playoff') return 'Superliga APA'
+    else if (format === 'playoff') return 'Eliminatoria'
+    else if (format === 'world_cup') return 'Copa del Mundo'
+    else return format
+  }
+
+
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} style={{backgroundColor: '#f6f8fb'}}>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} style={{backgroundColor: '#f6f8fb', minHeight: '100vh'}}>
       <Container>
         <ContentWrapper>
           <ImageWrapper>
@@ -121,17 +186,24 @@ const Tournament = () => {
               </InfoText>
               <InfoText>
                 <strong>Formato:</strong>{' '}
-                {format === 'league' ? 'Liga' : format === 'playoff' ? 'Playoff' : format === 'league_playin_playoff' ? 'Superliga APA' : 'Copa del mundo'}
+                {parseTournamentFormat(format)}
               </InfoText>
-              <InfoText>
+              { !legacy && (
+                <InfoText>
                 <strong>Equipos:</strong> {teams?.length || 0}
               </InfoText>
-              <InfoText>
+              )}
+              { !legacy && (
+                <InfoText>
                 <strong>Partidos jugados:</strong> {tournamentSummary?.matches?.totalPlayed || 0}
               </InfoText>
+              )}
               <InfoText>
                 <strong>Estado:</strong> {ongoing ? <span style={{ color: 'var(--green-900)', fontWeight: 'bold' }}>En curso</span> : <span style={{ color: 'var(--red-700)', fontWeight: 'bold' }}>Finalizado</span>}
               </InfoText>
+              {ongoing && format === 'league' && (
+                  <PrimaryLink asButton text={"Finalizar Torneo"} onClick={handleFinishTournament} />
+                )}
             </InfoCard>
           </InfoSection>
         </ContentWrapper>
@@ -204,8 +276,7 @@ const Tournament = () => {
           </RecentMatchesSection>
         )}
 
-        {/* Participant Statistics */}
-        {tournamentSummary?.participants?.length > 0 && (
+        {!legacy && tournamentSummary?.participants?.length > 0 && (
           <div style={{ width: '100%', overflowX: 'auto'}}>
             <h2 style={{ color: "var(--blue-900)", margin: '0 0 1rem 0'}}>Estadísticas de Participantes</h2>
             <ParticipantsTable>

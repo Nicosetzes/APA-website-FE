@@ -190,6 +190,7 @@ const TournamentFixture = () => {
       amountOfNotPlayedMatches,
       amountOfTotalMatches,
       totalPages,
+      teamStats,
     } = fixtureData
 
     return (
@@ -292,6 +293,7 @@ const TournamentFixture = () => {
               format={format}
               matches={matches}
               getFixtureData={getFixtureData}
+              teamStats={teamStats}
             />
             <Pagination
               color="primary"

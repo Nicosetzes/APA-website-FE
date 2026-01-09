@@ -1,7 +1,7 @@
 import { StyledFixtureContainer } from './styled'
 import Match from './../Match'
 
-const FixtureContainer = ({ format, getFixtureData, matches }) => {
+const FixtureContainer = ({ format, getFixtureData, matches, teamStats }) => {
   console.log(format)
 
   console.log(matches)
@@ -13,6 +13,7 @@ const FixtureContainer = ({ format, getFixtureData, matches }) => {
             key={match._id}
             match={match}
             getFixtureData={getFixtureData}
+            teamStats={teamStats}
           />
         ))}
       </StyledFixtureContainer>

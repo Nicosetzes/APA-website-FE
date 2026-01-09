@@ -1,10 +1,22 @@
-import BarChartIcon from '@mui/icons-material/BarChart'
 import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
 import IconButton from '@mui/material/IconButton'
-import { StyledMatch } from './styled'
+import {
+  InputContainer,
+  MatchContainer,
+  MatchDate,
+  MatchInfo,
+  MatchScore,
+  MatchView,
+  PlayerInput,
+  PlayedMatchesCount,
+  ScoreInput,
+  StyledMatch,
+  TeamLogo,
+  TeamTextarea,
+  VersusSpan,
+} from './styled'
 import Swal from 'sweetalert2'
-import TeamInformationModal from '../TeamInformationModal'
 import { apiClient } from 'api/axiosConfig'
 import { useLogin } from 'context/LoginContext'
 import { useState } from 'react'
@@ -13,7 +25,7 @@ import { api, database } from 'api'
 import { format, parseISO } from 'date-fns'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
-const Match = ({ match, getFixtureData }) => {
+const Match = ({ match, getFixtureData, teamStats }) => {
   const MySwal = withReactContent(Swal)
 
   const [searchParams, setSearchParams] = useSearchParams()
@@ -256,36 +268,16 @@ const Match = ({ match, getFixtureData }) => {
     })
   }
 
-  // const [teamInformation, setTeamInformation] = useState()
-
-  const displayExtraInfoFromTeam = (id) => {
-    const group = searchParams.get('group')
-
-    MySwal.fire({
-      background: 'var(--blue-900)',
-      width: 600,
-      showConfirmButton: false,
-      showCloseButton: true,
-      didOpen: () => {
-        MySwal.showLoading()
-        apiClient
-          .get(`${api}/tournaments/${tournament}/teams/${id}?group=${group}`)
-          .then(({ data }) => {
-            MySwal.update({
-              html: <TeamInformationModal teamInformation={data} />,
-            })
-          })
-      },
-      didRender: () => {
-        MySwal.hideLoading()
-      },
-    })
-  }
-
   const onHandleTeamChange = (id) => {
     const group = searchParams.get('group')
     if (!group) setSearchParams({ team: id })
     else setSearchParams({ team: id, group })
+  }
+
+  const getPlayedMatches = (teamId) => {
+    if (!teamStats) return null
+    const stats = teamStats.find((stat) => stat.teamId === teamId)
+    return stats ? `${stats.playedMatches}/${stats.totalMatches}` : null
   }
 
   return (
@@ -299,53 +291,39 @@ const Match = ({ match, getFixtureData }) => {
           : 'var(--red-700) 3px solid',
       }}
     >
-      <div className="match-view">
-        <div className="match-info">
-          <BarChartIcon
-            fontSize="medium"
-            sx={{ cursor: 'pointer' }}
-            onClick={() => displayExtraInfoFromTeam(teamP1.id)}
-          />
-          <textarea
-            name="teamP1"
-            wrap="soft"
-            className="match-info__team"
-            value={teamP1.name}
-            readOnly
-          >
+      <MatchView>
+        <MatchInfo>
+          {getPlayedMatches(teamP1.id) !== null && (
+            <PlayedMatchesCount>
+              {getPlayedMatches(teamP1.id)}
+            </PlayedMatchesCount>
+          )}
+          <TeamTextarea name="teamP1" wrap="soft" value={teamP1.name} readOnly>
             {teamP1.name}
-          </textarea>
+          </TeamTextarea>
 
-          <img
+          <TeamLogo
             src={`${database}/logos/${teamP1.id}`}
             alt={match.teamP1}
-            className="match-info__logo"
             onClick={() => onHandleTeamChange(teamP1.id)}
           />
-          <input
-            name="playerP1"
-            className="match-info__player"
-            value={playerP1.name}
-            readOnly
-          />
-        </div>
-        <div className="match-score">
-          <div className="match__container">
-            <input
+          <PlayerInput name="playerP1" value={playerP1.name} readOnly />
+        </MatchInfo>
+        <MatchScore>
+          <MatchContainer>
+            <ScoreInput
               name="scoreP1"
-              className="match-score__goals"
-              value={matchScore.scoreP1 ?? ''} // IMPORTANT // TODO: Handle react warning about not adding and onChange handler
+              value={matchScore.scoreP1 ?? ''}
               onChange={onHandleChange}
             />
-            <span className="match-score__versus">vs</span>
-            <input
+            <VersusSpan>vs</VersusSpan>
+            <ScoreInput
               name="scoreP2"
-              className="match-score__goals"
-              value={matchScore.scoreP2 ?? ''} // IMPORTANT // TODO: Handle react warning about not adding and onChange handler
+              value={matchScore.scoreP2 ?? ''}
               onChange={onHandleChange}
             />
-          </div>
-          <div className="input__container">
+          </MatchContainer>
+          <InputContainer>
             <IconButton type="submit" aria-label="edit" color="success">
               <EditIcon />
             </IconButton>
@@ -356,44 +334,32 @@ const Match = ({ match, getFixtureData }) => {
             >
               <DeleteIcon />
             </IconButton>
-          </div>
-        </div>
-        <div className="match-info">
-          <BarChartIcon
-            fontSize="medium"
-            sx={{ cursor: 'pointer' }}
-            onClick={() => displayExtraInfoFromTeam(teamP2.id)}
-          />
-          <textarea
-            name="teamP2"
-            wrap="soft"
-            className="match-info__team"
-            value={teamP2.name}
-            readOnly
-          >
+          </InputContainer>
+        </MatchScore>
+        <MatchInfo>
+          {getPlayedMatches(teamP2.id) !== null && (
+            <PlayedMatchesCount>
+              {getPlayedMatches(teamP2.id)}
+            </PlayedMatchesCount>
+          )}
+          <TeamTextarea name="teamP2" wrap="soft" value={teamP2.name} readOnly>
             {teamP2.name}
-          </textarea>
-          <img
+          </TeamTextarea>
+          <TeamLogo
             src={`${database}/logos/${teamP2.id}`}
             alt={teamP2.name}
-            className="match-info__logo"
             onClick={() => onHandleTeamChange(teamP2.id)}
           />
-          <input
-            name="playerP2"
-            className="match-info__player"
-            value={playerP2.name}
-            readOnly
-          />
-        </div>
-      </div>
+          <PlayerInput name="playerP2" value={playerP2.name} readOnly />
+        </MatchInfo>
+      </MatchView>
       {updatedAt && updatedAt !== createdAt ? (
-        <div className="match-date">
+        <MatchDate>
           Actualizado el:{' '}
           {updatedAt && format(parseISO(updatedAt), 'dd/MM/yyyy hh:mm:ss a')}{' '}
-        </div>
+        </MatchDate>
       ) : (
-        <div className="match-date">El partido aún no se ha jugado</div>
+        <MatchDate>El partido aún no se ha jugado</MatchDate>
       )}
     </StyledMatch>
   )

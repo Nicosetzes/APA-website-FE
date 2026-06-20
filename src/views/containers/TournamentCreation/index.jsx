@@ -27,7 +27,7 @@ const TournamentCreation = () => {
     mode: 'onChange',
     defaultValues: {
       tournamentName: '',
-      format: '',
+      format: {},
       selectedPlayers: [],
       selectedLeagues: [],
       selectedTeams: [],
@@ -40,7 +40,6 @@ const TournamentCreation = () => {
   const { watch, trigger } = methods
   const watchedFormat = watch('format')
 
-  // Dynamic steps based on format
   const getSteps = () => {
     const baseSteps = [
       { id: 1, label: 'Formato', component: Format },
@@ -48,7 +47,7 @@ const TournamentCreation = () => {
       { id: 3, label: 'Ligas', component: Leagues },
     ]
 
-    if (watchedFormat === 'playoff') {
+    if (watchedFormat.id === 'playoff') {
       return [
         ...baseSteps,
         { id: 4, label: 'Bracket', component: PlayoffBracket },

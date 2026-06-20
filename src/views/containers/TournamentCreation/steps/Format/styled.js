@@ -69,10 +69,11 @@ export const FormatCard = styled.div`
 `
 
 export const FormatImage = styled.img`
-  width: 100%;
-  max-width: 120px;
   height: auto;
+  max-height: 125px;
+  max-width: 125px;
   object-fit: contain;
+  width: 100%;
 `
 
 export const FormatTitle = styled.div`

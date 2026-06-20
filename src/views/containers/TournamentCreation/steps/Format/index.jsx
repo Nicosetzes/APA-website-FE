@@ -1,25 +1,21 @@
-import { useFormContext, Controller } from 'react-hook-form'
+import { FORMATS } from '../../formats'
 import { database } from 'api'
 import {
-  StepContainer,
-  StepTitle,
-  StepDescription,
-  FormatsGrid,
+  Controller,
+  useFormContext
+} from 'react-hook-form'
+import {
+  ErrorMessage,
   FormatCard,
+  FormatsGrid,
   FormatImage,
   FormatTitle,
-  ErrorMessage,
   InputField,
   InputLabel,
+  StepContainer,
+  StepDescription,
+  StepTitle,
 } from './styled'
-
-const FORMATS = [
-  { id: 'league', name: 'Liga Única', logo: 1 },
-  { id: 'league_playin_playoff', name: 'Superliga APA', logo: 8 },
-  { id: 'world_cup', name: 'Copa del Mundo', logo: 2 },
-  { id: 'champions_league', name: 'Chempions', logo: 5 },
-  { id: 'playoff', name: 'Playoffs', logo: 10 },
-]
 
 const StepFormat = () => {
   const {
@@ -74,8 +70,8 @@ const StepFormat = () => {
             {FORMATS.map((format) => (
               <FormatCard
                 key={format.id}
-                $selected={field.value === format.id}
-                onClick={() => field.onChange(format.id)}
+                $selected={field.value?.id === format.id}
+                onClick={() => field.onChange(format)}
               >
                 <FormatImage
                   src={`${database}/tournaments/logos/${format.logo}`}
@@ -101,7 +97,7 @@ const StepFormat = () => {
           }}
         >
           ✓ Torneo "{tournamentName}" - Formato:{' '}
-          {FORMATS.find((f) => f.id === selectedFormat)?.name}
+          {FORMATS.find((f) => f.id === selectedFormat.id)?.name}
         </div>
       )}
     </StepContainer>

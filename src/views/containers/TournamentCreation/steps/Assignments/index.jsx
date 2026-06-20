@@ -10,13 +10,16 @@ import {
   StepContainer,
   StepDescription,
   StepTitle,
-  TeamInfo,
   TeamImage,
+  TeamInfo,
   TeamName,
 } from '../styled'
-import { Controller , useFormContext } from 'react-hook-form'
+import {
+  Controller,
+  useFormContext
+} from 'react-hook-form'
 
-const StepAssignments = ({ players, format }) => {
+const StepAssignments = ({ format, players }) => {
   const {
     control,
     formState: { errors },
@@ -27,19 +30,10 @@ const StepAssignments = ({ players, format }) => {
   const selectedTeams = watch('selectedTeams') || []
   const selectedPlayers = watch('selectedPlayers') || []
   const teamAssignments = watch('teamAssignments') || []
-  const teamsData = watch('teamsData') || [] // Get teams from form state
+  const teamsData = watch('teamsData') || []
 
-  console.log(teamsData)
-
-  const hasGroups =
-    format === 'league_playin_playoff' ||
-    format === 'world_cup' ||
-    format === 'champions_league'
-  const groups = hasGroups
-    ? format === 'league_playin_playoff'
-      ? ['A', 'B']
-      : ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
-    : []
+  const groups = format?.groups ?? []
+  const hasGroups = groups.length > 0
 
   useEffect(() => {
     // Initialize assignments if not already set
@@ -118,13 +112,12 @@ const StepAssignments = ({ players, format }) => {
               if (!allHaveGroups)
                 return 'Todos los equipos deben tener un grupo asignado'
 
-              // Champions League validation: exactly 4 teams per group in all 8 groups
-              if (format === 'champions_league') {
+              // Format validation: exactly 4 teams per group in all groups
+              if (format?.id === 'champions_league' || format?.id.includes('world_cup')) {
                 const groupCounts = {}
-                const allGroups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
 
                 // Initialize all groups with 0
-                allGroups.forEach((group) => {
+                groups.forEach((group) => {
                   groupCounts[group] = 0
                 })
 
@@ -136,18 +129,13 @@ const StepAssignments = ({ players, format }) => {
                   }
                 })
 
-                // Check that all 8 groups have exactly 4 teams
+                // Check that all groups have exactly 4 teams
                 const invalidGroups = Object.entries(groupCounts).filter(
                   ([, count]) => count !== 4,
                 )
 
                 if (invalidGroups.length > 0) {
-                  const groupsText = invalidGroups
-                    .map(
-                      ([group, count]) => `Grupo ${group} (${count} equipos)`,
-                    )
-                    .join(', ')
-                  return `Champions League requiere exactamente 4 equipos en cada uno de los 8 grupos. ${groupsText}`
+                  return `El formato "${format.name}" requiere exactamente 4 equipos en cada uno de los grupos.`
                 }
               }
             }

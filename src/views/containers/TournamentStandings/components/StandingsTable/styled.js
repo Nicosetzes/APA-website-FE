@@ -10,37 +10,103 @@ export const StyledTable = styled(Table)`
       &:hover {
         background-color: #306485;
       }
-      &:nth-child(1),
-      &:nth-child(2),
-      &:nth-child(3),
-      &:nth-child(4),
-      &:nth-child(5),
-      &:nth-child(6) {
+      &:nth-of-type(1),
+      &:nth-of-type(2) {
         background-color: ${(props) =>
-          `${props.playin ? '#007058' : 'rgba(0, 74, 121, 1)'}`};
+          `${
+            props.format.includes('playin') ||
+            props.format.includes('world_cup')
+              ? '#007058'
+              : 'rgba(0, 74, 121, 1)'
+          }`};
         &:hover {
           background-color: ${(props) =>
-            `${props.playin ? '#237c69' : '#306485'}`};
+            `${
+              props.format.includes('playin') ||
+              props.format.includes('world_cup')
+                ? '#237c69'
+                : '#306485'
+            }`};
         }
       }
-      &:nth-child(7),
-      &:nth-child(8) {
+      ,
+      &:nth-of-type(3) {
         background-color: ${(props) =>
-          `${props.playin ? '#a1920a' : 'rgba(0, 74, 121, 1)'}`};
+          `${
+            props.format === 'world_cup_2026'
+              ? '#a1920a'
+              : props.format.includes('playin')
+              ? '#007058'
+              : 'rgba(0, 74, 121, 1)'
+          }`};
         &:hover {
           background-color: ${(props) =>
-            `${props.playin ? '#b8ae58' : '#306485'}`};
+            `${
+              props.format === 'world_cup_2026'
+                ? '#b8ae58'
+                : props.format.includes('playin')
+                ? '#237c69'
+                : '#306485'
+            }`};
         }
       }
-      &:nth-child(9),
-      &:nth-child(10) {
+      ,
+      &:nth-of-type(4) {
         background-color: ${(props) =>
-          `${props.playin ? '#75330c' : 'rgba(0, 74, 121, 1)'}`};
+          `${
+            props.format.includes('playin') ? '#007058' : 'rgba(0, 74, 121, 1)'
+          }`};
         &:hover {
           background-color: ${(props) =>
-            `${props.playin ? '#8f5e42' : '#306485'}`};
+            `${props.format.includes('playin') ? '#237c69' : '#306485'}`};
         }
       }
+      ,
+      &:nth-of-type(5),
+      &:nth-of-type(6) {
+        background-color: ${(props) =>
+          `${
+            props.format.includes('playin') ? '#007058' : 'rgba(0, 74, 121, 1)'
+          }`};
+        &:hover {
+          background-color: ${(props) =>
+            `${props.format.includes('playin') ? '#237c69' : '#306485'}`};
+        }
+      }
+      &:nth-of-type(7),
+      &:nth-of-type(8) {
+        background-color: ${(props) =>
+          `${
+            props.format.includes('playin') ? '#a1920a' : 'rgba(0, 74, 121, 1)'
+          }`};
+        &:hover {
+          background-color: ${(props) =>
+            `${props.format.includes('playin') ? '#b8ae58' : '#306485'}`};
+        }
+      }
+      &:nth-of-type(9),
+      &:nth-of-type(10) {
+        background-color: ${(props) =>
+          `${
+            props.format.includes('playin') ? '#75330c' : 'rgba(0, 74, 121, 1)'
+          }`};
+        &:hover {
+          background-color: ${(props) =>
+            `${props.format.includes('playin') ? '#8f5e42' : '#306485'}`};
+        }
+      }
+      ,
+      &:nth-of-type(11),
+      &:nth-of-type(12),
+      &:nth-of-type(13),
+      &:nth-of-type(14),
+      &:nth-of-type(15) {
+        background-color: rgba(0, 74, 121, 1);
+        &:hover {
+          background-color: #306485;
+        }
+      }
+      ,
       .MuiTableCell-root {
         color: #fff;
         font-family: 'Fira Sans', sans-serif;

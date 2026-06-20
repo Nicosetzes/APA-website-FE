@@ -6,18 +6,21 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import withReactContent from 'sweetalert2-react-content'
 import {
-  StepContainer,
-  StepTitle,
   ConfirmationSection,
   ConfirmationItem,
   ConfirmationLabel,
   ConfirmationValue,
-  TeamsList,
-  TeamItem,
+  StepContainer,
+  StepTitle,
   TeamImage,
+  TeamItem,
+  TeamsList,
   SubmitButton,
 } from './styled'
-import { api, database } from 'api'
+import {
+  api,
+  database
+} from 'api'
 
 const MySwal = withReactContent(Swal)
 
@@ -108,32 +111,20 @@ const MatchNumber = styled.div`
   margin-bottom: 0.25rem;
 `
 
-const FORMATS = {
-  champions_league: 'Chempions',
-  league: 'Liga Única',
-  league_playin_playoff: 'Superliga APA',
-  world_cup: 'Copa del Mundo',
-  playoff: 'Playoffs',
-}
-
-const StepConfirmation = ({ players }) => {
+const StepConfirmation = ({ format, players }) => {
   const { watch } = useFormContext()
   const navigate = useNavigate()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const tournamentName = watch('tournamentName')
-  const format = watch('format')
   const selectedPlayers = watch('selectedPlayers') || []
   const selectedTeams = watch('selectedTeams') || []
   const teamAssignments = watch('teamAssignments') || []
   const playoffBracket = watch('playoffBracket') || []
 
-  const hasGroups =
-    format === 'league_playin_playoff' ||
-    format === 'world_cup' ||
-    format === 'champions_league'
-
-  const isPlayoffs = format === 'playoff'
+  const groups = format.groups || []
+  const hasGroups = groups.length > 0
+  const isPlayoffs = format?.id === 'playoff'
 
   const getPlayerName = (playerId) => {
     return players.find((p) => p.id === playerId)?.name || 'Desconocido'
@@ -222,7 +213,7 @@ const StepConfirmation = ({ players }) => {
 
       const response = await apiClient.post(`${api}/tournaments`, {
         name: tournamentName,
-        format,
+        format: format.id,
         players: tournamentPlayers,
         teams,
       })
@@ -275,7 +266,7 @@ const StepConfirmation = ({ players }) => {
 
         <ConfirmationItem>
           <ConfirmationLabel>Formato:</ConfirmationLabel>
-          <ConfirmationValue>{FORMATS[format]}</ConfirmationValue>
+          <ConfirmationValue>{format.name}</ConfirmationValue>
         </ConfirmationItem>
 
         <ConfirmationItem>

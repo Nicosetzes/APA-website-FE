@@ -165,7 +165,8 @@ const Tournament = () => {
     else if (format === 'league') return 'Torneo largo'
     else if (format === 'league_playin_playoff') return 'Superliga APA'
     else if (format === 'playoff') return 'Eliminatoria'
-    else if (format === 'world_cup') return 'Copa del Mundo'
+    else if (format === 'world_cup') return 'Copa del Mundo (formato clásico)'
+    else if (format === 'world_cup_2026') return 'Copa del Mundo (formato nuevo)'
     else return format
   }
 

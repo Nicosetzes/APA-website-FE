@@ -21,6 +21,7 @@ import {
   TournamentPlayin,
   TournamentPlayoffs,
   TournamentStandings,
+  TournamentPlayoffsPreview,
   StatisticsGeneral,
 } from 'views/containers'
 import { Route, Routes, useLocation } from 'react-router-dom'
@@ -69,6 +70,10 @@ export const AnimatedRoutes = () => {
             <Route path="playin" element={<TournamentPlayin />} />
             <Route path="playoffs" element={<TournamentPlayoffs />} />
             <Route path="stats" element={<Players />} />
+            <Route
+              path="playoff-preview"
+              element={<TournamentPlayoffsPreview />}
+            />
           </Route>
         </Route>
 

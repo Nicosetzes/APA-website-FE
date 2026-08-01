@@ -1,7 +1,5 @@
 import { Oval } from 'react-loader-spinner'
-import { PageLoader } from 'views/components'
 import { SpinnerContainer } from './styled'
-import StandingsTable from './components/StandingsTable'
 import { api } from 'api'
 import axios from 'axios'
 import { motion } from 'framer-motion'
@@ -18,6 +16,7 @@ import {
   StandingsLinks,
   Title,
 } from './styled'
+import { PageLoader, StandingsTable } from 'views/components'
 import {
   createSearchParams,
   useNavigate,
@@ -27,7 +26,6 @@ import {
 import { useCallback, useEffect, useState } from 'react'
 
 const TournamentStandings = () => {
-
   const [searchParams, setSearchParams] = useSearchParams()
 
   const { tournament } = useParams()
@@ -127,7 +125,6 @@ const TournamentStandings = () => {
               </StandingsLink>
             </StandingsLinks>
           </Header>
-
           {groups?.length ? (
             <Card>
               <ControlsRow>
@@ -168,7 +165,9 @@ const TournamentStandings = () => {
               tournament={tournament}
               format={format}
               standings={standings}
-              onHandle={goToSpecificFixture}
+              onHandle={
+                format === 'world_cup_2026_preview' ? null : goToSpecificFixture
+              }
             />
           </>
         )}

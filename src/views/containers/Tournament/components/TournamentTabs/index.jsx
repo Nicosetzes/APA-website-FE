@@ -88,7 +88,13 @@ const TournamentImage = styled.div`
   height: 50px;
 `
 
-const TournamentTabs = ({ cloudinary_id, format, legacy, name, tournamentId }) => {
+const TournamentTabs = ({
+  cloudinary_id,
+  format,
+  legacy,
+  name,
+  tournamentId,
+}) => {
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -101,6 +107,7 @@ const TournamentTabs = ({ cloudinary_id, format, legacy, name, tournamentId }) =
     if (path.includes('/stats')) return 'stats'
     if (path.includes('/playin')) return 'playin'
     if (path.includes('/playoffs')) return 'playoffs'
+    if (path.includes('/playoff-preview')) return 'preview'
     return 'resumen'
   }, [location.pathname])
 
@@ -110,50 +117,57 @@ const TournamentTabs = ({ cloudinary_id, format, legacy, name, tournamentId }) =
     ]
 
     if (!legacy) {
-
       if (format !== 'playoff') {
+        tabsArray.push({
+          id: 'fixture',
+          label: 'Fixture',
+          path: `/tournaments/${tournamentId}/fixture`,
+        })
+        tabsArray.push({
+          id: 'clasificacion',
+          label: 'Clasificación',
+          path: `/tournaments/${tournamentId}/standings`,
+        })
+      }
+
+      if (format === 'league') {
+        tabsArray.push({
+          id: 'simulador',
+          label: 'Simulador',
+          path: `/tournaments/${tournamentId}/simulator`,
+        })
+      }
+
+      if (format === 'league_playin_playoff') {
+        tabsArray.push({
+          id: 'playin',
+          label: 'PlayIn',
+          path: `/tournaments/${tournamentId}/playin`,
+        })
+      }
+
+      if (format === 'world_cup_2026') {
+        tabsArray.push({
+          id: 'preview',
+          label: 'Cruces',
+          path: `/tournaments/${tournamentId}/playoff-preview`,
+        })
+      }
+
+      if (format !== 'league') {
+        tabsArray.push({
+          id: 'playoffs',
+          label: 'Playoffs',
+          path: `/tournaments/${tournamentId}/playoffs`,
+        })
+      }
+
       tabsArray.push({
-        id: 'fixture',
-        label: 'Fixture',
-        path: `/tournaments/${tournamentId}/fixture`,
-      })
-      tabsArray.push({
-        id: 'clasificacion',
-        label: 'Clasificación',
-        path: `/tournaments/${tournamentId}/standings`,
+        id: 'stats',
+        label: 'Estadísticas',
+        path: `/tournaments/${tournamentId}/stats`,
       })
     }
-
-    if (format === 'league') {
-      tabsArray.push({
-        id: 'simulador',
-        label: 'Simulador',
-        path: `/tournaments/${tournamentId}/simulator`,
-      })
-    }
-
-    tabsArray.push({
-      id: 'stats',
-      label: 'Rendimiento',
-      path: `/tournaments/${tournamentId}/stats`,
-    })
-
-    if (format === 'league_playin_playoff') {
-      tabsArray.push({
-        id: 'playin',
-        label: 'PlayIn',
-        path: `/tournaments/${tournamentId}/playin`,
-      })
-    }
-
-    if (format !== 'league') {
-      tabsArray.push({
-        id: 'playoffs',
-        label: 'Playoffs',
-        path: `/tournaments/${tournamentId}/playoffs`,
-      })
-    }
-  }
 
     return tabsArray
   }, [format, tournamentId])

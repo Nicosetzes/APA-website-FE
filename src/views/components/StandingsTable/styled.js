@@ -4,7 +4,6 @@ import Table from '@mui/material/Table'
 export const StyledTable = styled(Table)`
   background-color: rgba(0, 74, 121, 1);
   border: var(--yellow-900) 3px solid;
-
   .MuiTableBody-root {
     .MuiTableRow-root {
       &:hover {
@@ -14,16 +13,18 @@ export const StyledTable = styled(Table)`
       &:nth-of-type(2) {
         background-color: ${(props) =>
           `${
-            props.format.includes('playin') ||
-            props.format.includes('world_cup')
+            ['playin', 'world_cup', 'world_cup_2026_preview'].some((format) =>
+              props.format?.includes(format),
+            )
               ? '#007058'
               : 'rgba(0, 74, 121, 1)'
           }`};
         &:hover {
           background-color: ${(props) =>
             `${
-              props.format.includes('playin') ||
-              props.format.includes('world_cup')
+              ['playin', 'world_cup', 'world_cup_2026_preview'].some((format) =>
+                props.format?.includes(format),
+              )
                 ? '#237c69'
                 : '#306485'
             }`};
@@ -35,7 +36,11 @@ export const StyledTable = styled(Table)`
           `${
             props.format === 'world_cup_2026'
               ? '#a1920a'
-              : props.format.includes('playin')
+              : [
+                  'league_playin_playoff',
+                  'playin',
+                  'world_cup_2026_preview',
+                ].some((format) => props.format === format)
               ? '#007058'
               : 'rgba(0, 74, 121, 1)'
           }`};
@@ -44,7 +49,11 @@ export const StyledTable = styled(Table)`
             `${
               props.format === 'world_cup_2026'
                 ? '#b8ae58'
-                : props.format.includes('playin')
+                : [
+                    'league_playin_playoff',
+                    'playin',
+                    'world_cup_2026_preview',
+                  ].some((format) => props.format === format)
                 ? '#237c69'
                 : '#306485'
             }`};
@@ -54,11 +63,21 @@ export const StyledTable = styled(Table)`
       &:nth-of-type(4) {
         background-color: ${(props) =>
           `${
-            props.format.includes('playin') ? '#007058' : 'rgba(0, 74, 121, 1)'
+            ['playin', 'world_cup_2026_preview'].some((format) =>
+              props.format?.includes(format),
+            )
+              ? '#007058'
+              : 'rgba(0, 74, 121, 1)'
           }`};
         &:hover {
           background-color: ${(props) =>
-            `${props.format.includes('playin') ? '#237c69' : '#306485'}`};
+            `${
+              ['playin', 'world_cup_2026_preview'].some((format) =>
+                props.format?.includes(format),
+              )
+                ? '#237c69'
+                : '#306485'
+            }`};
         }
       }
       ,
@@ -66,38 +85,68 @@ export const StyledTable = styled(Table)`
       &:nth-of-type(6) {
         background-color: ${(props) =>
           `${
-            props.format.includes('playin') ? '#007058' : 'rgba(0, 74, 121, 1)'
+            ['playin', 'world_cup_2026_preview'].some((format) =>
+              props.format?.includes(format),
+            )
+              ? '#007058'
+              : 'rgba(0, 74, 121, 1)'
           }`};
         &:hover {
           background-color: ${(props) =>
-            `${props.format.includes('playin') ? '#237c69' : '#306485'}`};
+            `${
+              ['playin', 'world_cup_2026_preview'].some((format) =>
+                props.format?.includes(format),
+              )
+                ? '#237c69'
+                : '#306485'
+            }`};
         }
       }
       &:nth-of-type(7),
       &:nth-of-type(8) {
         background-color: ${(props) =>
           `${
-            props.format.includes('playin') ? '#a1920a' : 'rgba(0, 74, 121, 1)'
+            props.format?.includes('playin')
+              ? '#a1920a'
+              : props.format?.includes('world_cup_2026_preview')
+              ? '#007058'
+              : 'rgba(0, 74, 121, 1)'
           }`};
         &:hover {
           background-color: ${(props) =>
-            `${props.format.includes('playin') ? '#b8ae58' : '#306485'}`};
+            `${
+              props.format?.includes('playin')
+                ? '#b8ae58'
+                : props.format?.includes('world_cup_2026_preview')
+                ? '#237c69'
+                : '#306485'
+            }`};
         }
       }
       &:nth-of-type(9),
-      &:nth-of-type(10) {
+      &:nth-of-type(10),
+      &:nth-of-type(11),
+      &:nth-of-type(12) {
         background-color: ${(props) =>
           `${
-            props.format.includes('playin') ? '#75330c' : 'rgba(0, 74, 121, 1)'
+            ['playin', 'world_cup_2026_preview'].some((format) =>
+              props.format?.includes(format),
+            )
+              ? '#75330c'
+              : 'rgba(0, 74, 121, 1)'
           }`};
         &:hover {
           background-color: ${(props) =>
-            `${props.format.includes('playin') ? '#8f5e42' : '#306485'}`};
+            `${
+              ['playin', 'world_cup_2026_preview'].some((format) =>
+                props.format?.includes(format),
+              )
+                ? '#8f5e42'
+                : '#306485'
+            }`};
         }
       }
       ,
-      &:nth-of-type(11),
-      &:nth-of-type(12),
       &:nth-of-type(13),
       &:nth-of-type(14),
       &:nth-of-type(15) {
@@ -119,7 +168,8 @@ export const StyledTable = styled(Table)`
             cursor: pointer;
             display: flex;
             height: 100%;
-            min-width: 160px;
+            min-width: ${(props) =>
+              props.format === 'world_cup_2026_preview' ? '80px' : '160px'};
             img {
               height: 25px;
               margin-right: 0.5rem;

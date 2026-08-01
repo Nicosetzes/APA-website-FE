@@ -4,15 +4,9 @@ export const PlayoffsPreviewContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  max-width: 800px;
-  padding: 2.75rem 0.75rem;
+  justify-content: center;
+  padding: 0 0.75rem;
   width: 100%;
-`
-
-export const PlayoffsSideContainer = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: column;
   @media (min-width: 768px) {
     flex-direction: row;
   }
@@ -24,7 +18,6 @@ export const PlayoffsSide = styled.div`
   flex-direction: column;
   gap: 0.75rem;
   min-width: 280px;
-  flex: 1 1 360px;
 `
 
 export const PlayoffsSideHeader = styled.h2`

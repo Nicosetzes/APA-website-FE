@@ -8,13 +8,16 @@ import TableCell from '@mui/material/TableCell'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import { database } from 'api'
+import { formatTeamName } from 'utils'
 
 const StandingsTable = ({ tournament, format, standings, onHandle }) => {
   return (
     <>
-      <div style={{ overflowX: 'auto', width: '100%' }}>
+      <div
+        style={{ maxHeight: 'fit-content', overflowX: 'auto', width: '100%' }}
+      >
         <StyledTable
-          sx={{ minWidth: 300, maxWidth: 1000, margin: '0.5rem auto' }}
+          sx={{ minWidth: 300, maxWidth: 1000, margin: '0 auto' }}
           aria-label="simple table"
           format={format}
         >
@@ -59,12 +62,18 @@ const StandingsTable = ({ tournament, format, standings, onHandle }) => {
               <TableCell sx={{ color: '#fff', fontWeight: 800 }} align="center">
                 PTS
               </TableCell>
-              <TableCell
-                sx={{ color: '#fff', fontWeight: 800, verticalAlign: 'middle' }}
-                align="center"
-              >
-                <ShowChartIcon sx={{ verticalAlign: 'middle' }} />
-              </TableCell>
+              {format !== 'world_cup_2026_preview' && (
+                <TableCell
+                  sx={{
+                    color: '#fff',
+                    fontWeight: 800,
+                    verticalAlign: 'middle',
+                  }}
+                  align="center"
+                >
+                  <ShowChartIcon sx={{ verticalAlign: 'middle' }} />
+                </TableCell>
+              )}
             </TableRow>
           </TableHead>
           <TableBody>
@@ -100,13 +109,19 @@ const StandingsTable = ({ tournament, format, standings, onHandle }) => {
                   <TableCell component="th" scope="row">
                     <div
                       className="teamAndLogoWrapper"
-                      onClick={() => onHandle(tournament, team.id)}
+                      onClick={
+                        onHandle
+                          ? () => onHandle(tournament, team.id)
+                          : undefined
+                      }
                     >
                       <img
                         src={`${database}/logos/${team.id}`}
                         alt={team.name}
                       />
-                      {team.name}
+                      {format === 'world_cup_2026_preview'
+                        ? formatTeamName(team.name)
+                        : team.name}
                       {directlyQualified && playinQualified && (
                         <span style={{ marginLeft: '0.5rem', fontWeight: 700 }}>
                           {' '}
@@ -130,7 +145,11 @@ const StandingsTable = ({ tournament, format, standings, onHandle }) => {
                   <TableCell
                     component="th"
                     scope="row"
-                    onClick={() => onHandle(tournament, player.id)}
+                    onClick={
+                      onHandle
+                        ? () => onHandle(tournament, player.id)
+                        : undefined
+                    }
                   >
                     <span style={{ cursor: 'pointer' }}>{player.name}</span>
                   </TableCell>
@@ -158,41 +177,43 @@ const StandingsTable = ({ tournament, format, standings, onHandle }) => {
                   <TableCell component="th" scope="row">
                     {points}
                   </TableCell>
-                  <TableCell component="th" scope="row">
-                    {streak ? (
-                      <div className="streak">
-                        {streak.map(
-                          (
-                            {
-                              outcome,
-                              playerP1,
-                              teamP1,
-                              scoreP1,
-                              playerP2,
-                              teamP2,
-                              scoreP2,
-                              date,
-                            },
-                            index,
-                          ) => (
-                            <ScoreBox
-                              key={index}
-                              result={outcome}
-                              playerP1={playerP1}
-                              teamP1={teamP1}
-                              scoreP1={scoreP1}
-                              playerP2={playerP2}
-                              teamP2={teamP2}
-                              scoreP2={scoreP2}
-                              date={date}
-                            />
-                          ),
-                        )}
-                      </div>
-                    ) : (
-                      '-'
-                    )}
-                  </TableCell>
+                  {format !== 'world_cup_2026_preview' && (
+                    <TableCell component="th" scope="row">
+                      {streak ? (
+                        <div className="streak">
+                          {streak.map(
+                            (
+                              {
+                                outcome,
+                                playerP1,
+                                teamP1,
+                                scoreP1,
+                                playerP2,
+                                teamP2,
+                                scoreP2,
+                                date,
+                              },
+                              index,
+                            ) => (
+                              <ScoreBox
+                                key={index}
+                                result={outcome}
+                                playerP1={playerP1}
+                                teamP1={teamP1}
+                                scoreP1={scoreP1}
+                                playerP2={playerP2}
+                                teamP2={teamP2}
+                                scoreP2={scoreP2}
+                                date={date}
+                              />
+                            ),
+                          )}
+                        </div>
+                      ) : (
+                        '-'
+                      )}
+                    </TableCell>
+                  )}
                 </TableRow>
               ),
             )}

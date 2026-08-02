@@ -1,161 +1,93 @@
-import styled from 'styled-components'
 import Table from '@mui/material/Table'
+import styled, { css } from 'styled-components'
+
+const COLORS = {
+  blue: {
+    base: '#004a79',
+    hover: '#306485',
+  },
+  green: {
+    base: '#007058',
+    hover: '#237c69',
+  },
+  gold: {
+    base: '#8d7b12',
+    hover: '#a29139',
+  },
+  burgundy: {
+    base: '#6b2034',
+    hover: '#874058',
+  },
+}
+
+const FORMAT_RULES = {
+  champions_league: [{ from: 1, to: 2, color: 'green' }],
+  league_playin_playoff: [
+    { from: 1, to: 6, color: 'green' },
+    { from: 7, to: 8, color: 'gold' },
+    { from: 9, to: 10, color: 'burgundy' },
+  ],
+  world_cup: [{ from: 1, to: 2, color: 'green' }],
+  world_cup_2026: [
+    { from: 1, to: 2, color: 'green' },
+    { from: 3, to: 3, color: 'gold' },
+  ],
+  world_cup_2026_preview: [{ from: 1, to: 8, color: 'green' }],
+}
+
+const DEFAULT_COLOR = 'blue'
+
+const getRules = (format) => {
+  if (!format) return []
+
+  if (FORMAT_RULES[format]) {
+    return FORMAT_RULES[format]
+  }
+
+  const key = Object.keys(FORMAT_RULES).find((rule) => format.includes(rule))
+
+  return key ? FORMAT_RULES[key] : []
+}
+
+const getRowColor = (format, row) => {
+  const rules = getRules(format)
+
+  const rule = rules.find(({ from, to }) => row >= from && row <= to)
+
+  return COLORS[rule?.color ?? DEFAULT_COLOR]
+}
+
+const rowStyles = Array.from(
+  { length: 15 },
+  (_, i) => css`
+    &:nth-of-type(${i + 1}) {
+      background-color: ${({ format }) => getRowColor(format, i + 1).base};
+
+      &:hover {
+        background-color: ${({ format }) => getRowColor(format, i + 1).hover};
+      }
+    }
+  `,
+)
+
+export const TableTitle = styled.h2`
+  align-self: center;
+  color: var(--blue-900);
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  margin: 1.25rem auto 0.75rem;
+  max-width: fit-content;
+  text-transform: uppercase;
+`
 
 export const StyledTable = styled(Table)`
   background-color: rgba(0, 74, 121, 1);
   border: var(--yellow-900) 3px solid;
   .MuiTableBody-root {
     .MuiTableRow-root {
-      &:hover {
-        background-color: #306485;
-      }
-      &:nth-of-type(1),
-      &:nth-of-type(2) {
-        background-color: ${(props) =>
-          `${
-            ['playin', 'world_cup', 'world_cup_2026_preview'].some((format) =>
-              props.format?.includes(format),
-            )
-              ? '#007058'
-              : 'rgba(0, 74, 121, 1)'
-          }`};
-        &:hover {
-          background-color: ${(props) =>
-            `${
-              ['playin', 'world_cup', 'world_cup_2026_preview'].some((format) =>
-                props.format?.includes(format),
-              )
-                ? '#237c69'
-                : '#306485'
-            }`};
-        }
-      }
-      ,
-      &:nth-of-type(3) {
-        background-color: ${(props) =>
-          `${
-            props.format === 'world_cup_2026'
-              ? '#a1920a'
-              : [
-                  'league_playin_playoff',
-                  'playin',
-                  'world_cup_2026_preview',
-                ].some((format) => props.format === format)
-              ? '#007058'
-              : 'rgba(0, 74, 121, 1)'
-          }`};
-        &:hover {
-          background-color: ${(props) =>
-            `${
-              props.format === 'world_cup_2026'
-                ? '#b8ae58'
-                : [
-                    'league_playin_playoff',
-                    'playin',
-                    'world_cup_2026_preview',
-                  ].some((format) => props.format === format)
-                ? '#237c69'
-                : '#306485'
-            }`};
-        }
-      }
-      ,
-      &:nth-of-type(4) {
-        background-color: ${(props) =>
-          `${
-            ['playin', 'world_cup_2026_preview'].some((format) =>
-              props.format?.includes(format),
-            )
-              ? '#007058'
-              : 'rgba(0, 74, 121, 1)'
-          }`};
-        &:hover {
-          background-color: ${(props) =>
-            `${
-              ['playin', 'world_cup_2026_preview'].some((format) =>
-                props.format?.includes(format),
-              )
-                ? '#237c69'
-                : '#306485'
-            }`};
-        }
-      }
-      ,
-      &:nth-of-type(5),
-      &:nth-of-type(6) {
-        background-color: ${(props) =>
-          `${
-            ['playin', 'world_cup_2026_preview'].some((format) =>
-              props.format?.includes(format),
-            )
-              ? '#007058'
-              : 'rgba(0, 74, 121, 1)'
-          }`};
-        &:hover {
-          background-color: ${(props) =>
-            `${
-              ['playin', 'world_cup_2026_preview'].some((format) =>
-                props.format?.includes(format),
-              )
-                ? '#237c69'
-                : '#306485'
-            }`};
-        }
-      }
-      &:nth-of-type(7),
-      &:nth-of-type(8) {
-        background-color: ${(props) =>
-          `${
-            props.format?.includes('playin')
-              ? '#a1920a'
-              : props.format?.includes('world_cup_2026_preview')
-              ? '#007058'
-              : 'rgba(0, 74, 121, 1)'
-          }`};
-        &:hover {
-          background-color: ${(props) =>
-            `${
-              props.format?.includes('playin')
-                ? '#b8ae58'
-                : props.format?.includes('world_cup_2026_preview')
-                ? '#237c69'
-                : '#306485'
-            }`};
-        }
-      }
-      &:nth-of-type(9),
-      &:nth-of-type(10),
-      &:nth-of-type(11),
-      &:nth-of-type(12) {
-        background-color: ${(props) =>
-          `${
-            ['playin', 'world_cup_2026_preview'].some((format) =>
-              props.format?.includes(format),
-            )
-              ? '#75330c'
-              : 'rgba(0, 74, 121, 1)'
-          }`};
-        &:hover {
-          background-color: ${(props) =>
-            `${
-              ['playin', 'world_cup_2026_preview'].some((format) =>
-                props.format?.includes(format),
-              )
-                ? '#8f5e42'
-                : '#306485'
-            }`};
-        }
-      }
-      ,
-      &:nth-of-type(13),
-      &:nth-of-type(14),
-      &:nth-of-type(15) {
-        background-color: rgba(0, 74, 121, 1);
-        &:hover {
-          background-color: #306485;
-        }
-      }
-      ,
+      ${rowStyles}
+    }
       .MuiTableCell-root {
         color: #fff;
         font-family: 'Fira Sans', sans-serif;

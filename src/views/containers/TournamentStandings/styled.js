@@ -7,18 +7,19 @@ export const HeaderContainer = styled.div`
   flex-direction: column;
   margin: 2rem auto 0 auto;
   max-width: 350px;
-  padding-inline: 0.5rem;
   width: 100%;
 
   @media (min-width: 576px) {
-    max-width: 500px;
+    max-width: fit-content;
+    padding-inline: 0.5rem;
   }
 `
 
 export const Header = styled.div`
-  display: flex;
-  justify-content: space-between;
   align-items: center;
+  display: flex;
+  gap: 1.5rem;
+  justify-content: space-between;
   margin: 8px 0 16px;
   width: 100%;
 `
@@ -79,6 +80,10 @@ export const GroupButtons = styled.div`
   display: inline-flex;
   gap: 6px;
   flex-wrap: wrap;
+
+  @media (min-width: 576px) {
+    flex-wrap: nowrap;
+  }
 `
 
 export const GroupButton = styled.button`

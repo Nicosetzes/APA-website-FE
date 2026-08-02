@@ -17,12 +17,7 @@ import {
   Title,
 } from './styled'
 import { PageLoader, StandingsTable } from 'views/components'
-import {
-  createSearchParams,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from 'react-router-dom'
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { useCallback, useEffect, useState } from 'react'
 
 const TournamentStandings = () => {
@@ -35,38 +30,43 @@ const TournamentStandings = () => {
 
   const navigate = useNavigate()
 
-  const playerParams = (param) => {
-    return { player: param }
-  }
-  const teamParams = (param) => {
-    return { team: param }
-  }
-
-  const goToSpecificFixture = (id, params) => {
+  const goToSpecificFixture = (id, param) => {
     const group = searchParams.get('group')
-    if (isNaN(Number(params))) {
-      // Navigate by player (state), keep current group context if present
-      return navigate(
+    const search = new URLSearchParams()
+
+    if (group) {
+      search.set('group', group)
+    }
+
+    if (isNaN(Number(param))) {
+      navigate(
         {
           pathname: `/tournaments/${id}/fixture`,
-          search: group ? `?${createSearchParams({ group })}` : undefined,
+          search: search.toString() || undefined,
         },
-        { state: playerParams(params) },
+        {
+          state: { player: param },
+        },
       )
-    } else {
-      // Navigate by team (query), also include current group if present
-      const query = group
-        ? createSearchParams({ ...teamParams(params), group }).toString()
-        : createSearchParams(teamParams(params)).toString()
-      return navigate({
-        pathname: `/tournaments/${id}/fixture`,
-        search: `?${query}`,
-      })
+      return
     }
+
+    search.set('team', param)
+
+    navigate({
+      pathname: `/tournaments/${id}/fixture`,
+      search: `?${search.toString()}`,
+    })
   }
 
+  const selectedGroup = searchParams.get('group')
+
   const onHandleGroupChange = (group) => {
-    setSearchParams({ group })
+    if (selectedGroup === group) {
+      setSearchParams({})
+    } else {
+      setSearchParams({ group })
+    }
   }
 
   const [loading, setLoading] = useState(false)
@@ -74,25 +74,19 @@ const TournamentStandings = () => {
   const getTournamentData = useCallback(() => {
     const controller = new AbortController()
     setLoading(true)
-    const group = searchParams.get('group')
-
-    const standParams = group
-      ? { params: { group }, signal: controller.signal }
-      : { signal: controller.signal }
-
-    const standingsReq = axios.get(
-      `${api}/tournaments/${tournament}/standings/table`,
-      standParams,
-    )
-
-    Promise.all([standingsReq]).then((values) => {
-      const data = values.map((response) => response.data)
-      setStandingsData(data)
-      setLoading(false)
-    })
-
+    axios
+      .get(`${api}/tournaments/${tournament}/standings/table`, {
+        signal: controller.signal,
+      })
+      .then(({ data }) => {
+        setStandingsData(data)
+      })
+      .catch((err) => {
+        console.error(err)
+      })
+      .finally(() => setLoading(false))
     return () => controller.abort()
-  }, [api, tournament, searchParams])
+  }, [api, tournament])
 
   useEffect(() => {
     const cleanup = getTournamentData()
@@ -101,7 +95,11 @@ const TournamentStandings = () => {
 
   if (tournamentData && standingsData) {
     const { format, groups } = tournamentData
-    const { standings } = standingsData[0]
+    const { standings } = standingsData
+
+    const displayedStandings = selectedGroup
+      ? standings.filter(({ group }) => group === selectedGroup)
+      : standings
 
     return (
       <motion.div
@@ -113,15 +111,18 @@ const TournamentStandings = () => {
           <Header>
             <Title>Clasificación</Title>
             <StandingsLinks>
-              {(format === 'league_playin_playoff' ||
-                format === 'champions_league' ||
-                format === 'world_cup') && (
+              {[
+                'champions_league',
+                'league_playin_playoff',
+                'world_cup',
+                'world_cup_2026',
+              ].includes(format) && (
                 <StandingsLink to={`/tournaments/${tournament}/playoffs`}>
-                  Ir a Playoffs
+                  Playoffs
                 </StandingsLink>
               )}
               <StandingsLink to={`/tournaments/${tournament}/fixture`}>
-                Ir a Fixture
+                Fixture
               </StandingsLink>
             </StandingsLinks>
           </Header>
@@ -130,20 +131,21 @@ const TournamentStandings = () => {
               <ControlsRow>
                 <GroupsTitle>Grupos</GroupsTitle>
                 <GroupButtons>
-                  {groups.map((group) => {
-                    const active =
-                      (group === 'A' && !searchParams.get('group')) ||
-                      group === searchParams.get('group')
-                    return (
-                      <GroupButton
-                        key={group}
-                        $active={active}
-                        onClick={() => onHandleGroupChange(group)}
-                      >
-                        {group}
-                      </GroupButton>
-                    )
-                  })}
+                  <GroupButton
+                    $active={!selectedGroup}
+                    onClick={() => setSearchParams({})}
+                  >
+                    Todos
+                  </GroupButton>
+                  {groups.map((group) => (
+                    <GroupButton
+                      key={group}
+                      $active={group === selectedGroup}
+                      onClick={() => onHandleGroupChange(group)}
+                    >
+                      {group}
+                    </GroupButton>
+                  ))}
                 </GroupButtons>
               </ControlsRow>
             </Card>
@@ -161,14 +163,20 @@ const TournamentStandings = () => {
           </SpinnerContainer>
         ) : (
           <>
-            <StandingsTable
-              tournament={tournament}
-              format={format}
-              standings={standings}
-              onHandle={
-                format === 'world_cup_2026_preview' ? null : goToSpecificFixture
-              }
-            />
+            {displayedStandings.map(({ group, teams }) => (
+              <StandingsTable
+                key={group ?? 'standings'}
+                format={format}
+                standings={teams}
+                title={group ? `Grupo ${group}` : null}
+                tournament={tournament}
+                onHandle={
+                  format === 'world_cup_2026_preview'
+                    ? null
+                    : goToSpecificFixture
+                }
+              />
+            ))}
           </>
         )}
       </motion.div>

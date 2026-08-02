@@ -2,24 +2,25 @@ import PersonIcon from '@mui/icons-material/Person'
 import { ScoreBox } from 'views/components'
 import ShowChartIcon from '@mui/icons-material/ShowChart'
 import SportsSoccerIcon from '@mui/icons-material/SportsSoccer'
-import { StyledTable } from './styled'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import { database } from 'api'
 import { formatTeamName } from 'utils'
+import { StyledTable, TableTitle } from './styled'
 
-const StandingsTable = ({ tournament, format, standings, onHandle }) => {
+const StandingsTable = ({ format, standings, title, tournament, onHandle }) => {
   return (
     <>
       <div
         style={{ maxHeight: 'fit-content', overflowX: 'auto', width: '100%' }}
       >
+        {title && <TableTitle>{title}</TableTitle>}
         <StyledTable
-          sx={{ minWidth: 300, maxWidth: 1000, margin: '0 auto' }}
           aria-label="simple table"
           format={format}
+          sx={{ minWidth: 300, maxWidth: 1000, margin: '0 auto' }}
         >
           <TableHead>
             <TableRow sx={{ backgroundColor: '#262121' }}>

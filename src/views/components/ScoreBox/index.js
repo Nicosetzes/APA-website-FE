@@ -35,7 +35,7 @@ const ScoreBox = ({
           </>
         }
       >
-        <StyledScoreBox color="#2cad2c">
+        <StyledScoreBox color="#1FA971">
           <DoneIcon sx={{ fontSize: '0.5rem' }} />
         </StyledScoreBox>
       </Tooltip>
@@ -61,7 +61,7 @@ const ScoreBox = ({
           </>
         }
       >
-        <StyledScoreBox color="#8e8e8f">
+        <StyledScoreBox color="#8A929C">
           <HorizontalRuleIcon sx={{ fontSize: '0.5rem' }} />
         </StyledScoreBox>
       </Tooltip>
@@ -87,7 +87,7 @@ const ScoreBox = ({
           </>
         }
       >
-        <StyledScoreBox color="#af1111">
+        <StyledScoreBox color="#d64b4b">
           <CloseIcon sx={{ fontSize: '0.5rem' }} />
         </StyledScoreBox>
       </Tooltip>

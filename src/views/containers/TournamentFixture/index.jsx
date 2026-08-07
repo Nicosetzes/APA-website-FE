@@ -1,4 +1,4 @@
-import { Oval } from 'react-loader-spinner'
+import { Loader } from 'views/components'
 import Pagination from '@mui/material/Pagination'
 import Swal from 'sweetalert2'
 import { apiClient } from 'api/axiosConfig'
@@ -280,12 +280,7 @@ const TournamentFixture = () => {
 
         {fixtureLoading ? (
           <SpinnerContainer>
-            <Oval
-              height="80"
-              width="80"
-              color="var(--green-900)"
-              ariaLabel="loading"
-            />
+            <Loader />
           </SpinnerContainer>
         ) : matches.length ? (
           <>

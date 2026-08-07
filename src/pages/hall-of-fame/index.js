@@ -1,5 +1,5 @@
 import Accolades from './components/Accolades'
-import { Oval } from 'react-loader-spinner'
+import { Loader } from 'views/components'
 import Showcase from './components/Showcase'
 import TeamRankings from './components/TeamRankings'
 import { api } from 'api'
@@ -64,16 +64,8 @@ const Trophies = () => {
       {tournamentsData ? (
         <Showcase tournaments={tournamentsData} />
       ) : (
-        <div style={{ margin: 'auto', width: '100px' }}>
-          <Oval
-            height="80"
-            width="80"
-            radius="9"
-            color="var(--green-900)"
-            ariaLabel="three-dots-loading"
-            $wrapperStyle
-            $wrapperClass
-          />
+        <div style={{ margin: 'auto' }}>
+          <Loader />
         </div>
       )}
       <Accolades tournaments={tournamentsData} />
@@ -93,16 +85,8 @@ const Trophies = () => {
         </div>
       )}
       {teamsStatsLoading && (
-        <div style={{ margin: 'auto', width: '100px' }}>
-          <Oval
-            height="80"
-            width="80"
-            radius="9"
-            color="var(--green-900)"
-            ariaLabel="three-dots-loading"
-            $wrapperStyle
-            $wrapperClass
-          />
+        <div style={{ margin: 'auto' }}>
+          <Loader />
         </div>
       )}
       {teamsData && (
@@ -143,16 +127,8 @@ const Trophies = () => {
         </div>
       )}
       {faceToFaceLoading && (
-        <div style={{ margin: 'auto', width: '100px' }}>
-          <Oval
-            height="80"
-            width="80"
-            radius="9"
-            color="var(--green-900)"
-            ariaLabel="three-dots-loading"
-            $wrapperStyle
-            $wrapperClass
-          />
+        <div style={{ margin: 'auto' }}>
+          <Loader />
         </div>
       )}
       {faceToFaceData &&

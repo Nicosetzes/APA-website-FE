@@ -2,6 +2,7 @@ import CelebrationAnimation from './../CelebrationAnimation'
 import CheckIcon from '@mui/icons-material/Check'
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
 import IconButton from '@mui/material/IconButton'
+import { Loader } from 'views/components'
 import { StyledPlayoffMatch } from './styled'
 import Swal from 'sweetalert2'
 import Tooltip from '../Tooltip'
@@ -28,6 +29,7 @@ const PlayoffMatch = ({
   valid,
   isThisTheFinal,
 }) => {
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [showAnimation, setShowAnimation] = useState(false)
 
   const MySwal = withReactContent(Swal)
@@ -41,6 +43,19 @@ const PlayoffMatch = ({
 
   const [matchScore, setMatchScore] = useState({})
 
+  const toastConfig = {
+    background: 'rgba(28, 25, 25, 0.95)',
+    color: '#fff',
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 2000,
+    timerProgressBar: true,
+    customClass: {
+      timerProgressBar: 'toast-progress-dark',
+    },
+  }
+
   const onHandleChange = (event) => {
     const name = event.target.name
     const value = event.target.value
@@ -48,10 +63,17 @@ const PlayoffMatch = ({
   }
 
   const handleMatchSubmit = async (isMatchValid) => {
-    console.log('Cargo partido')
+    setIsSubmitting(true)
     const { scoreP1, penaltyScoreP1, scoreP2, penaltyScoreP2 } = matchScore
-    if (scoreP1 == null || scoreP1 === '' || scoreP2 == null || scoreP2 === '')
+
+    if (
+      scoreP1 == null ||
+      scoreP1 === '' ||
+      scoreP2 == null ||
+      scoreP2 === ''
+    ) {
       return console.log('Resultado incompleto')
+    }
 
     const update = {
       playerP1,
@@ -68,87 +90,81 @@ const PlayoffMatch = ({
       isThisTheFinal,
     }
 
-    apiClient
-      .put(`${api}/tournaments/${tournament}/matches/update-game/${id}`, update)
-      .then(({ data }) => {
-        console.log(data)
-        if (isThisTheFinal) {
-          setShowAnimation(true)
-        }
+    try {
+      const { data } = await apiClient.put(
+        `${api}/tournaments/${tournament}/matches/update-game/${id}`,
+        update,
+      )
 
-        MySwal.fire({
-          background: `rgba(28, 25, 25, 0.95)`,
-          color: `#fff`,
-          icon: 'success',
-          iconColor: '#18890e',
-          toast: true,
-          // title: `Resultado cargado con éxito`,
-          position: 'top-end',
-          showConfirmButton: false,
-          text: 'Resultado cargado con éxito',
-          timer: 2000,
-          timerProgressBar: true,
-          customClass: { timerProgressBar: 'toast-progress-dark' },
-          didOpen: (toast) => {
-            getData()
-            toast.addEventListener('mouseenter', Swal.stopTimer)
-            toast.addEventListener('mouseleave', Swal.resumeTimer)
-          },
-        })
+      console.log(data)
+
+      await getData()
+
+      if (isThisTheFinal) {
+        setShowAnimation(true)
+      }
+
+      MySwal.fire({
+        ...toastConfig,
+        icon: 'success',
+        iconColor: '#18890e',
+        text: 'Resultado cargado con éxito',
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer)
+          toast.addEventListener('mouseleave', Swal.resumeTimer)
+        },
       })
-      .catch(({ response }) => {
-        const { data } = response
-        const { auth, message } = data
-        MySwal.fire({
-          background: `rgba(28, 25, 25, 0.95)`,
-          color: `#fff`,
-          icon: 'error',
-          iconColor: '#b30a0a',
-          text: message,
-          title: '¡Error!',
-          toast: true,
-          position: 'top-end',
-          showConfirmButton: false,
-          timer: 2000,
-          timerProgressBar: true,
-          customClass: { timerProgressBar: 'toast-progress-dark' },
-          didOpen: (toast) => {
-            toast.addEventListener('mouseenter', Swal.stopTimer)
-            toast.addEventListener('mouseleave', Swal.resumeTimer)
-          },
-          didClose: () => {
-            setLoginStatus((loginStatus) => ({
-              ...loginStatus,
-              status: auth,
-            }))
-            auth === false &&
-              navigate(
-                {
-                  pathname: `/users/login`,
-                },
-                {
-                  state: { url: location.pathname },
-                },
-              )
-          },
-        })
+    } catch ({ response }) {
+      const { auth, message } = response.data
+
+      MySwal.fire({
+        ...toastConfig,
+        icon: 'error',
+        iconColor: '#b30a0a',
+        title: '¡Error!',
+        text: message,
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer)
+          toast.addEventListener('mouseleave', Swal.resumeTimer)
+        },
+        didClose: () => {
+          setLoginStatus((loginStatus) => ({
+            ...loginStatus,
+            status: auth,
+          }))
+
+          if (auth === false) {
+            navigate(
+              {
+                pathname: '/users/login',
+              },
+              {
+                state: { url: location.pathname },
+              },
+            )
+          }
+        },
       })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
+
   return (
     <>
       <StyledPlayoffMatch isThisTheFinal={isThisTheFinal}>
         <div style={{ display: 'flex' }}>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <div className="container__team">
-              <div className="team-seed">{seedP1}.</div>
+              <div className="team-seed">{seedP1 ? `${seedP1}.` : '?'}</div>
               <div className="team-logo">
                 <img
+                  alt={teamP1?.name || 'sitioapa logo'}
                   src={
                     teamP1?.id
                       ? `${database}/logos/${teamP1.id}`
                       : '/images/sitioapalogo.png'
                   }
-                  alt={teamP1?.name || 'sitioapa logo'}
                 />
               </div>
               <div className="team-name">
@@ -216,7 +232,7 @@ const PlayoffMatch = ({
               )}
             </div>
             <div className="container__team">
-              <div className="team-seed">{seedP2}.</div>
+              <div className="team-seed">{seedP2 ? `${seedP2}.` : '?'}</div>
               <div className="team-logo">
                 <img
                   src={
@@ -294,25 +310,33 @@ const PlayoffMatch = ({
           </div>
         </div>
 
-        {!played && (
+        {!played ? (
           <div className="match__confirmation">
-            <IconButton
-              type="submit"
-              sx={{ color: '#09d514' }}
-              onClick={() => handleMatchSubmit()}
-            >
-              <CheckIcon />
-            </IconButton>
-            <IconButton
-              type="submit"
-              sx={{ color: '#e1dd28', flexDirection: 'column' }}
-              onClick={() => handleMatchSubmit(false)}
-            >
-              <CheckIcon />
-              <span style={{ fontSize: 13 }}>SIM</span>
-            </IconButton>
+            {isSubmitting ? (
+              <div style={{ margin: 'auto' }}>
+                <Loader />
+              </div>
+            ) : (
+              <>
+                <IconButton
+                  type="submit"
+                  sx={{ color: '#09d514' }}
+                  onClick={() => handleMatchSubmit()}
+                >
+                  <CheckIcon />
+                </IconButton>
+                <IconButton
+                  type="submit"
+                  sx={{ color: '#e1dd28', flexDirection: 'column' }}
+                  onClick={() => handleMatchSubmit(false)}
+                >
+                  <CheckIcon />
+                  <span style={{ fontSize: 13 }}>SIM</span>
+                </IconButton>
+              </>
+            )}
           </div>
-        )}
+        ) : null}
       </StyledPlayoffMatch>
       {isThisTheFinal && showAnimation && (
         <CelebrationAnimation showAnimation={showAnimation} />

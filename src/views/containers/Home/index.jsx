@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import { StyledHome } from './styled'
 import { api, cloudName } from 'api'
 import { Image } from 'cloudinary-react'
-import { Oval } from 'react-loader-spinner'
+import { Loader } from 'views/components'
 import axios from 'axios'
 
 const superliga_internacional_cloudinary_id = 'tournaments/internacional_co4gg7'
@@ -105,12 +105,7 @@ const Home = () => {
                 padding: '2rem',
               }}
             >
-              <Oval
-                height="60"
-                width="60"
-                color="var(--blue-900)"
-                ariaLabel="loading"
-              />
+              <Loader />
             </div>
           ) : tournamentsError ? (
             <div

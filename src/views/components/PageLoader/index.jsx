@@ -1,21 +1,12 @@
-import { Oval } from 'react-loader-spinner';
-import { StyledPageLoader }  from './styled';
+import { Loader } from 'views/components'
+import { StyledPageLoader } from './styled'
 
-const PageLoader = ({ color="var(--green-900)", height="80", width="80" }) => {
-    return ( 
+const PageLoader = ({ color, height, width }) => {
+  return (
     <StyledPageLoader>
-        <Oval
-          ariaLabel="three-dots-loading"
-          color={color}
-          height={height}
-          radius="9"
-          width={width}
-          $wrapperStyle
-          $wrapperClass
-        />
-      </StyledPageLoader> 
-      );
+      <Loader color={color} height={height} width={width} />
+    </StyledPageLoader>
+  )
 }
- 
-export default PageLoader;
 
+export default PageLoader

@@ -1,6 +1,6 @@
 import DeleteIcon from '@mui/icons-material/Delete'
 import IconButton from '@mui/material/IconButton'
-import { Oval } from 'react-loader-spinner'
+import { Loader } from 'views/components'
 import { Pagination } from '@mui/material'
 import Swal from 'sweetalert2'
 import { api } from 'api'
@@ -193,12 +193,7 @@ const Edits = () => {
 
         {loading ? (
           <SpinnerContainer>
-            <Oval
-              height="80"
-              width="80"
-              color="var(--blue-900)"
-              ariaLabel="loading"
-            />
+            <Loader />
           </SpinnerContainer>
         ) : edits.length === 0 ? (
           <Message>No hay edits disponibles</Message>

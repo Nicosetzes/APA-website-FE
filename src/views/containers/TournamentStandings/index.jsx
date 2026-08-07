@@ -1,4 +1,4 @@
-import { Oval } from 'react-loader-spinner'
+import { Loader } from 'views/components'
 import { SpinnerContainer } from './styled'
 import { api } from 'api'
 import axios from 'axios'
@@ -154,12 +154,7 @@ const TournamentStandings = () => {
 
         {loading ? (
           <SpinnerContainer>
-            <Oval
-              height="80"
-              width="80"
-              color="var(--green-900)"
-              ariaLabel="loading"
-            />
+            <Loader />
           </SpinnerContainer>
         ) : (
           <>

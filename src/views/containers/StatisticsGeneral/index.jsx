@@ -1,5 +1,5 @@
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
-import { Oval } from 'react-loader-spinner'
+import { Loader } from 'views/components'
 import { apiClient } from 'api/axiosConfig'
 import { database } from 'api'
 import { motion } from 'framer-motion'
@@ -480,12 +480,7 @@ const StatisticsGeneral = () => {
   if (loading) {
     return (
       <SpinnerContainer>
-        <Oval
-          height="80"
-          width="80"
-          color="var(--green-900)"
-          ariaLabel="loading"
-        />
+        <Loader />
       </SpinnerContainer>
     )
   }

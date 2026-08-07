@@ -108,11 +108,28 @@ const PlayoffRound = ({ matches, round, getData, isThisTheFinal }) => {
     firstRoundMatchesCount = matches.length
   }
 
+  const getRoundName = (matchesCount) => {
+    switch (matchesCount) {
+      case 16:
+        return '16vos de final'
+      case 8:
+        return '8vos de final'
+      case 4:
+        return '4tos de final'
+      case 2:
+        return 'Semifinal'
+      case 1:
+        return 'Final'
+      default:
+        return `Ronda ${round}`
+    }
+  }
+
   return (
     <PlayoffRoundContainer
       firstRoundMatchesCount={round === 1 ? firstRoundMatchesCount : null}
     >
-      <RoundName>Ronda {round}</RoundName>
+      <RoundName>{getRoundName(matches?.length)}</RoundName>
       <RoundMatches spread={round !== 1}>
         {matches.length
           ? matches.map(

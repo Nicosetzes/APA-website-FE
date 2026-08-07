@@ -1,4 +1,4 @@
-import { Oval } from 'react-loader-spinner'
+import { Loader } from 'views/components'
 import { api } from 'api'
 import { apiClient } from 'api/axiosConfig'
 import { motion } from 'framer-motion'
@@ -226,12 +226,7 @@ const EditsUpload = () => {
 
             {uploading ? (
               <SpinnerContainer>
-                <Oval
-                  height="60"
-                  width="60"
-                  color="var(--blue-900)"
-                  ariaLabel="uploading"
-                />
+                <Loader />
               </SpinnerContainer>
             ) : (
               <UploadButton

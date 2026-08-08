@@ -14,15 +14,15 @@ const PlayerBox = ({ player, trophies }) => {
           <div className="player-box__name">{player}</div>
           <div className="player-box__stars">
             {trophies &&
-              trophies.map((trophy, index) => (
+              trophies.map((_, index) => (
                 <StarIcon
-                  key={index}
-                  htmlColor={'#ffc30b'}
                   fontSize={'large'}
+                  htmlColor={'#ffc30b'}
+                  key={index}
                 />
               ))}
           </div>
-          <div className="player-box__trophies">
+          <p className="player-box__trophies">
             {trophies &&
               trophies.map((trophy, index) => (
                 <Image
@@ -32,7 +32,7 @@ const PlayerBox = ({ player, trophies }) => {
                   style={{ maxHeight: '100%', objectFit: 'contain' }}
                 />
               ))}
-          </div>
+          </p>
         </div>
       </StyledPlayerBox>
     </>

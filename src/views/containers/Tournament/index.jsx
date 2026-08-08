@@ -46,7 +46,6 @@ import { format as formatDate, parseISO } from 'date-fns'
 import { useEffect, useState } from 'react'
 import { useOutletContext, useParams } from 'react-router-dom'
 
-
 const Tournament = () => {
   const isSm = useMediaQuery({ query: '(min-width: 576px)' })
   const { tournamentData } = useOutletContext()
@@ -59,7 +58,9 @@ const Tournament = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const { data } = await axios.get(`${api}/tournaments/${tournament}/summary`)
+        const { data } = await axios.get(
+          `${api}/tournaments/${tournament}/summary`,
+        )
         setTournamentSummary(data)
       } catch (err) {
         console.error('Error fetching tournament stats:', err)
@@ -72,7 +73,8 @@ const Tournament = () => {
 
   if (statsLoading) return <PageLoader />
 
-  const { cloudinary_id, format, legacy, name, ongoing, outcome, teams } = tournamentData
+  const { cloudinary_id, format, legacy, name, ongoing, outcome, teams } =
+    tournamentData
   const champion = outcome?.champion
   const finalist = outcome?.finalist
 
@@ -96,7 +98,7 @@ const Tournament = () => {
 
     try {
       await apiClient.put(`/tournaments/${tournament}/complete`)
-      
+
       MySwal.fire({
         background: 'rgba(28, 25, 25, 0.95)',
         color: '#fff',
@@ -110,7 +112,7 @@ const Tournament = () => {
         timerProgressBar: true,
         customClass: { timerProgressBar: 'toast-progress-dark' },
       })
-      
+
       // Refresh page to show updated data
       setTimeout(() => window.location.reload(), 1500)
     } catch (err) {
@@ -154,9 +156,12 @@ const Tournament = () => {
 
   const parseStreak = (streak) => {
     const amount = Number(streak?.slice(0, 1))
-    if (streak?.includes('W')) return `${streak.split('W')[0]} ${amount > 1 ? 'victorias' : 'victoria'}`
-    else if (streak?.includes('L')) return `${streak.split('L')[0]} ${amount > 1 ? 'derrotas' : 'derrota'}`
-    else if (streak?.includes('D')) return `${streak.split('D')[0]} ${amount > 1 ? 'empates' : 'empate'}`
+    if (streak?.includes('W'))
+      return `${streak.split('W')[0]} ${amount > 1 ? 'victorias' : 'victoria'}`
+    else if (streak?.includes('L'))
+      return `${streak.split('L')[0]} ${amount > 1 ? 'derrotas' : 'derrota'}`
+    else if (streak?.includes('D'))
+      return `${streak.split('D')[0]} ${amount > 1 ? 'empates' : 'empate'}`
     else return '-'
   }
 
@@ -166,45 +171,68 @@ const Tournament = () => {
     else if (format === 'league_playin_playoff') return 'Superliga APA'
     else if (format === 'playoff') return 'Eliminatoria'
     else if (format === 'world_cup') return 'Copa del Mundo (formato clásico)'
-    else if (format === 'world_cup_2026') return 'Copa del Mundo (formato nuevo)'
+    else if (format === 'world_cup_2026')
+      return 'Copa del Mundo (formato nuevo)'
     else return format
   }
 
-
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} style={{backgroundColor: '#f6f8fb', minHeight: '100vh'}}>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      style={{ backgroundColor: '#f6f8fb', minHeight: '100vh' }}
+    >
       <Container>
         <ContentWrapper>
           <ImageWrapper>
-            <Image cloudName={cloudName} publicId={cloudinary_id} style={{ height: '300px', objectFit: 'contain' }} />
+            <Image
+              cloudName={cloudName}
+              publicId={cloudinary_id}
+              style={{ height: '300px', objectFit: 'contain' }}
+            />
           </ImageWrapper>
           <InfoSection>
             <InfoCard>
               <InfoTitle>Información del Torneo</InfoTitle>
               <InfoText>
-                <strong>Nombre:</strong>{' '}
-                {name}
+                <strong>Nombre:</strong> {name}
               </InfoText>
               <InfoText>
-                <strong>Formato:</strong>{' '}
-                {parseTournamentFormat(format)}
+                <strong>Formato:</strong> {parseTournamentFormat(format)}
               </InfoText>
-              { !legacy && (
+              {!legacy && (
                 <InfoText>
-                <strong>Equipos:</strong> {teams?.length || 0}
-              </InfoText>
+                  <strong>Equipos:</strong> {teams?.length || 0}
+                </InfoText>
               )}
-              { !legacy && (
+              {!legacy && (
                 <InfoText>
-                <strong>Partidos jugados:</strong> {tournamentSummary?.matches?.totalPlayed || 0}
-              </InfoText>
+                  <strong>Partidos jugados:</strong>{' '}
+                  {tournamentSummary?.matches?.totalPlayed || 0}
+                </InfoText>
               )}
               <InfoText>
-                <strong>Estado:</strong> {ongoing ? <span style={{ color: 'var(--green-900)', fontWeight: 'bold' }}>En curso</span> : <span style={{ color: 'var(--red-700)', fontWeight: 'bold' }}>Finalizado</span>}
+                <strong>Estado:</strong>{' '}
+                {ongoing ? (
+                  <span
+                    style={{ color: 'var(--green-900)', fontWeight: 'bold' }}
+                  >
+                    En curso
+                  </span>
+                ) : (
+                  <span style={{ color: 'var(--red-700)', fontWeight: 'bold' }}>
+                    Finalizado
+                  </span>
+                )}
               </InfoText>
               {ongoing && format === 'league' && (
-                  <PrimaryLink asButton text={"Finalizar Torneo"} onClick={handleFinishTournament} />
-                )}
+                <PrimaryLink
+                  asButton
+                  text={'Finalizar Torneo'}
+                  onClick={handleFinishTournament}
+                />
+              )}
             </InfoCard>
           </InfoSection>
         </ContentWrapper>
@@ -223,7 +251,9 @@ const Tournament = () => {
                 />
                 <TeamInfo>
                   <OutcomeTeamName>{champion.team.name}</OutcomeTeamName>
-                  <OutcomePlayerName>({champion.player.name})</OutcomePlayerName>
+                  <OutcomePlayerName>
+                    ({champion.player.name})
+                  </OutcomePlayerName>
                 </TeamInfo>
               </OutcomeContent>
             </OutcomeCard>
@@ -234,12 +264,14 @@ const Tournament = () => {
               </OutcomeHeader>
               <OutcomeContent $centered={!isSm}>
                 <OutcomeTeamLogo
-                  src={`${database}/logos/${finalist.team.id}`}
                   alt={finalist.team.name}
+                  src={`${database}/logos/${finalist.team.id}`}
                 />
                 <TeamInfo>
                   <OutcomeTeamName>{finalist.team.name}</OutcomeTeamName>
-                  <OutcomePlayerName>({finalist.player.name})</OutcomePlayerName>
+                  <OutcomePlayerName>
+                    ({finalist.player.name})
+                  </OutcomePlayerName>
                 </TeamInfo>
               </OutcomeContent>
             </OutcomeCard>
@@ -248,38 +280,62 @@ const Tournament = () => {
 
         {tournamentSummary?.matches?.recent?.length > 0 && (
           <RecentMatchesSection>
-            <h2 style={{margin: '0 0 1rem 0'}}>Partidos Recientes</h2>
+            <h2 style={{ margin: '0 0 1rem 0' }}>Partidos Recientes</h2>
             <MatchList>
-            {tournamentSummary.matches.recent.map((match) => (
-              <MatchCard color={parseMatchTypeColor(match.type)} key={match.id}>
-                <MatchType color={parseMatchTypeColor(match.type)}>{parseMatchType(match.type)}</MatchType>
-                <MatchContainer>
-                  <MatchTeam>
-                    <TeamLogo src={`${database}/logos/${match.teamP1.id}`} alt={match.teamP1.name} />
-                    <div>
-                      <TeamName>{`${match.teamP1.name.slice(0,3).toUpperCase()}`}</TeamName>
-                      <PlayerName>{match.playerP1.name}</PlayerName>
-                    </div>
-                  </MatchTeam>
-                  <MatchScore>{match.scoreP1} - {match.scoreP2}</MatchScore>
-                  <MatchTeam>
-                    <div style={{ textAlign: 'right' }}>
-                      <TeamName>{`${match.teamP2.name.slice(0,3).toUpperCase()}`}</TeamName>
-                      <PlayerName>{match.playerP2.name}</PlayerName>
-                    </div>
-                    <TeamLogo src={`${database}/logos/${match.teamP2.id}`} alt={match.teamP2.name} />
-                  </MatchTeam>  
-                </MatchContainer>
-                <MatchDate>{formatDate(parseISO(match.updatedAt), 'dd/MM/yyyy hh:mm:ss a')}</MatchDate>
-              </MatchCard>
-            ))}
+              {tournamentSummary.matches.recent.map((match) => (
+                <MatchCard
+                  color={parseMatchTypeColor(match.type)}
+                  key={match.id}
+                >
+                  <MatchType color={parseMatchTypeColor(match.type)}>
+                    {parseMatchType(match.type)}
+                  </MatchType>
+                  <MatchContainer>
+                    <MatchTeam>
+                      <TeamLogo
+                        src={`${database}/logos/${match.teamP1.id}`}
+                        alt={match.teamP1.name}
+                      />
+                      <div>
+                        <TeamName>{`${match.teamP1.name
+                          .slice(0, 3)
+                          .toUpperCase()}`}</TeamName>
+                        <PlayerName>{match.playerP1.name}</PlayerName>
+                      </div>
+                    </MatchTeam>
+                    <MatchScore>
+                      {match.scoreP1} - {match.scoreP2}
+                    </MatchScore>
+                    <MatchTeam>
+                      <div style={{ textAlign: 'right' }}>
+                        <TeamName>{`${match.teamP2.name
+                          .slice(0, 3)
+                          .toUpperCase()}`}</TeamName>
+                        <PlayerName>{match.playerP2.name}</PlayerName>
+                      </div>
+                      <TeamLogo
+                        src={`${database}/logos/${match.teamP2.id}`}
+                        alt={match.teamP2.name}
+                      />
+                    </MatchTeam>
+                  </MatchContainer>
+                  <MatchDate>
+                    {formatDate(
+                      parseISO(match.updatedAt),
+                      'dd/MM/yyyy hh:mm:ss a',
+                    )}
+                  </MatchDate>
+                </MatchCard>
+              ))}
             </MatchList>
           </RecentMatchesSection>
         )}
 
         {!legacy && tournamentSummary?.participants?.length > 0 && (
-          <div style={{ width: '100%', overflowX: 'auto'}}>
-            <h2 style={{ color: "var(--blue-900)", margin: '0 0 1rem 0'}}>Estadísticas de Participantes</h2>
+          <div style={{ width: '100%', overflowX: 'auto' }}>
+            <h2 style={{ color: 'var(--blue-900)', margin: '0 0 1rem 0' }}>
+              Estadísticas de Participantes
+            </h2>
             <ParticipantsTable>
               <thead>
                 <TableRow header>

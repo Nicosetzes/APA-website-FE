@@ -68,8 +68,9 @@ export const StyledHome = styled.div`
     flex-direction: column;
     isolation: isolate;
     justify-content: center;
-    padding: 1.5rem 0;
+    padding: 1.5rem 0.5rem;
     position: relative;
+    width: 100%;
     &::after {
       content: '';
       background-color: var(--blue-900);
@@ -80,11 +81,15 @@ export const StyledHome = styled.div`
     }
     .box__champion {
       align-items: center;
+      border: #fff 2px solid;
       display: flex;
       flex-direction: column;
-      margin: 0.5rem auto;
-      outline: #fff 2px solid;
-      padding: 1rem 3rem;
+      gap: 0.75rem;
+      margin: 0 auto;
+      padding: 1.75rem 0.75rem;
+      @media (min-width: 400px) {
+        padding: 2rem;
+      }
       .champion-title {
         color: #fff;
         display: flex;
@@ -92,27 +97,27 @@ export const StyledHome = styled.div`
         font-weight: 700;
         margin: 0.5rem auto;
       }
-      .champion-player {
+      .champion-tournament {
         color: #fff;
         display: flex;
         font-size: 2rem;
         font-weight: 700;
+        text-align: center;
       }
       .champion-img {
         display: flex;
-        margin: 0.75rem auto;
         img {
           height: 150px;
         }
       }
-      .champion-team {
+      .champion-player {
         align-items: center;
         display: flex;
         justify-content: center;
         span {
           color: #fff;
           display: flex;
-          font-size: 1.75rem;
+          font-size: 1.5rem;
           font-weight: 700;
           margin: 0 0.5rem;
           text-align: center;

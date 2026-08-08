@@ -18,17 +18,22 @@ export const StyledPlayerBox = styled.div`
   padding: 1rem 0;
   width: 100%;
   .player-box {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    height: 100%;
+    justify-content: start;
     .player-box__name {
       color: #f5f5f5; /* Blanco roto */
       font-size: 2.5rem;
       font-weight: 700;
-      margin-bottom: 1rem;
       text-align: center;
     }
     .player-box__stars {
       display: flex;
-      justify-content: center;
-      margin-bottom: 1rem;
+      flex-wrap: wrap;
+      max-width: 250px;
     }
     .player-box__trophies {
       align-content: start; /* Alinea las filas de trofeos desde arriba */
@@ -37,7 +42,7 @@ export const StyledPlayerBox = styled.div`
       grid-template-columns: repeat(3, 1fr);
       gap: 1rem;
       justify-items: center;
-      margin-top: 1rem;
+      margin-top: auto;
       min-height: 375px;
       padding: 1rem;
       position: relative;

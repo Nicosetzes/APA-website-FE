@@ -1,14 +1,13 @@
-import { useMediaQuery } from 'react-responsive'
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import { StyledHome } from './styled'
-import { api, cloudName } from 'api'
 import { Image } from 'cloudinary-react'
 import { Loader } from 'views/components'
+import { StyledHome } from './styled'
 import axios from 'axios'
-
-const superliga_internacional_cloudinary_id = 'tournaments/internacional_co4gg7'
+import { motion } from 'framer-motion'
+import { useMediaQuery } from 'react-responsive'
+import { useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { api, cloudName, database } from 'api'
+import { useEffect, useState } from 'react'
 
 const Home = () => {
   const isM = useMediaQuery({ query: '(min-width: 768px)' })
@@ -18,30 +17,57 @@ const Home = () => {
   const navigate = useNavigate()
 
   const [activeTournaments, setActiveTournaments] = useState([])
+  const [finalizedTournaments, setFinalizedTournaments] = useState([])
   const [tournamentsLoading, setTournamentsLoading] = useState(false)
   const [tournamentsError, setTournamentsError] = useState(null)
 
-  useEffect(() => {
+  const fetchTournaments = async () => {
     const controller = new AbortController()
     setTournamentsLoading(true)
-    setTournamentsError(null)
-    axios
-      .get(`${api}/tournaments`, {
-        params: { status: 'active' },
-        signal: controller.signal,
-      })
-      .then(({ data }) => {
-        setActiveTournaments(data || [])
-      })
-      .catch((err) => {
-        if (axios.isCancel?.(err) || err?.name === 'CanceledError') return
-        console.error(err)
-        setTournamentsError('No se pudieron cargar los torneos activos')
-      })
-      .finally(() => setTournamentsLoading(false))
-
+    try {
+      const [activeTournamentsRes, finalizedTournamentsRes] = await Promise.all(
+        [
+          axios.get(`${api}/tournaments`, {
+            params: { status: 'active' },
+            signal: controller.signal,
+          }),
+          axios.get(`${api}/tournaments`, {
+            params: { status: 'finalized' },
+            signal: controller.signal,
+          }),
+        ],
+      )
+      setActiveTournaments(activeTournamentsRes.data || [])
+      setFinalizedTournaments(finalizedTournamentsRes.data || [])
+    } catch (err) {
+      if (axios.isCancel?.(err) || err?.name === 'CanceledError') return
+      console.error(err)
+      setTournamentsError('No se pudieron cargar los torneos activos')
+    } finally {
+      setTournamentsLoading(false)
+    }
     return () => controller.abort()
+  }
+
+  useEffect(() => {
+    fetchTournaments()
   }, [])
+
+  const lastTournament = useMemo(() => {
+    if (finalizedTournaments.length === 0) return null
+    return finalizedTournaments
+      .filter(({ updatedAt }) => !!updatedAt)
+      .sort((a, b) => {
+        const aDate = new Date(a.updatedAt)
+        const bDate = new Date(b.updatedAt)
+        return bDate - aDate
+      })[0]
+  }, [finalizedTournaments])
+
+  const lastChampion = useMemo(() => {
+    if (!lastTournament) return null
+    return lastTournament.outcome?.champion || null
+  }, [lastTournament])
 
   return (
     <motion.div
@@ -70,15 +96,25 @@ const Home = () => {
         <div className="container__accolades">
           <div className="box__champion">
             <div className="champion-title">CAMPEÓN VIGENTE</div>
-            <div className="champion-player">Nico</div>
+            <div className="champion-tournament">{lastTournament?.name}</div>
             <div className="champion-img">
               <Image
                 cloudName={cloudName}
-                publicId={superliga_internacional_cloudinary_id}
+                publicId={lastTournament?.cloudinary_id}
+              />
+              <img
+                alt={lastChampion?.player?.name}
+                src={`${database}/logos/small/${lastChampion?.team?.id}`}
               />
             </div>
-            <div className="champion-team">
-              <span>ITALIA</span>
+            <div className="champion-player">
+              <span>
+                {lastChampion?.player?.name}
+                {lastTournament?.updatedAt &&
+                  ` - ${new Date(
+                    lastTournament.updatedAt,
+                  ).toLocaleDateString()}`}
+              </span>
             </div>
             <button onClick={() => navigate('./hall-of-fame')}>
               SALÓN DE LA FAMA

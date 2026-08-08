@@ -21,6 +21,7 @@ export const StyledFinalistBox = styled.div`
   }
   .team {
     margin: 0.5rem auto;
+    max-width: 100%;
   }
   .player {
     color: #fff;

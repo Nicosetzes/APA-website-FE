@@ -146,7 +146,7 @@ const TournamentTabs = ({
         })
       }
 
-      if (format === 'world_cup_2026') {
+      if (format === 'super_cup' || format === 'world_cup_2026') {
         tabsArray.push({
           id: 'preview',
           label: 'Cruces',

@@ -111,3 +111,58 @@ export const InputField = styled.input`
     color: #999;
   }
 `
+
+export const ImagesGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 1rem;
+  margin-top: 0.75rem;
+`
+
+export const ImageCard = styled.button`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+
+  padding: 0.75rem;
+
+  border: 2px solid ${({ $selected }) => ($selected ? '#1976d2' : '#e0e0e0')};
+  border-radius: 10px;
+
+  background: ${({ $selected }) => ($selected ? '#f0f7ff' : '#fff')};
+
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease,
+    transform 0.2s ease;
+
+  &:hover {
+    border-color: #1976d2;
+    transform: translateY(-2px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid #1976d2;
+    outline-offset: 2px;
+  }
+`
+
+export const TournamentImage = styled.img`
+  display: block;
+
+  width: 100%;
+  height: 180px;
+
+  object-fit: contain;
+  border-radius: 6px;
+`
+
+export const ImageTitle = styled.span`
+  margin-top: 0.75rem;
+
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #333;
+  text-align: center;
+`

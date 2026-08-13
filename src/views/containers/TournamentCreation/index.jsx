@@ -14,7 +14,14 @@ import {
   WizardHeader,
   WizardTitle,
 } from './styled'
-import { Assignments, Confirmation, Format, Leagues, Players, PlayoffBracket } from './steps'
+import {
+  Assignments,
+  Confirmation,
+  Format,
+  Leagues,
+  Players,
+  PlayoffBracket,
+} from './steps'
 import { PageLoader, PrimaryLink } from 'views/components'
 
 const TournamentCreation = () => {
@@ -22,12 +29,14 @@ const TournamentCreation = () => {
   const [players, setPlayers] = useState([])
   const [leagues, setLeagues] = useState([])
   const [loading, setLoading] = useState(true)
+  const [tournamentImages, setTournamentImages] = useState([])
 
   const methods = useForm({
     mode: 'onChange',
     defaultValues: {
       tournamentName: '',
       format: {},
+      cloudinaryId: '',
       selectedPlayers: [],
       selectedLeagues: [],
       selectedTeams: [],
@@ -67,12 +76,14 @@ const TournamentCreation = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [playersRes, leaguesRes] = await Promise.all([
+        const [playersRes, leaguesRes, imagesRes] = await Promise.all([
           axios.get(`${api}/users`),
           axios.get(`${database}/leagues`),
+          axios.get(`${api}/tournaments/images`),
         ])
         setPlayers(playersRes.data)
         setLeagues(leaguesRes.data)
+        setTournamentImages(imagesRes.data.data)
         setLoading(false)
       } catch (error) {
         console.error('Error fetching data:', error)
@@ -150,6 +161,7 @@ const TournamentCreation = () => {
                 players={players}
                 leagues={leagues}
                 format={watchedFormat}
+                tournamentImages={tournamentImages}
               />
             </WizardContent>
           </motion.div>
@@ -157,10 +169,20 @@ const TournamentCreation = () => {
 
         <WizardActions>
           {currentStep > 1 && (
-            <PrimaryLink asButton text={"Anterior"} type="button" onClick={prevStep} />
+            <PrimaryLink
+              asButton
+              text={'Anterior'}
+              type="button"
+              onClick={prevStep}
+            />
           )}
           {currentStep < STEPS.length && (
-            <PrimaryLink asButton text={"Siguiente"} type="button" onClick={nextStep} />
+            <PrimaryLink
+              asButton
+              text={'Siguiente'}
+              type="button"
+              onClick={nextStep}
+            />
           )}
         </WizardActions>
       </WizardContainer>

@@ -17,10 +17,7 @@ import {
   TeamsList,
   SubmitButton,
 } from './styled'
-import {
-  api,
-  database
-} from 'api'
+import { api, database } from 'api'
 
 const MySwal = withReactContent(Swal)
 
@@ -117,6 +114,7 @@ const StepConfirmation = ({ format, players }) => {
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const tournamentName = watch('tournamentName')
+  const cloudinaryId = watch('cloudinaryId')
   const selectedPlayers = watch('selectedPlayers') || []
   const selectedTeams = watch('selectedTeams') || []
   const teamAssignments = watch('teamAssignments') || []
@@ -212,8 +210,9 @@ const StepConfirmation = ({ format, players }) => {
       }
 
       const response = await apiClient.post(`${api}/tournaments`, {
-        name: tournamentName,
+        ...(cloudinaryId && { cloudinary_id: cloudinaryId }),
         format: format.id,
+        name: tournamentName,
         players: tournamentPlayers,
         teams,
       })

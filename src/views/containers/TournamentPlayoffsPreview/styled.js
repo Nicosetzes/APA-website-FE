@@ -11,6 +11,10 @@ export const Container = styled.div`
   @media (min-width: 1366px) {
     flex-direction: row;
   }
+  & > p {
+    margin-inline: auto;
+    text-align: center;
+  }
 `
 
 export const TableTitle = styled.h2`

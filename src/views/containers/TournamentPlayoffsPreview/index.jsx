@@ -44,11 +44,19 @@ const TournamentPlayoffsPreview = () => {
 
   return (
     <Container>
-      <PlayoffsPreview matches={matches} />
-      <TableContainer>
-        <TableTitle>Tabla de mejores terceros</TableTitle>
-        <StandingsTable format="world_cup_2026_preview" standings={thirds} />
-      </TableContainer>
+      {matches.length ? (
+        <PlayoffsPreview matches={matches} />
+      ) : (
+        <p>Aún no es posible predecir los cruces</p>
+      )}
+      {thirds.length ? (
+        <TableContainer>
+          <TableTitle>Tabla de mejores terceros</TableTitle>
+          <StandingsTable format="world_cup_2026_preview" standings={thirds} />
+        </TableContainer>
+      ) : (
+        <p>Aún no es posible generar la tabla de mejores terceros</p>
+      )}
     </Container>
   )
 }

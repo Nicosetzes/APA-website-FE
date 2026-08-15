@@ -147,71 +147,89 @@ const TournamentPlayoffs = () => {
     })
   }
 
-  const playoffGeneration = () => {
-    apiClient
-      .post(`${api}/tournaments/${tournament}/playoff`, tournament)
-      .then(({ data }) => {
-        console.log(data)
-        MySwal.fire({
-          background: `rgba(28, 25, 25, 0.95)`,
-          color: `#fff`,
-          icon: 'success',
-          iconColor: '#18890e',
-          toast: true,
-          title: `¡Éxito!`,
-          position: 'top-end',
-          showConfirmButton: false,
-          text: `Playoff creado con éxito`,
-          timer: 2000,
-          timerProgressBar: true,
-          customClass: { timerProgressBar: 'toast-progress-dark' },
-          didOpen: (toast) => {
-            getPlayoffsData()
-            toast.addEventListener('mouseenter', Swal.stopTimer)
-            toast.addEventListener('mouseleave', Swal.resumeTimer)
-          },
-        })
+  const playoffGeneration = async () => {
+    const result = await MySwal.fire({
+      title: '¿Generar playoff?',
+      text: '¿Estás seguro de que quieres generar el playoff?',
+      icon: 'warning',
+      reverseButtons: true,
+      showCancelButton: true,
+      confirmButtonColor: 'var(--blue-900)',
+      cancelButtonColor: 'var(--red-700)',
+      confirmButtonText: 'Sí, generar',
+      cancelButtonText: 'Cancelar',
+      background: 'rgba(28, 25, 25, 0.95)',
+      color: '#fff',
+    })
+
+    if (!result.isConfirmed) {
+      return
+    }
+
+    try {
+      await apiClient.post(
+        `${api}/tournaments/${tournament}/playoff`,
+        tournament,
+      )
+      MySwal.fire({
+        background: `rgba(28, 25, 25, 0.95)`,
+        color: `#fff`,
+        icon: 'success',
+        iconColor: '#18890e',
+        toast: true,
+        title: `¡Éxito!`,
+        position: 'top-end',
+        showConfirmButton: false,
+        text: `Playoff creado con éxito`,
+        timer: 2000,
+        timerProgressBar: true,
+        customClass: { timerProgressBar: 'toast-progress-dark' },
+        didOpen: (toast) => {
+          getPlayoffsData()
+          toast.addEventListener('mouseenter', Swal.stopTimer)
+          toast.addEventListener('mouseleave', Swal.resumeTimer)
+        },
       })
-      .catch(({ response }) => {
-        const { data } = response
-        const { auth, message } = data
-        MySwal.fire({
-          background: `rgba(28, 25, 25, 0.95)`,
-          color: `#fff`,
-          icon: 'error',
-          iconColor: '#b30a0a',
-          text: message,
-          title: '¡Error!',
-          toast: true,
-          position: 'top-end',
-          showConfirmButton: false,
-          timer: 2000,
-          timerProgressBar: true,
-          customClass: { timerProgressBar: 'toast-progress-dark' },
-          didOpen: (toast) => {
-            toast.addEventListener('mouseenter', Swal.stopTimer)
-            toast.addEventListener('mouseleave', Swal.resumeTimer)
-          },
-          didClose: () => {
-            setLoginStatus((loginStatus) => ({
-              ...loginStatus,
-              status: auth,
-            }))
-            auth === false
-              ? navigate(
-                  {
-                    pathname: `/users/login`,
-                  },
-                  {
-                    state: { url: location.pathname },
-                  },
-                )
-              : navigate({
-                  pathname: `/tournaments/${tournament}/playin`,
-                })
-          },
-        })
+    } catch ({ response }) {
+      const { data } = response
+      const { auth, message } = data
+      MySwal.fire({
+        background: `rgba(28, 25, 25, 0.95)`,
+        color: `#fff`,
+        icon: 'error',
+        iconColor: '#b30a0a',
+        text: message,
+        title: '¡Error!',
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+        customClass: { timerProgressBar: 'toast-progress-dark' },
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer)
+          toast.addEventListener('mouseleave', Swal.resumeTimer)
+        },
+        didClose: () => {
+          setLoginStatus((loginStatus) => ({
+            ...loginStatus,
+            status: auth,
+          }))
+          auth === false
+            ? navigate(
+                {
+                  pathname: `/users/login`,
+                },
+                {
+                  state: { url: location.pathname },
+                },
+              )
+            : navigate({
+                pathname: `/tournaments/${tournament}/playin`,
+              })
+        },
       })
+    }
   }
 
   if (tournamentData && playoffData) {

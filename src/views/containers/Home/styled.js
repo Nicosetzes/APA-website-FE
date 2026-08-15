@@ -10,7 +10,7 @@ export const StyledHome = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    height: 89vh;
+    height: calc(100vh - 110px);
     isolation: isolate;
     position: relative;
     &::after {

@@ -6,7 +6,6 @@ export const StyledFooter = styled.div`
   border-top: var(--yellow-900) 10px solid;
   display: flex;
   flex-direction: ${(props) => `${props.isXS ? 'column' : 'row'}`};
-  /* height: 110px; */
   justify-content: space-between;
   padding: 1.75rem 0;
   width: 100%;

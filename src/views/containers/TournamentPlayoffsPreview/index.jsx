@@ -1,13 +1,17 @@
 import { apiClient } from 'api/axiosConfig'
-import { useParams } from 'react-router-dom'
 import { Container, TableContainer, TableTitle } from './styled'
 import { PageLoader, PlayoffsPreview, StandingsTable } from 'views/components'
 import { useCallback, useEffect, useState } from 'react'
+import { useOutletContext, useParams } from 'react-router-dom'
 
 const TournamentPlayoffsPreview = () => {
   const [matches, setMatches] = useState([])
   const [thirds, setThirds] = useState([])
   const [loading, setLoading] = useState(true)
+
+  const {
+    tournamentData: { format },
+  } = useOutletContext()
 
   const { tournament } = useParams()
 
@@ -52,7 +56,7 @@ const TournamentPlayoffsPreview = () => {
       {thirds.length ? (
         <TableContainer>
           <TableTitle>Tabla de mejores terceros</TableTitle>
-          <StandingsTable format="world_cup_2026_preview" standings={thirds} />
+          <StandingsTable format={`${format}_best_thirds`} standings={thirds} />
         </TableContainer>
       ) : (
         <p>Aún no es posible generar la tabla de mejores terceros</p>

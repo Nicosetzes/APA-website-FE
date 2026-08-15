@@ -63,7 +63,7 @@ const StandingsTable = ({ format, standings, title, tournament, onHandle }) => {
               <TableCell sx={{ color: '#fff', fontWeight: 800 }} align="center">
                 PTS
               </TableCell>
-              {format !== 'world_cup_2026_preview' && (
+              {!format.includes('best_thirds') && (
                 <TableCell
                   sx={{
                     color: '#fff',
@@ -120,7 +120,7 @@ const StandingsTable = ({ format, standings, title, tournament, onHandle }) => {
                         src={`${database}/logos/${team.id}`}
                         alt={team.name}
                       />
-                      {format === 'world_cup_2026_preview'
+                      {format.includes('best_thirds')
                         ? formatTeamName(team.name)
                         : team.name}
                       {directlyQualified && playinQualified && (
@@ -178,7 +178,7 @@ const StandingsTable = ({ format, standings, title, tournament, onHandle }) => {
                   <TableCell component="th" scope="row">
                     {points}
                   </TableCell>
-                  {format !== 'world_cup_2026_preview' && (
+                  {!format.includes('best_thirds') && (
                     <TableCell component="th" scope="row">
                       {streak ? (
                         <div className="streak">

@@ -27,12 +27,17 @@ const FORMAT_RULES = {
     { from: 7, to: 8, color: 'gold' },
     { from: 9, to: 10, color: 'burgundy' },
   ],
+  super_cup: [
+    { from: 1, to: 2, color: 'green' },
+    { from: 3, to: 3, color: 'gold' },
+  ],
+  super_cup_best_thirds: [{ from: 1, to: 4, color: 'green' }],
   world_cup: [{ from: 1, to: 2, color: 'green' }],
   world_cup_2026: [
     { from: 1, to: 2, color: 'green' },
     { from: 3, to: 3, color: 'gold' },
   ],
-  world_cup_2026_preview: [{ from: 1, to: 8, color: 'green' }],
+  world_cup_2026_best_thirds: [{ from: 1, to: 8, color: 'green' }],
 }
 
 const DEFAULT_COLOR = 'blue'
@@ -101,7 +106,7 @@ export const StyledTable = styled(Table)`
             display: flex;
             height: 100%;
             min-width: ${(props) =>
-              props.format === 'world_cup_2026_preview' ? '80px' : '160px'};
+              props.format.includes('best_thirds') ? '80px' : '160px'};
             img {
               height: 25px;
               margin-right: 0.5rem;

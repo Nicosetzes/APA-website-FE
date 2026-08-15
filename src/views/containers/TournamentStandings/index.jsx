@@ -30,12 +30,12 @@ const TournamentStandings = () => {
 
   const navigate = useNavigate()
 
-  const goToSpecificFixture = (id, param) => {
-    const group = searchParams.get('group')
+  const goToSpecificFixture = (id, param, group) => {
+    const resolvedGroup = group ?? searchParams.get('group')
     const search = new URLSearchParams()
 
-    if (group) {
-      search.set('group', group)
+    if (resolvedGroup) {
+      search.set('group', resolvedGroup)
     }
 
     if (isNaN(Number(param))) {
@@ -166,9 +166,9 @@ const TournamentStandings = () => {
                 title={group ? `Grupo ${group}` : null}
                 tournament={tournament}
                 onHandle={
-                  format === 'world_cup_2026_preview'
+                  format.includes('best_thirds')
                     ? null
-                    : goToSpecificFixture
+                    : (id, param) => goToSpecificFixture(id, param, group)
                 }
               />
             ))}

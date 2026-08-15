@@ -2,14 +2,7 @@ import { AnimatePresence } from 'framer-motion'
 import ProtectedRoute from '../ProtectedRoute'
 import { ROUTES } from '../routesConfig'
 import { TournamentLayout } from 'views/containers/Tournament/layout'
-import {
-  Calculator,
-  HallOfFame,
-  Login,
-  Matches,
-  Players,
-  Simulator,
-} from 'pages'
+import { Calculator, HallOfFame, Login, Matches, Simulator } from 'pages'
 import {
   EditListing,
   EditUpload,
@@ -22,6 +15,7 @@ import {
   TournamentPlayoffs,
   TournamentStandings,
   TournamentPlayoffsPreview,
+  TournamentStatistics,
   StatisticsGeneral,
 } from 'views/containers'
 import { Route, Routes, useLocation } from 'react-router-dom'
@@ -69,7 +63,7 @@ export const AnimatedRoutes = () => {
             />
             <Route path="playin" element={<TournamentPlayin />} />
             <Route path="playoffs" element={<TournamentPlayoffs />} />
-            <Route path="stats" element={<Players />} />
+            <Route path="stats" element={<TournamentStatistics />} />
             <Route
               path="playoff-preview"
               element={<TournamentPlayoffsPreview />}

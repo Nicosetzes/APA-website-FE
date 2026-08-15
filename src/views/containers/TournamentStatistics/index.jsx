@@ -1,21 +1,19 @@
 import { PageLoader } from 'views/components'
-import PlayerBox from './components/PlayerBox'
-import StatsLayout from './components/StatsLayout'
-import { StyledPlayers } from './styled'
+import { PlayerSelector, StatisticsContainer } from './styled'
 import { api } from 'api'
 import axios from 'axios'
 import { useOutletContext } from 'react-router-dom'
+import { PlayerBox, StatsLayout } from './components'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useParams, useSearchParams } from 'react-router-dom'
 
-const Players = () => {
+const TournamentStatistics = () => {
   const { tournament } = useParams()
 
   const [searchParams, setSearchParams] = useSearchParams()
 
   const { tournamentData } = useOutletContext()
 
-  // Set first player as active if no player is selected
   useEffect(() => {
     if (!searchParams.get('player') && tournamentData?.players?.length > 0) {
       setSearchParams({ player: tournamentData.players[0].id })
@@ -90,8 +88,8 @@ const Players = () => {
   const { players } = tournamentData
 
   return (
-    <StyledPlayers>
-      <div className="players">
+    <StatisticsContainer>
+      <PlayerSelector>
         {players.map(({ id, name }) => (
           <PlayerBox
             key={id}
@@ -101,7 +99,7 @@ const Players = () => {
             handler={() => setSearchParams({ player: id })}
           />
         ))}
-      </div>
+      </PlayerSelector>
       {playerId ? (
         playerError ? (
           <div
@@ -119,8 +117,8 @@ const Players = () => {
           <StatsLayout playerStats={playerStats} />
         ) : null
       ) : null}
-    </StyledPlayers>
+    </StatisticsContainer>
   )
 }
 
-export default Players
+export default TournamentStatistics

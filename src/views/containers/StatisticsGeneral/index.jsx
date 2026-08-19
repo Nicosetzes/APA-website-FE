@@ -66,9 +66,9 @@ const StatisticsGeneral = () => {
   }, [getStatistics])
 
   const getStreakLabel = (type) => {
-    if (type === 'W') return 'Victorias'
-    if (type === 'D') return 'Empates'
-    return 'Derrotas'
+    if (type === 'W') return 'Victoria'
+    if (type === 'D') return 'Empate'
+    return 'Derrota'
   }
 
   const getRecordLabel = (key) => {
@@ -166,7 +166,9 @@ const StatisticsGeneral = () => {
                 <div style={{ textAlign: 'center' }}>
                   <StreakBadge $type={player.current_streak.type}>
                     {player.current_streak.length}{' '}
-                    {getStreakLabel(player.current_streak.type)}
+                    {`${getStreakLabel(player.current_streak.type)}${
+                      player.current_streak.length > 1 ? 's' : ''
+                    }`}
                   </StreakBadge>
                 </div>
               </div>

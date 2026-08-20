@@ -1,5 +1,4 @@
 export { default as Calculator } from './calculator'
 export { default as HallOfFame } from './hall-of-fame'
 export { default as Login } from './login'
-export { default as Matches } from './matches'
 export { default as Simulator } from './simulator'

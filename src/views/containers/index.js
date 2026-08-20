@@ -1,6 +1,7 @@
 export { default as EditListing } from './EditListing'
 export { default as EditUpload } from './EditUpload'
 export { default as Home } from './Home'
+export { default as MatchListing } from './MatchListing'
 export { default as StatisticsGeneral } from './StatisticsGeneral'
 export { default as Tournament } from './Tournament'
 export { default as TournamentCreation } from './TournamentCreation'

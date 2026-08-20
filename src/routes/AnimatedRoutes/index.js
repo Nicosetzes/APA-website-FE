@@ -2,11 +2,12 @@ import { AnimatePresence } from 'framer-motion'
 import ProtectedRoute from '../ProtectedRoute'
 import { ROUTES } from '../routesConfig'
 import { TournamentLayout } from 'views/containers/Tournament/layout'
-import { Calculator, HallOfFame, Login, Matches, Simulator } from 'pages'
+import { Calculator, HallOfFame, Login, Simulator } from 'pages'
 import {
   EditListing,
   EditUpload,
   Home,
+  MatchListing,
   Tournament,
   TournamentCreation,
   TournamentFixture,
@@ -71,7 +72,7 @@ export const AnimatedRoutes = () => {
           </Route>
         </Route>
 
-        <Route path={ROUTES.MATCHES.path} element={<Matches />} />
+        <Route path={ROUTES.MATCHES.path} element={<MatchListing />} />
         <Route path={ROUTES.STATISTICS.path} element={<StatisticsGeneral />} />
         <Route path={ROUTES.HALL_OF_FAME.path} element={<HallOfFame />} />
 

@@ -131,7 +131,7 @@ export const RecentMatchesSection = styled.div`
   display: flex;
   flex-direction: column;
   margin: 0 auto;
-  max-width: 300px;
+  max-width: 400px;
   width: 100%;
   h2 {
     color: var(--blue-900);
@@ -147,10 +147,8 @@ export const MatchList = styled.div`
   flex-direction: column;
   gap: 1rem;
   @media (min-width: 992px) {
-    align-content: center;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(325px, 1fr));
   }
 `
 
@@ -163,11 +161,10 @@ export const MatchCard = styled.div`
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
   display: flex;
   flex-direction: column;
-  max-width: 300px;
   padding: 1rem;
   width: 100%;
-  @media (min-width: 1200px) {
-    max-width: 350px;
+  @media (min-width: 992px) {
+    flex: 1 1 300px;
   }
 `
 

@@ -115,7 +115,6 @@ const TournamentFixture = () => {
     return () => controller.abort()
   }, [api, tournament, searchParams, switchState])
 
-  // Track search params by their string representation to avoid unnecessary reruns
   const searchKey = useMemo(() => searchParams.toString(), [searchParams])
   useEffect(() => {
     const cleanup = getFixtureData()
@@ -129,18 +128,14 @@ const TournamentFixture = () => {
     [setParams],
   )
 
+  const selectedGroup = searchParams.get('group')
+
   const onHandleGroupChange = useCallback(
     (group) => {
-      // If changing groups, clear any active team filter since teams are group-specific
-      const currentGroup = searchParams.get('group')
-      if (currentGroup && currentGroup === group) {
-        setParams({ group, page: 0 })
-      } else {
-        // Passing an empty string removes the key in setParams cleaning step
-        setParams({ group, page: 0, team: '' })
-      }
+      if (selectedGroup === group) setParams({ page: 0, group: '', team: '' })
+      else setParams({ group, page: 0, team: '' })
     },
-    [setParams, searchParams],
+    [setParams, selectedGroup],
   )
 
   const resetTeamFilter = useCallback(() => {
@@ -212,11 +207,14 @@ const TournamentFixture = () => {
               <ControlsRow>
                 <GroupsTitle>Grupos</GroupsTitle>
                 <GroupButtons>
+                  <GroupButton
+                    $active={!selectedGroup}
+                    onClick={() => setParams({ page: 0, group: '', team: '' })}
+                  >
+                    Todos
+                  </GroupButton>
                   {groups.map((g) => {
-                    const active =
-                      (groups.includes(searchParams.get('group'))
-                        ? searchParams.get('group') || 'A'
-                        : groups?.[0] || 'A') === g
+                    const active = g === selectedGroup
                     return (
                       <GroupButton
                         key={g}
@@ -335,7 +333,7 @@ const TournamentFixture = () => {
                 <div style={{ fontSize: '1.25rem' }}>
                   La zona{' '}
                   <span style={{ color: 'var(--blue-900)', fontWeight: '700' }}>
-                    {searchParams.get('group') || 'A'}
+                    {selectedGroup || 'A'}
                   </span>{' '}
                   aun no cuenta con partidos
                 </div>
@@ -343,9 +341,7 @@ const TournamentFixture = () => {
                 <PrimaryLink
                   asButton
                   text="Generar partidos"
-                  onClick={() =>
-                    fixtureGeneration(searchParams.get('group') || 'A')
-                  }
+                  onClick={() => fixtureGeneration(selectedGroup || 'A')}
                 />
               </>
             ) : (

@@ -5,6 +5,7 @@ import {
   InputContainer,
   MatchContainer,
   MatchDate,
+  MatchHeader,
   MatchInfo,
   MatchScore,
   MatchView,
@@ -38,16 +39,17 @@ const Match = ({ match, getFixtureData, teamStats }) => {
   const { tournament } = useParams()
 
   const {
+    _id,
+    createdAt,
+    group,
+    played,
     playerP1,
     playerP2,
-    teamP1,
-    teamP2,
     scoreP1,
     scoreP2,
-    played,
-    _id,
+    teamP1,
+    teamP2,
     updatedAt,
-    createdAt,
   } = match
   const [matchScore, setMatchScore] = useState({
     scoreP1: scoreP1,
@@ -291,6 +293,7 @@ const Match = ({ match, getFixtureData, teamStats }) => {
           : 'var(--red-700) 3px solid',
       }}
     >
+      {group ? <MatchHeader>{`Grupo ${group}`}</MatchHeader> : null}
       <MatchView>
         <MatchInfo>
           {getPlayedMatches(teamP1.id) !== null && (
@@ -355,7 +358,6 @@ const Match = ({ match, getFixtureData, teamStats }) => {
       </MatchView>
       {updatedAt && updatedAt !== createdAt ? (
         <MatchDate>
-          Actualizado el:{' '}
           {updatedAt && format(parseISO(updatedAt), 'dd/MM/yyyy hh:mm:ss a')}{' '}
         </MatchDate>
       ) : (

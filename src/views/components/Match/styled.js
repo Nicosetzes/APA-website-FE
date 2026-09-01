@@ -41,6 +41,12 @@ export const StyledMatch = styled.form`
   }
 `
 
+export const MatchHeader = styled.div`
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+`
+
 export const MatchView = styled.div`
   align-items: center;
   display: flex;

@@ -1,8 +1,5 @@
 import { Image } from 'cloudinary-react'
 import StarIcon from '@mui/icons-material/Star'
-import { api } from 'api'
-import { apiClient } from 'api/axiosConfig'
-import axios from 'axios'
 import { motion } from 'framer-motion'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
@@ -41,6 +38,7 @@ import {
   TableRow,
 } from './styled'
 import { PageLoader, PrimaryLink } from 'views/components'
+import { apiClient, getApiErrorMessage } from 'api/axiosConfig'
 import { cloudName, database } from 'api'
 import { format as formatDate, parseISO } from 'date-fns'
 import { useEffect, useState } from 'react'
@@ -51,6 +49,7 @@ const Tournament = () => {
   const { tournamentData } = useOutletContext()
   const { tournament } = useParams()
   const [tournamentSummary, setTournamentSummary] = useState(null)
+  const [summaryError, setSummaryError] = useState(null)
   const [statsLoading, setStatsLoading] = useState(true)
 
   const MySwal = withReactContent(Swal)
@@ -58,12 +57,15 @@ const Tournament = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const { data } = await axios.get(
-          `${api}/tournaments/${tournament}/summary`,
+        const { data } = await apiClient.get(
+          `/tournaments/${tournament}/summary`,
         )
         setTournamentSummary(data)
-      } catch (err) {
-        console.error('Error fetching tournament stats:', err)
+        setSummaryError(null)
+      } catch (error) {
+        setSummaryError(
+          getApiErrorMessage(error, 'No se pudo cargar el resumen del torneo'),
+        )
       } finally {
         setStatsLoading(false)
       }
@@ -72,6 +74,9 @@ const Tournament = () => {
   }, [tournament])
 
   if (statsLoading) return <PageLoader />
+  if (summaryError) {
+    return <div style={{ margin: '2rem auto' }}>{summaryError}</div>
+  }
 
   const { cloudinary_id, format, legacy, name, ongoing, outcome, teams } =
     tournamentData
@@ -116,10 +121,9 @@ const Tournament = () => {
       // Refresh page to show updated data
       setTimeout(() => window.location.reload(), 1500)
     } catch (err) {
-      console.error('Error finishing tournament:', err)
       MySwal.fire({
         title: 'Error',
-        text: 'Error al finalizar el torneo',
+        text: getApiErrorMessage(err, 'Error al finalizar el torneo'),
         icon: 'error',
         background: 'rgba(28, 25, 25, 0.95)',
         color: '#fff',

@@ -2,23 +2,34 @@ import { Image } from 'cloudinary-react'
 import { Link } from 'react-router-dom'
 import { PageLoader } from 'views/components'
 import { StyledTournamentsContainer } from './styled'
-import axios from 'axios'
 import { motion } from 'framer-motion'
-import { api, database, cloudName } from 'api'
+import { apiClient, getApiErrorMessage } from 'api/axiosConfig'
+import { database, cloudName } from 'api'
 import { useEffect, useState } from 'react'
 
 const TournamentListing = () => {
   const [tournaments, setTournaments] = useState()
+  const [tournamentsError, setTournamentsError] = useState(null)
 
   const getTournamentsData = async () => {
-    const tournaments = await axios.get(`${api}/tournaments`)
-
-    setTournaments(tournaments.data)
+    try {
+      const response = await apiClient.get('/tournaments')
+      setTournaments(response.data)
+      setTournamentsError(null)
+    } catch (error) {
+      setTournamentsError(
+        getApiErrorMessage(error, 'No se pudieron cargar los torneos'),
+      )
+    }
   }
 
   useEffect(() => {
     getTournamentsData()
   }, [])
+
+  if (tournamentsError) {
+    return <div style={{ margin: '2rem auto' }}>{tournamentsError}</div>
+  }
 
   if (tournaments) {
     return (

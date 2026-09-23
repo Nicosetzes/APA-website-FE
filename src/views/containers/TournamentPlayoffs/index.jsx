@@ -23,12 +23,20 @@ const TournamentPlayoffs = () => {
 
   const [playoffsTableData, setPlayoffsTableData] = useState()
   const [playoffData, setPlayoffData] = useState()
+  const [playoffError, setPlayoffError] = useState(null)
 
   const getPlayoffsTableData = () => {
-    console.log('Traigo la playoff table del torneo')
     apiClient
       .get(`${api}/tournaments/${tournament}/playoffs/table`)
       .then(({ data }) => setPlayoffsTableData(data))
+      .catch((error) => {
+        setPlayoffError(
+          getApiErrorMessage(
+            error,
+            'No se pudo cargar la tabla previa al playoff',
+          ),
+        )
+      })
   }
 
   const getPlayoffsData = () => {
@@ -36,9 +44,15 @@ const TournamentPlayoffs = () => {
       .get(`${api}/tournaments/${tournament}/playoff/matches`)
       .then(({ data }) => {
         setPlayoffData(data)
+        setPlayoffError(null)
         if (!data.matches || data.matches.length === 0) {
           getPlayoffsTableData()
         }
+      })
+      .catch((error) => {
+        setPlayoffError(
+          getApiErrorMessage(error, 'No se pudo cargar el playoff'),
+        )
       })
   }
 
@@ -56,7 +70,7 @@ const TournamentPlayoffs = () => {
       return arr
     }
 
-    if (format === 'playoff') {
+    if (format === 'playoff' || format === 'world_cup_2026') {
       switch (componentRound) {
         case 1:
           expectedIds = range(1, 16)
@@ -206,8 +220,17 @@ const TournamentPlayoffs = () => {
     }
   }
 
+  if (playoffError) {
+    return (
+      <div style={{ margin: '2rem auto', textAlign: 'center' }}>
+        {playoffError}
+      </div>
+    )
+  }
+
   if (tournamentData && playoffData) {
     const { format } = tournamentData
+    const hasRoundOf32 = format === 'playoff' || format === 'world_cup_2026'
     const { matches } = playoffData
     const standings = playoffsTableData?.standings || []
 
@@ -240,7 +263,7 @@ const TournamentPlayoffs = () => {
             }}
           >
             {/* Round of 32 - Only for playoff format */}
-            {format === 'playoff' && (
+            {hasRoundOf32 && (
               <PlayoffRound
                 matches={getMatchesForRound(format, matches, 1)}
                 round={1}
@@ -253,9 +276,9 @@ const TournamentPlayoffs = () => {
               matches={getMatchesForRound(
                 format,
                 matches,
-                format === 'playoff' ? 2 : 1,
+                hasRoundOf32 ? 2 : 1,
               )}
-              round={format === 'playoff' ? 2 : 1}
+              round={hasRoundOf32 ? 2 : 1}
               getData={getPlayoffsData}
               isThisTheFinal={false}
             />
@@ -264,9 +287,9 @@ const TournamentPlayoffs = () => {
               matches={getMatchesForRound(
                 format,
                 matches,
-                format === 'playoff' ? 3 : 2,
+                hasRoundOf32 ? 3 : 2,
               )}
-              round={format === 'playoff' ? 3 : 2}
+              round={hasRoundOf32 ? 3 : 2}
               getData={getPlayoffsData}
               isThisTheFinal={false}
             />
@@ -275,9 +298,9 @@ const TournamentPlayoffs = () => {
               matches={getMatchesForRound(
                 format,
                 matches,
-                format === 'playoff' ? 4 : 3,
+                hasRoundOf32 ? 4 : 3,
               )}
-              round={format === 'playoff' ? 4 : 3}
+              round={hasRoundOf32 ? 4 : 3}
               getData={getPlayoffsData}
               isThisTheFinal={false}
             />
@@ -286,9 +309,9 @@ const TournamentPlayoffs = () => {
               matches={getMatchesForRound(
                 format,
                 matches,
-                format === 'playoff' ? 5 : 4,
+                hasRoundOf32 ? 5 : 4,
               )}
-              round={format === 'playoff' ? 5 : 4}
+              round={hasRoundOf32 ? 5 : 4}
               getData={getPlayoffsData}
               isThisTheFinal={true}
             />
@@ -305,7 +328,7 @@ const TournamentPlayoffs = () => {
                     <FinalistBox match={matches.at(-1)} />
                   </div>
                 )
-              : format === 'playoff'
+              : hasRoundOf32
               ? matches.filter(({ outcome }) => outcome).length == 31 && (
                   <div
                     style={{
@@ -345,14 +368,20 @@ const TournamentPlayoffs = () => {
             }}
           >
             <div style={{ fontSize: '1.25rem' }}>
-              No existen partidos programados para el Playoff
+              {format === 'playoff'
+                ? 'El bracket inicial no está disponible; este formato lo genera al crear el torneo'
+                : 'No existen partidos programados para el Playoff'}
             </div>
-            <div style={{ margin: '0.5rem auto' }}>¿Desea generarlos?</div>
-            <PrimaryLink
-              asButton
-              text={'Generar Playoff'}
-              onClick={() => playoffGeneration()}
-            />
+            {format !== 'playoff' && (
+              <>
+                <div style={{ margin: '0.5rem auto' }}>¿Desea generarlos?</div>
+                <PrimaryLink
+                  asButton
+                  text={'Generar Playoff'}
+                  onClick={() => playoffGeneration()}
+                />
+              </>
+            )}
           </div>
         )}
       </motion.div>

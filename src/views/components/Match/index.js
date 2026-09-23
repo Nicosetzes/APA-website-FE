@@ -185,8 +185,7 @@ const Match = ({ match, getFixtureData, teamStats }) => {
             `${api}/tournaments/${tournament}/matches/delete-game/${_id}`,
             {},
           )
-          .then(({ data }) => {
-            console.log(data)
+          .then(() => {
             MySwal.fire({
               background: `rgba(28, 25, 25, 0.95)`,
               color: `#fff`,

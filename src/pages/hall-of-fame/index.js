@@ -5,10 +5,12 @@ import TeamRankings from './components/TeamRankings'
 import { api } from 'api'
 import axios from 'axios'
 import { FaceToFaceTable, PrimaryLink } from 'views/components'
+import { apiClient, getApiErrorMessage } from 'api/axiosConfig'
 import { useState, useEffect } from 'react'
 
 const Trophies = () => {
   const [tournamentsData, setTournamentsData] = useState(null)
+  const [tournamentsError, setTournamentsError] = useState(null)
   const [teamsData, setTeamsData] = useState(null)
   const [faceToFaceData, setFaceToFaceData] = useState(null)
   const [teamsStatsLoading, setTeamsStatsLoading] = useState(false)
@@ -17,9 +19,17 @@ const Trophies = () => {
   const [faceToFaceButtonState, setFaceToFaceButtonState] = useState(true)
 
   const getTournamentsData = () => {
-    axios.get(`${api}/tournaments?status=finalized`).then((response) => {
-      setTournamentsData(response.data)
-    })
+    apiClient
+      .get('/tournaments', { params: { status: 'finalized' } })
+      .then((response) => {
+        setTournamentsData(response.data)
+        setTournamentsError(null)
+      })
+      .catch((error) => {
+        setTournamentsError(
+          getApiErrorMessage(error, 'No se pudieron cargar los torneos'),
+        )
+      })
   }
 
   const getTeamsStats = () => {
@@ -58,6 +68,10 @@ const Trophies = () => {
   useEffect(() => {
     getTournamentsData()
   }, [])
+
+  if (tournamentsError) {
+    return <div style={{ margin: '2rem auto' }}>{tournamentsError}</div>
+  }
 
   return (
     <>

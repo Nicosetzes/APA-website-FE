@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react'
-import { useLocation, useParams } from 'react-router-dom'
-import { api, database } from 'api'
-import axios from 'axios'
 import CalculatorStandingsTable from './components/CalculatorStandingsTable'
-import IconButton from '@mui/material/IconButton'
 import ClearIcon from '@mui/icons-material/Clear'
+import IconButton from '@mui/material/IconButton'
+import axios from 'axios'
+import { getApiErrorMessage } from 'api/axiosConfig'
+import { api, database } from 'api'
+import { useLocation, useParams } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 import { PageLoader } from 'views/components'
 
 const Calculator = () => {
@@ -20,8 +21,19 @@ const Calculator = () => {
 
   const [calculatorStandings, setCalculatorStandings] = useState()
 
+  const [calculatorError, setCalculatorError] = useState(null)
+
   useEffect(() => {
     const fetchData = async () => {
+      if (!Array.isArray(teams) || teams.length === 0) {
+        setCalculatorError(
+          'Elegí los equipos desde la tabla de posiciones para usar la calculadora',
+        )
+        return
+      }
+
+      setCalculatorError(null)
+
       await axios
         .get(`${api}/tournaments/${tournament}/calculator`, {
           params: {
@@ -33,10 +45,11 @@ const Calculator = () => {
           setCalculatorTeams(teams)
           setCalculatorStandings(standings)
         })
-      // .catch((err) => {
-      //   console.log(err)
-      //   navigate('/')
-      // })
+        .catch((error) => {
+          setCalculatorError(
+            getApiErrorMessage(error, 'No se pudo cargar la calculadora'),
+          )
+        })
     }
     fetchData()
   }, [])
@@ -486,6 +499,25 @@ const Calculator = () => {
           calculatorTeams={calculatorTeams}
         />
       </>
+    )
+  } else if (calculatorError) {
+    return (
+      <div
+        role="alert"
+        style={{
+          background: '#fee',
+          border: '1px solid #c00',
+          borderRadius: '8px',
+          color: '#c00',
+          fontWeight: 600,
+          margin: '2rem auto',
+          maxWidth: '40rem',
+          padding: '1rem',
+          textAlign: 'center',
+        }}
+      >
+        {calculatorError}
+      </div>
     )
   } else {
     return <PageLoader />

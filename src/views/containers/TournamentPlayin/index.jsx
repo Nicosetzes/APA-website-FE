@@ -14,11 +14,20 @@ const TournamentPlayin = () => {
   const { tournament } = useParams()
   const { tournamentData } = useOutletContext()
   const [playinData, setPlayinData] = useState()
+  const [playinError, setPlayinError] = useState(null)
 
   const getPlayinData = () => {
     apiClient
       .get(`${api}/tournaments/${tournament}/playin/matches`)
-      .then(({ data }) => setPlayinData(data))
+      .then(({ data }) => {
+        setPlayinData(data)
+        setPlayinError(null)
+      })
+      .catch((error) => {
+        setPlayinError(
+          getApiErrorMessage(error, 'No se pudo cargar el play-in'),
+        )
+      })
   }
 
   useEffect(() => {
@@ -122,6 +131,14 @@ const TournamentPlayin = () => {
         },
       })
     }
+  }
+
+  if (playinError) {
+    return (
+      <div style={{ margin: '2rem auto', textAlign: 'center' }}>
+        {playinError}
+      </div>
+    )
   }
 
   if (tournamentData && playinData) {

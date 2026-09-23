@@ -1,29 +1,41 @@
 import { PageLoader } from 'views/components'
 import TournamentTabs from '../../components/TournamentTabs'
-import { api } from 'api'
-import { apiClient } from 'api/axiosConfig'
-import { Outlet, useNavigate , useParams } from 'react-router-dom'
+import { Outlet, useParams } from 'react-router-dom'
+import { apiClient, getApiErrorMessage } from 'api/axiosConfig'
 import { useEffect, useState } from 'react'
 
 const TournamentLayout = () => {
   const { tournament } = useParams()
-  const navigate = useNavigate()
   const [tournamentData, setTournamentData] = useState(null)
+  const [tournamentError, setTournamentError] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const fetchTournament = async () => {
+      setLoading(true)
       try {
-        const { data } = await apiClient.get(`${api}/tournaments/${tournament}`)
+        const { data } = await apiClient.get(`/tournaments/${tournament}`)
         setTournamentData(data)
+        setTournamentError(null)
+      } catch (error) {
+        setTournamentError(
+          getApiErrorMessage(error, 'No se pudo cargar el torneo'),
+        )
+      } finally {
         setLoading(false)
-      } catch (err) {
-        console.error(err)
-        navigate('/')
       }
     }
     fetchTournament()
   }, [tournament])
+
+  if (loading) return <PageLoader />
+  if (tournamentError) {
+    return (
+      <div style={{ margin: '2rem auto', textAlign: 'center' }}>
+        {tournamentError}
+      </div>
+    )
+  }
 
   return (
     <div
@@ -38,10 +50,10 @@ const TournamentLayout = () => {
           tournamentId={tournament}
         />
       )}
-      {loading || !tournamentData ? (
-        <PageLoader />
-      ) : (
+      {tournamentData ? (
         <Outlet context={{ tournamentData }} />
+      ) : (
+        <div style={{ margin: '2rem auto' }}>No se encontró el torneo</div>
       )}
     </div>
   )

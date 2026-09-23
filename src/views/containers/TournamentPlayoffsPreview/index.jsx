@@ -1,6 +1,6 @@
-import { apiClient } from 'api/axiosConfig'
 import { Container, TableContainer, TableTitle } from './styled'
 import { PageLoader, PlayoffsPreview, StandingsTable } from 'views/components'
+import { apiClient, getApiErrorMessage } from 'api/axiosConfig'
 import { useCallback, useEffect, useState } from 'react'
 import { useOutletContext, useParams } from 'react-router-dom'
 
@@ -8,6 +8,7 @@ const TournamentPlayoffsPreview = () => {
   const [matches, setMatches] = useState([])
   const [thirds, setThirds] = useState([])
   const [loading, setLoading] = useState(true)
+  const [previewError, setPreviewError] = useState(null)
 
   const {
     tournamentData: { format },
@@ -18,6 +19,7 @@ const TournamentPlayoffsPreview = () => {
   const fetchPlayoffPreview = useCallback(
     async (signal) => {
       setLoading(true)
+      setPreviewError(null)
 
       try {
         const {
@@ -29,7 +31,10 @@ const TournamentPlayoffsPreview = () => {
         setMatches(bracketPreview)
         setThirds(thirdsTable)
       } catch (err) {
-        console.error(err)
+        if (err?.name === 'CanceledError' || err?.name === 'AbortError') return
+        setPreviewError(
+          getApiErrorMessage(err, 'No se pudieron calcular los cruces'),
+        )
       } finally {
         setLoading(false)
       }
@@ -45,6 +50,14 @@ const TournamentPlayoffsPreview = () => {
   }, [fetchPlayoffPreview])
 
   if (loading) return <PageLoader />
+
+  if (previewError) {
+    return (
+      <Container>
+        <p role="alert">{previewError}</p>
+      </Container>
+    )
+  }
 
   return (
     <Container>

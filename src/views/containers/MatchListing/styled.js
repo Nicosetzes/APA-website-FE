@@ -139,3 +139,14 @@ export const PaginationWrapper = styled.div`
   justify-content: center;
   padding: 1.5rem 0;
 `
+
+export const ErrorMessage = styled.div`
+  background: #fee;
+  border: 1px solid #c00;
+  border-radius: 8px;
+  color: #c00;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  text-align: center;
+`

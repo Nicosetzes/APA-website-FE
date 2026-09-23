@@ -88,22 +88,26 @@ const FaceToFaceTable = ({ stats }) => {
                   {scoringDifference}
                 </TableCell>
                 <TableCell component="th" scope="row">
-                  <div className="teamAndLogoWrapper">
-                    <Tooltip title={bestWin.teamThatWon.name}>
-                      <img
-                        src={`${database}/logos/${bestWin.teamThatWon.id}`}
-                        alt={bestWin.teamThatWon.name}
-                      />
-                    </Tooltip>{' '}
-                    {bestWin.scoreFromTeamThatWon} -{' '}
-                    {bestWin.scoreFromTeamThatLost}{' '}
-                    <Tooltip title={bestWin.teamThatLost.name}>
-                      <img
-                        src={`${database}/logos/${bestWin.teamThatLost.id}`}
-                        alt={bestWin.teamThatLost.name}
-                      />
-                    </Tooltip>
-                  </div>
+                  {bestWin?.teamThatWon && bestWin?.teamThatLost ? (
+                    <div className="teamAndLogoWrapper">
+                      <Tooltip title={bestWin.teamThatWon.name}>
+                        <img
+                          src={`${database}/logos/${bestWin.teamThatWon.id}`}
+                          alt={bestWin.teamThatWon.name}
+                        />
+                      </Tooltip>{' '}
+                      {bestWin.scoreFromTeamThatWon} -{' '}
+                      {bestWin.scoreFromTeamThatLost}{' '}
+                      <Tooltip title={bestWin.teamThatLost.name}>
+                        <img
+                          src={`${database}/logos/${bestWin.teamThatLost.id}`}
+                          alt={bestWin.teamThatLost.name}
+                        />
+                      </Tooltip>
+                    </div>
+                  ) : (
+                    <span>Sin victorias</span>
+                  )}
                 </TableCell>
               </TableRow>
             ),

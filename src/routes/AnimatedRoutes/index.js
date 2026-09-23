@@ -77,7 +77,14 @@ export const AnimatedRoutes = () => {
         <Route path={ROUTES.HALL_OF_FAME.path} element={<HallOfFame />} />
 
         <Route path="/edits">
-          <Route index element={<EditListing />} />
+          <Route
+            index
+            element={
+              <ProtectedRoute>
+                <EditListing />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="upload"
             element={

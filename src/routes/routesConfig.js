@@ -67,7 +67,7 @@ export const ROUTES = {
   },
   EDITS: {
     path: '/edits',
-    isPublic: true,
+    isPublic: false,
   },
   EDITS_UPLOAD: {
     path: '/edits/upload',

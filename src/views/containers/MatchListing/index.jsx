@@ -1,11 +1,11 @@
 import Pagination from '@mui/material/Pagination'
 import { api } from 'api'
-import { apiClient } from 'api/axiosConfig'
 import { motion } from 'framer-motion'
 import { useMediaQuery } from 'react-responsive'
 import { useSearchParams } from 'react-router-dom'
 import {
   ClearButton,
+  ErrorMessage,
   FilterCard,
   FilterGrid,
   FilterSectionTitle,
@@ -19,6 +19,7 @@ import {
   StyledSelect,
 } from './styled'
 import { MatchesTable, PageLoader } from 'views/components'
+import { apiClient, getApiErrorMessage } from 'api/axiosConfig'
 import { useCallback, useEffect, useState } from 'react'
 
 const MatchListing = () => {
@@ -26,6 +27,7 @@ const MatchListing = () => {
   const [searchParams, setSearchParams] = useSearchParams()
 
   const [data, setData] = useState(null)
+  const [error, setError] = useState(null)
   const [loading, setLoading] = useState(true)
   const [players, setPlayers] = useState([])
   const [tournaments, setTournaments] = useState([])
@@ -126,12 +128,16 @@ const MatchListing = () => {
 
   useEffect(() => {
     setLoading(true)
+    setError(null)
     const currentParams = new URLSearchParams(searchParams)
 
     apiClient
       .get(`${api}/matches?${currentParams.toString()}`)
       .then(({ data }) => setData(data))
-      .catch((err) => console.error('Error cargando partidos:', err))
+      .catch((err) => {
+        setData(null)
+        setError(getApiErrorMessage(err, 'No se pudieron cargar los partidos'))
+      })
       .finally(() => setLoading(false))
   }, [searchParams])
 
@@ -296,6 +302,7 @@ const MatchListing = () => {
             </FilterGrid>
           </div>
         </FilterCard>
+        {error && <ErrorMessage role="alert">{error}</ErrorMessage>}
         {loading ? (
           <PageLoader />
         ) : (

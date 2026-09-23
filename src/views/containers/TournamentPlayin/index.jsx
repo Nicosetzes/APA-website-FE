@@ -1,21 +1,15 @@
 import Swal from 'sweetalert2'
-import { apiClient } from 'api/axiosConfig'
 import { motion } from 'framer-motion'
-import { useLogin } from 'context/LoginContext'
 import { useOutletContext } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import withReactContent from 'sweetalert2-react-content'
 import { PageLoader, PlayinRound, PrimaryLink } from 'views/components'
 import { api, database } from 'api'
-import { useNavigate, useParams } from 'react-router-dom'
+import { apiClient, getApiErrorMessage } from 'api/axiosConfig'
 import { useEffect, useState } from 'react'
 
 const TournamentPlayin = () => {
   const MySwal = withReactContent(Swal)
-
-  const navigate = useNavigate()
-
-  const login = useLogin()
-  const { setLoginStatus } = login
 
   const { tournament } = useParams()
   const { tournamentData } = useOutletContext()
@@ -104,9 +98,11 @@ const TournamentPlayin = () => {
           toast.addEventListener('mouseleave', Swal.resumeTimer)
         },
       })
-    } catch ({ response }) {
-      const { data } = response
-      const { auth, message } = data
+    } catch (error) {
+      const message = getApiErrorMessage(
+        error,
+        'No se pudo conectar con el servidor',
+      )
       MySwal.fire({
         background: `rgba(28, 25, 25, 0.95)`,
         color: `#fff`,
@@ -119,25 +115,10 @@ const TournamentPlayin = () => {
         showConfirmButton: false,
         timer: 2000,
         timerProgressBar: true,
-        customClass: { timerProgressBar: 'toast-progress-dark' }, // Definido en index.css //
+        customClass: { timerProgressBar: 'toast-progress-dark' },
         didOpen: (toast) => {
           toast.addEventListener('mouseenter', Swal.stopTimer)
           toast.addEventListener('mouseleave', Swal.resumeTimer)
-        },
-        didClose: () => {
-          setLoginStatus((loginStatus) => ({
-            ...loginStatus,
-            status: auth,
-          }))
-          auth === false &&
-            navigate(
-              {
-                pathname: `/users/login`,
-              },
-              {
-                state: { url: location.pathname },
-              },
-            )
         },
       })
     }

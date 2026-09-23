@@ -6,27 +6,22 @@ import { StyledSignIn } from './styled'
 import Swal from 'sweetalert2'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
-import { api } from 'api'
-import axios from 'axios'
-import { useLogin } from 'context/LoginContext'
+import { useAuth } from 'context/AuthContext'
 import { useState } from 'react'
 import withReactContent from 'sweetalert2-react-content'
+import { apiClient, getApiErrorMessage } from 'api/axiosConfig'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 const SignIn = () => {
   const MySwal = withReactContent(Swal)
-
   const [loginData, setLoginData] = useState({})
-
   const location = useLocation()
-
   const navigate = useNavigate()
-
-  const previousUrl = location?.state?.from?.pathname || location?.state?.url
-
-  const login = useLogin()
-
-  const { setLoginStatus } = login
+  const { startSession } = useAuth()
+  const from = location.state?.from
+  const previousUrl = from
+    ? `${from.pathname || ''}${from.search || ''}${from.hash || ''}`
+    : '/'
 
   const handleLoginChange = (event) => {
     const { name, value } = event.target
@@ -35,68 +30,56 @@ const SignIn = () => {
 
   const handleLoginSubmit = async (event) => {
     event.preventDefault()
-    await axios
-      .post(`${api}/users/login`, { ...loginData })
-      .then(({ data }) => {
-        const { auth, token, user, message } = data
 
-        localStorage.setItem('authToken', token)
-        localStorage.setItem('user', JSON.stringify(user))
+    try {
+      const { data } = await apiClient.post('/users/login', { ...loginData })
+      const { token, user, message } = data
 
-        MySwal.fire({
-          background: `rgba(28, 25, 25, 0.95)`,
-          color: `#fff`,
-          icon: 'success',
-          iconColor: '#18890e',
-          toast: true,
-          title: message,
-          position: 'top-end',
-          showConfirmButton: false,
-          text: 'Inicio de sesión exitoso! Será redirigido en breve...',
-          timer: 1000,
-          timerProgressBar: true,
-          customClass: { timerProgressBar: 'toast-progress-dark' },
-          didOpen: (toast) => {
-            toast.addEventListener('mouseenter', Swal.stopTimer)
-            toast.addEventListener('mouseleave', Swal.resumeTimer)
-          },
-          didClose: () => {
-            setLoginStatus({
-              status: auth,
-              user,
-              token,
-            })
-            navigate({
-              pathname: previousUrl || '/',
-            })
-          },
-        })
+      startSession({ token, user, validation: 'server' })
+
+      MySwal.fire({
+        background: `rgba(28, 25, 25, 0.95)`,
+        color: `#fff`,
+        icon: 'success',
+        iconColor: '#18890e',
+        toast: true,
+        title: message,
+        position: 'top-end',
+        showConfirmButton: false,
+        text: 'Inicio de sesión exitoso! Será redirigido en breve...',
+        timer: 1000,
+        timerProgressBar: true,
+        customClass: { timerProgressBar: 'toast-progress-dark' },
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer)
+          toast.addEventListener('mouseleave', Swal.resumeTimer)
+        },
+        didClose: () => navigate(previousUrl || '/', { replace: true }),
       })
-      .catch(({ response }) => {
-        const { data } = response
-        const { auth, message } = data
-        MySwal.fire({
-          background: `rgba(28, 25, 25, 0.95)`,
-          color: `#fff`,
-          icon: 'error',
-          iconColor: '#b30a0a',
-          text: message,
-          title: '¡Error!',
-          toast: true,
-          position: 'top-end',
-          showConfirmButton: false,
-          timer: 1500,
-          timerProgressBar: true,
-          customClass: { timerProgressBar: 'toast-progress-dark' },
-          didOpen: (toast) => {
-            toast.addEventListener('mouseenter', Swal.stopTimer)
-            toast.addEventListener('mouseleave', Swal.resumeTimer)
-          },
-          didClose: () => {
-            setLoginStatus((loginStatus) => ({ ...loginStatus, status: auth }))
-          },
-        })
+    } catch (error) {
+      const message = getApiErrorMessage(
+        error,
+        'No se pudo conectar con el servidor',
+      )
+      MySwal.fire({
+        background: `rgba(28, 25, 25, 0.95)`,
+        color: `#fff`,
+        icon: 'error',
+        iconColor: '#b30a0a',
+        text: message,
+        title: '¡Error!',
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 1500,
+        timerProgressBar: true,
+        customClass: { timerProgressBar: 'toast-progress-dark' },
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer)
+          toast.addEventListener('mouseleave', Swal.resumeTimer)
+        },
       })
+    }
   }
 
   return (

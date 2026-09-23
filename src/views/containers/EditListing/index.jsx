@@ -4,7 +4,6 @@ import { Loader } from 'views/components'
 import { Pagination } from '@mui/material'
 import Swal from 'sweetalert2'
 import { api } from 'api'
-import { apiClient } from 'api/axiosConfig'
 import { motion } from 'framer-motion'
 import withReactContent from 'sweetalert2-react-content'
 import {
@@ -31,6 +30,7 @@ import {
   PaginationContainer,
   PaginationInfo,
 } from './styled'
+import { apiClient, getApiErrorMessage } from 'api/axiosConfig'
 import { format, parseISO } from 'date-fns'
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
@@ -130,9 +130,11 @@ const Edits = () => {
               },
             })
           })
-          .catch(({ response }) => {
-            const message =
-              response?.data?.message || 'Error al eliminar el edit'
+          .catch((error) => {
+            const message = getApiErrorMessage(
+              error,
+              'Error al eliminar el edit',
+            )
             MySwal.fire({
               background: 'rgba(28, 25, 25, 0.95)',
               color: '#fff',

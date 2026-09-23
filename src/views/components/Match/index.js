@@ -18,23 +18,17 @@ import {
   VersusSpan,
 } from './styled'
 import Swal from 'sweetalert2'
-import { apiClient } from 'api/axiosConfig'
-import { useLogin } from 'context/LoginContext'
 import { useState } from 'react'
 import withReactContent from 'sweetalert2-react-content'
 import { api, database } from 'api'
+import { apiClient, getApiErrorMessage } from 'api/axiosConfig'
 import { format, parseISO } from 'date-fns'
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import { useParams, useSearchParams } from 'react-router-dom'
 
 const Match = ({ match, getFixtureData, teamStats }) => {
   const MySwal = withReactContent(Swal)
 
   const [searchParams, setSearchParams] = useSearchParams()
-
-  const navigate = useNavigate()
-
-  const login = useLogin()
-  const { setLoginStatus } = login
 
   const { tournament } = useParams()
 
@@ -103,8 +97,7 @@ const Match = ({ match, getFixtureData, teamStats }) => {
 
     apiClient
       .put(`${api}/tournaments/${tournament}/matches/update-game/${_id}`, data)
-      .then(({ data }) => {
-        // ¿Debería hacer algo con data? //
+      .then(() => {
         MySwal.fire({
           background: `rgba(28, 25, 25, 0.95)`,
           color: `#fff`,
@@ -126,9 +119,11 @@ const Match = ({ match, getFixtureData, teamStats }) => {
           },
         })
       })
-      .catch(({ response }) => {
-        const { data } = response
-        const { auth, message } = data
+      .catch((error) => {
+        const message = getApiErrorMessage(
+          error,
+          'No se pudo conectar con el servidor',
+        )
         MySwal.fire({
           background: `rgba(28, 25, 25, 0.95)`,
           color: `#fff`,
@@ -141,25 +136,10 @@ const Match = ({ match, getFixtureData, teamStats }) => {
           showConfirmButton: false,
           timer: 2000,
           timerProgressBar: true,
-          customClass: { timerProgressBar: 'toast-progress-dark' }, // Definido en index.css //
+          customClass: { timerProgressBar: 'toast-progress-dark' },
           didOpen: (toast) => {
             toast.addEventListener('mouseenter', Swal.stopTimer)
             toast.addEventListener('mouseleave', Swal.resumeTimer)
-          },
-          didClose: () => {
-            setLoginStatus((loginStatus) => ({
-              ...loginStatus,
-              status: auth,
-            }))
-            auth === false &&
-              navigate(
-                {
-                  pathname: `/users/login`,
-                },
-                {
-                  state: { url: location.pathname },
-                },
-              )
           },
         })
       })
@@ -227,9 +207,11 @@ const Match = ({ match, getFixtureData, teamStats }) => {
               },
             })
           })
-          .catch(({ response }) => {
-            const { data } = response
-            const { auth, message } = data
+          .catch((error) => {
+            const message = getApiErrorMessage(
+              error,
+              'No se pudo conectar con el servidor',
+            )
             MySwal.fire({
               background: `rgba(28, 25, 25, 0.95)`,
               color: `#fff`,
@@ -242,27 +224,10 @@ const Match = ({ match, getFixtureData, teamStats }) => {
               showConfirmButton: false,
               timer: 2000,
               timerProgressBar: true,
-              customClass: { timerProgressBar: 'toast-progress-dark' }, // Definido en index.css //
+              customClass: { timerProgressBar: 'toast-progress-dark' },
               didOpen: (toast) => {
                 toast.addEventListener('mouseenter', Swal.stopTimer)
                 toast.addEventListener('mouseleave', Swal.resumeTimer)
-              },
-              didClose: () => {
-                setLoginStatus((loginStatus) => ({
-                  ...loginStatus,
-                  status: auth,
-                }))
-                /* auth ==== false solo cuando el endpoint del BE corra el middleware isAuth() y este falle */
-                /* Por lo tanto, redirijo a /users/login */
-                auth === false &&
-                  navigate(
-                    {
-                      pathname: `/users/login`,
-                    },
-                    {
-                      state: { url: location.pathname },
-                    } /* Adjunto info de la ruta actual, para luego volver a ella en caso de login exitoso */,
-                  )
               },
             })
           })

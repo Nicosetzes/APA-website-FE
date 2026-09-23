@@ -150,7 +150,7 @@ const TournamentFixture = () => {
       .post(`${api}/tournaments/${tournament}/fixture`, {
         group,
       })
-      .then(({ data }) => {
+      .then(() => {
         MySwal.fire({
           background: `rgba(28, 25, 25, 0.95)`,
           color: `#fff`,

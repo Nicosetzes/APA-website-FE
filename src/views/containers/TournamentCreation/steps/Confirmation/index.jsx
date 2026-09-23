@@ -1,5 +1,4 @@
 import Swal from 'sweetalert2'
-import { apiClient } from 'api/axiosConfig'
 import styled from 'styled-components'
 import { useFormContext } from 'react-hook-form'
 import { useState } from 'react'
@@ -18,6 +17,7 @@ import {
   SubmitButton,
 } from './styled'
 import { api, database } from 'api'
+import { apiClient, getApiErrorMessage } from 'api/axiosConfig'
 
 const MySwal = withReactContent(Swal)
 
@@ -239,7 +239,7 @@ const StepConfirmation = ({ format, players }) => {
         icon: 'error',
         iconColor: '#b30a0a',
         title: 'Error al crear el torneo',
-        text: error.response?.data?.message || 'Por favor intenta nuevamente',
+        text: getApiErrorMessage(error, 'Por favor intenta nuevamente'),
         toast: true,
         position: 'top-end',
         showConfirmButton: false,

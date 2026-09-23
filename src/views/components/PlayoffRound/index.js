@@ -1,30 +1,23 @@
 import Swal from 'sweetalert2'
 import { api } from 'api'
-import { apiClient } from 'api/axiosConfig'
-import { useLogin } from 'context/LoginContext'
+import { useParams } from 'react-router-dom'
 import withReactContent from 'sweetalert2-react-content'
 import { PlayoffMatch, PrimaryLink } from 'views/components'
 import { PlayoffRoundContainer, RoundMatches, RoundName } from './styled'
-import { useNavigate, useParams } from 'react-router-dom'
+import { apiClient, getApiErrorMessage } from 'api/axiosConfig'
 
 const PlayoffRound = ({ matches, round, getData, isThisTheFinal }) => {
   const { tournament } = useParams()
-
   const MySwal = withReactContent(Swal)
 
-  const navigate = useNavigate()
-
-  const login = useLogin()
-  const { setLoginStatus } = login
-
-  const checkForNewPlayoffMatches = (round) => {
+  const checkForNewPlayoffMatches = (roundNumber) => {
     apiClient
       .post(`${api}/tournaments/${tournament}/playoff/update`, {
-        round,
+        round: roundNumber,
       })
       .then(({ data }) => {
-        const { matches, message } = data
-        matches.length
+        const { matches: newMatches, message } = data
+        newMatches.length
           ? MySwal.fire({
               background: `rgba(28, 25, 25, 0.95)`,
               color: `#fff`,
@@ -63,9 +56,11 @@ const PlayoffRound = ({ matches, round, getData, isThisTheFinal }) => {
               },
             })
       })
-      .catch(({ response }) => {
-        const { data } = response
-        const { auth, message } = data
+      .catch((error) => {
+        const message = getApiErrorMessage(
+          error,
+          'No se pudo conectar con el servidor',
+        )
         MySwal.fire({
           background: `rgba(28, 25, 25, 0.95)`,
           color: `#fff`,
@@ -83,30 +78,11 @@ const PlayoffRound = ({ matches, round, getData, isThisTheFinal }) => {
             toast.addEventListener('mouseenter', Swal.stopTimer)
             toast.addEventListener('mouseleave', Swal.resumeTimer)
           },
-          didClose: () => {
-            setLoginStatus((loginStatus) => ({
-              ...loginStatus,
-              status: auth,
-            }))
-            auth === false &&
-              navigate(
-                {
-                  pathname: `/users/login`,
-                },
-                {
-                  state: { url: location.pathname },
-                },
-              )
-          },
         })
       })
   }
 
-  let firstRoundMatchesCount = 0
-
-  if (round === 1) {
-    firstRoundMatchesCount = matches.length
-  }
+  const firstRoundMatchesCount = round === 1 ? matches.length : 0
 
   const getRoundName = (matchesCount) => {
     switch (matchesCount) {

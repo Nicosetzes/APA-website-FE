@@ -1,15 +1,13 @@
-import { NavLink } from 'react-router-dom'
 import { StyledExtendedNavMenu } from './styled'
 import Swal from 'sweetalert2'
-import { removeAuthToken } from 'utils/auth'
-import { useLogin } from 'context/LoginContext'
+import { useAuth } from 'context/AuthContext'
 import withReactContent from 'sweetalert2-react-content'
+import { NavLink, useNavigate } from 'react-router-dom'
 
 const ExtendedNavMenu = () => {
   const MySwal = withReactContent(Swal)
-  const { loginStatus, setLoginStatus } = useLogin()
-
-  const { status } = loginStatus
+  const navigate = useNavigate()
+  const { endSession, isAuthenticated } = useAuth()
 
   const handleLogout = () => {
     MySwal.fire({
@@ -25,9 +23,8 @@ const ExtendedNavMenu = () => {
       timerProgressBar: true,
       customClass: { timerProgressBar: 'toast-progress-dark' },
       didClose: () => {
-        removeAuthToken()
-        setLoginStatus({})
-        window.location.href = '/'
+        endSession()
+        navigate('/', { replace: true })
       },
     })
   }
@@ -55,7 +52,7 @@ const ExtendedNavMenu = () => {
       <NavLink to="/hall-of-fame" className="nav-link">
         SALÓN DE LA FAMA
       </NavLink>
-      {status ? (
+      {isAuthenticated ? (
         <button onClick={handleLogout} className="nav-link logout-button">
           CERRAR SESIÓN
         </button>

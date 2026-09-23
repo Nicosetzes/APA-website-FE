@@ -6,12 +6,11 @@ import { Loader } from 'views/components'
 import { StyledPlayoffMatch } from './styled'
 import Swal from 'sweetalert2'
 import Tooltip from '../Tooltip'
-import { apiClient } from 'api/axiosConfig'
-import { useLogin } from 'context/LoginContext'
 import { useState } from 'react'
 import withReactContent from 'sweetalert2-react-content'
 import { api, database } from 'api'
-import { useNavigate, useParams } from 'react-router-dom'
+import { apiClient, getApiErrorMessage } from 'api/axiosConfig'
+import { useParams } from 'react-router-dom'
 
 const PlayoffMatch = ({
   id,
@@ -33,11 +32,6 @@ const PlayoffMatch = ({
   const [showAnimation, setShowAnimation] = useState(false)
 
   const MySwal = withReactContent(Swal)
-
-  const navigate = useNavigate()
-
-  const login = useLogin()
-  const { setLoginStatus } = login
 
   const { tournament } = useParams()
 
@@ -114,8 +108,11 @@ const PlayoffMatch = ({
           toast.addEventListener('mouseleave', Swal.resumeTimer)
         },
       })
-    } catch ({ response }) {
-      const { auth, message } = response.data
+    } catch (error) {
+      const message = getApiErrorMessage(
+        error,
+        'No se pudo conectar con el servidor',
+      )
 
       MySwal.fire({
         ...toastConfig,
@@ -126,23 +123,6 @@ const PlayoffMatch = ({
         didOpen: (toast) => {
           toast.addEventListener('mouseenter', Swal.stopTimer)
           toast.addEventListener('mouseleave', Swal.resumeTimer)
-        },
-        didClose: () => {
-          setLoginStatus((loginStatus) => ({
-            ...loginStatus,
-            status: auth,
-          }))
-
-          if (auth === false) {
-            navigate(
-              {
-                pathname: '/users/login',
-              },
-              {
-                state: { url: location.pathname },
-              },
-            )
-          }
         },
       })
     } finally {

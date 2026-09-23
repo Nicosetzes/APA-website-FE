@@ -1,9 +1,8 @@
 import Swal from 'sweetalert2'
 import { api } from 'api'
-import { apiClient } from 'api/axiosConfig'
 import { motion } from 'framer-motion'
-import { useLogin } from 'context/LoginContext'
 import { useOutletContext } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import withReactContent from 'sweetalert2-react-content'
 import {
   ChampionBox,
@@ -13,16 +12,10 @@ import {
   PrimaryLink,
   StandingsTable,
 } from 'views/components'
+import { apiClient, getApiErrorMessage } from 'api/axiosConfig'
 import { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
 
 const TournamentPlayoffs = () => {
-  const navigate = useNavigate()
-
-  const login = useLogin()
-
-  const { setLoginStatus } = login
-
   const MySwal = withReactContent(Swal)
 
   const { tournament } = useParams()
@@ -167,10 +160,7 @@ const TournamentPlayoffs = () => {
     }
 
     try {
-      await apiClient.post(
-        `${api}/tournaments/${tournament}/playoff`,
-        tournament,
-      )
+      await apiClient.post(`${api}/tournaments/${tournament}/playoff`, {})
       MySwal.fire({
         background: `rgba(28, 25, 25, 0.95)`,
         color: `#fff`,
@@ -190,9 +180,11 @@ const TournamentPlayoffs = () => {
           toast.addEventListener('mouseleave', Swal.resumeTimer)
         },
       })
-    } catch ({ response }) {
-      const { data } = response
-      const { auth, message } = data
+    } catch (error) {
+      const message = getApiErrorMessage(
+        error,
+        'No se pudo conectar con el servidor',
+      )
       MySwal.fire({
         background: `rgba(28, 25, 25, 0.95)`,
         color: `#fff`,
@@ -209,24 +201,6 @@ const TournamentPlayoffs = () => {
         didOpen: (toast) => {
           toast.addEventListener('mouseenter', Swal.stopTimer)
           toast.addEventListener('mouseleave', Swal.resumeTimer)
-        },
-        didClose: () => {
-          setLoginStatus((loginStatus) => ({
-            ...loginStatus,
-            status: auth,
-          }))
-          auth === false
-            ? navigate(
-                {
-                  pathname: `/users/login`,
-                },
-                {
-                  state: { url: location.pathname },
-                },
-              )
-            : navigate({
-                pathname: `/tournaments/${tournament}/playin`,
-              })
         },
       })
     }

@@ -10,19 +10,17 @@ import HomeIcon from '@mui/icons-material/Home'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import MenuList from '@mui/material/MenuList'
 import MenuItem from '@mui/material/MenuItem'
-import { NavLink } from 'react-router-dom'
 import SportsSoccerIcon from '@mui/icons-material/SportsSoccer'
 import { StyledMenu } from './styled'
 import Swal from 'sweetalert2'
-import { removeAuthToken } from 'utils/auth'
-import { useLogin } from 'context/LoginContext'
+import { useAuth } from 'context/AuthContext'
 import withReactContent from 'sweetalert2-react-content'
+import { NavLink, useNavigate } from 'react-router-dom'
 
 const NavMenu = ({ handleClose, isOpen, anchorEl }) => {
   const MySwal = withReactContent(Swal)
-  const { loginStatus, setLoginStatus } = useLogin()
-
-  const { status } = loginStatus
+  const navigate = useNavigate()
+  const { endSession, isAuthenticated } = useAuth()
 
   const handleLogout = () => {
     handleClose()
@@ -39,9 +37,8 @@ const NavMenu = ({ handleClose, isOpen, anchorEl }) => {
       timerProgressBar: true,
       customClass: { timerProgressBar: 'toast-progress-dark' },
       didClose: () => {
-        removeAuthToken()
-        setLoginStatus({})
-        window.location.href = '/'
+        endSession()
+        navigate('/', { replace: true })
       },
     })
   }
@@ -120,7 +117,7 @@ const NavMenu = ({ handleClose, isOpen, anchorEl }) => {
           </NavLink>
         </MenuItem>
         <Divider sx={{ borderColor: 'var(--blue-900)' }} />
-        {status ? (
+        {isAuthenticated ? (
           <MenuItem onClick={handleLogout}>
             <ListItemIcon>
               <AccountCircle htmlColor="var(--blue-900)" fontSize="small" />

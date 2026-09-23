@@ -1,7 +1,7 @@
 import './index.css'
 import AnimatedRoutes from 'routes/AnimatedRoutes'
+import { AuthProvider } from 'context/AuthContext'
 import { BrowserRouter } from 'react-router-dom'
-import { LoginProvider } from 'context/LoginContext'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import reportWebVitals from './reportWebVitals'
@@ -10,13 +10,13 @@ import { Navbar, Footer, PageWrapper } from 'views/components'
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
-      <LoginProvider>
+      <AuthProvider>
         <Navbar />
         <PageWrapper>
           <AnimatedRoutes />
         </PageWrapper>
         <Footer />
-      </LoginProvider>
+      </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>,
   document.getElementById('root'),

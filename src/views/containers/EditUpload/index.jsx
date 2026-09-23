@@ -1,6 +1,5 @@
 import { Loader } from 'views/components'
 import { api } from 'api'
-import { apiClient } from 'api/axiosConfig'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
@@ -22,6 +21,7 @@ import {
   UploadButton,
   UploadCard,
 } from './styled'
+import { apiClient, getApiErrorMessage } from 'api/axiosConfig'
 
 const EditsUpload = () => {
   const [selectedFiles, setSelectedFiles] = useState([])
@@ -148,7 +148,7 @@ const EditsUpload = () => {
       if (err.response?.status === 401 || err.response?.status === 403) {
         setError('No estás autorizado. Por favor inicia sesión.')
       } else {
-        setError(err.response?.data?.message || 'Error al subir las imágenes')
+        setError(getApiErrorMessage(err, 'Error al subir las imágenes'))
       }
     } finally {
       setUploading(false)

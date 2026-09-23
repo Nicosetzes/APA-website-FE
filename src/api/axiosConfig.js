@@ -1,45 +1,58 @@
 import axios from 'axios'
 import { api, database } from './index'
 
-// Create axios instance for API requests
 export const apiClient = axios.create({
   baseURL: api,
 })
 
-// Create axios instance for database requests
 export const databaseClient = axios.create({
   baseURL: database,
 })
 
-// Request interceptor to add auth token
-const authInterceptor = (config) => {
-  const token = localStorage.getItem('authToken')
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
+export const getApiErrorMessage = (error, fallback) =>
+  error?.response?.data?.error?.message ||
+  error?.response?.data?.message ||
+  fallback
+
+let authRuntime = null
+
+export const bindAuthRuntime = (runtime) => {
+  authRuntime = runtime
+
+  return () => {
+    if (authRuntime === runtime) authRuntime = null
   }
-  return config
 }
 
-// Response interceptor to handle 403 errors
-const errorInterceptor = (error) => {
-  if (error.response?.status === 403) {
-    // Token is invalid or expired
-    localStorage.removeItem('authToken')
-    localStorage.removeItem('user')
-    // Redirect to login
-    window.location.href = '/users/login'
+export const isAuthenticationError = (error) => error.response?.status === 401
+
+export const authRequestInterceptor = (config) => {
+  const token = authRuntime?.getToken() ?? null
+  const nextConfig = config
+
+  nextConfig.__apaExpectedAuthToken = token
+  if (token) {
+    nextConfig.headers = nextConfig.headers || {}
+    nextConfig.headers.Authorization = `Bearer ${token}`
   }
+
+  return nextConfig
+}
+
+export const authErrorInterceptor = (error) => {
+  if (isAuthenticationError(error)) {
+    authRuntime?.invalidate({
+      expectedToken: error.config?.__apaExpectedAuthToken,
+    })
+  }
+
   return Promise.reject(error)
 }
 
-// Apply interceptors to both clients
-apiClient.interceptors.request.use(authInterceptor)
-apiClient.interceptors.response.use((response) => response, errorInterceptor)
-
-databaseClient.interceptors.request.use(authInterceptor)
-databaseClient.interceptors.response.use(
+apiClient.interceptors.request.use(authRequestInterceptor)
+apiClient.interceptors.response.use(
   (response) => response,
-  errorInterceptor,
+  authErrorInterceptor,
 )
 
 export default apiClient

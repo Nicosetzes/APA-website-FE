@@ -44,15 +44,6 @@ export const ROUTES = {
     path: '/tournaments/:tournament/playoffs',
     isPublic: true,
   },
-  TOURNAMENT_PLAYERS: {
-    path: '/tournaments/:tournament/players',
-    isPublic: true,
-  },
-  TOURNAMENT_TEAMS: {
-    path: '/tournaments/:tournament/teams',
-    isPublic: true,
-  },
-
   MATCHES: {
     path: '/matches',
     isPublic: true,

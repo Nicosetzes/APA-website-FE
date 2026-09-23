@@ -7,8 +7,13 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   quality:
+    name: Lint, tests y build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -20,9 +25,15 @@ jobs:
           cache: npm
       - name: Install dependencies
         run: npm ci
+      # El script de lint incluye --ext .js,.jsx: sin eso ESLint ignora los
+      # containers, que son casi todos .jsx.
       - name: Lint
         run: npm run lint
-      - name: Test
+      - name: Tests
         run: npm test -- --watchAll=false
       - name: Build
         run: npm run build
+        env:
+          # Con CI=true, Create React App trata los warnings de lint como
+          # errores. Verificado que hoy el build compila limpio bajo esa regla.
+          CI: true

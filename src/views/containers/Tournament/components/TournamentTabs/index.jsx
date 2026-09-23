@@ -103,7 +103,6 @@ const TournamentTabs = ({
     if (path.includes('/fixture')) return 'fixture'
     if (path.includes('/standings')) return 'clasificacion'
     if (path.includes('/simulator')) return 'simulador'
-    if (path.includes('/teams')) return 'equipos'
     if (path.includes('/stats')) return 'stats'
     if (path.includes('/playin')) return 'playin'
     if (path.includes('/playoffs')) return 'playoffs'

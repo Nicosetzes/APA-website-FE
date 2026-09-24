@@ -215,6 +215,15 @@ export const RecordsGrid = styled.div`
   max-width: 1200px;
 `
 
+export const EmptyMessage = styled.p`
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 0.9rem;
+  font-style: italic;
+  margin: 0 auto;
+  max-width: 600px;
+  text-align: center;
+`
+
 export const RecordCard = styled(Card)`
   display: flex;
   flex-direction: column;

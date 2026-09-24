@@ -204,8 +204,8 @@ const StepConfirmation = ({ format, players }) => {
             id: assignment.teamId,
             name: assignment.teamName,
           },
-          player: assignment.playerId, // Already contains { id, name }
-          group: assignment.group,
+          player: assignment.playerId,
+          ...(assignment.group ? { group: assignment.group } : {}),
         }))
       }
 

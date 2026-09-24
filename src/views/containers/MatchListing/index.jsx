@@ -32,7 +32,7 @@ const MatchListing = () => {
   const [players, setPlayers] = useState([])
   const [tournaments, setTournaments] = useState([])
 
-  const page = Number(searchParams.get('page')) || 0
+  const page = Math.max(1, Number(searchParams.get('page')) || 1)
   const teamName = searchParams.get('teamName') || ''
   const player1 = searchParams.get('player1') || ''
   const player2 = searchParams.get('player2') || ''
@@ -71,7 +71,7 @@ const MatchListing = () => {
       const params = new URLSearchParams(searchParams)
 
       if (!('page' in newFilters)) {
-        params.set('page', '0')
+        params.set('page', '1')
       }
 
       if (
@@ -105,7 +105,7 @@ const MatchListing = () => {
   const handleClearFilters = () => {
     setTeamInput('')
     setGoalDiffValInput('')
-    setSearchParams(new URLSearchParams({ page: '0' }))
+    setSearchParams(new URLSearchParams({ page: '1' }))
   }
 
   useEffect(() => {
@@ -130,6 +130,7 @@ const MatchListing = () => {
     setLoading(true)
     setError(null)
     const currentParams = new URLSearchParams(searchParams)
+    currentParams.set('page', String(page))
 
     apiClient
       .get(`${api}/matches?${currentParams.toString()}`)
@@ -139,10 +140,10 @@ const MatchListing = () => {
         setError(getApiErrorMessage(err, 'No se pudieron cargar los partidos'))
       })
       .finally(() => setLoading(false))
-  }, [searchParams])
+  }, [page, searchParams])
 
   const handlePageChange = (event, value) => {
-    updateFilters({ page: value - 1 })
+    updateFilters({ page: value })
   }
 
   return (
@@ -312,14 +313,14 @@ const MatchListing = () => {
                 Partidos encontrados: <strong>{data?.totalMatches || 0}</strong>
               </span>
               <ResultsBadge>
-                Página {page + 1} de {data?.totalPages || 1}
+                Página {page} de {data?.totalPages || 1}
               </ResultsBadge>
             </ResultsHeader>
             <MatchesTable matches={data?.matches || []} />
             <PaginationWrapper>
               <Pagination
                 count={data?.totalPages || 0}
-                page={page + 1}
+                page={page}
                 onChange={handlePageChange}
                 variant="outlined"
                 color="secondary"

@@ -12,7 +12,7 @@ const TournamentPlayin = () => {
   const MySwal = withReactContent(Swal)
 
   const { tournament } = useParams()
-  const { tournamentData } = useOutletContext()
+  const { canMutate, tournamentData } = useOutletContext()
   const [playinData, setPlayinData] = useState()
   const [playinError, setPlayinError] = useState(null)
 
@@ -68,6 +68,8 @@ const TournamentPlayin = () => {
   }
 
   const playinGeneration = async (group) => {
+    if (!canMutate) return
+
     const result = await MySwal.fire({
       title: '¿Generar playin?',
       text: `¿Estás seguro de que quieres generar el playin de la zona ${group}?`,
@@ -163,11 +165,13 @@ const TournamentPlayin = () => {
               }}
             >
               <PlayinRound
+                canMutate={canMutate}
                 matches={getPlayinMatchesForRound(matches, 1)}
                 round={1}
                 getData={getPlayinData}
               />
               <PlayinRound
+                canMutate={canMutate}
                 matches={getPlayinMatchesForRound(matches, 2)}
                 round={2}
                 getData={getPlayinData}
@@ -242,12 +246,16 @@ const TournamentPlayin = () => {
             <div style={{ fontSize: '1.25rem' }}>
               La zona A no posee partidos programados para el Playin
             </div>
-            <div style={{ margin: '0.5rem auto' }}>¿Desea generarlos?</div>
-            <PrimaryLink
-              asButton
-              text="Generar partidos Zona A"
-              onClick={() => playinGeneration('A')}
-            />
+            {canMutate && (
+              <>
+                <div style={{ margin: '0.5rem auto' }}>¿Desea generarlos?</div>
+                <PrimaryLink
+                  asButton
+                  text="Generar partidos Zona A"
+                  onClick={() => playinGeneration('A')}
+                />
+              </>
+            )}
           </div>
         )}
         {(!matches.length ||
@@ -266,12 +274,16 @@ const TournamentPlayin = () => {
             <div style={{ fontSize: '1.25rem' }}>
               La zona B no posee partidos programados para el Playin
             </div>
-            <div style={{ margin: '0.5rem auto' }}>¿Desea generarlos?</div>
-            <PrimaryLink
-              asButton
-              text="Generar partidos Zona B"
-              onClick={() => playinGeneration('B')}
-            />
+            {canMutate && (
+              <>
+                <div style={{ margin: '0.5rem auto' }}>¿Desea generarlos?</div>
+                <PrimaryLink
+                  asButton
+                  text="Generar partidos Zona B"
+                  onClick={() => playinGeneration('B')}
+                />
+              </>
+            )}
           </div>
         )}
       </motion.div>

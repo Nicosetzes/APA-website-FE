@@ -19,7 +19,7 @@ const TournamentPlayoffs = () => {
   const MySwal = withReactContent(Swal)
 
   const { tournament } = useParams()
-  const { tournamentData } = useOutletContext()
+  const { canMutate, tournamentData } = useOutletContext()
 
   const [playoffsTableData, setPlayoffsTableData] = useState()
   const [playoffData, setPlayoffData] = useState()
@@ -155,6 +155,8 @@ const TournamentPlayoffs = () => {
   }
 
   const playoffGeneration = async () => {
+    if (!canMutate) return
+
     const result = await MySwal.fire({
       title: '¿Generar playoff?',
       text: '¿Estás seguro de que quieres generar el playoff?',
@@ -265,6 +267,7 @@ const TournamentPlayoffs = () => {
             {/* Round of 32 - Only for playoff format */}
             {hasRoundOf32 && (
               <PlayoffRound
+                canMutate={canMutate}
                 matches={getMatchesForRound(format, matches, 1)}
                 round={1}
                 getData={getPlayoffsData}
@@ -273,6 +276,7 @@ const TournamentPlayoffs = () => {
             )}
             {/* Round of 16 */}
             <PlayoffRound
+              canMutate={canMutate}
               matches={getMatchesForRound(
                 format,
                 matches,
@@ -284,6 +288,7 @@ const TournamentPlayoffs = () => {
             />
             {/* Quarterfinals */}
             <PlayoffRound
+              canMutate={canMutate}
               matches={getMatchesForRound(
                 format,
                 matches,
@@ -295,6 +300,7 @@ const TournamentPlayoffs = () => {
             />
             {/* Semifinals */}
             <PlayoffRound
+              canMutate={canMutate}
               matches={getMatchesForRound(
                 format,
                 matches,
@@ -306,6 +312,7 @@ const TournamentPlayoffs = () => {
             />
             {/* Final */}
             <PlayoffRound
+              canMutate={canMutate}
               matches={getMatchesForRound(
                 format,
                 matches,
@@ -372,7 +379,7 @@ const TournamentPlayoffs = () => {
                 ? 'El bracket inicial no está disponible; este formato lo genera al crear el torneo'
                 : 'No existen partidos programados para el Playoff'}
             </div>
-            {format !== 'playoff' && (
+            {canMutate && format !== 'playoff' && (
               <>
                 <div style={{ margin: '0.5rem auto' }}>¿Desea generarlos?</div>
                 <PrimaryLink

@@ -1,11 +1,14 @@
 import { PageLoader } from 'views/components'
 import TournamentTabs from '../../components/TournamentTabs'
+import { canMutateTournament } from 'utils/tournamentPermissions'
+import { useAuth } from 'context/AuthContext'
 import { Outlet, useParams } from 'react-router-dom'
 import { apiClient, getApiErrorMessage } from 'api/axiosConfig'
 import { useEffect, useState } from 'react'
 
 const TournamentLayout = () => {
   const { tournament } = useParams()
+  const { isAuthenticated, user, validation } = useAuth()
   const [tournamentData, setTournamentData] = useState(null)
   const [tournamentError, setTournamentError] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -37,6 +40,11 @@ const TournamentLayout = () => {
     )
   }
 
+  const canMutate =
+    isAuthenticated &&
+    validation !== 'cache' &&
+    canMutateTournament(tournamentData, user)
+
   return (
     <div
       style={{ display: 'flex', flexDirection: 'column', minHeight: '100%' }}
@@ -51,7 +59,7 @@ const TournamentLayout = () => {
         />
       )}
       {tournamentData ? (
-        <Outlet context={{ tournamentData }} />
+        <Outlet context={{ tournamentData, canMutate }} />
       ) : (
         <div style={{ margin: '2rem auto' }}>No se encontró el torneo</div>
       )}

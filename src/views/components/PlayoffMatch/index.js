@@ -13,6 +13,7 @@ import { apiClient, getApiErrorMessage } from 'api/axiosConfig'
 import { useParams } from 'react-router-dom'
 
 const PlayoffMatch = ({
+  canMutate,
   id,
   playerP1,
   teamP1,
@@ -57,6 +58,8 @@ const PlayoffMatch = ({
   }
 
   const handleMatchSubmit = async (isMatchValid) => {
+    if (!canMutate) return
+
     setIsSubmitting(true)
     const { scoreP1, penaltyScoreP1, scoreP2, penaltyScoreP2 } = matchScore
 
@@ -81,7 +84,6 @@ const PlayoffMatch = ({
       scoreP2,
       penaltyScoreP2,
       valid: isMatchValid === false ? false : undefined,
-      isThisTheFinal,
     }
 
     try {
@@ -184,7 +186,7 @@ const PlayoffMatch = ({
                   )}
                   {valid !== false && scoreP1}
                 </div>
-              ) : (
+              ) : canMutate ? (
                 <div className="team-inputs">
                   <input
                     name="scoreP1"
@@ -198,6 +200,8 @@ const PlayoffMatch = ({
                     placeholder="PEN"
                   />
                 </div>
+              ) : (
+                <div className="team-score">-</div>
               )}
               {outcome?.penalties && (
                 <div className="team-penalties">
@@ -260,7 +264,7 @@ const PlayoffMatch = ({
                   )}
                   {valid !== false && scoreP2}
                 </div>
-              ) : (
+              ) : canMutate ? (
                 <div className="team-inputs">
                   <input
                     name="scoreP2"
@@ -274,6 +278,8 @@ const PlayoffMatch = ({
                     placeholder="PEN"
                   />
                 </div>
+              ) : (
+                <div className="team-score">-</div>
               )}
               {outcome?.penalties && (
                 <div className="team-penalties">
@@ -290,7 +296,7 @@ const PlayoffMatch = ({
           </div>
         </div>
 
-        {!played ? (
+        {!played && canMutate ? (
           <div className="match__confirmation">
             {isSubmitting ? (
               <div style={{ margin: 'auto' }}>

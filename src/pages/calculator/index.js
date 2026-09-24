@@ -2,8 +2,8 @@ import CalculatorStandingsTable from './components/CalculatorStandingsTable'
 import ClearIcon from '@mui/icons-material/Clear'
 import IconButton from '@mui/material/IconButton'
 import axios from 'axios'
-import { getApiErrorMessage } from 'api/axiosConfig'
 import { api, database } from 'api'
+import { getApiErrorMessage, serializeRepeatedParams } from 'api/axiosConfig'
 import { useLocation, useParams } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { PageLoader } from 'views/components'
@@ -36,9 +36,8 @@ const Calculator = () => {
 
       await axios
         .get(`${api}/tournaments/${tournament}/calculator`, {
-          params: {
-            teams: `${JSON.stringify(teams)}`,
-          },
+          params: { teams },
+          paramsSerializer: serializeRepeatedParams,
         })
         .then(({ data }) => {
           const { teams, standings } = data

@@ -6,11 +6,13 @@ import { PlayinRoundContainer, RoundMatches, RoundName } from './styled'
 import { PlayoffMatch, PrimaryLink } from 'views/components'
 import { apiClient, getApiErrorMessage } from 'api/axiosConfig'
 
-const PlayinRound = ({ matches, round, getData }) => {
+const PlayinRound = ({ canMutate, matches, round, getData }) => {
   const { tournament } = useParams()
   const MySwal = withReactContent(Swal)
 
   const checkForNewPlayinMatches = (roundNumber) => {
+    if (!canMutate) return
+
     apiClient
       .post(`${api}/tournaments/${tournament}/playin/update`, {
         round: roundNumber,
@@ -87,6 +89,7 @@ const PlayinRound = ({ matches, round, getData }) => {
                 valid,
               }) => (
                 <PlayoffMatch
+                  canMutate={canMutate}
                   key={_id}
                   id={_id}
                   playerP1={playerP1}
@@ -106,12 +109,14 @@ const PlayinRound = ({ matches, round, getData }) => {
             )
           : null}
       </RoundMatches>
-      <PrimaryLink
-        asButton
-        text="Actualizar partidos"
-        disabled={round === 1}
-        onClick={() => checkForNewPlayinMatches(round)}
-      />
+      {canMutate && (
+        <PrimaryLink
+          asButton
+          text="Actualizar partidos"
+          disabled={round === 1}
+          onClick={() => checkForNewPlayinMatches(round)}
+        />
+      )}
     </PlayinRoundContainer>
   )
 }

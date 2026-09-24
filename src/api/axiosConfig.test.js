@@ -1,11 +1,13 @@
 /* eslint-env jest */
 import {
+  apiClient,
   authErrorInterceptor,
   authRequestInterceptor,
   bindAuthRuntime,
   databaseClient,
   getApiErrorMessage,
   isAuthenticationError,
+  serializeRepeatedParams,
 } from './axiosConfig'
 
 describe('authentication Axios bridge', () => {
@@ -105,5 +107,56 @@ describe('API error messages', () => {
     expect(
       getApiErrorMessage(new Error('Network error'), 'Local fallback'),
     ).toBe('Local fallback')
+  })
+})
+
+describe('list filters in the query string', () => {
+  test('repeats the key instead of using the bracket notation of axios', () => {
+    expect(serializeRepeatedParams({ teams: ['10', '20'] })).toBe(
+      'teams=10&teams=20',
+    )
+  })
+
+  test('keeps scalar filters and drops empty ones', () => {
+    expect(
+      serializeRepeatedParams({
+        page: 2,
+        team: 'Racing',
+        group: undefined,
+        players: null,
+      }),
+    ).toBe('page=2&team=Racing')
+  })
+
+  test('encodes values that need it', () => {
+    expect(serializeRepeatedParams({ teams: ['Boca Juniors', 'a&b'] })).toBe(
+      'teams=Boca+Juniors&teams=a%26b',
+    )
+  })
+
+  test('is the serializer used by the API client', () => {
+    expect(apiClient.defaults.paramsSerializer).toBe(serializeRepeatedParams)
+  })
+
+  test('the URL that the API client actually requests repeats the key', async () => {
+    const open = jest
+      .spyOn(window.XMLHttpRequest.prototype, 'open')
+      .mockImplementation(() => {})
+    const send = jest
+      .spyOn(window.XMLHttpRequest.prototype, 'send')
+      .mockImplementation(() => {})
+
+    apiClient
+      .get('/tournaments/1/calculator', { params: { teams: ['10', '20'] } })
+      .catch(() => {})
+    await new Promise((resolve) => setTimeout(resolve, 0))
+
+    expect(open).toHaveBeenCalled()
+    expect(open.mock.calls[0][1]).toContain(
+      '/tournaments/1/calculator?teams=10&teams=20',
+    )
+
+    open.mockRestore()
+    send.mockRestore()
   })
 })

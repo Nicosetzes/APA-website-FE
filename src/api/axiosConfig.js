@@ -1,8 +1,29 @@
 import axios from 'axios'
 import { api, database } from './index'
 
+export const serializeRepeatedParams = (params) => {
+  const search = new URLSearchParams()
+
+  Object.entries(params ?? {}).forEach(([key, value]) => {
+    if (value === undefined || value === null) return
+
+    if (Array.isArray(value)) {
+      value.forEach((item) => {
+        if (item === undefined || item === null) return
+        search.append(key, item)
+      })
+      return
+    }
+
+    search.append(key, value)
+  })
+
+  return search.toString()
+}
+
 export const apiClient = axios.create({
   baseURL: api,
+  paramsSerializer: serializeRepeatedParams,
 })
 
 export const databaseClient = axios.create({

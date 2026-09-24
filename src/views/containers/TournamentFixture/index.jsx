@@ -38,7 +38,7 @@ const TournamentFixture = () => {
 
   const { tournament } = useParams()
 
-  const { tournamentData } = useOutletContext()
+  const { canMutate, tournamentData } = useOutletContext()
 
   const [searchParams, setSearchParams] = useSearchParams()
 
@@ -49,6 +49,8 @@ const TournamentFixture = () => {
   const [switchState, setSwitchState] = useState(
     initialPlayer ? [initialPlayer] : [],
   )
+
+  const currentPage = Math.max(1, Number(searchParams.get('page')) || 1)
 
   const setParams = useCallback(
     (next) => {
@@ -68,7 +70,7 @@ const TournamentFixture = () => {
   const handleSwitchChange = useCallback(
     (event) => {
       // Reset to first page and keep current filters
-      setParams({ page: 0 })
+      setParams({ page: 1 })
 
       const id = event.target.name
       const checked = event.target.checked
@@ -85,7 +87,7 @@ const TournamentFixture = () => {
   const getFixtureData = useCallback(() => {
     const controller = new AbortController()
     setFixtureLoading(true)
-    const page = searchParams.get('page')
+    const page = currentPage
     const team = searchParams.get('team')
     const group = searchParams.get('group')
 
@@ -94,7 +96,7 @@ const TournamentFixture = () => {
       ...(page ? { page } : {}),
       ...(team ? { team } : {}),
       ...(group ? { group } : {}),
-      ...(switchState.length ? { players: JSON.stringify(switchState) } : {}),
+      ...(switchState.length ? { players: switchState } : {}),
     }
 
     apiClient
@@ -113,7 +115,7 @@ const TournamentFixture = () => {
       })
 
     return () => controller.abort()
-  }, [api, tournament, searchParams, switchState])
+  }, [api, tournament, currentPage, searchParams, switchState])
 
   const searchKey = useMemo(() => searchParams.toString(), [searchParams])
   useEffect(() => {
@@ -123,7 +125,7 @@ const TournamentFixture = () => {
 
   const handlePageChange = useCallback(
     (event, value) => {
-      setParams({ page: Number(value) - 1 })
+      setParams({ page: Number(value) })
     },
     [setParams],
   )
@@ -132,8 +134,8 @@ const TournamentFixture = () => {
 
   const onHandleGroupChange = useCallback(
     (group) => {
-      if (selectedGroup === group) setParams({ page: 0, group: '', team: '' })
-      else setParams({ group, page: 0, team: '' })
+      if (selectedGroup === group) setParams({ page: 1, group: '', team: '' })
+      else setParams({ group, page: 1, team: '' })
     },
     [setParams, selectedGroup],
   )
@@ -146,6 +148,8 @@ const TournamentFixture = () => {
   }, [searchParams, setSearchParams])
 
   const fixtureGeneration = (group = null) => {
+    if (!canMutate) return
+
     apiClient
       .post(`${api}/tournaments/${tournament}/fixture`, {
         group,
@@ -209,7 +213,7 @@ const TournamentFixture = () => {
                 <GroupButtons>
                   <GroupButton
                     $active={!selectedGroup}
-                    onClick={() => setParams({ page: 0, group: '', team: '' })}
+                    onClick={() => setParams({ page: 1, group: '', team: '' })}
                   >
                     Todos
                   </GroupButton>
@@ -283,6 +287,7 @@ const TournamentFixture = () => {
         ) : matches.length ? (
           <>
             <FixtureContainer
+              canMutate={canMutate}
               format={format}
               matches={matches}
               getFixtureData={getFixtureData}
@@ -292,7 +297,7 @@ const TournamentFixture = () => {
               color="primary"
               count={totalPages}
               name={'page'}
-              page={Number(searchParams.get('page')) + 1}
+              page={currentPage}
               shape="rounded"
               size={!isXS ? 'small' : 'medium'}
               style={{
@@ -337,12 +342,18 @@ const TournamentFixture = () => {
                   </span>{' '}
                   aun no cuenta con partidos
                 </div>
-                <div style={{ margin: '0.5rem auto' }}>¿Desea generarlos?</div>
-                <PrimaryLink
-                  asButton
-                  text="Generar partidos"
-                  onClick={() => fixtureGeneration(selectedGroup || 'A')}
-                />
+                {canMutate && (
+                  <>
+                    <div style={{ margin: '0.5rem auto' }}>
+                      ¿Desea generarlos?
+                    </div>
+                    <PrimaryLink
+                      asButton
+                      text="Generar partidos"
+                      onClick={() => fixtureGeneration(selectedGroup || 'A')}
+                    />
+                  </>
+                )}
               </>
             ) : (
               <>
@@ -353,12 +364,18 @@ const TournamentFixture = () => {
                   </span>{' '}
                   aun no cuenta con partidos
                 </div>
-                <div style={{ margin: '0.5rem auto' }}>¿Desea generarlos?</div>
-                <PrimaryLink
-                  asButton
-                  onClick={() => fixtureGeneration()}
-                  text="Generar partidos"
-                />
+                {canMutate && (
+                  <>
+                    <div style={{ margin: '0.5rem auto' }}>
+                      ¿Desea generarlos?
+                    </div>
+                    <PrimaryLink
+                      asButton
+                      onClick={() => fixtureGeneration()}
+                      text="Generar partidos"
+                    />
+                  </>
+                )}
               </>
             )}
           </div>

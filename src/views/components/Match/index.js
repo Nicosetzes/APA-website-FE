@@ -25,7 +25,7 @@ import { apiClient, getApiErrorMessage } from 'api/axiosConfig'
 import { format, parseISO } from 'date-fns'
 import { useParams, useSearchParams } from 'react-router-dom'
 
-const Match = ({ match, getFixtureData, teamStats }) => {
+const Match = ({ canMutate, match, getFixtureData, teamStats }) => {
   const MySwal = withReactContent(Swal)
 
   const [searchParams, setSearchParams] = useSearchParams()
@@ -51,6 +51,8 @@ const Match = ({ match, getFixtureData, teamStats }) => {
   })
 
   const onHandleChange = (event) => {
+    if (!canMutate) return
+
     const name = event.target.name
     const value = event.target.value
     setMatchScore((values) => ({ ...values, [name]: value }))
@@ -58,6 +60,8 @@ const Match = ({ match, getFixtureData, teamStats }) => {
 
   const handleMatchSubmit = async (event) => {
     event.preventDefault()
+    if (!canMutate) return
+
     const { scoreP1, scoreP2 } = matchScore
     if (
       scoreP1 == null ||
@@ -146,6 +150,8 @@ const Match = ({ match, getFixtureData, teamStats }) => {
   }
 
   const handleMatchRemoval = async () => {
+    if (!canMutate) return
+
     if (scoreP1 == null || scoreP2 == null) {
       MySwal.fire({
         background: `rgba(28, 25, 25, 0.95)`,
@@ -282,26 +288,30 @@ const Match = ({ match, getFixtureData, teamStats }) => {
               name="scoreP1"
               value={matchScore.scoreP1 ?? ''}
               onChange={onHandleChange}
+              readOnly={!canMutate}
             />
             <VersusSpan>vs</VersusSpan>
             <ScoreInput
               name="scoreP2"
               value={matchScore.scoreP2 ?? ''}
               onChange={onHandleChange}
+              readOnly={!canMutate}
             />
           </MatchContainer>
-          <InputContainer>
-            <IconButton type="submit" aria-label="edit" color="success">
-              <EditIcon />
-            </IconButton>
-            <IconButton
-              onClick={() => handleMatchRemoval()}
-              aria-label="delete"
-              color="error"
-            >
-              <DeleteIcon />
-            </IconButton>
-          </InputContainer>
+          {canMutate && (
+            <InputContainer>
+              <IconButton type="submit" aria-label="edit" color="success">
+                <EditIcon />
+              </IconButton>
+              <IconButton
+                onClick={() => handleMatchRemoval()}
+                aria-label="delete"
+                color="error"
+              >
+                <DeleteIcon />
+              </IconButton>
+            </InputContainer>
+          )}
         </MatchScore>
         <MatchInfo>
           {getPlayedMatches(teamP2.id) !== null && (

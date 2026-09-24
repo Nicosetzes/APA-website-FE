@@ -46,7 +46,7 @@ import { useOutletContext, useParams } from 'react-router-dom'
 
 const Tournament = () => {
   const isSm = useMediaQuery({ query: '(min-width: 576px)' })
-  const { tournamentData } = useOutletContext()
+  const { canMutate, tournamentData } = useOutletContext()
   const { tournament } = useParams()
   const [tournamentSummary, setTournamentSummary] = useState(null)
   const [summaryError, setSummaryError] = useState(null)
@@ -84,6 +84,8 @@ const Tournament = () => {
   const finalist = outcome?.finalist
 
   const handleFinishTournament = async () => {
+    if (!canMutate) return
+
     const result = await MySwal.fire({
       title: '¿Finalizar torneo?',
       text: '¿Estás seguro de que quieres finalizar este torneo?',
@@ -231,7 +233,7 @@ const Tournament = () => {
                   </span>
                 )}
               </InfoText>
-              {ongoing && format === 'league' && (
+              {canMutate && ongoing && format === 'league' && (
                 <PrimaryLink
                   asButton
                   text={'Finalizar Torneo'}

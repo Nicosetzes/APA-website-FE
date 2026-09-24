@@ -6,11 +6,19 @@ import { PlayoffMatch, PrimaryLink } from 'views/components'
 import { PlayoffRoundContainer, RoundMatches, RoundName } from './styled'
 import { apiClient, getApiErrorMessage } from 'api/axiosConfig'
 
-const PlayoffRound = ({ matches, round, getData, isThisTheFinal }) => {
+const PlayoffRound = ({
+  canMutate,
+  matches,
+  round,
+  getData,
+  isThisTheFinal,
+}) => {
   const { tournament } = useParams()
   const MySwal = withReactContent(Swal)
 
   const checkForNewPlayoffMatches = (roundNumber) => {
+    if (!canMutate) return
+
     apiClient
       .post(`${api}/tournaments/${tournament}/playoff/update`, {
         round: roundNumber,
@@ -124,6 +132,7 @@ const PlayoffRound = ({ matches, round, getData, isThisTheFinal }) => {
                 valid,
               }) => (
                 <PlayoffMatch
+                  canMutate={canMutate}
                   key={_id}
                   id={_id}
                   playerP1={playerP1}
@@ -144,12 +153,14 @@ const PlayoffRound = ({ matches, round, getData, isThisTheFinal }) => {
             )
           : null}
       </RoundMatches>
-      <PrimaryLink
-        asButton
-        text="Actualizar partidos"
-        disabled={round === 1}
-        onClick={() => checkForNewPlayoffMatches(round)}
-      />
+      {canMutate && (
+        <PrimaryLink
+          asButton
+          text="Actualizar partidos"
+          disabled={round === 1}
+          onClick={() => checkForNewPlayoffMatches(round)}
+        />
+      )}
     </PlayoffRoundContainer>
   )
 }

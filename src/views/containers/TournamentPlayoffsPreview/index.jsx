@@ -1,5 +1,9 @@
-import { Container, TableContainer, TableTitle } from './styled'
-import { PageLoader, PlayoffsPreview, StandingsTable } from 'views/components'
+import { BracketSection, Container, TableContainer, TableTitle } from './styled'
+import {
+  PageLoader,
+  PlayoffBracketPreview,
+  StandingsTable,
+} from 'views/components'
 import { apiClient, getApiErrorMessage } from 'api/axiosConfig'
 import { useCallback, useEffect, useState } from 'react'
 import { useOutletContext, useParams } from 'react-router-dom'
@@ -11,7 +15,7 @@ const TournamentPlayoffsPreview = () => {
   const [previewError, setPreviewError] = useState(null)
 
   const {
-    tournamentData: { format },
+    tournamentData: { cloudinary_id, format },
   } = useOutletContext()
 
   const { tournament } = useParams()
@@ -60,12 +64,18 @@ const TournamentPlayoffsPreview = () => {
   }
 
   return (
-    <Container>
-      {matches.length ? (
-        <PlayoffsPreview matches={matches} />
-      ) : (
-        <p>Aún no es posible predecir los cruces</p>
-      )}
+    <>
+      <BracketSection>
+        <TableTitle>Cuadro de playoffs preliminar</TableTitle>
+        {matches.length ? (
+          <PlayoffBracketPreview
+            cloudinaryId={cloudinary_id}
+            matches={matches}
+          />
+        ) : (
+          <p>Aún no es posible predecir los cruces</p>
+        )}
+      </BracketSection>
       {thirds.length ? (
         <TableContainer>
           <TableTitle>Tabla de mejores terceros</TableTitle>
@@ -74,7 +84,7 @@ const TournamentPlayoffsPreview = () => {
       ) : (
         <p>Aún no es posible generar la tabla de mejores terceros</p>
       )}
-    </Container>
+    </>
   )
 }
 

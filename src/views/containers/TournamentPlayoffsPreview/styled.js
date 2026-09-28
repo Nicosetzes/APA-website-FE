@@ -6,11 +6,25 @@ export const Container = styled.div`
   gap: 0.75rem;
   margin: 0 auto;
   max-width: 1400px;
-  padding: 2.75rem 0.75rem;
+  padding: 0 0.75rem 2.75rem;
   width: 100%;
   @media (min-width: 1366px) {
     flex-direction: row;
   }
+  & > p {
+    margin-inline: auto;
+    text-align: center;
+  }
+`
+
+export const BracketSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 0 auto;
+  max-width: 1200px;
+  padding: 2.75rem 0.75rem 0;
+  width: 100%;
   & > p {
     margin-inline: auto;
     text-align: center;

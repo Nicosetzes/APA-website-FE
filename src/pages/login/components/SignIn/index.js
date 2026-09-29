@@ -3,17 +3,15 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import KeyIcon from '@mui/icons-material/Key'
 import { StyledSignIn } from './styled'
-import Swal from 'sweetalert2'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
+import { apiClient } from 'api/axiosConfig'
+import { toast } from 'utils/notifications'
 import { useAuth } from 'context/AuthContext'
 import { useState } from 'react'
-import withReactContent from 'sweetalert2-react-content'
-import { apiClient, getApiErrorMessage } from 'api/axiosConfig'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 const SignIn = () => {
-  const MySwal = withReactContent(Swal)
   const [loginData, setLoginData] = useState({})
   const location = useLocation()
   const navigate = useNavigate()
@@ -36,49 +34,10 @@ const SignIn = () => {
       const { token, user, message } = data
 
       startSession({ token, user, validation: 'server' })
-
-      MySwal.fire({
-        background: `rgba(28, 25, 25, 0.95)`,
-        color: `#fff`,
-        icon: 'success',
-        iconColor: '#18890e',
-        toast: true,
-        title: message,
-        position: 'top-end',
-        showConfirmButton: false,
-        text: 'Inicio de sesión exitoso! Será redirigido en breve...',
-        timer: 1000,
-        timerProgressBar: true,
-        customClass: { timerProgressBar: 'toast-progress-dark' },
-        didOpen: (toast) => {
-          toast.addEventListener('mouseenter', Swal.stopTimer)
-          toast.addEventListener('mouseleave', Swal.resumeTimer)
-        },
-        didClose: () => navigate(previousUrl || '/', { replace: true }),
-      })
+      navigate(previousUrl || '/', { replace: true })
+      toast.success({ title: message || 'Inicio de sesión exitoso' })
     } catch (error) {
-      const message = getApiErrorMessage(
-        error,
-        'No se pudo conectar con el servidor',
-      )
-      MySwal.fire({
-        background: `rgba(28, 25, 25, 0.95)`,
-        color: `#fff`,
-        icon: 'error',
-        iconColor: '#b30a0a',
-        text: message,
-        title: '¡Error!',
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 1500,
-        timerProgressBar: true,
-        customClass: { timerProgressBar: 'toast-progress-dark' },
-        didOpen: (toast) => {
-          toast.addEventListener('mouseenter', Swal.stopTimer)
-          toast.addEventListener('mouseleave', Swal.resumeTimer)
-        },
-      })
+      toast.apiError(error)
     }
   }
 

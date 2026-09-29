@@ -1,32 +1,16 @@
 import { StyledExtendedNavMenu } from './styled'
-import Swal from 'sweetalert2'
+import { toast } from 'utils/notifications'
 import { useAuth } from 'context/AuthContext'
-import withReactContent from 'sweetalert2-react-content'
 import { NavLink, useNavigate } from 'react-router-dom'
 
 const ExtendedNavMenu = () => {
-  const MySwal = withReactContent(Swal)
   const navigate = useNavigate()
   const { endSession, isAuthenticated } = useAuth()
 
   const handleLogout = () => {
-    MySwal.fire({
-      background: `rgba(28, 25, 25, 0.95)`,
-      color: `#fff`,
-      icon: 'info',
-      iconColor: '#0a15d1',
-      toast: true,
-      title: 'Cerrando sesión...',
-      position: 'top-end',
-      showConfirmButton: false,
-      timer: 1500,
-      timerProgressBar: true,
-      customClass: { timerProgressBar: 'toast-progress-dark' },
-      didClose: () => {
-        endSession()
-        navigate('/', { replace: true })
-      },
-    })
+    endSession()
+    navigate('/', { replace: true })
+    toast.info({ title: 'Sesión cerrada' })
   }
 
   return (

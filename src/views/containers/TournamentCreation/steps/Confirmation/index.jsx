@@ -1,9 +1,9 @@
-import Swal from 'sweetalert2'
 import styled from 'styled-components'
+import { apiClient } from 'api/axiosConfig'
+import { toast } from 'utils/notifications'
 import { useFormContext } from 'react-hook-form'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import withReactContent from 'sweetalert2-react-content'
 import {
   ConfirmationSection,
   ConfirmationItem,
@@ -17,9 +17,6 @@ import {
   SubmitButton,
 } from './styled'
 import { api, database } from 'api'
-import { apiClient, getApiErrorMessage } from 'api/axiosConfig'
-
-const MySwal = withReactContent(Swal)
 
 const BracketPreview = styled.div`
   display: flex;
@@ -217,34 +214,12 @@ const StepConfirmation = ({ format, players }) => {
         teams,
       })
 
-      MySwal.fire({
-        background: 'rgba(28, 25, 25, 0.95)',
-        color: '#fff',
-        icon: 'success',
-        iconColor: '#18890e',
-        toast: true,
-        title: 'Torneo creado con éxito',
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true,
-      }).then(() => {
-        navigate(`/tournaments/${response.data._id}`)
-      })
+      navigate(`/tournaments/${response.data._id}`)
+      toast.success({ title: 'Torneo creado con éxito' })
     } catch (error) {
       console.error('Error creating tournament:', error)
-      MySwal.fire({
-        background: 'rgba(28, 25, 25, 0.95)',
-        color: '#fff',
-        icon: 'error',
-        iconColor: '#b30a0a',
+      toast.apiError(error, 'Por favor intenta nuevamente', {
         title: 'Error al crear el torneo',
-        text: getApiErrorMessage(error, 'Por favor intenta nuevamente'),
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true,
       })
       setIsSubmitting(false)
     }

@@ -2,10 +2,9 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import IconButton from '@mui/material/IconButton'
 import { Loader } from 'views/components'
 import { Pagination } from '@mui/material'
-import Swal from 'sweetalert2'
 import { api } from 'api'
+import { apiClient } from 'api/axiosConfig'
 import { motion } from 'framer-motion'
-import withReactContent from 'sweetalert2-react-content'
 import {
   Caption,
   CloseButton,
@@ -30,14 +29,12 @@ import {
   PaginationContainer,
   PaginationInfo,
 } from './styled'
-import { apiClient, getApiErrorMessage } from 'api/axiosConfig'
+import { confirmDialog, toast } from 'utils/notifications'
 import { format, parseISO } from 'date-fns'
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 
 const Edits = () => {
-  const MySwal = withReactContent(Swal)
-
   const [edits, setEdits] = useState([])
   const [pagination, setPagination] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -93,69 +90,23 @@ const Edits = () => {
     setSelectedImage(null)
   }
 
-  const handleDeleteEdit = (editId) => {
-    Swal.fire({
+  const handleDeleteEdit = async (editId) => {
+    const confirmed = await confirmDialog({
       title: 'Eliminar edit',
-      html: '¿Está seguro que desea eliminar este edit?',
-      icon: 'warning',
-      showCancelButton: true,
-      reverseButtons: true,
-      confirmButtonColor: 'var(--red-700)',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Eliminar',
-      cancelButtonText: 'Volver',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        apiClient
-          .delete(`${api}/edits/${editId}`)
-          .then(() => {
-            MySwal.fire({
-              background: 'rgba(28, 25, 25, 0.95)',
-              color: '#fff',
-              icon: 'success',
-              iconColor: 'var(--green-900)',
-              toast: true,
-              title: 'Edit eliminado con éxito',
-              position: 'top-end',
-              showConfirmButton: false,
-              text: 'Aguarde unos instantes...',
-              timer: 2000,
-              timerProgressBar: true,
-              customClass: { timerProgressBar: 'toast-progress-dark' },
-              didOpen: (toast) => {
-                const controller = new AbortController()
-                fetchEdits(controller.signal)
-                toast.addEventListener('mouseenter', Swal.stopTimer)
-                toast.addEventListener('mouseleave', Swal.resumeTimer)
-              },
-            })
-          })
-          .catch((error) => {
-            const message = getApiErrorMessage(
-              error,
-              'Error al eliminar el edit',
-            )
-            MySwal.fire({
-              background: 'rgba(28, 25, 25, 0.95)',
-              color: '#fff',
-              icon: 'error',
-              iconColor: 'var(--red-700)',
-              text: message,
-              title: '¡Error!',
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 2000,
-              timerProgressBar: true,
-              customClass: { timerProgressBar: 'toast-progress-dark' },
-              didOpen: (toast) => {
-                toast.addEventListener('mouseenter', Swal.stopTimer)
-                toast.addEventListener('mouseleave', Swal.resumeTimer)
-              },
-            })
-          })
-      }
+      text: '¿Está seguro que desea eliminar este edit?',
+      confirmText: 'Eliminar',
+      cancelText: 'Volver',
+      danger: true,
     })
+    if (!confirmed) return
+
+    try {
+      await apiClient.delete(`${api}/edits/${editId}`)
+      fetchEdits()
+      toast.success({ title: 'Edit eliminado con éxito' })
+    } catch (error) {
+      toast.apiError(error, 'Error al eliminar el edit')
+    }
   }
 
   useEffect(() => {

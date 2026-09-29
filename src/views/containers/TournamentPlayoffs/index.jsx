@@ -1,9 +1,7 @@
-import Swal from 'sweetalert2'
 import { api } from 'api'
 import { motion } from 'framer-motion'
 import { useOutletContext } from 'react-router-dom'
 import { useParams } from 'react-router-dom'
-import withReactContent from 'sweetalert2-react-content'
 import {
   PageLoader,
   PlayoffBracket,
@@ -11,11 +9,10 @@ import {
   StandingsTable,
 } from 'views/components'
 import { apiClient, getApiErrorMessage } from 'api/axiosConfig'
+import { confirmDialog, toast } from 'utils/notifications'
 import { useEffect, useState } from 'react'
 
 const TournamentPlayoffs = () => {
-  const MySwal = withReactContent(Swal)
-
   const { tournament } = useParams()
   const { canMutate, tournamentData } = useOutletContext()
 
@@ -61,68 +58,19 @@ const TournamentPlayoffs = () => {
   const playoffGeneration = async () => {
     if (!canMutate) return
 
-    const result = await MySwal.fire({
+    const confirmed = await confirmDialog({
       title: '¿Generar playoff?',
       text: '¿Estás seguro de que quieres generar el playoff?',
-      icon: 'warning',
-      reverseButtons: true,
-      showCancelButton: true,
-      confirmButtonColor: 'var(--blue-900)',
-      cancelButtonColor: 'var(--red-700)',
-      confirmButtonText: 'Sí, generar',
-      cancelButtonText: 'Cancelar',
-      background: 'rgba(28, 25, 25, 0.95)',
-      color: '#fff',
+      confirmText: 'Sí, generar',
     })
-
-    if (!result.isConfirmed) {
-      return
-    }
+    if (!confirmed) return
 
     try {
       await apiClient.post(`${api}/tournaments/${tournament}/playoff`, {})
-      MySwal.fire({
-        background: `rgba(28, 25, 25, 0.95)`,
-        color: `#fff`,
-        icon: 'success',
-        iconColor: '#18890e',
-        toast: true,
-        title: `¡Éxito!`,
-        position: 'top-end',
-        showConfirmButton: false,
-        text: `Playoff creado con éxito`,
-        timer: 2000,
-        timerProgressBar: true,
-        customClass: { timerProgressBar: 'toast-progress-dark' },
-        didOpen: (toast) => {
-          getPlayoffsData()
-          toast.addEventListener('mouseenter', Swal.stopTimer)
-          toast.addEventListener('mouseleave', Swal.resumeTimer)
-        },
-      })
+      getPlayoffsData()
+      toast.success({ title: 'Playoff creado con éxito' })
     } catch (error) {
-      const message = getApiErrorMessage(
-        error,
-        'No se pudo conectar con el servidor',
-      )
-      MySwal.fire({
-        background: `rgba(28, 25, 25, 0.95)`,
-        color: `#fff`,
-        icon: 'error',
-        iconColor: '#b30a0a',
-        text: message,
-        title: '¡Error!',
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 2000,
-        timerProgressBar: true,
-        customClass: { timerProgressBar: 'toast-progress-dark' },
-        didOpen: (toast) => {
-          toast.addEventListener('mouseenter', Swal.stopTimer)
-          toast.addEventListener('mouseleave', Swal.resumeTimer)
-        },
-      })
+      toast.apiError(error)
     }
   }
 

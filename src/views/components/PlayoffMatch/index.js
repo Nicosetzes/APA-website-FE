@@ -4,13 +4,12 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
 import IconButton from '@mui/material/IconButton'
 import { Loader } from 'views/components'
 import { StyledPlayoffMatch } from './styled'
-import Swal from 'sweetalert2'
 import Tooltip from '../Tooltip'
-import { useState } from 'react'
-import withReactContent from 'sweetalert2-react-content'
-import { api, database } from 'api'
-import { apiClient, getApiErrorMessage } from 'api/axiosConfig'
+import { apiClient } from 'api/axiosConfig'
+import { toast } from 'utils/notifications'
 import { useParams } from 'react-router-dom'
+import { useState } from 'react'
+import { api, database } from 'api'
 
 const PlayoffMatch = ({
   canMutate,
@@ -34,24 +33,9 @@ const PlayoffMatch = ({
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showAnimation, setShowAnimation] = useState(false)
 
-  const MySwal = withReactContent(Swal)
-
   const { tournament } = useParams()
 
   const [matchScore, setMatchScore] = useState({})
-
-  const toastConfig = {
-    background: 'rgba(28, 25, 25, 0.95)',
-    color: '#fff',
-    toast: true,
-    position: 'top-end',
-    showConfirmButton: false,
-    timer: 2000,
-    timerProgressBar: true,
-    customClass: {
-      timerProgressBar: 'toast-progress-dark',
-    },
-  }
 
   const onHandleChange = (event) => {
     const name = event.target.name
@@ -62,7 +46,6 @@ const PlayoffMatch = ({
   const handleMatchSubmit = async (isMatchValid) => {
     if (!canMutate) return
 
-    setIsSubmitting(true)
     const { scoreP1, penaltyScoreP1, scoreP2, penaltyScoreP2 } = matchScore
 
     if (
@@ -71,8 +54,11 @@ const PlayoffMatch = ({
       scoreP2 == null ||
       scoreP2 === ''
     ) {
-      return console.log('Resultado incompleto')
+      toast.error({ text: 'Resultado incompleto, intente nuevamente' })
+      return
     }
+
+    setIsSubmitting(true)
 
     const update = {
       playerP1,
@@ -89,46 +75,20 @@ const PlayoffMatch = ({
     }
 
     try {
-      const { data } = await apiClient.put(
+      await apiClient.put(
         `${api}/tournaments/${tournament}/matches/update-game/${id}`,
         update,
       )
 
-      console.log(data)
-
-      await getData()
+      getData()
 
       if (isThisTheFinal) {
         setShowAnimation(true)
       }
 
-      MySwal.fire({
-        ...toastConfig,
-        icon: 'success',
-        iconColor: '#18890e',
-        text: 'Resultado cargado con éxito',
-        didOpen: (toast) => {
-          toast.addEventListener('mouseenter', Swal.stopTimer)
-          toast.addEventListener('mouseleave', Swal.resumeTimer)
-        },
-      })
+      toast.success({ title: 'Resultado cargado con éxito' })
     } catch (error) {
-      const message = getApiErrorMessage(
-        error,
-        'No se pudo conectar con el servidor',
-      )
-
-      MySwal.fire({
-        ...toastConfig,
-        icon: 'error',
-        iconColor: '#b30a0a',
-        title: '¡Error!',
-        text: message,
-        didOpen: (toast) => {
-          toast.addEventListener('mouseenter', Swal.stopTimer)
-          toast.addEventListener('mouseleave', Swal.resumeTimer)
-        },
-      })
+      toast.apiError(error)
     } finally {
       setIsSubmitting(false)
     }

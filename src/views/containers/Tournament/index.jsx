@@ -1,8 +1,6 @@
 import { Image } from 'cloudinary-react'
 import StarIcon from '@mui/icons-material/Star'
 import { motion } from 'framer-motion'
-import Swal from 'sweetalert2'
-import withReactContent from 'sweetalert2-react-content'
 import { useMediaQuery } from 'react-responsive'
 import {
   Container,
@@ -40,38 +38,36 @@ import {
 import { PageLoader, PrimaryLink } from 'views/components'
 import { apiClient, getApiErrorMessage } from 'api/axiosConfig'
 import { cloudName, database } from 'api'
+import { confirmDialog, toast } from 'utils/notifications'
 import { format as formatDate, parseISO } from 'date-fns'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useOutletContext, useParams } from 'react-router-dom'
 
 const Tournament = () => {
   const isSm = useMediaQuery({ query: '(min-width: 576px)' })
-  const { canMutate, tournamentData } = useOutletContext()
+  const { canMutate, refreshTournament, tournamentData } = useOutletContext()
   const { tournament } = useParams()
   const [tournamentSummary, setTournamentSummary] = useState(null)
   const [summaryError, setSummaryError] = useState(null)
   const [statsLoading, setStatsLoading] = useState(true)
 
-  const MySwal = withReactContent(Swal)
+  const fetchSummary = useCallback(async () => {
+    try {
+      const { data } = await apiClient.get(`/tournaments/${tournament}/summary`)
+      setTournamentSummary(data)
+      setSummaryError(null)
+    } catch (error) {
+      setSummaryError(
+        getApiErrorMessage(error, 'No se pudo cargar el resumen del torneo'),
+      )
+    } finally {
+      setStatsLoading(false)
+    }
+  }, [tournament])
 
   useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const { data } = await apiClient.get(
-          `/tournaments/${tournament}/summary`,
-        )
-        setTournamentSummary(data)
-        setSummaryError(null)
-      } catch (error) {
-        setSummaryError(
-          getApiErrorMessage(error, 'No se pudo cargar el resumen del torneo'),
-        )
-      } finally {
-        setStatsLoading(false)
-      }
-    }
-    fetchStats()
-  }, [tournament])
+    fetchSummary()
+  }, [fetchSummary])
 
   if (statsLoading) return <PageLoader />
   if (summaryError) {
@@ -86,51 +82,21 @@ const Tournament = () => {
   const handleFinishTournament = async () => {
     if (!canMutate) return
 
-    const result = await MySwal.fire({
+    const confirmed = await confirmDialog({
       title: '¿Finalizar torneo?',
       text: '¿Estás seguro de que quieres finalizar este torneo?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: 'var(--red-700)',
-      cancelButtonColor: 'var(--blue-900)',
-      confirmButtonText: 'Sí, finalizar',
-      cancelButtonText: 'Cancelar',
-      background: 'rgba(28, 25, 25, 0.95)',
-      color: '#fff',
+      confirmText: 'Sí, finalizar',
+      danger: true,
     })
-
-    if (!result.isConfirmed) {
-      return
-    }
+    if (!confirmed) return
 
     try {
       await apiClient.put(`/tournaments/${tournament}/complete`)
-
-      MySwal.fire({
-        background: 'rgba(28, 25, 25, 0.95)',
-        color: '#fff',
-        icon: 'success',
-        iconColor: '#18890e',
-        toast: true,
-        title: 'Torneo finalizado con éxito',
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 1500,
-        timerProgressBar: true,
-        customClass: { timerProgressBar: 'toast-progress-dark' },
-      })
-
-      // Refresh page to show updated data
-      setTimeout(() => window.location.reload(), 1500)
+      refreshTournament()
+      fetchSummary()
+      toast.success({ title: 'Torneo finalizado con éxito' })
     } catch (err) {
-      MySwal.fire({
-        title: 'Error',
-        text: getApiErrorMessage(err, 'Error al finalizar el torneo'),
-        icon: 'error',
-        background: 'rgba(28, 25, 25, 0.95)',
-        color: '#fff',
-        confirmButtonColor: 'var(--red-700)',
-      })
+      toast.apiError(err, 'Error al finalizar el torneo')
     }
   }
 

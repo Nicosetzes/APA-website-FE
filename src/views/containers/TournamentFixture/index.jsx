@@ -1,11 +1,10 @@
 import { Loader } from 'views/components'
 import Pagination from '@mui/material/Pagination'
-import Swal from 'sweetalert2'
 import { apiClient } from 'api/axiosConfig'
 import { motion } from 'framer-motion'
+import { toast } from 'utils/notifications'
 import { useMediaQuery } from 'react-responsive'
 import { useOutletContext } from 'react-router-dom'
-import withReactContent from 'sweetalert2-react-content'
 import {
   Card,
   ClearButton,
@@ -33,8 +32,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 
 const TournamentFixture = () => {
   const isXS = useMediaQuery({ query: '(min-width: 375px)' })
-
-  const MySwal = withReactContent(Swal)
 
   const { tournament } = useParams()
 
@@ -155,31 +152,14 @@ const TournamentFixture = () => {
         group,
       })
       .then(() => {
-        MySwal.fire({
-          background: `rgba(28, 25, 25, 0.95)`,
-          color: `#fff`,
-          icon: 'success',
-          iconColor: '#18890e',
-          toast: true,
+        getFixtureData()
+        toast.success({
           title: `Fixture ${
-            group ? `para la zona ${group}` : `del torneo`
+            group ? `para la zona ${group}` : 'del torneo'
           } creado con éxito`,
-          position: 'top-end',
-          showConfirmButton: false,
-          text: 'Aguarde unos instantes...',
-          timer: 1500,
-          timerProgressBar: true,
-          customClass: { timerProgressBar: 'toast-progress-dark' },
-          didOpen: (toast) => {
-            getFixtureData()
-            toast.addEventListener('mouseenter', Swal.stopTimer)
-            toast.addEventListener('mouseleave', Swal.resumeTimer)
-          },
         })
       })
-      .catch((err) => {
-        console.log(err)
-      })
+      .catch((error) => toast.apiError(error, 'No se pudo generar el fixture'))
   }
 
   if (tournamentData && fixtureData) {

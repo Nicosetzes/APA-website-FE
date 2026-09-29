@@ -12,35 +12,19 @@ import MenuList from '@mui/material/MenuList'
 import MenuItem from '@mui/material/MenuItem'
 import SportsSoccerIcon from '@mui/icons-material/SportsSoccer'
 import { StyledMenu } from './styled'
-import Swal from 'sweetalert2'
+import { toast } from 'utils/notifications'
 import { useAuth } from 'context/AuthContext'
-import withReactContent from 'sweetalert2-react-content'
 import { NavLink, useNavigate } from 'react-router-dom'
 
 const NavMenu = ({ handleClose, isOpen, anchorEl }) => {
-  const MySwal = withReactContent(Swal)
   const navigate = useNavigate()
   const { endSession, isAuthenticated } = useAuth()
 
   const handleLogout = () => {
     handleClose()
-    MySwal.fire({
-      background: `rgba(28, 25, 25, 0.95)`,
-      color: `#fff`,
-      icon: 'info',
-      iconColor: '#0a15d1',
-      toast: true,
-      title: 'Cerrando sesión...',
-      position: 'top-end',
-      showConfirmButton: false,
-      timer: 1500,
-      timerProgressBar: true,
-      customClass: { timerProgressBar: 'toast-progress-dark' },
-      didClose: () => {
-        endSession()
-        navigate('/', { replace: true })
-      },
-    })
+    endSession()
+    navigate('/', { replace: true })
+    toast.info({ title: 'Sesión cerrada' })
   }
 
   return (

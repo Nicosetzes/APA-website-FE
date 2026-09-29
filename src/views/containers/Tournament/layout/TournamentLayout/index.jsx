@@ -46,9 +46,7 @@ const TournamentLayout = () => {
     canMutateTournament(tournamentData, user)
 
   return (
-    <div
-      style={{ display: 'flex', flexDirection: 'column', minHeight: '100%' }}
-    >
+    <div style={{ display: 'flex', flex: 1, flexDirection: 'column' }}>
       {tournamentData && (
         <TournamentTabs
           cloudinary_id={tournamentData.cloudinary_id}

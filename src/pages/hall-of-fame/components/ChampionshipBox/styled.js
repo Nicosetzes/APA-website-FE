@@ -56,7 +56,7 @@ export const StyledChampionshipBox = styled.div`
         }
         .showcase__body-info-user {
           color: var(--blue-900);
-          font-size: 3.5rem;
+          font-size: 2.75rem;
           font-weight: 700;
           line-height: 2.5rem;
         }

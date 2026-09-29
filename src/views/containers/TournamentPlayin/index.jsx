@@ -1,10 +1,10 @@
 import Swal from 'sweetalert2'
+import { api } from 'api'
 import { motion } from 'framer-motion'
 import { useOutletContext } from 'react-router-dom'
 import { useParams } from 'react-router-dom'
 import withReactContent from 'sweetalert2-react-content'
-import { PageLoader, PlayinRound, PrimaryLink } from 'views/components'
-import { api, database } from 'api'
+import { PageLoader, PlayinBracket, PrimaryLink } from 'views/components'
 import { apiClient, getApiErrorMessage } from 'api/axiosConfig'
 import { useEffect, useState } from 'react'
 
@@ -33,39 +33,6 @@ const TournamentPlayin = () => {
   useEffect(() => {
     getPlayinData()
   }, [])
-
-  const getPlayinMatchesForRound = (matches = [], componentRound) => {
-    if (!Array.isArray(matches)) return []
-
-    const expectedIds =
-      componentRound === 1 ? [1, 2, 3, 4] : componentRound === 2 ? [5, 6] : []
-
-    const matchById = new Map()
-    matches.forEach((m) => {
-      matchById.set(Number(m.playoff_id), m)
-    })
-
-    return expectedIds.map((playoffId) => {
-      const existing = matchById.get(playoffId)
-      if (existing) return existing
-
-      return {
-        _id: `preview-${playoffId}`,
-        playoff_id: playoffId,
-        playerP1: null,
-        teamP1: null,
-        seedP1: '?',
-        scoreP1: null,
-        playerP2: null,
-        teamP2: null,
-        seedP2: '?',
-        scoreP2: null,
-        played: false,
-        outcome: null,
-        valid: false,
-      }
-    })
-  }
 
   const playinGeneration = async (group) => {
     if (!canMutate) return
@@ -151,85 +118,16 @@ const TournamentPlayin = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
+        style={{ display: 'flex', flex: 1, flexDirection: 'column' }}
       >
-        {matches.length && (
-          <>
-            <div
-              style={{
-                backgroundColor: '#003545',
-                display: 'flex',
-                gap: '1rem',
-                height: '100%',
-                overflowX: 'auto',
-                padding: '2rem 0.5rem',
-              }}
-            >
-              <PlayinRound
-                canMutate={canMutate}
-                matches={getPlayinMatchesForRound(matches, 1)}
-                round={1}
-                getData={getPlayinData}
-              />
-              <PlayinRound
-                canMutate={canMutate}
-                matches={getPlayinMatchesForRound(matches, 2)}
-                round={2}
-                getData={getPlayinData}
-              />
-              {matches.length &&
-                matches.filter(({ outcome }) => outcome).length == 6 && (
-                  <div
-                    style={{
-                      border: 'var(--orange-900) 2px solid',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      margin: 'auto',
-                      padding: '1.75rem 1.5rem',
-                      minWidth: '200px',
-                    }}
-                  >
-                    <div
-                      style={{
-                        color: '#fff',
-                        fontWeight: 700,
-                        textAlign: 'center',
-                      }}
-                    >
-                      Equipos clasificados
-                    </div>
-                    <div style={{ margin: '0.5rem auto 0 auto' }}>
-                      {matches
-                        .filter(
-                          ({ playoff_id }) =>
-                            playoff_id == 1 ||
-                            playoff_id == 3 ||
-                            playoff_id == 5 ||
-                            playoff_id == 6,
-                        )
-                        .map(({ _id, outcome }) => (
-                          <div
-                            key={_id}
-                            style={{
-                              alignItems: 'center',
-                              display: 'flex',
-                              margin: '0.25rem auto',
-                            }}
-                          >
-                            <img
-                              src={`${database}/logos/${outcome.teamThatWon.id}`}
-                              style={{ margin: '0 0.25rem', width: '25px' }}
-                            />
-                            <span style={{ color: '#fff' }}>
-                              {outcome.teamThatWon.name}
-                            </span>
-                          </div>
-                        ))}
-                    </div>
-                  </div>
-                )}
-            </div>
-          </>
-        )}
+        {matches.length ? (
+          <PlayinBracket
+            canMutate={canMutate}
+            cloudinaryId={tournamentData.cloudinary_id}
+            getData={getPlayinData}
+            matches={matches}
+          />
+        ) : null}
         {(!matches.length ||
           !matches.filter(({ group }) => group == 'A').length) && (
           <div

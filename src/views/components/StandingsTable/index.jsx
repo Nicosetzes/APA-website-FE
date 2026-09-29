@@ -10,7 +10,13 @@ import { database } from 'api'
 import { formatTeamName } from 'utils'
 import { StyledTable, TableTitle } from './styled'
 
-const StandingsTable = ({ format, standings, title, tournament, onHandle }) => {
+const StandingsTable = ({
+  format = '',
+  standings = [],
+  title,
+  tournament,
+  onHandle,
+}) => {
   return (
     <>
       <div

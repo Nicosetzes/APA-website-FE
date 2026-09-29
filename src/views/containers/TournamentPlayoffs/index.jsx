@@ -5,10 +5,8 @@ import { useOutletContext } from 'react-router-dom'
 import { useParams } from 'react-router-dom'
 import withReactContent from 'sweetalert2-react-content'
 import {
-  ChampionBox,
-  FinalistBox,
   PageLoader,
-  PlayoffRound,
+  PlayoffBracket,
   PrimaryLink,
   StandingsTable,
 } from 'views/components'
@@ -59,100 +57,6 @@ const TournamentPlayoffs = () => {
   useEffect(() => {
     getPlayoffsData()
   }, [])
-
-  const getMatchesForRound = (format, matches = [], componentRound) => {
-    if (!Array.isArray(matches)) return []
-
-    let expectedIds = []
-    const range = (min, max) => {
-      const arr = []
-      for (let i = min; i <= max; i++) arr.push(i)
-      return arr
-    }
-
-    if (format === 'playoff' || format === 'world_cup_2026') {
-      switch (componentRound) {
-        case 1:
-          expectedIds = range(1, 16)
-          break
-        case 2:
-          expectedIds = range(17, 24)
-          break
-        case 3:
-          expectedIds = range(25, 28)
-          break
-        case 4:
-          expectedIds = range(29, 30)
-          break
-        case 5:
-          expectedIds = [31]
-          break
-        default:
-          expectedIds = []
-      }
-    } else if (format === 'champions_league') {
-      switch (componentRound) {
-        case 1:
-          expectedIds = range(1, 16)
-          break
-        case 2:
-          expectedIds = range(17, 24)
-          break
-        case 3:
-          expectedIds = range(25, 28)
-          break
-        case 4:
-          expectedIds = [29]
-          break
-        default:
-          expectedIds = []
-      }
-    } else {
-      // league_playin_playoff format
-      switch (componentRound) {
-        case 1:
-          expectedIds = range(1, 8)
-          break
-        case 2:
-          expectedIds = range(9, 12)
-          break
-        case 3:
-          expectedIds = range(13, 14)
-          break
-        case 4:
-          expectedIds = [15]
-          break
-        default:
-          expectedIds = []
-      }
-    }
-
-    const matchById = new Map()
-    matches.forEach((m) => {
-      matchById.set(Number(m.playoff_id), m)
-    })
-
-    return expectedIds.map((playoffId) => {
-      const existing = matchById.get(playoffId)
-      if (existing) return existing
-
-      return {
-        _id: `preview-${playoffId}`,
-        playoff_id: playoffId,
-        playerP1: null,
-        teamP1: null,
-        seedP1: null,
-        scoreP1: null,
-        playerP2: null,
-        teamP2: null,
-        seedP2: null,
-        scoreP2: null,
-        played: false,
-        outcome: null,
-        valid: false,
-      }
-    })
-  }
 
   const playoffGeneration = async () => {
     if (!canMutate) return
@@ -231,8 +135,7 @@ const TournamentPlayoffs = () => {
   }
 
   if (tournamentData && playoffData) {
-    const { format } = tournamentData
-    const hasRoundOf32 = format === 'playoff' || format === 'world_cup_2026'
+    const { cloudinary_id, format } = tournamentData
     const { matches } = playoffData
     const standings = playoffsTableData?.standings || []
 
@@ -241,8 +144,9 @@ const TournamentPlayoffs = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
+        style={{ display: 'flex', flex: 1, flexDirection: 'column' }}
       >
-        {standings.length ? (
+        {!matches.length && standings.length ? (
           <div
             style={{
               alignItems: 'center',
@@ -251,116 +155,20 @@ const TournamentPlayoffs = () => {
               justifyContent: 'center',
             }}
           >
-            <StandingsTable standings={standings} />
+            <StandingsTable
+              standings={standings}
+              title={'Tabla de clasificados'}
+            />
           </div>
         ) : null}
         {matches.length ? (
-          <div
-            style={{
-              backgroundColor: '#003545',
-              display: 'flex',
-              gap: '1rem',
-              overflowX: 'auto',
-              padding: '2rem 0.5rem',
-            }}
-          >
-            {/* Round of 32 - Only for playoff format */}
-            {hasRoundOf32 && (
-              <PlayoffRound
-                canMutate={canMutate}
-                matches={getMatchesForRound(format, matches, 1)}
-                round={1}
-                getData={getPlayoffsData}
-                isThisTheFinal={false}
-              />
-            )}
-            {/* Round of 16 */}
-            <PlayoffRound
-              canMutate={canMutate}
-              matches={getMatchesForRound(
-                format,
-                matches,
-                hasRoundOf32 ? 2 : 1,
-              )}
-              round={hasRoundOf32 ? 2 : 1}
-              getData={getPlayoffsData}
-              isThisTheFinal={false}
-            />
-            {/* Quarterfinals */}
-            <PlayoffRound
-              canMutate={canMutate}
-              matches={getMatchesForRound(
-                format,
-                matches,
-                hasRoundOf32 ? 3 : 2,
-              )}
-              round={hasRoundOf32 ? 3 : 2}
-              getData={getPlayoffsData}
-              isThisTheFinal={false}
-            />
-            {/* Semifinals */}
-            <PlayoffRound
-              canMutate={canMutate}
-              matches={getMatchesForRound(
-                format,
-                matches,
-                hasRoundOf32 ? 4 : 3,
-              )}
-              round={hasRoundOf32 ? 4 : 3}
-              getData={getPlayoffsData}
-              isThisTheFinal={false}
-            />
-            {/* Final */}
-            <PlayoffRound
-              canMutate={canMutate}
-              matches={getMatchesForRound(
-                format,
-                matches,
-                hasRoundOf32 ? 5 : 4,
-              )}
-              round={hasRoundOf32 ? 5 : 4}
-              getData={getPlayoffsData}
-              isThisTheFinal={true}
-            />
-            {format == 'champions_league'
-              ? matches.filter(({ outcome }) => outcome).length == 29 && (
-                  <div
-                    style={{
-                      alignItems: 'space-around',
-                      display: 'flex',
-                      flexDirection: 'column',
-                    }}
-                  >
-                    <ChampionBox match={matches.at(-1)} />
-                    <FinalistBox match={matches.at(-1)} />
-                  </div>
-                )
-              : hasRoundOf32
-              ? matches.filter(({ outcome }) => outcome).length == 31 && (
-                  <div
-                    style={{
-                      alignItems: 'space-around',
-                      display: 'flex',
-                      flexDirection: 'column',
-                    }}
-                  >
-                    <ChampionBox match={matches.at(-1)} />
-                    <FinalistBox match={matches.at(-1)} />
-                  </div>
-                )
-              : matches.filter(({ outcome }) => outcome).length == 15 && (
-                  <div
-                    style={{
-                      alignItems: 'space-around',
-                      display: 'flex',
-                      flexDirection: 'column',
-                    }}
-                  >
-                    <ChampionBox match={matches.at(-1)} />
-                    <FinalistBox match={matches.at(-1)} />
-                  </div>
-                )}
-          </div>
+          <PlayoffBracket
+            canMutate={canMutate}
+            cloudinaryId={cloudinary_id}
+            format={format}
+            getData={getPlayoffsData}
+            matches={matches}
+          />
         ) : null}
         {!matches.length && (
           <div

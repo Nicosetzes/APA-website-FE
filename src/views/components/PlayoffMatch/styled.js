@@ -2,25 +2,40 @@ import styled from 'styled-components'
 
 export const StyledPlayoffMatch = styled.div`
   background-color: rgb(0, 26, 42);
+  border: ${(props) =>
+    props.isThisTheFinal
+      ? '2px solid var(--orange-900)'
+      : '1px solid rgba(255, 255, 255, 0.15)'};
+  border-radius: 10px;
+  box-shadow: ${(props) =>
+    props.isThisTheFinal
+      ? '0 0 16px rgba(255, 195, 11, 0.25)'
+      : '0 2px 6px rgba(0, 0, 0, 0.35)'};
+  box-sizing: border-box;
   display: flex;
-  flex-direction: row;
+  flex-direction: ${(props) =>
+    props.$side === 'right' ? 'row-reverse' : 'row'};
+  flex-shrink: 0;
   height: 115px;
-  max-width: 325px;
-  outline: ${(props) =>
-    `${
-      props.isThisTheFinal ? 'var(--orange-900) 2px solid' : '#000 2px solid'
-    }`};
+  justify-content: ${(props) =>
+    props.$align === 'start' ? 'flex-start' : 'center'};
   padding: 0 0.5rem;
-  width: 100%;
+  width: 300px;
   .container__team {
     align-items: center;
     display: flex;
+    flex-direction: ${(props) =>
+      props.$side === 'right' ? 'row-reverse' : 'row'};
+    & + .container__team {
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
     .team-seed {
       align-items: center;
       color: #fff;
       display: flex;
       font-weight: 700;
       height: 40px;
+      justify-content: center;
       margin: 0.5rem;
       width: 20px;
     }
@@ -35,8 +50,11 @@ export const StyledPlayoffMatch = styled.div`
       display: flex;
       font-size: 0.8rem;
       height: 40px;
+      justify-content: ${(props) =>
+        props.$side === 'right' ? 'flex-end' : 'flex-start'};
       margin: 0 0.5rem;
-      width: 125px;
+      text-align: ${(props) => (props.$side === 'right' ? 'right' : 'left')};
+      width: 120px;
     }
     .team-user {
       align-items: center;
@@ -54,7 +72,17 @@ export const StyledPlayoffMatch = styled.div`
     .team-score {
       align-items: center;
       display: flex;
-      margin: 0 0 0 0.5rem;
+      justify-content: center;
+      margin: ${(props) =>
+        props.$side === 'right' ? '0 0.5rem 0 0' : '0 0 0 0.5rem'};
+      min-width: 2.5rem;
+    }
+    .team-walkover {
+      align-items: center;
+      display: inline-flex;
+      font-size: 0.9rem;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
     }
     .team-penalties {
       margin: 0 0.25rem;

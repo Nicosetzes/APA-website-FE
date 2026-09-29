@@ -28,6 +28,8 @@ const PlayoffMatch = ({
   getData,
   valid,
   isThisTheFinal,
+  side = 'left',
+  align = 'center',
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showAnimation, setShowAnimation] = useState(false)
@@ -134,7 +136,11 @@ const PlayoffMatch = ({
 
   return (
     <>
-      <StyledPlayoffMatch isThisTheFinal={isThisTheFinal}>
+      <StyledPlayoffMatch
+        isThisTheFinal={isThisTheFinal}
+        $side={side}
+        $align={align}
+      >
         <div style={{ display: 'flex' }}>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <div className="container__team">
@@ -171,18 +177,18 @@ const PlayoffMatch = ({
               {played ? (
                 <div className="team-score">
                   {valid === false && outcome.teamThatWon?.id == teamP1.id && (
-                    <>
-                      <span>W/O</span>
+                    <span className="team-walkover">
+                      W/O
                       <Tooltip title={'W/O = Walk Over (victoria automática)'}>
                         <HelpOutlineIcon
                           sx={{
                             fontSize: '1rem',
-                            marginLeft: '0.25rem',
+                            marginLeft: '0.15rem',
                             cursor: 'help',
                           }}
                         />
                       </Tooltip>
-                    </>
+                    </span>
                   )}
                   {valid !== false && scoreP1}
                 </div>
@@ -249,18 +255,18 @@ const PlayoffMatch = ({
               {played ? (
                 <div className="team-score">
                   {valid === false && outcome.teamThatWon?.id == teamP2.id && (
-                    <>
-                      <span>W/O</span>
+                    <span className="team-walkover">
+                      W/O
                       <Tooltip title={'W/O = Walk Over (victoria automática)'}>
                         <HelpOutlineIcon
                           sx={{
                             fontSize: '1rem',
-                            marginLeft: '0.25rem',
+                            marginLeft: '0.15rem',
                             cursor: 'help',
                           }}
                         />
                       </Tooltip>
-                    </>
+                    </span>
                   )}
                   {valid !== false && scoreP2}
                 </div>

@@ -3,6 +3,7 @@ import { es } from 'date-fns/locale'
 import {
   CustomTable,
   DateText,
+  PenaltyScore,
   PlayerTag,
   Scoreboard,
   ScoreBadge,
@@ -17,6 +18,16 @@ const TYPE_LABELS = {
   regular: 'Reg',
   playin: 'P-In',
   playoff: 'P-Off',
+}
+
+const getPenaltyScores = (outcome, teamP1) => {
+  if (!outcome?.penalties || !outcome.teamThatWon) return null
+
+  const p1Won = String(outcome.teamThatWon.id) === String(teamP1?.id)
+  return {
+    p1: p1Won ? outcome.scoreFromTeamThatWon : outcome.scoreFromTeamThatLost,
+    p2: p1Won ? outcome.scoreFromTeamThatLost : outcome.scoreFromTeamThatWon,
+  }
 }
 
 const MatchesTable = ({ matches }) => {
@@ -74,6 +85,7 @@ const MatchesTable = ({ matches }) => {
               outcome?.teamThatWon?.id === teamP1?.id && !outcome?.draw
             const isP2Winner =
               outcome?.teamThatWon?.id === teamP2?.id && !outcome?.draw
+            const penalties = getPenaltyScores(outcome, teamP1)
 
             return (
               <tr key={_id}>
@@ -121,8 +133,22 @@ const MatchesTable = ({ matches }) => {
                         />
                       )}
                     </TeamBlock>
-                    <ScoreBadge>
-                      {scoreP1} - {scoreP2}
+                    <ScoreBadge
+                      title={
+                        penalties
+                          ? `Penales: ${penalties.p1} - ${penalties.p2}`
+                          : undefined
+                      }
+                    >
+                      {scoreP1}
+                      {penalties && (
+                        <PenaltyScore>({penalties.p1})</PenaltyScore>
+                      )}
+                      -
+                      {penalties && (
+                        <PenaltyScore>({penalties.p2})</PenaltyScore>
+                      )}
+                      {scoreP2}
                     </ScoreBadge>
                     <TeamBlock align="left" isWinner={isP2Winner}>
                       {teamP2?.id && (

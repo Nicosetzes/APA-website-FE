@@ -1,6 +1,8 @@
+import ComparisonFilter from './ComparisonFilter'
 import Pagination from '@mui/material/Pagination'
 import { api } from 'api'
 import { motion } from 'framer-motion'
+import useDebouncedParam from './useDebouncedParam'
 import { useMediaQuery } from 'react-responsive'
 import { useSearchParams } from 'react-router-dom'
 import {
@@ -8,9 +10,10 @@ import {
   ErrorMessage,
   FilterCard,
   FilterGrid,
+  FilterHint,
+  FilterSection,
   FilterSectionTitle,
   FormGroup,
-  InlineInputs,
   PaginationWrapper,
   PageContainer,
   ResultsBadge,
@@ -19,8 +22,41 @@ import {
   StyledSelect,
 } from './styled'
 import { MatchesTable, PageLoader } from 'views/components'
+import TeamAutocomplete, { normalizeTeamSearch } from './TeamAutocomplete'
 import { apiClient, getApiErrorMessage } from 'api/axiosConfig'
 import { useCallback, useEffect, useState } from 'react'
+
+const isEmptyFilter = (value) => !value || value === 'all'
+
+const FILTER_DEPENDENCIES = [
+  {
+    param: 'player1',
+    isActive: (value) => !isEmptyFilter(value),
+    dependents: [
+      'outcome',
+      'player1GoalsOp',
+      'player1GoalsVal',
+      'player1ConcededOp',
+      'player1ConcededVal',
+      'player1Team',
+      'opponentTeam',
+      'player2',
+    ],
+  },
+  {
+    param: 'type',
+    isActive: (value) => value === 'playoff',
+    dependents: ['playoffRound'],
+  },
+]
+
+const PLAYOFF_ROUNDS = [
+  { value: 'round_of_32', label: '16vos de final' },
+  { value: 'round_of_16', label: '8vos de final' },
+  { value: 'quarterfinal', label: '4tos de final' },
+  { value: 'semifinal', label: 'Semifinal' },
+  { value: 'final', label: 'Final' },
+]
 
 const MatchListing = () => {
   const isXS = useMediaQuery({ query: '(min-width: 375px)' })
@@ -31,22 +67,22 @@ const MatchListing = () => {
   const [loading, setLoading] = useState(true)
   const [players, setPlayers] = useState([])
   const [tournaments, setTournaments] = useState([])
+  const [teams, setTeams] = useState([])
+
+  const getParam = (key, fallback = '') => searchParams.get(key) || fallback
 
   const page = Math.max(1, Number(searchParams.get('page')) || 1)
-  const teamName = searchParams.get('teamName') || ''
-  const player1 = searchParams.get('player1') || ''
-  const player2 = searchParams.get('player2') || ''
-  const tournamentId = searchParams.get('tournamentId') || ''
-  const type = searchParams.get('type') || 'all'
-  const outcome = searchParams.get('outcome') || 'all'
-  const goalDiffOp = searchParams.get('goalDiffOp') || 'gte'
-  const goalDiffVal = searchParams.get('goalDiffVal') || ''
-  const dateFrom = searchParams.get('dateFrom') || ''
-  const dateTo = searchParams.get('dateTo') || ''
+  const player1 = getParam('player1')
+  const player2 = getParam('player2')
+  const outcome = getParam('outcome', 'all')
+  const tournamentId = getParam('tournamentId')
+  const type = getParam('type', 'all')
+  const playoffRound = getParam('playoffRound', 'all')
+  const dateFrom = getParam('dateFrom')
+  const dateTo = getParam('dateTo')
 
-  // Estados locales para los campos de texto con debounce
-  const [teamInput, setTeamInput] = useState(teamName)
-  const [goalDiffValInput, setGoalDiffValInput] = useState(goalDiffVal)
+  const hasPlayer1 = !isEmptyFilter(player1)
+  const isPlayoff = type === 'playoff'
 
   useEffect(() => {
     const fetchData = async () => {
@@ -64,27 +100,32 @@ const MatchListing = () => {
       }
     }
     fetchData()
+
+    apiClient
+      .get(`${api}/matches/teams`)
+      .then(({ data }) => setTeams(Array.isArray(data) ? data : []))
+      .catch(() => setTeams([]))
   }, [])
 
   const updateFilters = useCallback(
     (newFilters) => {
       const params = new URLSearchParams(searchParams)
+      const filters = { ...newFilters }
 
-      if (!('page' in newFilters)) {
+      if (!('page' in filters)) {
         params.set('page', '1')
       }
 
-      if (
-        'player1' in newFilters &&
-        (!newFilters.player1 || newFilters.player1 === 'all')
-      ) {
-        delete newFilters.player2
-        delete newFilters.outcome
-        params.delete('player2')
-        params.delete('outcome')
-      }
+      FILTER_DEPENDENCIES.forEach(({ param, isActive, dependents }) => {
+        if (param in filters && !isActive(filters[param])) {
+          dependents.forEach((key) => {
+            delete filters[key]
+            params.delete(key)
+          })
+        }
+      })
 
-      Object.entries(newFilters).forEach(([key, value]) => {
+      Object.entries(filters).forEach(([key, value]) => {
         if (
           value !== undefined &&
           value !== null &&
@@ -102,29 +143,54 @@ const MatchListing = () => {
     [searchParams, setSearchParams],
   )
 
+  const debounced = (paramKey, options = {}) => ({
+    paramKey,
+    paramValue: getParam(paramKey),
+    updateFilters,
+    ...options,
+  })
+
+  const [teamInput, setTeamInput] = useDebouncedParam(
+    debounced('teamName', { normalize: normalizeTeamSearch }),
+  )
+  const [goalDiffInput, setGoalDiffInput] = useDebouncedParam(
+    debounced('goalDiffVal'),
+  )
+  const [totalGoalsInput, setTotalGoalsInput] = useDebouncedParam(
+    debounced('totalGoalsVal'),
+  )
+  const [player1GoalsInput, setPlayer1GoalsInput] = useDebouncedParam(
+    debounced('player1GoalsVal', { enabled: hasPlayer1 }),
+  )
+  const [player1ConcededInput, setPlayer1ConcededInput] = useDebouncedParam(
+    debounced('player1ConcededVal', { enabled: hasPlayer1 }),
+  )
+  const [player1TeamInput, setPlayer1TeamInput] = useDebouncedParam(
+    debounced('player1Team', {
+      normalize: normalizeTeamSearch,
+      enabled: hasPlayer1,
+    }),
+  )
+  const [opponentTeamInput, setOpponentTeamInput] = useDebouncedParam(
+    debounced('opponentTeam', {
+      normalize: normalizeTeamSearch,
+      enabled: hasPlayer1,
+    }),
+  )
+
   const handleClearFilters = () => {
-    setTeamInput('')
-    setGoalDiffValInput('')
+    const inputResetters = [
+      setTeamInput,
+      setGoalDiffInput,
+      setTotalGoalsInput,
+      setPlayer1GoalsInput,
+      setPlayer1ConcededInput,
+      setPlayer1TeamInput,
+      setOpponentTeamInput,
+    ]
+    inputResetters.forEach((reset) => reset(''))
     setSearchParams(new URLSearchParams({ page: '1' }))
   }
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (teamInput !== teamName) {
-        updateFilters({ teamName: teamInput.length > 2 ? teamInput : '' })
-      }
-    }, 400)
-    return () => clearTimeout(timer)
-  }, [teamInput, teamName, updateFilters])
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (goalDiffValInput !== goalDiffVal) {
-        updateFilters({ goalDiffVal: goalDiffValInput })
-      }
-    }, 400)
-    return () => clearTimeout(timer)
-  }, [goalDiffValInput, goalDiffVal, updateFilters])
 
   useEffect(() => {
     setLoading(true)
@@ -154,8 +220,13 @@ const MatchListing = () => {
     >
       <PageContainer>
         <FilterCard>
-          <div>
-            <FilterSectionTitle>Búsqueda General</FilterSectionTitle>
+          <FilterSection>
+            <FilterSectionTitle>Jugador</FilterSectionTitle>
+            <FilterHint>
+              {hasPlayer1
+                ? 'Los filtros de esta sección se aplican desde el punto de vista del jugador elegido. Con un rival, "Goles en contra" son los goles del rival.'
+                : 'Elegí un jugador para habilitar el resto de los filtros de esta sección.'}
+            </FilterHint>
             <FilterGrid>
               <FormGroup>
                 <label htmlFor="player1">Jugador</label>
@@ -173,24 +244,9 @@ const MatchListing = () => {
                 </StyledSelect>
               </FormGroup>
               <FormGroup>
-                <label htmlFor="outcomeFilter">Resultado (J1)</label>
-                <StyledSelect
-                  disabled={!player1}
-                  id="outcomeFilter"
-                  value={outcome}
-                  onChange={(e) => updateFilters({ outcome: e.target.value })}
-                >
-                  <option value="all">Todos</option>
-                  <option value="win">Victoria</option>
-                  <option value="draw">Empate</option>
-                  <option value="loss">Derrota</option>
-                  <option value="penalties">Penales</option>
-                </StyledSelect>
-              </FormGroup>
-              <FormGroup>
                 <label htmlFor="player2">Rival</label>
                 <StyledSelect
-                  disabled={!player1}
+                  disabled={!hasPlayer1}
                   id="player2"
                   value={player2}
                   onChange={(e) => updateFilters({ player2: e.target.value })}
@@ -205,10 +261,63 @@ const MatchListing = () => {
                     ))}
                 </StyledSelect>
               </FormGroup>
+              <FormGroup>
+                <label htmlFor="outcomeFilter">Resultado</label>
+                <StyledSelect
+                  disabled={!hasPlayer1}
+                  id="outcomeFilter"
+                  value={outcome}
+                  onChange={(e) => updateFilters({ outcome: e.target.value })}
+                >
+                  <option value="all">Todos</option>
+                  <option value="win">Victoria</option>
+                  <option value="draw">Empate</option>
+                  <option value="loss">Derrota</option>
+                  <option value="penalties">Penales</option>
+                </StyledSelect>
+              </FormGroup>
+              <ComparisonFilter
+                id="player1GoalsVal"
+                label="Goles a favor"
+                disabled={!hasPlayer1}
+                op={getParam('player1GoalsOp', 'gte')}
+                value={player1GoalsInput}
+                max="24"
+                onOpChange={(value) => updateFilters({ player1GoalsOp: value })}
+                onValueChange={setPlayer1GoalsInput}
+              />
+              <ComparisonFilter
+                id="player1ConcededVal"
+                label="Goles en contra"
+                disabled={!hasPlayer1}
+                op={getParam('player1ConcededOp', 'gte')}
+                value={player1ConcededInput}
+                max="24"
+                onOpChange={(value) =>
+                  updateFilters({ player1ConcededOp: value })
+                }
+                onValueChange={setPlayer1ConcededInput}
+              />
+              <TeamAutocomplete
+                id="player1Team"
+                label="Equipo del jugador"
+                disabled={!hasPlayer1}
+                teams={teams}
+                value={player1TeamInput}
+                onChange={setPlayer1TeamInput}
+              />
+              <TeamAutocomplete
+                id="opponentTeam"
+                label="Equipo contrario"
+                disabled={!hasPlayer1}
+                teams={teams}
+                value={opponentTeamInput}
+                onChange={setOpponentTeamInput}
+              />
             </FilterGrid>
-          </div>
-          <div>
-            <FilterSectionTitle>Búsqueda específica</FilterSectionTitle>
+          </FilterSection>
+          <FilterSection>
+            <FilterSectionTitle>Partido</FilterSectionTitle>
             <FilterGrid>
               <FormGroup>
                 <label htmlFor="tournamentFilter">Torneo</label>
@@ -242,40 +351,56 @@ const MatchListing = () => {
                 </StyledSelect>
               </FormGroup>
               <FormGroup>
-                <label htmlFor="teamSearch">Equipo</label>
-                <StyledInput
-                  id="teamSearch"
-                  placeholder="Ej. Brazil, Morocco..."
-                  value={teamInput}
-                  onChange={(e) => setTeamInput(e.target.value)}
-                />
+                <label htmlFor="playoffRoundFilter">Ronda de playoff</label>
+                <StyledSelect
+                  id="playoffRoundFilter"
+                  disabled={!isPlayoff}
+                  title={
+                    isPlayoff ? undefined : 'Elegí el tipo de partido Playoff'
+                  }
+                  value={playoffRound}
+                  onChange={(e) =>
+                    updateFilters({ playoffRound: e.target.value })
+                  }
+                >
+                  <option value="all">
+                    {isPlayoff ? 'Todas' : 'Requiere Playoff'}
+                  </option>
+                  {PLAYOFF_ROUNDS.map((round) => (
+                    <option key={round.value} value={round.value}>
+                      {round.label}
+                    </option>
+                  ))}
+                </StyledSelect>
               </FormGroup>
-              <FormGroup>
-                <label htmlFor="goalDiffVal">Diferencia de Goles</label>
-                <InlineInputs>
-                  <StyledSelect
-                    value={goalDiffOp}
-                    onChange={(e) =>
-                      updateFilters({ goalDiffOp: e.target.value })
-                    }
-                  >
-                    <option value="gte">≥ (Mayor o igual)</option>
-                    <option value="lte">≤ (Menor o igual)</option>
-                    <option value="eq">= (Igual a)</option>
-                  </StyledSelect>
-                  <StyledInput
-                    id="goalDiffVal"
-                    type="number"
-                    min="0"
-                    placeholder="Ej. 2"
-                    value={goalDiffValInput}
-                    onChange={(e) => setGoalDiffValInput(e.target.value)}
-                  />
-                </InlineInputs>
-              </FormGroup>
+              <TeamAutocomplete
+                id="teamSearch"
+                label="Equipo (cualquiera)"
+                teams={teams}
+                value={teamInput}
+                onChange={setTeamInput}
+              />
+              <ComparisonFilter
+                id="goalDiffVal"
+                label="Diferencia de goles"
+                op={getParam('goalDiffOp', 'gte')}
+                value={goalDiffInput}
+                onOpChange={(value) => updateFilters({ goalDiffOp: value })}
+                onValueChange={setGoalDiffInput}
+              />
+              <ComparisonFilter
+                id="totalGoalsVal"
+                label="Goles totales"
+                op={getParam('totalGoalsOp', 'gte')}
+                value={totalGoalsInput}
+                max="48"
+                placeholder="Ej. 5"
+                onOpChange={(value) => updateFilters({ totalGoalsOp: value })}
+                onValueChange={setTotalGoalsInput}
+              />
             </FilterGrid>
-          </div>
-          <div>
+          </FilterSection>
+          <FilterSection>
             <FilterSectionTitle>Período de Fecha</FilterSectionTitle>
             <FilterGrid>
               <FormGroup>
@@ -301,7 +426,7 @@ const MatchListing = () => {
                 Limpiar Filtros
               </ClearButton>
             </FilterGrid>
-          </div>
+          </FilterSection>
         </FilterCard>
         {error && <ErrorMessage role="alert">{error}</ErrorMessage>}
         {loading ? (

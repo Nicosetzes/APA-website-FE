@@ -114,6 +114,13 @@ export const ScoreBadge = styled.div`
   color: #ffffff;
 `
 
+export const PenaltyScore = styled.span`
+  color: #94a3b8;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-inline: 0.125rem;
+`
+
 export const DateText = styled.div`
   font-size: 0.85rem;
   font-weight: 500;

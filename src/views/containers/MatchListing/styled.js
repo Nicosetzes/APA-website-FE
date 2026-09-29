@@ -17,6 +17,17 @@ export const FilterCard = styled.div`
   gap: 1.25rem;
 `
 
+export const FilterSection = styled.section`
+  border-left: 3px solid var(--blue-900);
+  padding-left: 0.85rem;
+`
+
+export const FilterHint = styled.p`
+  margin: -0.25rem 0 0.75rem 0;
+  font-size: 0.8rem;
+  color: #64748b;
+`
+
 export const FilterSectionTitle = styled.h4`
   margin: 0 0 0.5rem 0;
   font-size: 0.9rem;
@@ -32,6 +43,21 @@ export const FilterGrid = styled.div`
 
   @media (min-width: 600px) {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+`
+
+export const TeamOption = styled.li`
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.9rem;
+
+  img,
+  .logo-placeholder {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    object-fit: contain;
   }
 `
 
@@ -70,6 +96,12 @@ export const StyledInput = styled.input`
   &::placeholder {
     color: #94a3b8;
   }
+
+  &:disabled {
+    background-color: #f1f5f9;
+    color: #94a3b8;
+    cursor: not-allowed;
+  }
 `
 
 export const StyledSelect = styled.select`
@@ -86,6 +118,12 @@ export const StyledSelect = styled.select`
 
   &:focus {
     border-color: #3b82f6;
+  }
+
+  &:disabled {
+    background-color: #f1f5f9;
+    color: #94a3b8;
+    cursor: not-allowed;
   }
 `
 

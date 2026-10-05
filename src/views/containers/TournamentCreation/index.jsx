@@ -36,6 +36,7 @@ const TournamentCreation = () => {
     defaultValues: {
       tournamentName: '',
       format: {},
+      playoffMode: 'single',
       cloudinaryId: '',
       selectedPlayers: [],
       selectedLeagues: [],

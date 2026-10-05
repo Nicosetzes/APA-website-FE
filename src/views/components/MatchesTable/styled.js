@@ -63,6 +63,7 @@ export const TypeBadge = styled.span`
   font-size: 0.75rem;
   font-weight: 700;
   justify-content: center;
+  margin: 0 auto;
   padding: 0.25rem 0.5rem;
   text-transform: uppercase;
   width: 50px;

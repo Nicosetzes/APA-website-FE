@@ -52,9 +52,9 @@ export const StyledPlayoffMatch = styled.div`
       height: 40px;
       justify-content: ${(props) =>
         props.$side === 'right' ? 'flex-end' : 'flex-start'};
-      margin: 0 0.5rem;
+      margin: 0 0.4rem;
       text-align: ${(props) => (props.$side === 'right' ? 'right' : 'left')};
-      width: 120px;
+      width: 105px;
     }
     .team-user {
       align-items: center;
@@ -64,18 +64,31 @@ export const StyledPlayoffMatch = styled.div`
       height: 40px;
       margin: 0.5rem;
     }
-    .team-score,
-    .team-penalties {
+    .team-score {
       color: #fff;
       font-weight: 700;
     }
-    .team-score {
+    .team-score,
+    .team-inputs {
       align-items: center;
       display: flex;
+      flex-shrink: 0;
       justify-content: center;
       margin: ${(props) =>
-        props.$side === 'right' ? '0 0.5rem 0 0' : '0 0 0 0.5rem'};
-      min-width: 2.5rem;
+        props.$side === 'right' ? '0 0.25rem 0 0' : '0 0 0 0.25rem'};
+      width: 2.85rem;
+    }
+    .team-score-value {
+      align-items: baseline;
+      display: inline-flex;
+    }
+    .penalty-score {
+      color: #cbd5e1;
+      font-size: 0.62rem;
+      line-height: 1;
+      margin-left: 0.08rem;
+      position: relative;
+      top: -0.35em;
     }
     .team-walkover {
       align-items: center;
@@ -84,16 +97,24 @@ export const StyledPlayoffMatch = styled.div`
       letter-spacing: 0.02em;
       white-space: nowrap;
     }
-    .team-penalties {
-      margin: 0 0.25rem;
-    }
     .team-inputs {
-      display: flex;
+      gap: 0.1rem;
       input {
+        box-sizing: border-box;
         height: 1.5rem;
-        width: 1.5rem;
+        padding: 0;
+        text-align: center;
+        width: 1.35rem;
       }
     }
+  }
+  .match__deletion {
+    align-items: center;
+    align-self: stretch;
+    display: inline-flex;
+    flex-shrink: 0;
+    justify-content: center;
+    margin: 0.5rem 0.5rem 0.25rem;
   }
   .match__confirmation {
     display: flex;

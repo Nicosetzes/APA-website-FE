@@ -116,6 +116,7 @@ const StepConfirmation = ({ format, players }) => {
   const selectedTeams = watch('selectedTeams') || []
   const teamAssignments = watch('teamAssignments') || []
   const playoffBracket = watch('playoffBracket') || []
+  const playoffMode = watch('playoffMode') || 'single'
 
   const groups = format.groups || []
   const hasGroups = groups.length > 0
@@ -209,6 +210,7 @@ const StepConfirmation = ({ format, players }) => {
       const response = await apiClient.post(`${api}/tournaments`, {
         ...(cloudinaryId && { cloudinary_id: cloudinaryId }),
         format: format.id,
+        ...(isPlayoffs && { playoffMode }),
         name: tournamentName,
         players: tournamentPlayers,
         teams,
@@ -242,6 +244,15 @@ const StepConfirmation = ({ format, players }) => {
           <ConfirmationLabel>Formato:</ConfirmationLabel>
           <ConfirmationValue>{format.name}</ConfirmationValue>
         </ConfirmationItem>
+
+        {isPlayoffs && (
+          <ConfirmationItem>
+            <ConfirmationLabel>Modalidad:</ConfirmationLabel>
+            <ConfirmationValue>
+              {playoffMode === 'two_legged' ? 'Ida y vuelta' : 'Partido único'}
+            </ConfirmationValue>
+          </ConfirmationItem>
+        )}
 
         <ConfirmationItem>
           <ConfirmationLabel>

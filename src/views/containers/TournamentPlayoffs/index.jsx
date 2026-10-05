@@ -35,7 +35,7 @@ const TournamentPlayoffs = () => {
   }
 
   const getPlayoffsData = () => {
-    apiClient
+    return apiClient
       .get(`${api}/tournaments/${tournament}/playoff/matches`)
       .then(({ data }) => {
         setPlayoffData(data)
@@ -116,6 +116,8 @@ const TournamentPlayoffs = () => {
             format={format}
             getData={getPlayoffsData}
             matches={matches}
+            playoffMode={tournamentData.playoffMode}
+            tournamentId={tournament}
           />
         ) : null}
         {!matches.length && (

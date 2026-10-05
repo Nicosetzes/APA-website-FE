@@ -13,6 +13,7 @@ import {
   Wrapper,
 } from './styled'
 import { cloudName, database } from 'api'
+import { getLegLabel, groupPlayoffSeries } from 'utils/playoffSeries'
 
 // playoff_id ranges for each round, per tournament format
 const ROUNDS_BY_FORMAT = {
@@ -50,8 +51,8 @@ const TWO_LEGGED_FORMATS = ['champions_league']
 const range = (min, max) =>
   Array.from({ length: max - min + 1 }, (_, i) => min + i)
 
-const buildPlaceholder = (playoffId) => ({
-  _id: `preview-${playoffId}`,
+const buildPlaceholder = (playoffId, tournamentId = '') => ({
+  _id: `${tournamentId}:${playoffId}:placeholder`,
   playoff_id: playoffId,
   playerP1: null,
   teamP1: null,
@@ -115,9 +116,54 @@ const groupIntoTies = (matches, legs) => {
   return ties
 }
 
-const buildRounds = (format, matches = []) => {
+export const buildRounds = (
+  format,
+  matches = [],
+  playoffMode = 'single',
+  tournamentId = '',
+) => {
   const ranges =
     ROUNDS_BY_FORMAT[format] || ROUNDS_BY_FORMAT.league_playin_playoff
+
+  if (format === 'playoff') {
+    const tiesById = new Map(
+      groupPlayoffSeries(matches, tournamentId).map((tie) => [
+        tie.playoffId,
+        tie,
+      ]),
+    )
+    return ranges.map(([min, max], index) => {
+      const isFinal = index === ranges.length - 1
+      const ties = range(min, max).map((playoffId) => {
+        const tie = tiesById.get(playoffId)
+        if (tie) {
+          return {
+            ...tie,
+            matches: tie.matches.map((match) => ({
+              ...match,
+              legLabel: getLegLabel({
+                format,
+                playoffMode,
+                playoffId,
+                leg: match.leg,
+              }),
+            })),
+          }
+        }
+        return {
+          key: `${tournamentId}:${playoffId}:placeholder`,
+          matches: [buildPlaceholder(playoffId, tournamentId)],
+        }
+      })
+      return {
+        round: index + 1,
+        isFinal,
+        name: getTieName(ties.length),
+        ties,
+      }
+    })
+  }
+
   const matchById = new Map(
     (Array.isArray(matches) ? matches : []).map((m) => [
       Number(m.playoff_id),
@@ -129,7 +175,7 @@ const buildRounds = (format, matches = []) => {
   return ranges.map(([min, max], index) => {
     const isFinal = index === ranges.length - 1
     const roundMatches = range(min, max).map(
-      (id) => matchById.get(id) || buildPlaceholder(id),
+      (id) => matchById.get(id) || buildPlaceholder(id, tournamentId),
     )
     const ties = groupIntoTies(roundMatches, isTwoLegged && !isFinal ? 2 : 1)
 
@@ -204,9 +250,14 @@ const PlayoffBracket = ({
   format,
   getData,
   matches,
+  playoffMode = 'single',
+  tournamentId = '',
 }) => {
   const dragScrollRef = useDragScroll()
-  const rounds = useMemo(() => buildRounds(format, matches), [format, matches])
+  const rounds = useMemo(
+    () => buildRounds(format, matches, playoffMode, tournamentId),
+    [format, matches, playoffMode, tournamentId],
+  )
   const finalRound = rounds[rounds.length - 1]
   const sideRounds = rounds.slice(0, -1)
   const finalMatch = finalRound?.ties[0]?.matches[0]

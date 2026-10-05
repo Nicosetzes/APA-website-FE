@@ -1,6 +1,6 @@
-import { useEffect } from 'react'
-import { useFormContext, Controller } from 'react-hook-form'
 import { database } from 'api'
+import { useEffect } from 'react'
+import { FormControlLabel, Radio, RadioGroup } from '@mui/material'
 import {
   StepContainer,
   StepTitle,
@@ -19,7 +19,9 @@ import {
   TeamSlotName,
   PlayerSelect,
   RemoveButton,
+  ModeSelector,
 } from './styled'
+import { useFormContext, Controller } from 'react-hook-form'
 
 const StepPlayoffBracket = ({ players }) => {
   const {
@@ -35,8 +37,6 @@ const StepPlayoffBracket = ({ players }) => {
 
   const availablePlayers = players.filter((p) => selectedPlayers.includes(p.id))
 
-  console.log(availablePlayers)
-
   // Initialize bracket with 16 matches (32 slots) if empty
   useEffect(() => {
     if (playoffBracket.length === 0 && teamsData.length > 0) {
@@ -50,7 +50,6 @@ const StepPlayoffBracket = ({ players }) => {
   }, [playoffBracket.length, teamsData.length, setValue])
 
   const updateSlot = (matchIndex, slotKey, teamId, playerId) => {
-    console.log('updateSlot called:', { matchIndex, slotKey, teamId, playerId })
     const updatedBracket = [...playoffBracket]
 
     if (!teamId) {
@@ -62,7 +61,6 @@ const StepPlayoffBracket = ({ players }) => {
 
       if (playerId) {
         const player = availablePlayers.find((p) => p.id === playerId)
-        console.log('Found player:', player)
         playerData = player ? { id: player.id, name: player.name } : null
       }
 
@@ -71,7 +69,6 @@ const StepPlayoffBracket = ({ players }) => {
         teamName: teamData?.team?.name || '',
         playerId: playerData,
       }
-      console.log('Updated slot:', updatedBracket[matchIndex][slotKey])
     }
 
     setValue('playoffBracket', updatedBracket, {
@@ -229,6 +226,32 @@ const StepPlayoffBracket = ({ players }) => {
         asigna jugadores a cada equipo
       </StepDescription>
 
+      <ModeSelector>
+        <span>Modalidad del playoff</span>
+        <Controller
+          name="playoffMode"
+          control={control}
+          rules={{ required: 'Debes seleccionar una modalidad' }}
+          render={({ field }) => (
+            <RadioGroup {...field} row aria-label="Modalidad del playoff">
+              <FormControlLabel
+                value="single"
+                control={<Radio />}
+                label="Partido único"
+              />
+              <FormControlLabel
+                value="two_legged"
+                control={<Radio />}
+                label="Ida y vuelta"
+              />
+            </RadioGroup>
+          )}
+        />
+        {errors.playoffMode && (
+          <ErrorMessage>{errors.playoffMode.message}</ErrorMessage>
+        )}
+      </ModeSelector>
+
       <Controller
         name="playoffBracket"
         control={control}
@@ -238,6 +261,14 @@ const StepPlayoffBracket = ({ players }) => {
               return 'Error en la configuración del bracket'
             }
 
+            const ids = value.map(({ playoff_id: playoffId }) => playoffId)
+            if (
+              new Set(ids).size !== 16 ||
+              ids.some((id) => !Number.isInteger(id) || id < 1 || id > 16)
+            ) {
+              return 'Los enfrentamientos deben usar una vez cada ID del 1 al 16'
+            }
+
             // Check all 32 slots are filled
             const totalSlots = value.reduce((count, match) => {
               return count + (match.slot1 ? 1 : 0) + (match.slot2 ? 1 : 0)
@@ -245,6 +276,14 @@ const StepPlayoffBracket = ({ players }) => {
 
             if (totalSlots !== 32) {
               return `Debes colocar los 32 equipos en el bracket. Actualmente: ${totalSlots} equipos`
+            }
+
+            const teamIds = value.flatMap((match) => [
+              match.slot1?.teamId,
+              match.slot2?.teamId,
+            ])
+            if (new Set(teamIds).size !== 32) {
+              return 'Cada equipo puede aparecer una sola vez'
             }
 
             // Check all teams have players assigned
@@ -265,8 +304,6 @@ const StepPlayoffBracket = ({ players }) => {
             })
 
             if (teamsWithoutPlayers.length > 0) {
-              console.log('Teams without players:', teamsWithoutPlayers)
-              console.log('Bracket data:', JSON.stringify(value, null, 2))
               return 'Todos los equipos deben tener un jugador asignado'
             }
 

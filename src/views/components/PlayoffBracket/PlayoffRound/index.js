@@ -12,7 +12,9 @@ import {
 } from './styled'
 
 export const isTieDecided = (tie) =>
-  Boolean(tie?.matches?.length) && tie.matches.every(({ played }) => played)
+  tie?.matches?.[0]?.series
+    ? tie.matches[0].series.status === 'decided'
+    : Boolean(tie?.matches?.length) && tie.matches.every(({ played }) => played)
 
 const getSlotPosition = (index, total) => {
   if (total === 1) return 'single'
@@ -53,11 +55,22 @@ const PlayoffRound = ({
           played,
           outcome,
           valid,
+          leg,
+          series,
+          mutation,
         }) => (
           <PlayoffMatch
             canMutate={canMutate}
+            canDelete={mutation?.canDeleteResult !== false}
+            isSeriesLeg={
+              tie.matches.some((item) => Number(item.leg) === 2) &&
+              [1, 2].includes(Number(leg))
+            }
             key={_id}
             id={_id}
+            leg={leg}
+            series={series}
+            mutation={mutation}
             playerP1={playerP1}
             teamP1={teamP1}
             seedP1={seedP1}

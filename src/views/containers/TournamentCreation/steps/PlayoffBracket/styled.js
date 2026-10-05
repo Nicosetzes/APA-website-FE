@@ -33,6 +33,24 @@ export const ErrorMessage = styled.div`
   font-weight: 500;
 `
 
+export const ModeSelector = styled.div`
+  align-items: center;
+  align-self: center;
+  background: rgba(26, 61, 77, 0.06);
+  border: 1px solid rgba(26, 61, 77, 0.2);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+
+  > span {
+    color: var(--blue-900);
+    font-size: 0.9rem;
+    font-weight: 700;
+  }
+`
+
 export const BracketContainer = styled.div`
   display: flex;
   gap: 2rem;

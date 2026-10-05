@@ -50,6 +50,75 @@ test('format selection does not show the playoff mode yet', () => {
   ReactDOM.unmountComponentAtNode(container)
 })
 
+test('broken tournament image is removed and valid one stays selectable', () => {
+  const images = [
+    { cloudinary_id: 'tournaments/gone', url: 'http://localhost/gone.jpg' },
+    { cloudinary_id: 'tournaments/ok', url: 'http://localhost/ok.jpg' },
+  ]
+  let values
+  const Harness = () => {
+    const methods = useForm({
+      defaultValues: { tournamentName: '', format: {}, cloudinaryId: '' },
+    })
+    values = methods.watch
+    return (
+      <FormProvider {...methods}>
+        <StepFormat tournamentImages={images} />
+      </FormProvider>
+    )
+  }
+  const container = document.createElement('div')
+  act(() => {
+    ReactDOM.render(<Harness />, container)
+  })
+  const tournamentImgs = () =>
+    [...container.querySelectorAll('img')].filter(
+      (img) => img.alt === 'Imagen de torneo',
+    )
+  expect(tournamentImgs()).toHaveLength(2)
+  act(() => Simulate.error(tournamentImgs()[0]))
+  expect(tournamentImgs()).toHaveLength(1)
+  expect(tournamentImgs()[0].src).toBe('http://localhost/ok.jpg')
+  act(() => Simulate.click(tournamentImgs()[0].parentElement))
+  expect(values('cloudinaryId')).toBe('tournaments/ok')
+  ReactDOM.unmountComponentAtNode(container)
+})
+
+test('selected tournament image that breaks clears the selection', () => {
+  const images = [
+    { cloudinary_id: 'tournaments/gone', url: 'http://localhost/gone.jpg' },
+    { cloudinary_id: 'tournaments/ok', url: 'http://localhost/ok.jpg' },
+  ]
+  let values
+  const Harness = () => {
+    const methods = useForm({
+      defaultValues: {
+        tournamentName: '',
+        format: {},
+        cloudinaryId: 'tournaments/gone',
+      },
+    })
+    values = methods.watch
+    return (
+      <FormProvider {...methods}>
+        <StepFormat tournamentImages={images} />
+      </FormProvider>
+    )
+  }
+  const container = document.createElement('div')
+  act(() => {
+    ReactDOM.render(<Harness />, container)
+  })
+  const tournamentImgs = () =>
+    [...container.querySelectorAll('img')].filter(
+      (img) => img.alt === 'Imagen de torneo',
+    )
+  act(() => Simulate.error(tournamentImgs()[0]))
+  expect(tournamentImgs()).toHaveLength(1)
+  expect(values('cloudinaryId')).toBe('')
+  ReactDOM.unmountComponentAtNode(container)
+})
+
 test('slot assignment step shows exactly two modes defaulting to single', () => {
   const container = document.createElement('div')
   act(() => {

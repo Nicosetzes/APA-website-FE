@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { FORMATS } from '../../formats'
 import { database } from 'api'
 import { Controller, useFormContext } from 'react-hook-form'
@@ -16,6 +17,25 @@ import {
   StepTitle,
   TournamentImage,
 } from './styled'
+
+const TournamentImageOption = ({ image, selected, onSelect, onBroken }) => {
+  const [failed, setFailed] = useState(false)
+
+  if (failed) return null
+
+  return (
+    <ImageCard type="button" $selected={selected} onClick={onSelect}>
+      <TournamentImage
+        src={image.url}
+        alt="Imagen de torneo"
+        onError={() => {
+          setFailed(true)
+          onBroken()
+        }}
+      />
+    </ImageCard>
+  )
+}
 
 const StepFormat = ({ tournamentImages }) => {
   const {
@@ -94,14 +114,15 @@ const StepFormat = ({ tournamentImages }) => {
           render={({ field }) => (
             <ImagesGrid>
               {tournamentImages.map((image) => (
-                <ImageCard
+                <TournamentImageOption
                   key={image.cloudinary_id}
-                  type="button"
-                  $selected={field.value === image.cloudinary_id}
-                  onClick={() => field.onChange(image.cloudinary_id)}
-                >
-                  <TournamentImage src={image.url} alt="Imagen de torneo" />
-                </ImageCard>
+                  image={image}
+                  selected={field.value === image.cloudinary_id}
+                  onSelect={() => field.onChange(image.cloudinary_id)}
+                  onBroken={() => {
+                    if (field.value === image.cloudinary_id) field.onChange('')
+                  }}
+                />
               ))}
             </ImagesGrid>
           )}

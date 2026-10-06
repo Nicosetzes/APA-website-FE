@@ -209,10 +209,34 @@ export const LeaderboardValue = styled.span`
 
 export const RecordsGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(275px, 1fr));
+  /* min() evita desbordar en pantallas de menos de 300px útiles. */
+  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
   gap: 1rem;
   margin: 0 auto;
   max-width: 1200px;
+`
+
+export const StreakRecordsGrid = styled(RecordsGrid)`
+  grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
+`
+
+export const StreakPanelBox = styled.div`
+  margin: 0 auto;
+  max-width: 1200px;
+
+  &:focus-visible {
+    border-radius: 8px;
+    outline: 2px solid var(--blue-900);
+    outline-offset: 4px;
+  }
+`
+
+export const StreakPanelDescription = styled.p`
+  color: rgba(0, 0, 0, 0.7);
+  font-size: 0.9rem;
+  margin: 0 auto 1rem auto;
+  max-width: 600px;
+  text-align: center;
 `
 
 export const EmptyMessage = styled.p`
@@ -265,9 +289,9 @@ export const RecordHolders = styled.div`
 
 export const HolderBadge = styled.div`
   background: ${(props) =>
-    props.$isCurrent ? '#18890e' : 'rgba(0, 0, 0, 0.1)'};
+    props.$isActive ? 'rgba(24, 137, 14, 0.12)' : 'rgba(0, 0, 0, 0.1)'};
   border-radius: 6px;
-  color: ${(props) => (props.$isCurrent ? 'white' : 'rgba(0, 0, 0, 0.7)')};
+  color: ${(props) => (props.$isActive ? '#11610a' : 'rgba(0, 0, 0, 0.7)')};
   font-size: 0.85rem;
   font-weight: 600;
   padding: 0.25rem 0.75rem;

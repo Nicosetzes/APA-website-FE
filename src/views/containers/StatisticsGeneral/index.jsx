@@ -5,7 +5,6 @@ import { database } from 'api'
 import { motion } from 'framer-motion'
 import {
   EmptyMessage,
-  HolderBadge,
   LeaderboardCard,
   LeaderboardsGrid,
   LeaderboardItem,
@@ -18,15 +17,8 @@ import {
   Rank,
   RecentMatches,
   RecentMatchDot,
-  RecordsGrid,
-  RecordCard,
-  RecordTitle,
-  RecordValue,
-  RecordDetail,
-  RecordHolders,
   Section,
   SectionTitle,
-  SectionSubtitle,
   SpinnerContainer,
   StatLabel,
   StatRow,
@@ -34,6 +26,7 @@ import {
   StreakBadge,
 } from './styled'
 import { PageLoader, Tabs, Tooltip } from 'views/components'
+import { RecordsTab } from './components'
 import { format, parseISO } from 'date-fns'
 import { useCallback, useEffect, useState } from 'react'
 
@@ -70,21 +63,6 @@ const StatisticsGeneral = () => {
     if (type === 'W') return 'Victoria'
     if (type === 'D') return 'Empate'
     return 'Derrota'
-  }
-
-  const getRecordLabel = (key) => {
-    const labels = {
-      highest_scoring_difference_match: 'Mayor diferencia de goles',
-      highest_total_goals_match: 'Más goles en un partido',
-      most_clean_sheets_in_a_row: 'Con valla invicta',
-      most_consecutive_matches_scoring_1_plus_goals: 'Convirtiendo (+1 gol)',
-      most_consecutive_matches_scoring_2_plus_goals: 'Convirtiendo (+2 goles)',
-      most_consecutive_matches_scoring_3_plus_goals: 'Convirtiendo (+3 goles)',
-      most_wins_in_a_row: 'Con victoria',
-      most_draws_in_a_row: 'Con empate',
-      most_losses_in_a_row: 'Con derrota',
-    }
-    return labels[key] || key
   }
 
   const getLeaderboardLabel = (key) => {
@@ -369,139 +347,6 @@ const StatisticsGeneral = () => {
     </Section>
   )
 
-  const isMatchRecord = (key) =>
-    key === 'highest_scoring_difference_match' ||
-    key === 'highest_total_goals_match'
-
-  const RecordsTab = () => {
-    const availableRecords = Object.entries(stats?.records || {}).filter(
-      ([, record]) => record,
-    )
-    const matchRecords = availableRecords.filter(([key]) => isMatchRecord(key))
-    const streakRecords = availableRecords.filter(
-      ([key]) => !isMatchRecord(key),
-    )
-
-    return (
-      <>
-        {/* Match Records Section */}
-        <Section>
-          <SectionTitle>Récords de Partidos</SectionTitle>
-          {matchRecords.length === 0 ? (
-            <EmptyMessage>
-              Todavía no hay partidos cargados para calcular récords.
-            </EmptyMessage>
-          ) : (
-            <RecordsGrid>
-              {matchRecords.map(([key, record]) => (
-                <RecordCard key={key}>
-                  <RecordTitle>{getRecordLabel(key)}</RecordTitle>
-                  <RecordValue>
-                    {record.count || record.diff || record.total}
-                  </RecordValue>
-                  {record.match && (
-                    <RecordDetail>
-                      <div>
-                        <strong>{record.match.player1}</strong> (
-                        {record.match.team1})
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '1.1rem',
-                          fontWeight: 700,
-                          margin: '0.25rem 0',
-                        }}
-                      >
-                        {record.match.score}
-                      </div>
-                      <div>
-                        <strong>{record.match.player2}</strong> (
-                        {record.match.team2})
-                      </div>
-                      <div
-                        style={{
-                          marginTop: '0.5rem',
-                          fontSize: '0.85rem',
-                          opacity: 0.8,
-                        }}
-                      >
-                        {record.match.tournament}
-                      </div>
-                      {/* 880 partidos del histórico no tienen fecha, y
-                          `parseISO(null)` rompe el render. */}
-                      {record.match.date && (
-                        <div style={{ fontSize: '0.8rem', opacity: 0.7 }}>
-                          {format(parseISO(record.match.date), 'dd/MM/yyyy')}
-                        </div>
-                      )}
-                    </RecordDetail>
-                  )}
-                </RecordCard>
-              ))}
-            </RecordsGrid>
-          )}
-        </Section>
-
-        {/* Streak Records Section */}
-        <Section>
-          <SectionTitle>Récords de Rachas</SectionTitle>
-          <SectionSubtitle>Partidos consecutivos</SectionSubtitle>
-          {streakRecords.length === 0 ? (
-            <EmptyMessage>
-              Todavía no hay rachas registradas. Aparecen cuando se cargan
-              resultados.
-            </EmptyMessage>
-          ) : (
-            <RecordsGrid>
-              {streakRecords.map(([key, record]) => {
-                const holders = record.players || []
-                // Find the oldest date (first to reach the record)
-                const oldestHolder = holders.reduce((oldest, current) => {
-                  if (!oldest?.date) return current
-                  if (!current.date) return oldest
-                  return new Date(current.date) < new Date(oldest.date)
-                    ? current
-                    : oldest
-                }, holders[0])
-
-                return (
-                  <RecordCard key={key}>
-                    <RecordTitle>{getRecordLabel(key)}</RecordTitle>
-                    <RecordValue>
-                      {record.count || record.diff || record.total}
-                    </RecordValue>
-                    {oldestHolder?.date && (
-                      <div
-                        style={{
-                          fontSize: '0.85rem',
-                          opacity: 0.7,
-                          textAlign: 'center',
-                          marginTop: '0.25rem',
-                        }}
-                      >
-                        {format(parseISO(oldestHolder.date), 'dd/MM/yyyy')}
-                        {holders.length > 1 && ` (${oldestHolder.name})`}
-                      </div>
-                    )}
-                    {holders.length > 0 && (
-                      <RecordHolders>
-                        {holders.map((p) => (
-                          <HolderBadge key={p.id} $isCurrent={p.is_current}>
-                            {p.name} {p.is_current && '(Actual)'}
-                          </HolderBadge>
-                        ))}
-                      </RecordHolders>
-                    )}
-                  </RecordCard>
-                )
-              })}
-            </RecordsGrid>
-          )}
-        </Section>
-      </>
-    )
-  }
-
   if (loading) {
     return (
       <SpinnerContainer>
@@ -545,7 +390,12 @@ const StatisticsGeneral = () => {
       {
         id: 'records',
         label: 'Récords',
-        content: <RecordsTab />,
+        content: (
+          <RecordsTab
+            records={stats.records}
+            activeStreaks={stats.activeStreaks}
+          />
+        ),
       },
     ]
 

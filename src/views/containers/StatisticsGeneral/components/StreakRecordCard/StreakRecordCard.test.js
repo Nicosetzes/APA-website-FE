@@ -256,6 +256,30 @@ test('actuales: tag "Récord" y sin pill "Activa" redundante', () => {
   expect(labels()).toEqual(['Inicio', 'Último'])
 })
 
+const pillLine = (label) =>
+  Array.from(container.querySelectorAll('span'))
+    .filter((node) => node.textContent === label)
+    .map((node) => node.parentElement.textContent)
+
+test('"Récord" y "Activa" comparten lugar junto al nombre', () => {
+  render({ count: 6, players: [holder()] })
+  expect(pillLine('Activa')).toEqual(['NicoActiva'])
+
+  render(
+    { count: 6, players: [holder()] },
+    { idPrefix: 'actuales', showActive: false, isRecord: true },
+  )
+  expect(pillLine('Récord')).toEqual(['NicoRécord'])
+})
+
+test('actuales con empate: "Récord" en cada poseedor', () => {
+  render(
+    { count: 6, players: [holder(), holder({ id: 'p3', name: 'Fede' })] },
+    { idPrefix: 'actuales', showActive: false, isRecord: true },
+  )
+  expect(pillLine('Récord')).toEqual(['NicoRécord', 'FedeRécord'])
+})
+
 test('empate: partidos detrás de "Ver partidos"', () => {
   render({
     count: 9,

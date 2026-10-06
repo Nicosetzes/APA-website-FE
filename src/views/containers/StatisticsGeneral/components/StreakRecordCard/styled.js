@@ -32,17 +32,6 @@ export const CategoryTag = styled.span`
   top: 0.6rem;
 `
 
-// Texto oscuro sobre dorado (contraste > 4.5:1).
-export const RecordTag = styled.span`
-  align-self: center;
-  background: #ffd700;
-  border-radius: 999px;
-  color: #1f1f1f;
-  font-size: 0.75rem;
-  font-weight: 700;
-  padding: 0.1rem 0.6rem;
-`
-
 export const ValueBlock = styled.div`
   align-items: baseline;
   display: flex;
@@ -90,17 +79,32 @@ export const HolderLine = styled.div`
   justify-content: center;
 `
 
-const pulse = keyframes`
-  0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.8); }
-  70% { box-shadow: 0 0 0 5px rgba(255, 255, 255, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+const pulse = (rgb) => keyframes`
+  0% { box-shadow: 0 0 0 0 rgba(${rgb}, 0.8); }
+  70% { box-shadow: 0 0 0 5px rgba(${rgb}, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(${rgb}, 0); }
 `
 
-export const ActivePill = styled.span`
+const PILLS = {
+  active: {
+    background: '#18890e',
+    color: 'white',
+    pulse: pulse('255, 255, 255'),
+  },
+  record: {
+    background: '#ffd700',
+    color: '#1f1f1f',
+    pulse: pulse('31, 31, 31'),
+  },
+}
+
+const getPill = (variant) => PILLS[variant] || PILLS.active
+
+export const StatusPill = styled.span`
   align-items: center;
-  background: #18890e;
+  background: ${({ $variant }) => getPill($variant).background};
   border-radius: 999px;
-  color: white;
+  color: ${({ $variant }) => getPill($variant).color};
   display: inline-flex;
   font-size: 0.75rem;
   font-weight: 700;
@@ -108,15 +112,16 @@ export const ActivePill = styled.span`
   padding: 0.15rem 0.6rem;
 `
 
-export const ActiveDot = styled.span`
-  background: white;
+export const StatusDot = styled.span`
+  background: currentColor;
   border-radius: 50%;
   display: inline-block;
   height: 7px;
   width: 7px;
 
   @media (prefers-reduced-motion: no-preference) {
-    animation: ${pulse} 1.8s ease-out infinite;
+    animation: ${({ $variant }) => getPill($variant).pulse} 1.8s ease-out
+      infinite;
   }
 `
 

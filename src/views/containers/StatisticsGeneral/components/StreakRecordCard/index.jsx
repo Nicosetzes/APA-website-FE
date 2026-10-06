@@ -8,8 +8,6 @@ import {
   RecordTitle,
 } from '../../styled'
 import {
-  ActiveDot,
-  ActivePill,
   CategoryTag,
   DurationText,
   HolderItem,
@@ -17,7 +15,8 @@ import {
   HolderList,
   MatchesGrid,
   RangeText,
-  RecordTag,
+  StatusDot,
+  StatusPill,
   StreakValue,
   StyledStreakCard,
   ToggleButton,
@@ -35,6 +34,15 @@ const hasDetails = (holder) => typeof holder?.isActive === 'boolean'
 
 const DateText = ({ value }) => (
   <time dateTime={value}>{format(parseISO(value), 'dd/MM/yyyy')}</time>
+)
+
+const STATUS_LABELS = { active: 'Activa', record: 'Récord' }
+
+const Status = ({ variant }) => (
+  <StatusPill $variant={variant}>
+    <StatusDot $variant={variant} aria-hidden="true" />
+    {STATUS_LABELS[variant]}
+  </StatusPill>
 )
 
 const StreakRange = ({ holder }) => {
@@ -99,7 +107,14 @@ const StreakMatches = ({ holder, id, hidden }) => {
   )
 }
 
-const HolderRow = ({ holder, count, collapsible, matchesId, showActive }) => {
+const HolderRow = ({
+  holder,
+  count,
+  collapsible,
+  matchesId,
+  showActive,
+  isRecord,
+}) => {
   const [open, setOpen] = useState(false)
   const duration = formatStreakDuration({
     startDate: holder.startDate,
@@ -115,12 +130,8 @@ const HolderRow = ({ holder, count, collapsible, matchesId, showActive }) => {
     <HolderItem>
       <HolderLine>
         <HolderBadge $isActive={isActive}>{holder.name}</HolderBadge>
-        {isActive && (
-          <ActivePill>
-            <ActiveDot aria-hidden="true" />
-            Activa
-          </ActivePill>
-        )}
+        {isActive && <Status variant="active" />}
+        {isRecord && <Status variant="record" />}
       </HolderLine>
       <StreakRange holder={holder} />
       {duration && <DurationText>{duration}</DurationText>}
@@ -151,7 +162,8 @@ const HolderRow = ({ holder, count, collapsible, matchesId, showActive }) => {
  * - `emptyMessage`: se muestra si no hay racha de al menos `MIN_STREAK`.
  * - `showActive`: pill "Activa" en los poseedores vigentes. En actuales todas
  *   son vigentes, así que se apaga.
- * - `isRecord`: la racha en curso también es el récord histórico.
+ * - `isRecord`: la racha en curso también es el récord histórico; pill
+ *   "Récord" junto a cada poseedor, en el lugar de "Activa".
  */
 const StreakRecordCard = ({
   idPrefix,
@@ -183,7 +195,6 @@ const StreakRecordCard = ({
             <StreakValue $tone={tone}>{count}</StreakValue>
             <ValueUnit>partidos</ValueUnit>
           </ValueBlock>
-          {isRecord && <RecordTag>Récord</RecordTag>}
           {detailed ? (
             <HolderList>
               {holders.map((holder) =>
@@ -194,12 +205,14 @@ const StreakRecordCard = ({
                     count={count}
                     collapsible={collapsible}
                     showActive={showActive}
+                    isRecord={isRecord}
                     matchesId={`${idPrefix}-${recordKey}-${holder.id}-partidos`}
                   />
                 ) : (
                   <HolderItem key={holder.id}>
                     <HolderLine>
                       <HolderBadge>{holder.name}</HolderBadge>
+                      {isRecord && <Status variant="record" />}
                     </HolderLine>
                   </HolderItem>
                 ),
@@ -210,6 +223,7 @@ const StreakRecordCard = ({
               {holders.map((holder) => (
                 <HolderBadge key={holder.id}>{holder.name}</HolderBadge>
               ))}
+              {isRecord && <Status variant="record" />}
             </RecordHolders>
           )}
         </>

@@ -99,7 +99,6 @@ test('racha activa: badge con aclaración, rango, duración, inicio y último', 
   const text = container.textContent
   expect(text).toContain('Resultados')
   expect(text).toContain('Activa')
-  expect(text).toContain('Puede extenderse en su próximo partido')
   expect(text).toContain('02/07/2026')
   expect(text).toContain('20/09/2026')
   expect(text).toContain('2 meses y 18 días')

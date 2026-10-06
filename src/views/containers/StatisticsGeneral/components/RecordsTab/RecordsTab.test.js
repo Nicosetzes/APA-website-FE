@@ -195,7 +195,6 @@ test('históricas: activa con aclaración, cerrada con corte, vacías < 2', () =
   const panel = panelOf(tab('Rachas históricas'))
   const wins = cardByTitle(panel, 'Con victoria')
   expect(wins.textContent).toContain('Activa')
-  expect(wins.textContent).toContain('Puede extenderse en su próximo partido')
   expect(wins.textContent).toContain('Último')
 
   const unbeaten = cardByTitle(panel, 'Invicto (sin derrotas)')

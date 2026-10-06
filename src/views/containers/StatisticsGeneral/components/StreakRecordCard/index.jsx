@@ -9,7 +9,6 @@ import {
 } from '../../styled'
 import {
   ActiveDot,
-  ActiveHint,
   ActivePill,
   CategoryTag,
   DurationText,
@@ -123,9 +122,6 @@ const HolderRow = ({ holder, count, collapsible, matchesId, showActive }) => {
           </ActivePill>
         )}
       </HolderLine>
-      {isActive && (
-        <ActiveHint>Puede extenderse en su próximo partido</ActiveHint>
-      )}
       <StreakRange holder={holder} />
       {duration && <DurationText>{duration}</DurationText>}
       {collapsible && hasMatches && (

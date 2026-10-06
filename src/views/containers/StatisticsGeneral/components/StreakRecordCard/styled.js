@@ -43,12 +43,6 @@ export const RecordTag = styled.span`
   padding: 0.1rem 0.6rem;
 `
 
-export const ActiveHint = styled.div`
-  color: rgba(0, 0, 0, 0.65);
-  font-size: 0.75rem;
-  text-align: center;
-`
-
 export const ValueBlock = styled.div`
   align-items: baseline;
   display: flex;

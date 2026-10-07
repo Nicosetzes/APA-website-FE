@@ -3,6 +3,7 @@ import DoneIcon from '@mui/icons-material/Done'
 import HorizontalRuleIcon from '@mui/icons-material/HorizontalRule'
 import CloseIcon from '@mui/icons-material/Close'
 import Tooltip from '../Tooltip'
+import { formatDateTime } from 'utils/dates'
 import { formatPlayedAt } from 'utils/playedAt'
 
 const ScoreBox = ({
@@ -17,9 +18,13 @@ const ScoreBox = ({
   playedAt,
   datePrecision,
 }) => {
-  // Fecha no exacta: etiqueta de precisión; si no, el texto legacy del BE.
+  // Fecha no exacta: etiqueta de precisión; exacta: DD/MM/YYYY HH:mm. El
+  // texto legacy del BE (`toLocaleString` del servidor, puede venir con
+  // AM/PM) queda sólo para un BE viejo sin `playedAt`.
   const dateLabel =
-    (playedAt && formatPlayedAt(playedAt, datePrecision)) || date
+    (playedAt &&
+      (formatPlayedAt(playedAt, datePrecision) || formatDateTime(playedAt))) ||
+    date
 
   if (result == 'w')
     return (

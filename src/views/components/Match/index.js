@@ -1,8 +1,9 @@
 import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
 import IconButton from '@mui/material/IconButton'
-import { useState } from 'react'
 import { apiClient } from 'api/axiosConfig'
+import { sameTeamId } from 'utils/teamRef'
+import { useState } from 'react'
 import {
   InputContainer,
   MatchContainer,
@@ -21,8 +22,12 @@ import {
 } from './styled'
 import { api, database } from 'api'
 import { confirmDialog, toast } from 'utils/notifications'
-import { format, parseISO } from 'date-fns'
-import { sameTeamId } from 'utils/teamRef'
+import { formatDateTime } from 'utils/dates'
+import {
+  formatPlayedAt,
+  getPlayedAt,
+  getPlayedAtPrecision,
+} from 'utils/playedAt'
 import { useParams, useSearchParams } from 'react-router-dom'
 
 const Match = ({ canMutate, match, getFixtureData, teamStats }) => {
@@ -32,7 +37,6 @@ const Match = ({ canMutate, match, getFixtureData, teamStats }) => {
 
   const {
     _id,
-    createdAt,
     group,
     played,
     playerP1,
@@ -41,8 +45,8 @@ const Match = ({ canMutate, match, getFixtureData, teamStats }) => {
     scoreP2,
     teamP1,
     teamP2,
-    updatedAt,
   } = match
+  const playedAt = getPlayedAt(match)
   const [matchScore, setMatchScore] = useState({
     scoreP1: scoreP1,
     scoreP2: scoreP2,
@@ -210,9 +214,10 @@ const Match = ({ canMutate, match, getFixtureData, teamStats }) => {
           <PlayerInput name="playerP2" value={playerP2.name} readOnly />
         </MatchInfo>
       </MatchView>
-      {updatedAt && updatedAt !== createdAt ? (
+      {played && playedAt ? (
         <MatchDate>
-          {updatedAt && format(parseISO(updatedAt), 'dd/MM/yyyy hh:mm:ss a')}{' '}
+          {formatPlayedAt(playedAt, getPlayedAtPrecision(match)) ||
+            formatDateTime(playedAt)}{' '}
         </MatchDate>
       ) : (
         <MatchDate>El partido aún no se ha jugado</MatchDate>

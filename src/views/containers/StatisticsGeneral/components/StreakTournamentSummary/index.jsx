@@ -1,8 +1,7 @@
-import { es } from 'date-fns/locale'
+import { formatDate } from 'utils/dates'
 import { formatPlayedAt } from 'utils/playedAt'
 import { MatchCard, MatchLabel, MetaLine } from '../StreakMatchSummary/styled'
 import { PhaseText, TournamentName } from './styled'
-import { format, parseISO } from 'date-fns'
 
 export const PHASE_LABELS = {
   regular: 'Fase regular',
@@ -22,7 +21,7 @@ const spokenDate = ({ ongoing, closedAt, closedAtPrecision }) => {
   if (!closedAt) return 'sin fecha registrada'
   return (
     formatPlayedAt(closedAt, closedAtPrecision, { style: 'long' }) ||
-    format(parseISO(closedAt), "d 'de' MMMM 'de' yyyy", { locale: es })
+    formatPlayedAt(closedAt, 'day', { style: 'long' })
   )
 }
 
@@ -31,8 +30,7 @@ const VisibleDate = ({ ongoing, closedAt, closedAtPrecision }) => {
   if (!closedAt) return <span>sin fecha</span>
   return (
     <time dateTime={closedAt}>
-      {formatPlayedAt(closedAt, closedAtPrecision) ||
-        format(parseISO(closedAt), 'dd/MM/yyyy')}
+      {formatPlayedAt(closedAt, closedAtPrecision) || formatDate(closedAt)}
     </time>
   )
 }

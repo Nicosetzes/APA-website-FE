@@ -1,6 +1,6 @@
 import StreakRecordCard, { MIN_STREAK } from '../StreakRecordCard'
 import StreakTabs, { getPanelId, getTabId } from '../StreakTabs'
-import { format, parseISO } from 'date-fns'
+import { formatDate } from 'utils/dates'
 import { formatPlayedAt } from 'utils/playedAt'
 import {
   EmptyMessage,
@@ -205,15 +205,14 @@ const RecordsTab = ({ records, activeStreaks }) => {
                       >
                         {record.match.tournament}
                       </div>
-                      {/* 880 partidos del histórico no tienen fecha, y
-                          `parseISO(null)` rompe el render. */}
+                      {/* 880 partidos del histórico no tienen fecha: sin
+                          fecha no se muestra la línea. */}
                       {record.match.date && (
                         <div style={{ fontSize: '0.8rem', opacity: 0.7 }}>
                           {formatPlayedAt(
                             record.match.date,
                             record.match.datePrecision,
-                          ) ||
-                            format(parseISO(record.match.date), 'dd/MM/yyyy')}
+                          ) || formatDate(record.match.date)}
                         </div>
                       )}
                     </RecordDetail>

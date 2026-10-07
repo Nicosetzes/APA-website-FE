@@ -1,9 +1,4 @@
 /* eslint-env jest */
-jest.mock('date-fns', () => ({
-  format: () => '01 ene 2025',
-  parseISO: (value) => new Date(value),
-}))
-jest.mock('date-fns/locale', () => ({ es: {} }))
 import ReactDOM from 'react-dom'
 import { act } from 'react-dom/test-utils'
 import MatchesTable from '.'
@@ -63,6 +58,44 @@ test('keeps date and time for exact matches', () => {
   })
   const cell = container.querySelector('tbody td')
   expect(cell.textContent).toContain('hs')
+  ReactDOM.unmountComponentAtNode(container)
+})
+
+test('shows exact dates as DD/MM/YYYY and the time in 24h without seconds', () => {
+  const container = document.createElement('div')
+  act(() => {
+    ReactDOM.render(
+      <MatchesTable
+        matches={[
+          {
+            ...match,
+            // Hora local: el test no depende de la zona horaria.
+            playedAt: new Date(2024, 6, 8, 21, 15, 42).toISOString(),
+            playedAtPrecision: 'exact',
+          },
+        ]}
+      />,
+      container,
+    )
+  })
+  const cell = container.querySelector('tbody td')
+  expect(cell.textContent).toBe('08/07/202421:15 hs')
+  expect(cell.querySelector('span').textContent).toBe('21:15 hs')
+  expect(cell.textContent).not.toMatch(/AM|PM|:42/)
+  ReactDOM.unmountComponentAtNode(container)
+})
+
+test('shows "-" when the date cannot be parsed', () => {
+  const container = document.createElement('div')
+  act(() => {
+    ReactDOM.render(
+      <MatchesTable
+        matches={[{ ...match, updatedAt: 'not-a-date', playedAt: undefined }]}
+      />,
+      container,
+    )
+  })
+  expect(container.querySelector('tbody td').textContent).toBe('-')
   ReactDOM.unmountComponentAtNode(container)
 })
 

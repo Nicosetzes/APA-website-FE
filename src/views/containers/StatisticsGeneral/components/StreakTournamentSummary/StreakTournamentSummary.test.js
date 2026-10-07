@@ -1,16 +1,5 @@
 /* eslint-env jest */
-// date-fns 4 no resuelve en el Jest de CRA: se reemplaza por un dd/MM/yyyy local.
-jest.mock('date-fns', () => {
-  const pad = (value) => String(value).padStart(2, '0')
-  return {
-    format: (date) =>
-      `${pad(date.getDate())}/${pad(
-        date.getMonth() + 1,
-      )}/${date.getFullYear()}`,
-    parseISO: (value) => new Date(value),
-  }
-})
-jest.mock('date-fns/locale', () => ({ es: {} }))
+// Las fechas salen de utils/dates (JS puro): no hace falta mockear date-fns.
 import ReactDOM from 'react-dom'
 import { act } from 'react-dom/test-utils'
 import StreakTournamentSummary, { PHASE_LABELS } from '.'
@@ -79,7 +68,7 @@ test('torneo cerrado: nombre, fase, fecha exacta y aria-label completo', () => {
     '2022-07-04T12:00:00',
   )
   expect(group().getAttribute('aria-label')).toBe(
-    'Torneo de inicio: Nico, Superliga Europea 2022, Campeón, 04/07/2022',
+    'Torneo de inicio: Nico, Superliga Europea 2022, Campeón, 4 de julio de 2022',
   )
 })
 
@@ -136,7 +125,7 @@ test('fase desconocida: se omite', () => {
 
   expect(group().textContent).not.toContain('group_stage')
   expect(group().getAttribute('aria-label')).toBe(
-    'Torneo de inicio: Nico, Superliga Europea 2022, 04/07/2022',
+    'Torneo de inicio: Nico, Superliga Europea 2022, 4 de julio de 2022',
   )
 })
 

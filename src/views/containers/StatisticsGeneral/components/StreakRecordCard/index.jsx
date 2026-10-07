@@ -28,7 +28,7 @@ import {
   ValueUnit,
   VisuallyHidden,
 } from './styled'
-import { format, parseISO } from 'date-fns'
+import { formatDate } from 'utils/dates'
 import { formatPlayedAt, isExactPrecision } from 'utils/playedAt'
 import {
   buildStreakMatchesLink,
@@ -45,7 +45,7 @@ const hasDetails = (holder) => typeof holder?.isActive === 'boolean'
 
 const DateText = ({ value, precision }) => (
   <time dateTime={value}>
-    {formatPlayedAt(value, precision) || format(parseISO(value), 'dd/MM/yyyy')}
+    {formatPlayedAt(value, precision) || formatDate(value)}
   </time>
 )
 

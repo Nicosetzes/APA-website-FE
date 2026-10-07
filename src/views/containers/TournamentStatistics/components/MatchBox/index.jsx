@@ -7,7 +7,7 @@ import {
   OutcomeTag,
   StyledMatchBox,
 } from './styled'
-import { format, parseISO } from 'date-fns'
+import { formatDate } from 'utils/dates'
 import {
   formatPlayedAt,
   getPlayedAt,
@@ -33,8 +33,7 @@ const MatchBox = ({
   const match = { playedAt, playedAtPrecision, updatedAt }
   const date = getPlayedAt(match)
   const dateLabel =
-    formatPlayedAt(date, getPlayedAtPrecision(match)) ||
-    format(parseISO(date), 'dd/MM/yyyy')
+    formatPlayedAt(date, getPlayedAtPrecision(match)) || formatDate(date)
 
   const getOutcomeKey = () => {
     const player = searchParams.get('player')

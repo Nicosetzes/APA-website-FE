@@ -39,7 +39,7 @@ import { PageLoader, PrimaryLink } from 'views/components'
 import { apiClient, getApiErrorMessage } from 'api/axiosConfig'
 import { cloudName, database } from 'api'
 import { confirmDialog, toast } from 'utils/notifications'
-import { format as formatDate, parseISO } from 'date-fns'
+import { formatDateTime } from 'utils/dates'
 import {
   formatPlayedAt,
   getPlayedAt,
@@ -301,11 +301,7 @@ const Tournament = () => {
                     {formatPlayedAt(
                       getPlayedAt(match),
                       getPlayedAtPrecision(match),
-                    ) ||
-                      formatDate(
-                        parseISO(getPlayedAt(match)),
-                        'dd/MM/yyyy hh:mm:ss a',
-                      )}
+                    ) || formatDateTime(getPlayedAt(match))}
                   </MatchDate>
                 </MatchCard>
               ))}

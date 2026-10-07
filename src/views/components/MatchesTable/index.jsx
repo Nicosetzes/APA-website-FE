@@ -1,5 +1,4 @@
 import { database } from 'api'
-import { es } from 'date-fns/locale'
 import {
   CustomTable,
   DateText,
@@ -12,7 +11,7 @@ import {
   TournamentLink,
   TypeBadge,
 } from './styled'
-import { format, parseISO } from 'date-fns'
+import { formatDate, formatTime } from 'utils/dates'
 import {
   formatPlayedAt,
   getPlayedAt,
@@ -37,7 +36,7 @@ const getPenaltyScores = (outcome, teamP1) => {
 }
 
 const MatchesTable = ({ matches }) => {
-  const formatDate = (dateString, id) => {
+  const getDateParts = (dateString, id) => {
     try {
       const isBadDate =
         !dateString ||
@@ -47,14 +46,14 @@ const MatchesTable = ({ matches }) => {
 
       const dateObj = isBadDate
         ? new Date(parseInt(id.substring(0, 8), 16) * 1000)
-        : parseISO(dateString)
+        : new Date(dateString)
 
-      return {
-        date: format(dateObj, 'dd MMM yyyy', { locale: es }),
-        time: format(dateObj, 'HH:mm'),
-      }
+      const date = formatDate(dateObj)
+      return date
+        ? { date, time: formatTime(dateObj) }
+        : { date: '-', time: null }
     } catch {
-      return { date: '-', time: '' }
+      return { date: '-', time: null }
     }
   }
 
@@ -92,7 +91,7 @@ const MatchesTable = ({ matches }) => {
             )
             const { date, time } = inexactDate
               ? { date: inexactDate, time: null }
-              : formatDate(getPlayedAt(match), _id)
+              : getDateParts(getPlayedAt(match), _id)
             const isP1Winner =
               sameTeamId(outcome?.teamThatWon?.id, teamP1?.id) && !outcome?.draw
             const isP2Winner =

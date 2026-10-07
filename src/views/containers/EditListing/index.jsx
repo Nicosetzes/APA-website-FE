@@ -4,6 +4,7 @@ import { Loader } from 'views/components'
 import { Pagination } from '@mui/material'
 import { api } from 'api'
 import { apiClient } from 'api/axiosConfig'
+import { formatDateTime } from 'utils/dates'
 import { motion } from 'framer-motion'
 import {
   Caption,
@@ -30,7 +31,6 @@ import {
   PaginationInfo,
 } from './styled'
 import { confirmDialog, toast } from 'utils/notifications'
-import { format, parseISO } from 'date-fns'
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 
@@ -167,12 +167,7 @@ const Edits = () => {
                           Subido por: {edit.user.nickname || edit.user.name}
                         </UserName>
                         {edit.caption && <Caption>{edit.caption}</Caption>}
-                        <EditDate>
-                          {format(
-                            parseISO(edit.createdAt),
-                            'dd/MM/yyyy hh:mm:ss a',
-                          )}
-                        </EditDate>
+                        <EditDate>{formatDateTime(edit.createdAt)}</EditDate>
                       </div>
                       <IconButton
                         onClick={() => handleDeleteEdit(edit._id)}

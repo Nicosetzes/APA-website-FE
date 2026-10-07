@@ -2,13 +2,14 @@ import { Image } from 'cloudinary-react'
 import { Loader } from 'views/components'
 import { StyledHome } from './styled'
 import axios from 'axios'
+import { formatDate } from 'utils/dates'
+import { formatPlayedAt } from 'utils/playedAt'
 import { motion } from 'framer-motion'
 import { useMediaQuery } from 'react-responsive'
 import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api, cloudName, database } from 'api'
 import { useEffect, useState } from 'react'
-import { formatPlayedAt } from 'utils/playedAt'
 
 const getClosedAt = (tournament) =>
   tournament?.closedAt ?? tournament?.updatedAt ?? null
@@ -73,7 +74,7 @@ const Home = () => {
       formatPlayedAt(
         lastTournament.closedAt,
         lastTournament.closedAtPrecision,
-      ) || new Date(closedAt).toLocaleDateString()
+      ) || formatDate(closedAt)
     )
   }, [lastTournament])
 

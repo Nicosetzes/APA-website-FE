@@ -1,16 +1,5 @@
 /* eslint-env jest */
-// date-fns 4 no resuelve en el Jest de CRA: se reemplaza por un dd/MM/yyyy local.
-jest.mock('date-fns', () => {
-  const pad = (value) => String(value).padStart(2, '0')
-  return {
-    format: (date) =>
-      `${pad(date.getDate())}/${pad(
-        date.getMonth() + 1,
-      )}/${date.getFullYear()}`,
-    parseISO: (value) => new Date(value),
-  }
-})
-jest.mock('date-fns/locale', () => ({ es: {} }))
+// Las fechas salen de utils/dates (JS puro): no hace falta mockear date-fns.
 import ReactDOM from 'react-dom'
 import { act } from 'react-dom/test-utils'
 import { MemoryRouter } from 'react-router-dom'

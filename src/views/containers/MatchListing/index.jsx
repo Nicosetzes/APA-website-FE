@@ -1,4 +1,5 @@
 import ComparisonFilter from './ComparisonFilter'
+import DateFilter, { DateFilterProvider } from './DateFilter'
 import Pagination from '@mui/material/Pagination'
 import { api } from 'api'
 import { motion } from 'framer-motion'
@@ -18,7 +19,6 @@ import {
   PageContainer,
   ResultsBadge,
   ResultsHeader,
-  StyledInput,
   StyledSelect,
 } from './styled'
 import { MatchesTable, PageLoader } from 'views/components'
@@ -68,6 +68,7 @@ const MatchListing = () => {
   const [players, setPlayers] = useState([])
   const [tournaments, setTournaments] = useState([])
   const [teams, setTeams] = useState([])
+  const [dateResetKey, setDateResetKey] = useState(0)
 
   const getParam = (key, fallback = '') => searchParams.get(key) || fallback
 
@@ -189,6 +190,8 @@ const MatchListing = () => {
       setOpponentTeamInput,
     ]
     inputResetters.forEach((reset) => reset(''))
+    // Remonta los pickers: descarta lo tipeado a medias que no llegó a la URL.
+    setDateResetKey((key) => key + 1)
     setSearchParams(new URLSearchParams({ page: '1' }))
   }
 
@@ -405,30 +408,28 @@ const MatchListing = () => {
           </FilterSection>
           <FilterSection>
             <FilterSectionTitle>Período de Fecha</FilterSectionTitle>
-            <FilterGrid>
-              <FormGroup>
-                <label htmlFor="dateFrom">Desde</label>
-                <StyledInput
+            <DateFilterProvider>
+              <FilterGrid>
+                <DateFilter
+                  key={`dateFrom-${dateResetKey}`}
                   id="dateFrom"
-                  type="date"
+                  label="Desde"
                   value={dateFrom}
-                  onChange={(e) => updateFilters({ dateFrom: e.target.value })}
+                  onChange={(value) => updateFilters({ dateFrom: value })}
                 />
-              </FormGroup>
-              <FormGroup>
-                <label htmlFor="dateTo">Hasta</label>
-                <StyledInput
+                <DateFilter
+                  key={`dateTo-${dateResetKey}`}
                   id="dateTo"
-                  type="date"
+                  label="Hasta"
                   value={dateTo}
-                  onChange={(e) => updateFilters({ dateTo: e.target.value })}
+                  onChange={(value) => updateFilters({ dateTo: value })}
                 />
-              </FormGroup>
 
-              <ClearButton onClick={handleClearFilters}>
-                Limpiar Filtros
-              </ClearButton>
-            </FilterGrid>
+                <ClearButton onClick={handleClearFilters}>
+                  Limpiar Filtros
+                </ClearButton>
+              </FilterGrid>
+            </DateFilterProvider>
           </FilterSection>
         </FilterCard>
         {error && <ErrorMessage role="alert">{error}</ErrorMessage>}

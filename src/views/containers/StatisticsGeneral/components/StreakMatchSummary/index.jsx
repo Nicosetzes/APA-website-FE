@@ -1,6 +1,5 @@
 import { database } from 'api'
-import { es } from 'date-fns/locale'
-import { format, parseISO } from 'date-fns'
+import { formatDate } from 'utils/dates'
 import { formatPlayedAt } from 'utils/playedAt'
 import {
   MatchCard,
@@ -62,7 +61,8 @@ const buildAriaLabel = ({
   parts.push(
     match.date
       ? formatPlayedAt(match.date, match.datePrecision, { style: 'long' }) ||
-          format(parseISO(match.date), "d 'de' MMMM 'de' yyyy", { locale: es })
+          // Exacta: "4 de julio de 2022", el mismo texto largo que nivel día.
+          formatPlayedAt(match.date, 'day', { style: 'long' })
       : 'sin fecha registrada',
   )
   return parts.join(', ')
@@ -121,7 +121,7 @@ const StreakMatchSummary = ({
         {match.date ? (
           <time dateTime={match.date}>
             {formatPlayedAt(match.date, match.datePrecision) ||
-              format(parseISO(match.date), 'dd/MM/yyyy')}
+              formatDate(match.date)}
           </time>
         ) : (
           <span>sin fecha</span>

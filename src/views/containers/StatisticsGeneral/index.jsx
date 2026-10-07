@@ -2,6 +2,7 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
 import { Loader } from 'views/components'
 import { apiClient } from 'api/axiosConfig'
 import { database } from 'api'
+import { formatDate } from 'utils/dates'
 import { motion } from 'framer-motion'
 import {
   EmptyMessage,
@@ -27,7 +28,6 @@ import {
 } from './styled'
 import { PageLoader, Tabs, Tooltip } from 'views/components'
 import { RecordsTab } from './components'
-import { format, parseISO } from 'date-fns'
 import { formatPlayedAt } from 'utils/playedAt'
 import { useCallback, useEffect, useState } from 'react'
 
@@ -203,7 +203,7 @@ const StatisticsGeneral = () => {
                           }}
                         >
                           {formatPlayedAt(match.date, match.datePrecision) ||
-                            format(parseISO(match.date), 'dd/MM/yyyy')}
+                            formatDate(match.date)}
                         </div>
                       </>
                     }

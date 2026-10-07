@@ -271,6 +271,9 @@ const MatchListing = () => {
                 >
                   <option value="all">Todos</option>
                   <option value="win">Victoria</option>
+                  <option value="winIncludingPenalties">
+                    Victoria (incl. penales)
+                  </option>
                   <option value="draw">Empate</option>
                   <option value="loss">Derrota</option>
                   <option value="penalties">Penales</option>

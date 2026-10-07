@@ -1,4 +1,5 @@
 import styled, { keyframes } from 'styled-components'
+import { Link } from 'react-router-dom'
 import { RecordCard, RecordValue } from '../../styled'
 
 export const TONES = {
@@ -152,6 +153,25 @@ export const RangeText = styled.div`
   color: rgba(0, 0, 0, 0.75);
   font-size: 0.85rem;
   text-align: center;
+`
+
+// Link sutil: hereda el color del rango y se subraya con hover o foco.
+export const RangeLink = styled(Link)`
+  border-radius: 2px;
+  color: inherit;
+  text-decoration: underline dotted rgba(0, 0, 0, 0.35);
+  text-underline-offset: 3px;
+
+  &:hover,
+  &:focus-visible {
+    color: var(--blue-900);
+    text-decoration: underline solid currentColor;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--blue-900);
+    outline-offset: 2px;
+  }
 `
 
 export const DurationText = styled.div`

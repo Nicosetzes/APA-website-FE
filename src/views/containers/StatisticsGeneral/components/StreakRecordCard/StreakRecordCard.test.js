@@ -13,7 +13,9 @@ jest.mock('date-fns', () => {
 jest.mock('date-fns/locale', () => ({ es: {} }))
 import ReactDOM from 'react-dom'
 import { act } from 'react-dom/test-utils'
+import { MemoryRouter } from 'react-router-dom'
 import StreakRecordCard from '.'
+import { buildStreakMatchesLink } from 'utils/streaks'
 
 const match = (overrides) => ({
   date: '2026-07-02T12:00:00',
@@ -63,15 +65,17 @@ let container
 const render = (record, props = {}) => {
   act(() => {
     ReactDOM.render(
-      <StreakRecordCard
-        idPrefix="historicas"
-        recordKey="most_wins_in_a_row"
-        title="Con victoria"
-        tone="positive"
-        category="Resultados"
-        record={record}
-        {...props}
-      />,
+      <MemoryRouter>
+        <StreakRecordCard
+          idPrefix="historicas"
+          recordKey="most_wins_in_a_row"
+          title="Con victoria"
+          tone="positive"
+          category="Resultados"
+          record={record}
+          {...props}
+        />
+      </MemoryRouter>,
       container,
     )
   })
@@ -556,8 +560,9 @@ test('torneos cerrada: Inicio y Fin con nombre, fase y fecha según precisión',
 
   const text = container.textContent
   expect(text).toContain('Eliminatorias')
-  expect(text).toContain('torneos')
-  expect(text).not.toContain('partidos')
+  expect(text).toContain('3torneos')
+  // La unidad es "torneos" (el link del rango sí dice "partidos").
+  expect(text).not.toMatch(/\dpartidos/)
   expect(text).not.toContain('3 3')
   expect(labels()).toEqual(['Inicio', 'Fin'])
 
@@ -856,6 +861,194 @@ test('torneos: estado vacío con count 1', () => {
   expect(container.textContent).toContain('Eliminatorias')
   expect(container.textContent).not.toContain('torneo')
   expect(container.querySelector('[role="group"]')).toBeNull()
+})
+
+describe('link del rango a /matches', () => {
+  const links = () => Array.from(container.querySelectorAll('a'))
+  const hrefOf = (link) => link.getAttribute('href')
+  // Texto que lee un lector de pantalla: sin los nodos aria-hidden.
+  const accessibleName = (node) =>
+    Array.from(node.childNodes)
+      .map((child) => {
+        if (child.nodeType === Node.TEXT_NODE) return child.textContent
+        if (child.getAttribute('aria-hidden') === 'true') return ''
+        return accessibleName(child)
+      })
+      .join('')
+
+  test('racha cerrada: jugador y días de inicio y fin, con nombre accesible', () => {
+    render({ count: 4, players: [holder({ isActive: false, breakMatch })] })
+
+    const [link] = links()
+    expect(links()).toHaveLength(1)
+    expect(hrefOf(link)).toBe(
+      '/matches?player1=p1&outcome=win&dateFrom=2026-07-02&dateTo=2026-09-20',
+    )
+    expect(accessibleName(link)).toBe(
+      'Ver los partidos de la racha de Nico: 02/07/2026 hasta 20/09/2026',
+    )
+    // El texto visible del rango sigue igual y las fechas siguen siendo <time>.
+    expect(link.textContent).toMatch(/02\/07\/2026\s*→\s*hasta\s*20\/09\/2026/)
+    const times = link.querySelectorAll('time')
+    expect(times).toHaveLength(2)
+    expect(times[0].getAttribute('dateTime')).toBe('2026-07-02T12:00:00')
+    // Las mini-tarjetas no son links.
+    container.querySelectorAll('[role="group"]').forEach((group) => {
+      expect(group.closest('a')).toBeNull()
+      expect(group.querySelector('a')).toBeNull()
+    })
+  })
+
+  test('racha activa: sin dateTo', () => {
+    render({ count: 9, players: [holder()] })
+    expect(hrefOf(links()[0])).toBe(
+      '/matches?player1=p1&outcome=win&dateFrom=2026-07-02',
+    )
+  })
+
+  test('actuales: también lleva link', () => {
+    render(
+      { count: 6, players: [holder()] },
+      { idPrefix: 'actuales', showActive: false, isRecord: true },
+    )
+    expect(hrefOf(links()[0])).toBe(
+      '/matches?player1=p1&outcome=win&dateFrom=2026-07-02',
+    )
+  })
+
+  test('empate: un link por poseedor, cada uno con su rango', () => {
+    render({
+      count: 9,
+      players: [
+        holder(),
+        holder({
+          id: 'p3',
+          name: 'Fede',
+          isActive: false,
+          startDate: '2025-01-10T12:00:00',
+          endDate: '2025-03-01T12:00:00',
+          breakMatch,
+        }),
+      ],
+    })
+
+    expect(links().map(hrefOf)).toEqual([
+      '/matches?player1=p1&outcome=win&dateFrom=2026-07-02',
+      '/matches?player1=p3&outcome=win&dateFrom=2025-01-10&dateTo=2025-03-01',
+    ])
+    expect(accessibleName(links()[1])).toMatch(
+      /^Ver los partidos de la racha de Fede: /,
+    )
+  })
+
+  test('victorias en eliminación: type=knockout + victoria incl. penales', () => {
+    render(
+      { count: 3, players: [holder({ isActive: false, breakMatch })] },
+      { recordKey: 'most_knockout_wins_in_a_row', variant: 'knockout' },
+    )
+    expect(hrefOf(links()[0])).toBe(
+      '/matches?player1=p1&type=knockout&outcome=winIncludingPenalties&dateFrom=2026-07-02&dateTo=2026-09-20',
+    )
+  })
+
+  test.each([
+    'most_consecutive_matches_scoring_3_plus_goals',
+    'most_clean_sheets_in_a_row',
+    'most_draws_in_a_row',
+  ])('%s: el href es el de buildStreakMatchesLink', (recordKey) => {
+    const entry = holder({ isActive: false, breakMatch })
+    render({ count: 4, players: [entry] }, { recordKey })
+    expect(hrefOf(links()[0])).toBe(buildStreakMatchesLink(recordKey, entry))
+  })
+
+  test('sin fecha de inicio o sin fechas: sin link', () => {
+    render({
+      count: 4,
+      players: [holder({ isActive: false, startDate: null, breakMatch })],
+    })
+    expect(container.textContent).toContain('Inicio sin fecha registrada')
+    expect(links()).toHaveLength(0)
+
+    render({
+      count: 4,
+      players: [holder({ startDate: null, endDate: null })],
+    })
+    expect(container.textContent).toContain('Sin fechas registradas')
+    expect(links()).toHaveLength(0)
+  })
+
+  test.each([
+    ['sin récord', null],
+    ['count 1', { count: 1, players: [holder()] }],
+    ['sin poseedores', { count: 3, players: [] }],
+  ])('estado vacío (%s): sin link', (_, record) => {
+    render(record)
+    expect(links()).toHaveLength(0)
+  })
+
+  test('BE viejo sin detalle: sin link', () => {
+    render({
+      count: 5,
+      players: [{ id: 'p1', name: 'Nico', date: '2026-09-20T12:00:00' }],
+    })
+    expect(links()).toHaveLength(0)
+  })
+
+  test('semis consecutivas: type=playoff + playoffRound=semifinal, de la primera a la última semi', () => {
+    renderTournament({
+      count: 3,
+      players: [
+        tournamentHolder({
+          startTournament: summary({
+            firstPlayoffPlayedAt: '2019-06-20T12:00:00',
+            firstPlayoffPlayedAtPrecision: 'exact',
+            firstSemifinalPlayedAt: '2019-06-25T12:00:00',
+            firstSemifinalPlayedAtPrecision: 'exact',
+          }),
+          endTournament: summary({
+            id: 't2022',
+            closedAt: '2022-07-04T12:00:00',
+            closedAtPrecision: 'exact',
+            lastPlayoffPlayedAt: '2022-06-30T12:00:00',
+            lastPlayoffPlayedAtPrecision: 'exact',
+            lastSemifinalPlayedAt: '2022-06-28T12:00:00',
+            lastSemifinalPlayedAtPrecision: 'exact',
+          }),
+        }),
+      ],
+    })
+    expect(hrefOf(links()[0])).toBe(
+      '/matches?player1=p1&type=playoff&playoffRound=semifinal&dateFrom=2019-06-25&dateTo=2022-06-28',
+    )
+  })
+
+  test('torneos con el último torneo en curso: sin dateTo, "→ En curso" dentro del link', () => {
+    renderTournament({
+      count: 2,
+      players: [
+        tournamentHolder({
+          isActive: true,
+          startDate: '2024-11-15T12:00:00',
+          startDatePrecision: 'exact',
+          endDate: '2026-09-20T12:00:00',
+          endDatePrecision: 'exact',
+          breakTournament: null,
+          startTournament: summary({
+            firstPlayoffPlayedAt: '2024-11-01T12:00:00',
+          }),
+          endTournament: ongoingEnd,
+        }),
+      ],
+    })
+
+    const [link] = links()
+    expect(hrefOf(link)).toBe(
+      '/matches?player1=p1&type=playoff&playoffRound=semifinal&dateFrom=2024-11-01',
+    )
+    expect(accessibleName(link)).toBe(
+      'Ver los partidos de la racha de Nico: desde el 15/11/2024, En curso',
+    )
+  })
 })
 
 test('precisión exacta explícita conserva la duración', () => {

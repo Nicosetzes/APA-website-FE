@@ -13,7 +13,9 @@ jest.mock('date-fns', () => {
 jest.mock('date-fns/locale', () => ({ es: {} }))
 import ReactDOM from 'react-dom'
 import { act } from 'react-dom/test-utils'
+import { MemoryRouter } from 'react-router-dom'
 import RecordsTab from '.'
+import { buildStreakMatchesLink } from 'utils/streaks'
 
 const match = (overrides) => ({
   date: '2026-07-02T12:00:00',
@@ -223,7 +225,12 @@ let container
 
 const render = (props) => {
   act(() => {
-    ReactDOM.render(<RecordsTab {...props} />, container)
+    ReactDOM.render(
+      <MemoryRouter>
+        <RecordsTab {...props} />
+      </MemoryRouter>,
+      container,
+    )
   })
 }
 
@@ -565,6 +572,98 @@ test('ayuda junto a "eliminación" en los títulos de partidos de eliminación',
   for (const node of others) {
     expect(node.querySelector('button')).toBeNull()
   }
+})
+
+test('el rango de cada racha lleva a /matches en las dos pestañas', () => {
+  render({ records: buildRecords(), activeStreaks: buildActiveStreaks() })
+
+  const hrefs = (card) =>
+    Array.from(card.querySelectorAll('a')).map((link) =>
+      link.getAttribute('href'),
+    )
+
+  const historicas = panelOf(tab('Rachas históricas'))
+  expect(hrefs(cardByTitle(historicas, 'Con victoria'))).toEqual([
+    '/matches?player1=nico&outcome=win&dateFrom=2026-07-02',
+  ])
+  expect(hrefs(cardByTitle(historicas, 'Con derrota'))).toEqual([
+    '/matches?player1=juan&outcome=loss&dateFrom=2026-07-02&dateTo=2026-09-20',
+  ])
+  expect(hrefs(cardByTitle(historicas, 'Invicto (sin derrotas)'))).toEqual([
+    '/matches?player1=nico&dateFrom=2026-07-02&dateTo=2026-09-20',
+  ])
+  expect(hrefs(cardByTitle(historicas, 'Convirtiendo (+2 goles)'))).toEqual([
+    '/matches?player1=fede&player1GoalsOp=gte&player1GoalsVal=2&dateFrom=2026-07-02&dateTo=2026-09-20',
+  ])
+  expect(hrefs(cardByTitle(historicas, 'Con valla invicta'))).toEqual([
+    '/matches?player1=fede&player1ConcededOp=eq&player1ConcededVal=0&dateFrom=2026-07-02&dateTo=2026-09-20',
+  ])
+  expect(hrefs(cardByTitle(historicas, 'Con victoria (eliminación)'))).toEqual([
+    '/matches?player1=nico&type=knockout&outcome=winIncludingPenalties&dateFrom=2026-07-02&dateTo=2026-09-20',
+  ])
+  expect(hrefs(cardByTitle(historicas, 'Campeonatos consecutivos'))).toEqual([
+    '/matches?player1=nico&type=playoff&playoffRound=final&outcome=winIncludingPenalties&dateFrom=2020-06-01&dateTo=2022-07-04',
+  ])
+  expect(hrefs(cardByTitle(historicas, SHOOTOUT_TITLE))).toEqual([
+    '/matches?player1=pedro&outcome=penalties&dateFrom=2026-07-02&dateTo=2026-09-20',
+  ])
+  expect(hrefs(cardByTitle(historicas, 'Invicto (eliminación)'))).toEqual([
+    '/matches?player1=santi&type=knockout&dateFrom=2026-07-02&dateTo=2026-09-20',
+  ])
+  // BE sin las fechas de playoff del jugador: cae a las fechas del poseedor.
+  expect(hrefs(cardByTitle(historicas, 'Semis consecutivas'))).toEqual([
+    '/matches?player1=juan&type=playoff&playoffRound=semifinal&dateFrom=2020-06-01&dateTo=2022-07-04',
+  ])
+  const [link] = cardByTitle(historicas, 'Con victoria').querySelectorAll('a')
+  expect(link.textContent).toMatch(/^Ver los partidos de la racha de Nico: /)
+  // Tarjetas vacías: sin link.
+  expect(hrefs(cardByTitle(historicas, 'Con empate'))).toEqual([])
+  expect(hrefs(cardByTitle(historicas, 'Finales consecutivas'))).toEqual([])
+
+  const actuales = panelOf(tab('Rachas actuales'))
+  expect(hrefs(cardByTitle(actuales, 'Invicto (sin derrotas)'))).toEqual([
+    '/matches?player1=fede&dateFrom=2026-07-02',
+  ])
+  expect(hrefs(cardByTitle(actuales, 'Campeonatos consecutivos'))).toEqual([
+    '/matches?player1=nico&type=playoff&playoffRound=final&outcome=winIncludingPenalties&dateFrom=2020-06-01',
+  ])
+  expect(hrefs(cardByTitle(actuales, 'Convirtiendo (+1 gol)'))).toEqual([
+    '/matches?player1=juan&player1GoalsOp=gte&player1GoalsVal=1&dateFrom=2026-07-02',
+  ])
+  expect(hrefs(cardByTitle(actuales, 'Con empate'))).toEqual([])
+})
+
+test('el href de cada tarjeta es el que arma buildStreakMatchesLink', () => {
+  const records = buildRecords()
+  const activeStreaks = buildActiveStreaks()
+  render({ records, activeStreaks })
+
+  const hrefOf = (root, title) =>
+    cardByTitle(root, title).querySelector('a')?.getAttribute('href')
+  const expected = (source, key) =>
+    buildStreakMatchesLink(key, source[key].players[0])
+
+  const historicas = panelOf(tab('Rachas históricas'))
+  const cases = [
+    ['most_wins_in_a_row', 'Con victoria'],
+    ['most_losses_in_a_row', 'Con derrota'],
+    [
+      'most_consecutive_matches_scoring_2_plus_goals',
+      'Convirtiendo (+2 goles)',
+    ],
+    ['most_clean_sheets_in_a_row', 'Con valla invicta'],
+    ['most_knockout_wins_in_a_row', 'Con victoria (eliminación)'],
+    ['most_consecutive_semifinals', 'Semis consecutivas'],
+    ['most_consecutive_titles', 'Campeonatos consecutivos'],
+  ]
+  for (const [key, title] of cases) {
+    expect(hrefOf(historicas, title)).toBe(expected(records, key))
+  }
+
+  const actuales = panelOf(tab('Rachas actuales'))
+  expect(hrefOf(actuales, 'Con victoria (eliminación)')).toBe(
+    expected(activeStreaks, 'most_knockout_wins_in_a_row'),
+  )
 })
 
 test('récord de partido con fecha no exacta muestra la etiqueta de precisión', () => {

@@ -15,6 +15,7 @@ import {
   HolderLine,
   HolderList,
   MatchesGrid,
+  RangeLink,
   RangeText,
   StatusDot,
   StatusPill,
@@ -29,7 +30,11 @@ import {
 } from './styled'
 import { format, parseISO } from 'date-fns'
 import { formatPlayedAt, isExactPrecision } from 'utils/playedAt'
-import { formatStreakDuration, getCountUnit } from 'utils/streaks'
+import {
+  buildStreakMatchesLink,
+  formatStreakDuration,
+  getCountUnit,
+} from 'utils/streaks'
 import { useState } from 'react'
 
 // Un solo partido no es racha.
@@ -103,14 +108,14 @@ const sincePrefix = (precision) =>
 
 // Rango con el último torneo en curso: "15/11/2024 → En curso", leído
 // "desde el 15/11/2024, en curso".
-const OngoingRange = ({ holder, startOngoing }) => {
+const OngoingRangeContent = ({ holder, startOngoing }) => {
   const { startDate, startDatePrecision } = holder
 
   // Defensivo: con el torneo de inicio también abierto no hay fecha real.
-  if (startOngoing) return <RangeText>{ONGOING_TEXT}</RangeText>
+  if (startOngoing) return ONGOING_TEXT
 
   return (
-    <RangeText>
+    <>
       {startDate ? (
         <>
           <VisuallyHidden>{sincePrefix(startDatePrecision)}</VisuallyHidden>
@@ -122,23 +127,21 @@ const OngoingRange = ({ holder, startOngoing }) => {
       <span aria-hidden="true"> → </span>
       <VisuallyHidden>, </VisuallyHidden>
       {ONGOING_TEXT}
-    </RangeText>
+    </>
   )
 }
 
-const StreakRange = ({ holder, ongoing }) => {
+const RangeContent = ({ holder, ongoing }) => {
   const { startDate, endDate, startDatePrecision, endDatePrecision } = holder
 
   if (ongoing.end) {
-    return <OngoingRange holder={holder} startOngoing={ongoing.start} />
+    return <OngoingRangeContent holder={holder} startOngoing={ongoing.start} />
   }
 
-  if (!startDate && !endDate) {
-    return <RangeText>Sin fechas registradas</RangeText>
-  }
+  if (!startDate && !endDate) return 'Sin fechas registradas'
 
   return (
-    <RangeText>
+    <>
       {startDate ? (
         <DateText value={startDate} precision={startDatePrecision} />
       ) : (
@@ -151,12 +154,28 @@ const StreakRange = ({ holder, ongoing }) => {
       ) : (
         'sin fecha'
       )}
+    </>
+  )
+}
+
+const StreakRange = ({ holder, ongoing, recordKey }) => {
+  const content = <RangeContent holder={holder} ongoing={ongoing} />
+  const to = buildStreakMatchesLink(recordKey, holder)
+
+  if (!to) return <RangeText>{content}</RangeText>
+
+  return (
+    <RangeText>
+      <RangeLink to={to}>
+        <VisuallyHidden>
+          {`Ver los partidos de la racha de ${holder.name}: `}
+        </VisuallyHidden>
+        <span>{content}</span>
+      </RangeLink>
     </RangeText>
   )
 }
 
-// Mini-tarjetas por tipo de ítem: partidos (rachas de partidos, de partidos de
-// eliminación y de penales) o torneos (rachas por torneo).
 const ITEMS = {
   match: {
     keys: { start: 'startMatch', end: 'endMatch', cut: 'breakMatch' },
@@ -264,6 +283,7 @@ const hasExactRange = (holder, variant) =>
 
 const HolderRow = ({
   holder,
+  recordKey,
   count,
   collapsible,
   itemsId,
@@ -293,7 +313,7 @@ const HolderRow = ({
         {isActive && <Status variant="active" />}
         {isRecord && <Status variant="record" />}
       </HolderLine>
-      <StreakRange holder={holder} ongoing={ongoing} />
+      <StreakRange holder={holder} ongoing={ongoing} recordKey={recordKey} />
       {duration && <DurationText>{duration}</DurationText>}
       {collapsible && hasItems && (
         <ToggleButton
@@ -376,6 +396,7 @@ const StreakRecordCard = ({
                   <HolderRow
                     key={holder.id}
                     holder={holder}
+                    recordKey={recordKey}
                     count={count}
                     collapsible={collapsible}
                     showActive={showActive}

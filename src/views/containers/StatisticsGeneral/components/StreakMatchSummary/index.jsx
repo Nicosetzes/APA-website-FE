@@ -1,6 +1,7 @@
 import { database } from 'api'
 import { es } from 'date-fns/locale'
 import { format, parseISO } from 'date-fns'
+import { formatPlayedAt } from 'utils/playedAt'
 import {
   MatchCard,
   MatchLabel,
@@ -43,7 +44,8 @@ const buildAriaLabel = ({ description, holderName, match, shootout }) => {
   if (match.tournament?.name) parts.push(match.tournament.name)
   parts.push(
     match.date
-      ? format(parseISO(match.date), "d 'de' MMMM 'de' yyyy", { locale: es })
+      ? formatPlayedAt(match.date, match.datePrecision, { style: 'long' }) ||
+          format(parseISO(match.date), "d 'de' MMMM 'de' yyyy", { locale: es })
       : 'sin fecha registrada',
   )
   return parts.join(', ')
@@ -99,7 +101,8 @@ const StreakMatchSummary = ({
         {match.tournament?.name && <span aria-hidden="true">·</span>}
         {match.date ? (
           <time dateTime={match.date}>
-            {format(parseISO(match.date), 'dd/MM/yyyy')}
+            {formatPlayedAt(match.date, match.datePrecision) ||
+              format(parseISO(match.date), 'dd/MM/yyyy')}
           </time>
         ) : (
           <span>sin fecha</span>

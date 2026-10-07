@@ -299,3 +299,29 @@ test('sin rachas: mensaje general', () => {
   expect(container.textContent).toContain('Todavía no hay rachas registradas.')
   expect(container.textContent).toContain('No hay rachas en curso.')
 })
+
+test('récord de partido con fecha no exacta muestra la etiqueta de precisión', () => {
+  const records = buildRecords()
+  records.highest_total_goals_match = {
+    total: 11,
+    match: {
+      player1: 'Nico',
+      team1: 'Racing',
+      player2: 'Santi',
+      team2: 'Boca',
+      score: '6-5',
+      tournament: 'Chempions',
+      date: '2019-07-09T12:00:00',
+      datePrecision: 'year',
+    },
+  }
+  records.highest_scoring_difference_match.match.date = '2026-07-02T12:00:00'
+  records.highest_scoring_difference_match.match.datePrecision = 'exact'
+  render({ records, activeStreaks: buildActiveStreaks() })
+
+  const text = container.textContent
+  expect(text).toContain('Más goles en un partido')
+  expect(text).toMatch(/Chempions\s*2019/)
+  // Exacta: el formato de siempre.
+  expect(text).toContain('02/07/2026')
+})

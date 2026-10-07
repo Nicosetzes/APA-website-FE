@@ -3,6 +3,7 @@ import DoneIcon from '@mui/icons-material/Done'
 import HorizontalRuleIcon from '@mui/icons-material/HorizontalRule'
 import CloseIcon from '@mui/icons-material/Close'
 import Tooltip from '../Tooltip'
+import { formatPlayedAt } from 'utils/playedAt'
 
 const ScoreBox = ({
   result,
@@ -13,7 +14,13 @@ const ScoreBox = ({
   teamP2,
   scoreP2,
   date,
+  playedAt,
+  datePrecision,
 }) => {
+  // Fecha no exacta: etiqueta de precisión; si no, el texto legacy del BE.
+  const dateLabel =
+    (playedAt && formatPlayedAt(playedAt, datePrecision)) || date
+
   if (result == 'w')
     return (
       <Tooltip
@@ -30,7 +37,7 @@ const ScoreBox = ({
               {playerP2.name[1].toUpperCase()}) <span>{teamP2.name}</span>
             </div>
             <div style={{ margin: '0.25rem 0', textAlign: 'right' }}>
-              {date}
+              {dateLabel}
             </div>
           </>
         }
@@ -56,7 +63,7 @@ const ScoreBox = ({
               {playerP2.name[1].toUpperCase()}) <span>{teamP2.name}</span>
             </div>
             <div style={{ margin: '0.25rem 0', textAlign: 'right' }}>
-              {date}
+              {dateLabel}
             </div>
           </>
         }
@@ -82,7 +89,7 @@ const ScoreBox = ({
               {playerP2.name[1].toUpperCase()}) <span>{teamP2.name}</span>
             </div>
             <div style={{ margin: '0.25rem 0', textAlign: 'right' }}>
-              {date}
+              {dateLabel}
             </div>
           </>
         }

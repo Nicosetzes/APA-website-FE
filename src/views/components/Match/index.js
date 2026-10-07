@@ -22,6 +22,7 @@ import {
 import { api, database } from 'api'
 import { confirmDialog, toast } from 'utils/notifications'
 import { format, parseISO } from 'date-fns'
+import { sameTeamId } from 'utils/teamRef'
 import { useParams, useSearchParams } from 'react-router-dom'
 
 const Match = ({ canMutate, match, getFixtureData, teamStats }) => {
@@ -127,7 +128,7 @@ const Match = ({ canMutate, match, getFixtureData, teamStats }) => {
 
   const getPlayedMatches = (teamId) => {
     if (!teamStats) return null
-    const stats = teamStats.find((stat) => stat.teamId === teamId)
+    const stats = teamStats.find((stat) => sameTeamId(stat.teamId, teamId))
     return stats ? `${stats.playedMatches}/${stats.totalMatches}` : null
   }
 

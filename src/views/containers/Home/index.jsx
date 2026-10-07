@@ -8,6 +8,10 @@ import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api, cloudName, database } from 'api'
 import { useEffect, useState } from 'react'
+import { formatPlayedAt } from 'utils/playedAt'
+
+const getClosedAt = (tournament) =>
+  tournament?.closedAt ?? tournament?.updatedAt ?? null
 
 const Home = () => {
   const isM = useMediaQuery({ query: '(min-width: 768px)' })
@@ -53,16 +57,25 @@ const Home = () => {
     fetchTournaments()
   }, [])
 
+  // El último campeón sale de la fecha de cierre; `updatedAt` queda como
+  // respaldo para torneos sin `closedAt` (BE viejo o sin backfill).
   const lastTournament = useMemo(() => {
     if (finalizedTournaments.length === 0) return null
     return finalizedTournaments
-      .filter(({ updatedAt }) => !!updatedAt)
-      .sort((a, b) => {
-        const aDate = new Date(a.updatedAt)
-        const bDate = new Date(b.updatedAt)
-        return bDate - aDate
-      })[0]
+      .filter((tournament) => !!getClosedAt(tournament))
+      .sort((a, b) => new Date(getClosedAt(b)) - new Date(getClosedAt(a)))[0]
   }, [finalizedTournaments])
+
+  const lastTournamentDate = useMemo(() => {
+    if (!lastTournament) return null
+    const closedAt = getClosedAt(lastTournament)
+    return (
+      formatPlayedAt(
+        lastTournament.closedAt,
+        lastTournament.closedAtPrecision,
+      ) || new Date(closedAt).toLocaleDateString()
+    )
+  }, [lastTournament])
 
   const lastChampion = useMemo(() => {
     if (!lastTournament) return null
@@ -110,10 +123,7 @@ const Home = () => {
             <div className="champion-player">
               <span>
                 {lastChampion?.player?.name}
-                {lastTournament?.updatedAt &&
-                  ` - ${new Date(
-                    lastTournament.updatedAt,
-                  ).toLocaleDateString()}`}
+                {lastTournamentDate && ` - ${lastTournamentDate}`}
               </span>
             </div>
             <button onClick={() => navigate('./hall-of-fame')}>

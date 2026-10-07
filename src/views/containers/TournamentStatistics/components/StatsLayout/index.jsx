@@ -205,6 +205,8 @@ const StatsLayout = ({ playerStats }) => {
                 scoreP2,
                 outcome,
                 updatedAt,
+                playedAt,
+                playedAtPrecision,
               }) => (
                 <MatchBox
                   key={_id}
@@ -216,6 +218,8 @@ const StatsLayout = ({ playerStats }) => {
                   scoreP1={scoreP1}
                   scoreP2={scoreP2}
                   updatedAt={updatedAt}
+                  playedAt={playedAt}
+                  playedAtPrecision={playedAtPrecision}
                 />
               ),
             )}

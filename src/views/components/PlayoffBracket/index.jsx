@@ -85,7 +85,9 @@ const getTieName = (tiesCount) => {
 }
 
 const teamsKey = ({ teamP1, teamP2 }) =>
-  teamP1?.id && teamP2?.id ? [teamP1.id, teamP2.id].sort().join('|') : null
+  teamP1?.id && teamP2?.id
+    ? [String(teamP1.id), String(teamP2.id)].sort().join('|')
+    : null
 
 const groupIntoTies = (matches, legs) => {
   if (legs === 1) {

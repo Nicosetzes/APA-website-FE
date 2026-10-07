@@ -1,5 +1,6 @@
 import StreakMatchSummary from '../StreakMatchSummary'
 import { format, parseISO } from 'date-fns'
+import { formatPlayedAt, isExactPrecision } from 'utils/playedAt'
 import { formatStreakDuration } from 'utils/streaks'
 import {
   EmptyMessage,
@@ -32,8 +33,10 @@ export const MIN_STREAK = 2
 // Un BE viejo manda sólo `{ id, name, date }` por poseedor.
 const hasDetails = (holder) => typeof holder?.isActive === 'boolean'
 
-const DateText = ({ value }) => (
-  <time dateTime={value}>{format(parseISO(value), 'dd/MM/yyyy')}</time>
+const DateText = ({ value, precision }) => (
+  <time dateTime={value}>
+    {formatPlayedAt(value, precision) || format(parseISO(value), 'dd/MM/yyyy')}
+  </time>
 )
 
 const STATUS_LABELS = { active: 'Activa', record: 'Récord' }
@@ -46,7 +49,7 @@ const Status = ({ variant }) => (
 )
 
 const StreakRange = ({ holder }) => {
-  const { startDate, endDate } = holder
+  const { startDate, endDate, startDatePrecision, endDatePrecision } = holder
 
   if (!startDate && !endDate) {
     return <RangeText>Sin fechas registradas</RangeText>
@@ -55,13 +58,17 @@ const StreakRange = ({ holder }) => {
   return (
     <RangeText>
       {startDate ? (
-        <DateText value={startDate} />
+        <DateText value={startDate} precision={startDatePrecision} />
       ) : (
         'Inicio sin fecha registrada'
       )}
       <span aria-hidden="true"> → </span>
       <VisuallyHidden> hasta </VisuallyHidden>
-      {endDate ? <DateText value={endDate} /> : 'sin fecha'}
+      {endDate ? (
+        <DateText value={endDate} precision={endDatePrecision} />
+      ) : (
+        'sin fecha'
+      )}
     </RangeText>
   )
 }
@@ -116,11 +123,17 @@ const HolderRow = ({
   isRecord,
 }) => {
   const [open, setOpen] = useState(false)
-  const duration = formatStreakDuration({
-    startDate: holder.startDate,
-    endDate: holder.endDate,
-    count,
-  })
+  // Con una punta no exacta (p. ej. sólo el año) la duración sería inventada.
+  const hasExactRange =
+    isExactPrecision(holder.startDatePrecision) &&
+    isExactPrecision(holder.endDatePrecision)
+  const duration = hasExactRange
+    ? formatStreakDuration({
+        startDate: holder.startDate,
+        endDate: holder.endDate,
+        count,
+      })
+    : null
   const hasMatches = Boolean(
     holder.startMatch || holder.endMatch || holder.breakMatch,
   )

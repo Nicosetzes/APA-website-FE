@@ -8,6 +8,11 @@ import {
   StyledMatchBox,
 } from './styled'
 import { format, parseISO } from 'date-fns'
+import {
+  formatPlayedAt,
+  getPlayedAt,
+  getPlayedAtPrecision,
+} from 'utils/playedAt'
 
 const OUTCOME_COLORS = { win: '#22c55e', draw: '#eab308', loss: '#ef4444' }
 const OUTCOME_LABELS = { win: 'V', draw: 'E', loss: 'D' }
@@ -21,8 +26,15 @@ const MatchBox = ({
   scoreP1,
   scoreP2,
   updatedAt,
+  playedAt,
+  playedAtPrecision,
 }) => {
   const [searchParams] = useSearchParams()
+  const match = { playedAt, playedAtPrecision, updatedAt }
+  const date = getPlayedAt(match)
+  const dateLabel =
+    formatPlayedAt(date, getPlayedAtPrecision(match)) ||
+    format(parseISO(date), 'dd/MM/yyyy')
 
   const getOutcomeKey = () => {
     const player = searchParams.get('player')
@@ -52,7 +64,7 @@ const MatchBox = ({
           <img src={`${database}/logos/${teamP2.id}`} alt={teamP2.name} />
         </MatchTeam>
       </div>
-      <MatchDate>{format(parseISO(updatedAt), 'dd/MM/yyyy')}</MatchDate>
+      <MatchDate>{dateLabel}</MatchDate>
     </StyledMatchBox>
   )
 }

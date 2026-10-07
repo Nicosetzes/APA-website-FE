@@ -327,3 +327,44 @@ test('BE viejo: sólo valor y poseedores', () => {
   expect(container.querySelector('time')).toBeNull()
   expect(container.querySelector('[role="group"]')).toBeNull()
 })
+
+test.each([
+  ['year', '2019', 'Liga, 2019'],
+  ['approx', 'aprox. jul. 2019', 'Liga, aproximadamente julio de 2019'],
+])(
+  'punta no exacta (%s): etiqueta de precisión y sin duración',
+  (precision, label, spoken) => {
+    render({
+      count: 9,
+      players: [
+        holder({
+          startDate: '2019-07-09T12:00:00',
+          startDatePrecision: precision,
+          endDatePrecision: 'exact',
+          startMatch: match({
+            date: '2019-07-09T12:00:00',
+            datePrecision: precision,
+          }),
+        }),
+      ],
+    })
+
+    const text = container.textContent
+    expect(text).toMatch(new RegExp(`${label}\\s*→\\s*hasta\\s*20/09/2026`))
+    expect(text).not.toMatch(/años|meses|días|mismo día/)
+    const [start] = container.querySelectorAll('[role="group"]')
+    expect(start.textContent).toContain(label)
+    expect(start.getAttribute('aria-label')).toContain(spoken)
+  },
+)
+
+test('precisión exacta explícita conserva la duración', () => {
+  render({
+    count: 9,
+    players: [
+      holder({ startDatePrecision: 'exact', endDatePrecision: 'exact' }),
+    ],
+  })
+
+  expect(container.textContent).toContain('2 meses y 18 días')
+})

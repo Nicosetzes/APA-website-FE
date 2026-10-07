@@ -13,6 +13,12 @@ import {
   TypeBadge,
 } from './styled'
 import { format, parseISO } from 'date-fns'
+import {
+  formatPlayedAt,
+  getPlayedAt,
+  getPlayedAtPrecision,
+} from 'utils/playedAt'
+import { sameTeamId } from 'utils/teamRef'
 
 const TYPE_LABELS = {
   regular: 'Reg',
@@ -67,7 +73,6 @@ const MatchesTable = ({ matches }) => {
           {matches.map((match) => {
             const {
               _id,
-              updatedAt,
               tournament,
               playerP1,
               teamP1,
@@ -80,11 +85,18 @@ const MatchesTable = ({ matches }) => {
               group,
             } = match
 
-            const { date, time } = formatDate(updatedAt, _id)
+            // Fecha no exacta: sólo la etiqueta, sin hora.
+            const inexactDate = formatPlayedAt(
+              getPlayedAt(match),
+              getPlayedAtPrecision(match),
+            )
+            const { date, time } = inexactDate
+              ? { date: inexactDate, time: null }
+              : formatDate(getPlayedAt(match), _id)
             const isP1Winner =
-              outcome?.teamThatWon?.id === teamP1?.id && !outcome?.draw
+              sameTeamId(outcome?.teamThatWon?.id, teamP1?.id) && !outcome?.draw
             const isP2Winner =
-              outcome?.teamThatWon?.id === teamP2?.id && !outcome?.draw
+              sameTeamId(outcome?.teamThatWon?.id, teamP2?.id) && !outcome?.draw
             const penalties = getPenaltyScores(outcome, teamP1)
 
             return (
@@ -92,13 +104,18 @@ const MatchesTable = ({ matches }) => {
                 <td>
                   <DateText>
                     {date}
-                    <span>{time} hs</span>
+                    {time !== null && <span>{time} hs</span>}
                   </DateText>
                 </td>
                 <td>
-                  <TournamentLink href={`/tournaments/${tournament?.id}`}>
-                    {tournament?.name || '-'}
-                  </TournamentLink>
+                  {/* Partido sin torneo: no hay a dónde linkear. */}
+                  {tournament?.id ? (
+                    <TournamentLink href={`/tournaments/${tournament.id}`}>
+                      {tournament.name || '-'}
+                    </TournamentLink>
+                  ) : (
+                    '-'
+                  )}
                   {group && (
                     <span
                       style={{

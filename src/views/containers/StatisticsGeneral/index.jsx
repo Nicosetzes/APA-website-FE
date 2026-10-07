@@ -28,6 +28,7 @@ import {
 import { PageLoader, Tabs, Tooltip } from 'views/components'
 import { RecordsTab } from './components'
 import { format, parseISO } from 'date-fns'
+import { formatPlayedAt } from 'utils/playedAt'
 import { useCallback, useEffect, useState } from 'react'
 
 const StatisticsGeneral = () => {
@@ -201,7 +202,8 @@ const StatisticsGeneral = () => {
                             textAlign: 'right',
                           }}
                         >
-                          {format(parseISO(match.date), 'dd/MM/yyyy')}
+                          {formatPlayedAt(match.date, match.datePrecision) ||
+                            format(parseISO(match.date), 'dd/MM/yyyy')}
                         </div>
                       </>
                     }

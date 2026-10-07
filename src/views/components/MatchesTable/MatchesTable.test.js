@@ -33,3 +33,60 @@ test('shows one physical row without a leg label', () => {
   expect(container.querySelectorAll('tbody tr')).toHaveLength(1)
   ReactDOM.unmountComponentAtNode(container)
 })
+
+test('shows an approximate playedAt label without time', () => {
+  const container = document.createElement('div')
+  act(() => {
+    ReactDOM.render(
+      <MatchesTable
+        matches={[
+          {
+            ...match,
+            playedAt: '2022-11-15T15:00:00.000Z',
+            playedAtPrecision: 'approx',
+          },
+        ]}
+      />,
+      container,
+    )
+  })
+  const cell = container.querySelector('tbody td')
+  expect(cell.textContent).toBe('aprox. nov. 2022')
+  expect(cell.textContent).not.toContain('hs')
+  ReactDOM.unmountComponentAtNode(container)
+})
+
+test('keeps date and time for exact matches', () => {
+  const container = document.createElement('div')
+  act(() => {
+    ReactDOM.render(<MatchesTable matches={[match]} />, container)
+  })
+  const cell = container.querySelector('tbody td')
+  expect(cell.textContent).toContain('hs')
+  ReactDOM.unmountComponentAtNode(container)
+})
+
+test('renders matches without tournament as "-" without a link', () => {
+  const container = document.createElement('div')
+  act(() => {
+    ReactDOM.render(
+      <MatchesTable matches={[{ ...match, tournament: null }]} />,
+      container,
+    )
+  })
+  const cell = container.querySelectorAll('tbody td')[1]
+  expect(cell.textContent).toBe('-')
+  expect(cell.querySelector('a')).toBeNull()
+  ReactDOM.unmountComponentAtNode(container)
+})
+
+test('keeps linking matches that belong to a tournament', () => {
+  const container = document.createElement('div')
+  act(() => {
+    ReactDOM.render(<MatchesTable matches={[match]} />, container)
+  })
+  const link = container.querySelectorAll('tbody td')[1].querySelector('a')
+  expect(link.getAttribute('href')).toBe('/tournaments/t')
+  expect(link.textContent).toBe('Copa')
+  ReactDOM.unmountComponentAtNode(container)
+})

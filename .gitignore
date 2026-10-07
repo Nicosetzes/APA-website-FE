@@ -22,3 +22,5 @@ yarn-error.log*
 
 # VSC settings
 .vscode
+
+.agents/

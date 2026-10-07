@@ -40,6 +40,11 @@ import { apiClient, getApiErrorMessage } from 'api/axiosConfig'
 import { cloudName, database } from 'api'
 import { confirmDialog, toast } from 'utils/notifications'
 import { format as formatDate, parseISO } from 'date-fns'
+import {
+  formatPlayedAt,
+  getPlayedAt,
+  getPlayedAtPrecision,
+} from 'utils/playedAt'
 import { useCallback, useEffect, useState } from 'react'
 import { useOutletContext, useParams } from 'react-router-dom'
 
@@ -293,10 +298,14 @@ const Tournament = () => {
                     </MatchTeam>
                   </MatchContainer>
                   <MatchDate>
-                    {formatDate(
-                      parseISO(match.updatedAt),
-                      'dd/MM/yyyy hh:mm:ss a',
-                    )}
+                    {formatPlayedAt(
+                      getPlayedAt(match),
+                      getPlayedAtPrecision(match),
+                    ) ||
+                      formatDate(
+                        parseISO(getPlayedAt(match)),
+                        'dd/MM/yyyy hh:mm:ss a',
+                      )}
                   </MatchDate>
                 </MatchCard>
               ))}

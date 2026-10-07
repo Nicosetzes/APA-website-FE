@@ -3,7 +3,7 @@ jest.mock('views/components', () => ({ Loader: () => null }))
 import ReactDOM from 'react-dom'
 import { act } from 'react-dom/test-utils'
 import { MemoryRouter } from 'react-router-dom'
-import PlayoffBracket from '.'
+import PlayoffBracket, { buildRounds } from '.'
 
 const reference = (id, name) => ({ id, name })
 const series = {
@@ -99,4 +99,29 @@ test('does not render aggregate labels before either leg is played', () => {
   })
   expect(container.textContent).not.toContain('Global')
   ReactDOM.unmountComponentAtNode(container)
+})
+
+test('groups both legs of a tie when team ids mix strings and numbers', () => {
+  const leg = (id, playoffId, teamP1, teamP2) => ({
+    _id: id,
+    playoff_id: playoffId,
+    playerP1: reference('p1', 'Nico'),
+    teamP1,
+    playerP2: reference('p2', 'Santi'),
+    teamP2,
+    played: false,
+  })
+  const [firstRound] = buildRounds('champions_league', [
+    leg('ida', 1, reference('10', 'Boca'), reference(9, 'River')),
+    leg('vuelta', 2, reference(9, 'River'), reference(10, 'Boca')),
+    leg('otra-ida', 3, reference(30, 'Racing'), reference('40', 'Lanus')),
+    leg('otra-vuelta', 4, reference('40', 'Lanus'), reference('30', 'Racing')),
+  ])
+
+  const [first, second] = firstRound.ties
+  expect(first.matches.map(({ _id }) => _id)).toEqual(['ida', 'vuelta'])
+  expect(second.matches.map(({ _id }) => _id)).toEqual([
+    'otra-ida',
+    'otra-vuelta',
+  ])
 })

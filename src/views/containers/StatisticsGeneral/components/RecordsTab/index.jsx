@@ -1,6 +1,7 @@
 import StreakRecordCard, { MIN_STREAK } from '../StreakRecordCard'
 import StreakTabs, { getPanelId, getTabId } from '../StreakTabs'
 import { format, parseISO } from 'date-fns'
+import { formatPlayedAt } from 'utils/playedAt'
 import {
   EmptyMessage,
   RecordCard,
@@ -179,7 +180,11 @@ const RecordsTab = ({ records, activeStreaks }) => {
                           `parseISO(null)` rompe el render. */}
                       {record.match.date && (
                         <div style={{ fontSize: '0.8rem', opacity: 0.7 }}>
-                          {format(parseISO(record.match.date), 'dd/MM/yyyy')}
+                          {formatPlayedAt(
+                            record.match.date,
+                            record.match.datePrecision,
+                          ) ||
+                            format(parseISO(record.match.date), 'dd/MM/yyyy')}
                         </div>
                       )}
                     </RecordDetail>

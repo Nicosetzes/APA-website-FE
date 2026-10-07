@@ -25,6 +25,7 @@ const getShootout = (penalties) => {
   const hasScores =
     isScore(penalties.goalsFor) && isScore(penalties.goalsAgainst)
   return {
+    hasScores,
     text: hasScores
       ? `(${penalties.goalsFor}-${penalties.goalsAgainst})`
       : '(pen.)',
@@ -34,13 +35,29 @@ const getShootout = (penalties) => {
   }
 }
 
-const buildAriaLabel = ({ description, holderName, match, shootout }) => {
+const KNOCKOUT_VERBS = { W: 'ganó', L: 'perdió' }
+
+const getSpokenShootout = (shootout, match, isKnockout) => {
+  const verb = isKnockout && KNOCKOUT_VERBS[match.result]
+  if (!verb) return shootout.spoken
+  return shootout.hasScores
+    ? `${verb} ${shootout.spoken}`
+    : `${verb} por penales`
+}
+
+const buildAriaLabel = ({
+  description,
+  holderName,
+  match,
+  shootout,
+  isKnockout,
+}) => {
   const parts = [
     `${description}: ${holderName} ${match.goalsFor} a ${match.goalsAgainst} ${
       match.opponent?.name || ''
     }`.trim(),
   ]
-  if (shootout) parts.push(shootout.spoken)
+  if (shootout) parts.push(getSpokenShootout(shootout, match, isKnockout))
   if (match.tournament?.name) parts.push(match.tournament.name)
   parts.push(
     match.date
@@ -57,6 +74,7 @@ const StreakMatchSummary = ({
   holderName,
   match,
   isBreak = false,
+  isKnockout = false,
 }) => {
   if (!match) return null
 
@@ -72,6 +90,7 @@ const StreakMatchSummary = ({
         holderName,
         match,
         shootout,
+        isKnockout,
       })}
     >
       <MatchLabel $isBreak={isBreak}>{label}</MatchLabel>

@@ -358,6 +358,506 @@ test.each([
   },
 )
 
+test('partidos de eliminación: unidad "partidos" y la tanda como victoria en el aria-label', () => {
+  render(
+    {
+      count: 3,
+      players: [
+        holder({
+          endMatch: match({
+            date: '2026-09-20T12:00:00',
+            type: 'playoff',
+            goalsFor: 1,
+            goalsAgainst: 1,
+            result: 'W',
+            penalties: { won: true, goalsFor: 4, goalsAgainst: 3 },
+          }),
+        }),
+      ],
+    },
+    {
+      recordKey: 'most_knockout_wins_in_a_row',
+      title: 'Con victoria (eliminación)',
+      category: 'Partidos de eliminación',
+      variant: 'knockout',
+    },
+  )
+
+  const text = container.textContent
+  expect(text).toContain('Partidos de eliminación')
+  expect(text).toContain('partidos')
+  expect(text).toContain('1-1 (4-3)')
+  const [, last] = container.querySelectorAll('[role="group"]')
+  expect(last.getAttribute('aria-label')).toContain(
+    'Nico 1 a 1 Santi, ganó 4 a 3 en penales, Liga',
+  )
+})
+
+describe('ayuda en el título', () => {
+  const HELP = 'Partidos de eliminatoria (Playin / Playoffs)'
+  const tooltip = () => document.querySelector('[role="tooltip"]')
+
+  beforeEach(() => {
+    jest.useFakeTimers()
+  })
+
+  afterEach(() => {
+    act(() => {
+      jest.runOnlyPendingTimers()
+    })
+    jest.useRealTimers()
+  })
+
+  const renderWithHelp = (props) =>
+    render(
+      { count: 3, players: [holder()] },
+      {
+        title: 'Invicto (eliminación)',
+        titleHelp: HELP,
+        ...props,
+      },
+    )
+
+  test('botón enfocable con nombre accesible, pegado a la última palabra', () => {
+    renderWithHelp()
+
+    const heading = container.querySelector('h4')
+    expect(heading.textContent).toBe('Invicto (eliminación)')
+    const button = heading.querySelector('button')
+    expect(button.getAttribute('type')).toBe('button')
+    expect(button.getAttribute('aria-label')).toBe(HELP)
+    expect(button.tabIndex).toBe(0)
+    expect(button.parentElement.textContent).toBe('(eliminación)')
+    expect(button.querySelector('svg').getAttribute('aria-hidden')).toBe('true')
+  })
+
+  test('el tooltip abre con el mouse', () => {
+    renderWithHelp()
+    const button = container.querySelector('h4 button')
+    expect(tooltip()).toBeNull()
+
+    act(() => {
+      button.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }))
+      jest.advanceTimersByTime(500)
+    })
+    expect(tooltip().textContent).toBe(HELP)
+  })
+
+  test('el tooltip abre con el foco del teclado', () => {
+    renderWithHelp()
+    const button = container.querySelector('h4 button')
+    expect(tooltip()).toBeNull()
+
+    // Tab desde el teclado y después el foco.
+    act(() => {
+      document.dispatchEvent(
+        new KeyboardEvent('keydown', { key: 'Tab', bubbles: true }),
+      )
+      button.focus()
+      jest.advanceTimersByTime(500)
+    })
+    expect(document.activeElement).toBe(button)
+    expect(tooltip().textContent).toBe(HELP)
+  })
+
+  test('sin ayuda el título queda como texto y acepta un nodo', () => {
+    render({ count: 3, players: [holder()] })
+    expect(container.querySelector('h4').textContent).toBe('Con victoria')
+    expect(container.querySelector('h4 button')).toBeNull()
+
+    renderWithHelp({ title: <em>Título armado</em> })
+    const heading = container.querySelector('h4')
+    expect(heading.querySelector('em').textContent).toBe('Título armado')
+    expect(heading.querySelector('button').getAttribute('aria-label')).toBe(
+      HELP,
+    )
+  })
+})
+
+test('partidos de eliminación: tanda perdida sin resultado registrado', () => {
+  render(
+    {
+      count: 3,
+      players: [
+        holder({
+          isActive: false,
+          breakMatch: match({
+            date: '2026-09-27T12:00:00',
+            type: 'playoff',
+            goalsFor: 0,
+            goalsAgainst: 0,
+            result: 'L',
+            penalties: { won: false },
+          }),
+        }),
+      ],
+    },
+    { variant: 'knockout' },
+  )
+
+  const [, cut] = container.querySelectorAll('[role="group"]')
+  expect(cut.textContent).toContain('0-0 (pen.)')
+  expect(cut.getAttribute('aria-label')).toContain(
+    '0 a 0 Santi, perdió por penales',
+  )
+})
+
+const summary = (overrides) => ({
+  id: 't2019',
+  name: 'Chempions 2019/20',
+  phaseReached: 'semifinal',
+  ongoing: false,
+  closedAt: '2019-07-09T12:00:00',
+  closedAtPrecision: 'year',
+  lastPlayedAt: '2019-07-09T12:00:00',
+  lastPlayedAtPrecision: 'year',
+  ...overrides,
+})
+
+const tournamentHolder = (overrides) => ({
+  id: 'p1',
+  name: 'Nico',
+  date: '2022-07-04T12:00:00',
+  datePrecision: 'exact',
+  isActive: false,
+  startDate: '2019-07-09T12:00:00',
+  startDatePrecision: 'year',
+  endDate: '2022-07-04T12:00:00',
+  endDatePrecision: 'exact',
+  startTournament: summary(),
+  endTournament: summary({
+    id: 't2022',
+    name: 'Superliga Europea 2022',
+    phaseReached: 'champion',
+    closedAt: '2022-07-04T12:00:00',
+    closedAtPrecision: 'exact',
+  }),
+  breakTournament: summary({
+    id: 't2023',
+    name: 'Liga 2023',
+    phaseReached: 'quarterfinal',
+    closedAt: '2023-05-10T12:00:00',
+    closedAtPrecision: 'exact',
+  }),
+  ...overrides,
+})
+
+const renderTournament = (record, props = {}) =>
+  render(record, {
+    recordKey: 'most_consecutive_semifinals',
+    title: 'Semis consecutivas',
+    category: 'Eliminatorias',
+    variant: 'tournament',
+    ...props,
+  })
+
+test('torneos cerrada: Inicio y Fin con nombre, fase y fecha según precisión', () => {
+  renderTournament({ count: 3, players: [tournamentHolder()] })
+
+  const text = container.textContent
+  expect(text).toContain('Eliminatorias')
+  expect(text).toContain('torneos')
+  expect(text).not.toContain('partidos')
+  expect(text).not.toContain('3 3')
+  expect(labels()).toEqual(['Inicio', 'Fin'])
+
+  const [start, cut] = container.querySelectorAll('[role="group"]')
+  expect(start.textContent).toContain('Chempions 2019/20')
+  expect(start.textContent).toContain('Semis')
+  expect(start.textContent).toContain('2019')
+  expect(start.getAttribute('aria-label')).toBe(
+    'Torneo de inicio: Nico, Chempions 2019/20, Semis, 2019',
+  )
+  expect(cut.textContent).toContain('Liga 2023')
+  expect(cut.textContent).toContain('Cuartos')
+  expect(cut.textContent).toContain('10/05/2023')
+  expect(cut.getAttribute('aria-label')).toMatch(
+    /^Torneo que cortó la racha: Nico, Liga 2023, Cuartos/,
+  )
+  // Una punta con precisión "year": sin duración.
+  expect(text).not.toMatch(/años|meses|días|mismo día/)
+})
+
+test('torneos activa con un torneo en curso: "Último" y "En curso"', () => {
+  renderTournament({
+    count: 2,
+    players: [
+      tournamentHolder({
+        isActive: true,
+        breakTournament: null,
+        endTournament: summary({
+          id: 't2026',
+          name: 'Copa Afinidades 2026',
+          ongoing: true,
+          closedAt: null,
+          closedAtPrecision: null,
+          lastPlayedAt: '2026-09-20T12:00:00',
+          lastPlayedAtPrecision: 'exact',
+        }),
+      }),
+    ],
+  })
+
+  expect(labels()).toEqual(['Inicio', 'Último'])
+  expect(container.textContent).toContain('Activa')
+  const [, last] = container.querySelectorAll('[role="group"]')
+  expect(last.textContent).toContain('Copa Afinidades 2026')
+  expect(last.textContent).toContain('En curso')
+  expect(last.getAttribute('aria-label')).toMatch(/^Último torneo: Nico/)
+  expect(last.getAttribute('aria-label')).toMatch(/en curso$/)
+})
+
+const ongoingEnd = summary({
+  id: 't2026',
+  name: 'Copa Afinidades 2026',
+  phaseReached: 'final',
+  ongoing: true,
+  closedAt: null,
+  closedAtPrecision: null,
+  lastPlayedAt: '2026-09-20T12:00:00',
+  lastPlayedAtPrecision: 'exact',
+})
+
+test('torneos con el último torneo en curso: "→ En curso" y sin duración', () => {
+  renderTournament({
+    count: 2,
+    players: [
+      tournamentHolder({
+        isActive: true,
+        startDate: '2024-11-15T12:00:00',
+        startDatePrecision: 'exact',
+        // El BE manda el lastPlayedAt del torneo abierto: no se muestra.
+        endDate: '2026-09-20T12:00:00',
+        endDatePrecision: 'exact',
+        breakTournament: null,
+        endTournament: ongoingEnd,
+      }),
+    ],
+  })
+
+  const times = container.querySelectorAll('time')
+  // Sólo el inicio del rango es una fecha real.
+  expect(times[0].getAttribute('dateTime')).toBe('2024-11-15T12:00:00')
+  expect(
+    Array.from(times).some(
+      (node) => node.getAttribute('dateTime') === '2026-09-20T12:00:00',
+    ),
+  ).toBe(false)
+
+  const range = times[0].parentElement
+  const nodes = Array.from(range.childNodes)
+  const isDecorative = (node) => node.getAttribute?.('aria-hidden') === 'true'
+  // Visible: "15/11/2024 → En curso"; "En curso" es texto, no <time>.
+  expect(nodes.filter(isDecorative).map((node) => node.textContent)).toEqual([
+    ' → ',
+  ])
+  expect(range.lastChild.nodeType).toBe(Node.TEXT_NODE)
+  expect(range.lastChild.textContent).toBe('En curso')
+  // Lectores de pantalla: "desde el 15/11/2024, En curso".
+  expect(
+    nodes
+      .filter((node) => !isDecorative(node))
+      .map((node) => node.textContent)
+      .join(''),
+  ).toBe('desde el 15/11/2024, En curso')
+  expect(container.textContent).not.toContain('20/09/2026')
+  expect(container.textContent).not.toMatch(/años|meses|días|mismo día/)
+})
+
+test('torneos con el último torneo cerrado: rango y duración normales', () => {
+  renderTournament({
+    count: 2,
+    players: [
+      tournamentHolder({
+        startDate: '2024-11-15T12:00:00',
+        startDatePrecision: 'exact',
+        endDate: '2026-09-20T12:00:00',
+        endDatePrecision: 'exact',
+        endTournament: {
+          ...ongoingEnd,
+          ongoing: false,
+          closedAt: '2026-09-20T12:00:00',
+          closedAtPrecision: 'exact',
+        },
+      }),
+    ],
+  })
+
+  const text = container.textContent
+  expect(text).toMatch(/15\/11\/2024\s*→\s*hasta\s*20\/09\/2026/)
+  expect(text).toContain('1 año, 10 meses y 5 días')
+  const range = container.querySelector('time').parentElement
+  expect(range.textContent).not.toContain('En curso')
+  expect(range.querySelectorAll('time')).toHaveLength(2)
+})
+
+test('torneos sin fecha de inicio y último torneo en curso', () => {
+  renderTournament({
+    count: 2,
+    players: [
+      tournamentHolder({
+        isActive: true,
+        startDate: null,
+        startDatePrecision: null,
+        breakTournament: null,
+        endTournament: ongoingEnd,
+      }),
+    ],
+  })
+
+  const text = container.textContent
+  expect(text).toMatch(/Inicio sin fecha registrada\s*→\s*,\s*En curso/)
+  expect(text).not.toContain('Sin fechas registradas')
+  expect(text).not.toMatch(/años|meses|días|mismo día/)
+})
+
+test('torneos con inicio y fin en curso: "En curso" sin romper', () => {
+  renderTournament({
+    count: 2,
+    players: [
+      tournamentHolder({
+        isActive: true,
+        startDate: '2026-09-20T12:00:00',
+        startDatePrecision: 'exact',
+        endDate: '2026-09-20T12:00:00',
+        endDatePrecision: 'exact',
+        startTournament: ongoingEnd,
+        breakTournament: null,
+        endTournament: ongoingEnd,
+      }),
+    ],
+  })
+
+  const text = container.textContent
+  expect(text).toContain('En curso')
+  expect(text).not.toContain('→')
+  expect(text).not.toMatch(/años|meses|días|mismo día/)
+})
+
+test('partidos: "ongoing" en un ítem no cambia el rango', () => {
+  render({
+    count: 9,
+    players: [holder({ endTournament: { ongoing: true } })],
+  })
+
+  expect(container.textContent).toMatch(
+    /02\/07\/2026\s*→\s*hasta\s*20\/09\/2026/,
+  )
+  expect(container.textContent).toContain('2 meses y 18 días')
+})
+
+test('torneos cortada por un torneo en curso: "Fin" con "En curso" y "Cuartos"', () => {
+  renderTournament({
+    count: 2,
+    players: [
+      tournamentHolder({
+        breakTournament: summary({
+          id: 't2026',
+          name: 'Copa Afinidades 2026',
+          phaseReached: 'quarterfinal',
+          ongoing: true,
+          closedAt: null,
+          closedAtPrecision: null,
+        }),
+      }),
+    ],
+  })
+
+  expect(labels()).toEqual(['Inicio', 'Fin'])
+  const [, cut] = container.querySelectorAll('[role="group"]')
+  expect(cut.textContent).toContain('En curso')
+  expect(cut.textContent).toContain('Cuartos')
+})
+
+test('torneos: duración sólo con las dos puntas exactas', () => {
+  renderTournament({
+    count: 2,
+    players: [
+      tournamentHolder({
+        startDate: '2026-07-02T12:00:00',
+        startDatePrecision: 'exact',
+        endDate: '2026-09-20T12:00:00',
+        endDatePrecision: 'exact',
+      }),
+    ],
+  })
+  expect(container.textContent).toContain('2 meses y 18 días')
+
+  // Sin precisión no se asume exacta.
+  renderTournament({
+    count: 2,
+    players: [
+      tournamentHolder({
+        startDate: '2026-07-02T12:00:00',
+        startDatePrecision: undefined,
+        endDate: '2026-09-20T12:00:00',
+        endDatePrecision: 'exact',
+      }),
+    ],
+  })
+  expect(container.textContent).not.toContain('2 meses y 18 días')
+})
+
+test('torneos sin startTournament ni breakTournament: degrada sin romper', () => {
+  renderTournament({
+    count: 2,
+    players: [
+      tournamentHolder({ startTournament: null, breakTournament: undefined }),
+    ],
+  })
+
+  // Sin corte cae al torneo final.
+  expect(labels()).toEqual(['Fin'])
+  const [end] = container.querySelectorAll('[role="group"]')
+  expect(end.getAttribute('aria-label')).toMatch(/^Torneo final: Nico/)
+
+  renderTournament({
+    count: 2,
+    players: [
+      tournamentHolder({
+        startTournament: undefined,
+        endTournament: undefined,
+        breakTournament: undefined,
+      }),
+    ],
+  })
+  expect(container.querySelector('[role="group"]')).toBeNull()
+  expect(container.textContent).toContain('Nico')
+})
+
+test('torneos con empate: toggle "Ver torneos"', () => {
+  renderTournament({
+    count: 2,
+    players: [tournamentHolder(), tournamentHolder({ id: 'p3', name: 'Fede' })],
+  })
+
+  const [first] = container.querySelectorAll('button')
+  expect(first.textContent).toBe('Ver torneos')
+  expect(first.getAttribute('aria-controls')).toBe(
+    'historicas-most_consecutive_semifinals-p1-torneos',
+  )
+  const panel = document.getElementById(first.getAttribute('aria-controls'))
+  expect(panel.hidden).toBe(true)
+
+  act(() => {
+    first.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+  })
+  expect(first.textContent).toBe('Ocultar torneos')
+  expect(panel.hidden).toBe(false)
+})
+
+test('torneos: estado vacío con count 1', () => {
+  renderTournament(
+    { count: 1, players: [tournamentHolder()] },
+    { emptyMessage: 'Nadie en racha' },
+  )
+
+  expect(container.textContent).toContain('Nadie en racha')
+  expect(container.textContent).toContain('Eliminatorias')
+  expect(container.textContent).not.toContain('torneo')
+  expect(container.querySelector('[role="group"]')).toBeNull()
+})
+
 test('precisión exacta explícita conserva la duración', () => {
   render({
     count: 9,

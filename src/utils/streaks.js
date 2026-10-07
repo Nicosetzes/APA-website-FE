@@ -46,6 +46,13 @@ export const calendarDiff = (start, end) => {
 const plural = (value, singular, pluralForm) =>
   `${value} ${value === 1 ? singular : pluralForm}`
 
+/**
+ * Unidad de un valor de racha ("partido"/"partidos", "torneo"/"torneos").
+ * Devuelve sólo la palabra: el número va aparte.
+ */
+export const getCountUnit = (count, [singular, pluralForm]) =>
+  count === 1 ? singular : pluralForm
+
 const joinParts = (parts) => {
   if (parts.length <= 1) return parts.join('')
   return `${parts.slice(0, -1).join(', ')} y ${parts[parts.length - 1]}`

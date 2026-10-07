@@ -283,7 +283,7 @@ const StatisticsGeneral = () => {
   const DecisiveMatchesTab = () => (
     <Section>
       <SectionTitle>
-        Partidos Decisivos
+        Partidos de eliminación
         <Tooltip title="Partidos de eliminatoria (Playin / Playoffs)">
           <HelpOutlineIcon
             sx={{
@@ -381,7 +381,7 @@ const StatisticsGeneral = () => {
       },
       {
         id: 'decisive',
-        label: 'Partidos Decisivos',
+        label: 'Partidos de eliminación',
         content: <DecisiveMatchesTab />,
       },
       {

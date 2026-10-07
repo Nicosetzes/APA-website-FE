@@ -1,5 +1,5 @@
 /* eslint-env jest */
-import { calendarDiff, formatStreakDuration } from './streaks'
+import { calendarDiff, formatStreakDuration, getCountUnit } from './streaks'
 
 // Fechas en hora local para que los tests no dependan de la zona horaria.
 const local = (year, month, day, hours = 12) =>
@@ -139,5 +139,15 @@ describe('formatStreakDuration', () => {
     expect(duration(null, local(2026, 9, 20))).toBeNull()
     expect(duration(null, null)).toBeNull()
     expect(formatStreakDuration()).toBeNull()
+  })
+})
+
+// La tarjeta trata count < 2 como vacía: el singular sólo se ve acá.
+describe('getCountUnit', () => {
+  test('singular con 1 y plural con el resto', () => {
+    expect(getCountUnit(1, ['partido', 'partidos'])).toBe('partido')
+    expect(getCountUnit(3, ['partido', 'partidos'])).toBe('partidos')
+    expect(getCountUnit(1, ['torneo', 'torneos'])).toBe('torneo')
+    expect(getCountUnit(3, ['torneo', 'torneos'])).toBe('torneos')
   })
 })

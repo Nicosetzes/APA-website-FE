@@ -1,7 +1,6 @@
 import styled, { keyframes } from 'styled-components'
 import { RecordCard, RecordValue } from '../../styled'
 
-// Positivo verde, neutral amarillo (con texto oscuro), negativo rojo.
 export const TONES = {
   positive: { accent: '#18890e', text: '#18890e' },
   neutral: { accent: '#ffa400', text: '#8a5a00' },
@@ -13,23 +12,47 @@ const getTone = (tone) => TONES[tone] || TONES.positive
 export const StyledStreakCard = styled(RecordCard)`
   border-top: 4px solid ${({ $tone }) => getTone($tone).accent};
   gap: 0.75rem;
-  /* Lugar para el tag de categoría sin pisar el título. */
-  padding-top: 2.25rem;
+  padding-top: 0.6rem;
   position: relative;
 `
 
 export const CategoryTag = styled.span`
+  align-self: flex-end;
   background: rgba(0, 74, 121, 0.08);
   border-radius: 4px;
   color: var(--blue-900);
   font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 0.04em;
+  line-height: 1.4;
+  margin-right: -0.75rem;
+  max-width: calc(100% + 0.75rem);
   padding: 0.1rem 0.45rem;
-  position: absolute;
-  right: 0.75rem;
+  text-align: right;
   text-transform: uppercase;
-  top: 0.6rem;
+`
+
+export const TitleTail = styled.span`
+  white-space: nowrap;
+`
+
+export const TitleHelpButton = styled.button`
+  align-items: center;
+  background: none;
+  border: 0;
+  border-radius: 50%;
+  color: inherit;
+  cursor: help;
+  display: inline-flex;
+  font-size: inherit;
+  margin-left: 0.3em;
+  padding: 0;
+  vertical-align: -0.125em;
+
+  &:focus-visible {
+    outline: 2px solid var(--blue-900);
+    outline-offset: 2px;
+  }
 `
 
 export const ValueBlock = styled.div`

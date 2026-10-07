@@ -28,6 +28,12 @@ const RECORD_LABELS = {
   most_unbeaten_in_a_row: 'Invicto (sin derrotas)',
   most_draws_in_a_row: 'Con empate',
   most_losses_in_a_row: 'Con derrota',
+  most_penalty_shootout_wins_in_a_row: 'Con victoria (penales)',
+  most_knockout_wins_in_a_row: 'Con victoria (eliminación)',
+  most_knockout_unbeaten_in_a_row: 'Invicto (eliminación)',
+  most_consecutive_semifinals: 'Semis consecutivas',
+  most_consecutive_finals: 'Finales consecutivas',
+  most_consecutive_titles: 'Campeonatos consecutivos',
 }
 
 // Orden explícito: claves que no estén acá no se renderizan.
@@ -39,15 +45,36 @@ const MATCH_RECORD_KEYS = [
 // Orden explícito y categoría de cada racha: claves que no estén acá no se
 // renderizan.
 const STREAK_KEYS = [
-  ['most_wins_in_a_row', 'Resultados'],
   ['most_unbeaten_in_a_row', 'Resultados'],
+  ['most_wins_in_a_row', 'Resultados'],
   ['most_draws_in_a_row', 'Resultados'],
   ['most_losses_in_a_row', 'Resultados'],
   ['most_consecutive_matches_scoring_1_plus_goals', 'Goles'],
   ['most_consecutive_matches_scoring_2_plus_goals', 'Goles'],
   ['most_consecutive_matches_scoring_3_plus_goals', 'Goles'],
   ['most_clean_sheets_in_a_row', 'Defensa'],
+  ['most_penalty_shootout_wins_in_a_row', 'Penales'],
+  ['most_knockout_unbeaten_in_a_row', 'Partidos de eliminación'],
+  ['most_knockout_wins_in_a_row', 'Partidos de eliminación'],
+  ['most_consecutive_semifinals', 'Eliminatorias'],
+  ['most_consecutive_finals', 'Eliminatorias'],
+  ['most_consecutive_titles', 'Eliminatorias'],
 ]
+
+const KNOCKOUT_HELP = 'Partidos de eliminatoria (Playin / Playoffs)'
+const STREAK_TITLE_HELP = {
+  most_knockout_unbeaten_in_a_row: KNOCKOUT_HELP,
+  most_knockout_wins_in_a_row: KNOCKOUT_HELP,
+}
+
+const STREAK_VARIANTS = {
+  most_penalty_shootout_wins_in_a_row: 'knockout',
+  most_knockout_wins_in_a_row: 'knockout',
+  most_knockout_unbeaten_in_a_row: 'knockout',
+  most_consecutive_semifinals: 'tournament',
+  most_consecutive_finals: 'tournament',
+  most_consecutive_titles: 'tournament',
+}
 
 const STREAK_TONES = {
   most_draws_in_a_row: 'neutral',
@@ -94,8 +121,10 @@ const StreakCards = ({ view, streaks, records }) => {
           idPrefix={view}
           recordKey={key}
           title={RECORD_LABELS[key]}
+          titleHelp={STREAK_TITLE_HELP[key]}
           tone={getStreakTone(key)}
           category={category}
+          variant={STREAK_VARIANTS[key]}
           record={streaks[key]}
           emptyMessage={emptyCard}
           showActive={!isActual}

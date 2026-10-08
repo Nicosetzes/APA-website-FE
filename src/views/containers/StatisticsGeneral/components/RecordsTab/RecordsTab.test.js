@@ -124,7 +124,8 @@ const buildRecords = () => ({
       team2: 'Boca',
       score: '7-0',
       tournament: 'Liga',
-      date: null,
+      date: '2026-07-02T12:00:00',
+      datePrecision: 'exact',
     },
   },
   highest_total_goals_match: null,
@@ -392,16 +393,6 @@ test('actuales filtra count < 2 aunque el BE lo mande', () => {
   expect(wins.textContent).not.toContain('Récord')
 })
 
-test('BE sin activeStreaks: sólo históricas, sin tabs', () => {
-  render({ records: buildRecords() })
-
-  expect(container.querySelector('[role="tablist"]')).toBeNull()
-  expect(container.querySelector('[role="tabpanel"]')).toBeNull()
-  expect(container.textContent).not.toContain('Rachas actuales')
-  expect(container.textContent).not.toContain('Nadie en racha')
-  expect(cardTitles(container)).toEqual(TITLES_IN_ORDER)
-})
-
 test('sin rachas: mensaje general', () => {
   render({ records: {}, activeStreaks: {} })
 
@@ -466,22 +457,6 @@ test('actuales: "Récord" en una racha por torneo que iguala el récord', () => 
   )
 })
 
-test('BE viejo sin las claves nuevas: no se renderizan sus tarjetas', () => {
-  const missing = [SHOOTOUT_KEY, ...NEW_KEYS]
-  render({
-    records: withoutKeys(buildRecords(), missing),
-    activeStreaks: withoutKeys(buildActiveStreaks(), missing),
-  })
-
-  for (const name of ['Rachas históricas', 'Rachas actuales']) {
-    const panel = panelOf(tab(name))
-    expect(cardTitles(panel)).toEqual(MATCH_STREAK_TITLES)
-    expect(panel.textContent).not.toContain('Penales')
-    expect(panel.textContent).not.toContain('Partidos de eliminación')
-    expect(panel.textContent).not.toContain('Eliminatorias')
-  }
-})
-
 test('BE sin la racha de penales: el resto sigue igual', () => {
   render({
     records: withoutKeys(buildRecords(), [SHOOTOUT_KEY]),
@@ -494,20 +469,22 @@ test('BE sin la racha de penales: el resto sigue igual', () => {
   )
 })
 
-test('sin rachas por torneo (falló su lectura): sólo las de partidos', () => {
+test('sin rachas por torneo (el BE las omitió): la clave omitida no se muestra', () => {
   const tournamentKeys = NEW_KEYS.slice(2)
   render({
     records: withoutKeys(buildRecords(), tournamentKeys),
     activeStreaks: withoutKeys(buildActiveStreaks(), tournamentKeys),
   })
 
-  const panel = panelOf(tab('Rachas históricas'))
-  expect(cardTitles(panel)).toEqual([
-    ...MATCH_STREAK_TITLES,
-    SHOOTOUT_TITLE,
-    ...KNOCKOUT_TITLES,
-  ])
-  expect(panel.textContent).not.toContain('Eliminatorias')
+  for (const name of ['Rachas históricas', 'Rachas actuales']) {
+    const panel = panelOf(tab(name))
+    expect(cardTitles(panel)).toEqual([
+      ...MATCH_STREAK_TITLES,
+      SHOOTOUT_TITLE,
+      ...KNOCKOUT_TITLES,
+    ])
+    expect(panel.textContent).not.toContain('Eliminatorias')
+  }
 })
 
 test('penales: después de "Con valla invicta", con la tanda entre paréntesis', () => {
@@ -670,8 +647,6 @@ test('récord de partido con fecha no exacta muestra la etiqueta de precisión',
       datePrecision: 'year',
     },
   }
-  records.highest_scoring_difference_match.match.date = '2026-07-02T12:00:00'
-  records.highest_scoring_difference_match.match.datePrecision = 'exact'
   render({ records, activeStreaks: buildActiveStreaks() })
 
   const text = container.textContent

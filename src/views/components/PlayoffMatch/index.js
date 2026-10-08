@@ -66,15 +66,13 @@ const PlayoffMatch = ({
     scoresAreComplete &&
     Number(matchScore.scoreP1) === Number(matchScore.scoreP2)
   const p1IsSeriesWinner =
-    series?.winnerTeamId != null &&
-    String(series.winnerTeamId) === String(teamP1?.id)
+    series?.winnerTeamId != null && series.winnerTeamId === teamP1?.id
   const p2IsSeriesWinner =
-    series?.winnerTeamId != null &&
-    String(series.winnerTeamId) === String(teamP2?.id)
+    series?.winnerTeamId != null && series.winnerTeamId === teamP2?.id
   const getPenaltyScore = (teamId) => {
     if (!outcome?.penalties || outcome?.teamThatWon?.id == null) return null
 
-    return String(outcome.teamThatWon.id) === String(teamId)
+    return outcome.teamThatWon.id === teamId
       ? outcome.scoreFromTeamThatWon
       : outcome.scoreFromTeamThatLost
   }
@@ -228,20 +226,24 @@ const PlayoffMatch = ({
               </div>
               {played ? (
                 <div className="team-score">
-                  {valid === false && outcome?.teamThatWon?.id == teamP1?.id && (
-                    <span className="team-walkover">
-                      W/O
-                      <Tooltip title={'W/O = Walk Over (victoria automática)'}>
-                        <HelpOutlineIcon
-                          sx={{
-                            fontSize: '1rem',
-                            marginLeft: '0.15rem',
-                            cursor: 'help',
-                          }}
-                        />
-                      </Tooltip>
-                    </span>
-                  )}
+                  {valid === false &&
+                    teamP1?.id != null &&
+                    outcome?.teamThatWon?.id === teamP1.id && (
+                      <span className="team-walkover">
+                        W/O
+                        <Tooltip
+                          title={'W/O = Walk Over (victoria automática)'}
+                        >
+                          <HelpOutlineIcon
+                            sx={{
+                              fontSize: '1rem',
+                              marginLeft: '0.15rem',
+                              cursor: 'help',
+                            }}
+                          />
+                        </Tooltip>
+                      </span>
+                    )}
                   {valid !== false && (
                     <span className="team-score-value">
                       {scoreP1}
@@ -308,20 +310,24 @@ const PlayoffMatch = ({
               </div>
               {played ? (
                 <div className="team-score">
-                  {valid === false && outcome?.teamThatWon?.id == teamP2?.id && (
-                    <span className="team-walkover">
-                      W/O
-                      <Tooltip title={'W/O = Walk Over (victoria automática)'}>
-                        <HelpOutlineIcon
-                          sx={{
-                            fontSize: '1rem',
-                            marginLeft: '0.15rem',
-                            cursor: 'help',
-                          }}
-                        />
-                      </Tooltip>
-                    </span>
-                  )}
+                  {valid === false &&
+                    teamP2?.id != null &&
+                    outcome?.teamThatWon?.id === teamP2.id && (
+                      <span className="team-walkover">
+                        W/O
+                        <Tooltip
+                          title={'W/O = Walk Over (victoria automática)'}
+                        >
+                          <HelpOutlineIcon
+                            sx={{
+                              fontSize: '1rem',
+                              marginLeft: '0.15rem',
+                              cursor: 'help',
+                            }}
+                          />
+                        </Tooltip>
+                      </span>
+                    )}
                   {valid !== false && (
                     <span className="team-score-value">
                       {scoreP2}

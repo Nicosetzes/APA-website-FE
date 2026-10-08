@@ -11,8 +11,8 @@ const series = {
   revision: 1,
   status: 'awaiting_leg2',
   aggregate: [
-    { teamId: 'a', score: 1 },
-    { teamId: 'b', score: 0 },
+    { teamId: 1, score: 1 },
+    { teamId: 2, score: 0 },
   ],
   winnerTeamId: null,
 }
@@ -22,10 +22,10 @@ const matches = [
     playoff_id: 1,
     leg: 1,
     playerP1: reference('p1', 'Nico'),
-    teamP1: reference('a', 'Boca'),
+    teamP1: reference(1, 'Boca'),
     seedP1: '1A',
     playerP2: reference('p2', 'Santi'),
-    teamP2: reference('b', 'River'),
+    teamP2: reference(2, 'River'),
     seedP2: '1B',
     played: true,
     scoreP1: 1,
@@ -37,10 +37,10 @@ const matches = [
     playoff_id: 1,
     leg: 2,
     playerP1: reference('p2', 'Santi'),
-    teamP1: reference('b', 'River'),
+    teamP1: reference(2, 'River'),
     seedP1: '1B',
     playerP2: reference('p1', 'Nico'),
-    teamP2: reference('a', 'Boca'),
+    teamP2: reference(1, 'Boca'),
     seedP2: '1A',
     played: false,
     series,
@@ -49,7 +49,7 @@ const matches = [
 
 test('marks the series winner without rendering leg or aggregate labels', () => {
   const container = document.createElement('div')
-  const decidedSeries = { ...series, status: 'decided', winnerTeamId: 'a' }
+  const decidedSeries = { ...series, status: 'decided', winnerTeamId: 1 }
   act(() => {
     ReactDOM.render(
       <MemoryRouter>
@@ -101,7 +101,7 @@ test('does not render aggregate labels before either leg is played', () => {
   ReactDOM.unmountComponentAtNode(container)
 })
 
-test('groups both legs of a tie when team ids mix strings and numbers', () => {
+test('groups both legs of a tie by their numeric team ids', () => {
   const leg = (id, playoffId, teamP1, teamP2) => ({
     _id: id,
     playoff_id: playoffId,
@@ -112,10 +112,10 @@ test('groups both legs of a tie when team ids mix strings and numbers', () => {
     played: false,
   })
   const [firstRound] = buildRounds('champions_league', [
-    leg('ida', 1, reference('10', 'Boca'), reference(9, 'River')),
+    leg('ida', 1, reference(10, 'Boca'), reference(9, 'River')),
     leg('vuelta', 2, reference(9, 'River'), reference(10, 'Boca')),
-    leg('otra-ida', 3, reference(30, 'Racing'), reference('40', 'Lanus')),
-    leg('otra-vuelta', 4, reference('40', 'Lanus'), reference('30', 'Racing')),
+    leg('otra-ida', 3, reference(30, 'Racing'), reference(40, 'Lanus')),
+    leg('otra-vuelta', 4, reference(40, 'Lanus'), reference(30, 'Racing')),
   ])
 
   const [first, second] = firstRound.ties

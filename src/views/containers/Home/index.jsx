@@ -11,8 +11,7 @@ import { useNavigate } from 'react-router-dom'
 import { api, cloudName, database } from 'api'
 import { useEffect, useState } from 'react'
 
-const getClosedAt = (tournament) =>
-  tournament?.closedAt ?? tournament?.updatedAt ?? null
+const getClosedAt = (tournament) => tournament?.closedAt ?? null
 
 const Home = () => {
   const isM = useMediaQuery({ query: '(min-width: 768px)' })
@@ -58,8 +57,6 @@ const Home = () => {
     fetchTournaments()
   }, [])
 
-  // El último campeón sale de la fecha de cierre; `updatedAt` queda como
-  // respaldo para torneos sin `closedAt` (BE viejo o sin backfill).
   const lastTournament = useMemo(() => {
     if (finalizedTournaments.length === 0) return null
     return finalizedTournaments

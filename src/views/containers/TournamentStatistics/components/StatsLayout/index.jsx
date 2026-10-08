@@ -204,7 +204,6 @@ const StatsLayout = ({ playerStats }) => {
                 scoreP1,
                 scoreP2,
                 outcome,
-                updatedAt,
                 playedAt,
                 playedAtPrecision,
               }) => (
@@ -217,7 +216,6 @@ const StatsLayout = ({ playerStats }) => {
                   teamP2={teamP2}
                   scoreP1={scoreP1}
                   scoreP2={scoreP2}
-                  updatedAt={updatedAt}
                   playedAt={playedAt}
                   playedAtPrecision={playedAtPrecision}
                 />

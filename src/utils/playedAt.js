@@ -1,6 +1,5 @@
-// Fecha en la que se jugó un partido y su precisión, en JS puro (el Jest de
-// CRA no resuelve date-fns 4). Mientras haya partidos sin backfill se cae a
-// `updatedAt`, igual que el BE.
+// Etiquetas de la fecha de un partido (`playedAt`) según su precisión
+// (`playedAtPrecision`), en JS puro (el Jest de CRA no resuelve date-fns 4).
 
 const SHORT_MONTHS = [
   'ene.',
@@ -32,17 +31,7 @@ const LONG_MONTHS = [
   'diciembre',
 ]
 
-export const getPlayedAt = (match) =>
-  match?.playedAt ?? match?.updatedAt ?? null
-
-export const getPlayedAtPrecision = (match) => {
-  if (match?.playedAt) return match.playedAtPrecision ?? 'exact'
-  return match?.updatedAt ? 'exact' : null
-}
-
-// Sin precisión (BE viejo) se asume exacta.
-export const isExactPrecision = (precision) =>
-  !precision || precision === 'exact'
+export const isExactPrecision = (precision) => precision === 'exact'
 
 const pad = (value) => String(value).padStart(2, '0')
 
@@ -85,8 +74,8 @@ const FORMATTERS = {
 /**
  * Etiqueta de una fecha no exacta ("30/11/2021", "nov. 2022", "2019",
  * "aprox. nov. 2022"); `style: 'long'` es para aria-labels. Devuelve `null` si
- * la precisión es exacta (o falta) o la fecha es inválida, para que el
- * componente use su formato de siempre.
+ * la precisión es exacta, falta o la fecha es inválida, para que el componente
+ * use su formato de siempre.
  */
 export const formatPlayedAt = (value, precision, { style = 'short' } = {}) => {
   if (isExactPrecision(precision)) return null

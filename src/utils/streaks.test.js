@@ -285,7 +285,7 @@ describe('buildStreakMatchesLink', () => {
     )
   })
 
-  test('torneos sin las fechas de playoff (BE viejo): cae a las del poseedor', () => {
+  test('torneos sin partido válido en playoff del jugador: cae a las fechas del poseedor', () => {
     expect(
       linkOf(
         'most_consecutive_titles',

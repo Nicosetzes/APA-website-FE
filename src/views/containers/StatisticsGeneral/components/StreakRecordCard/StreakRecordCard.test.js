@@ -26,7 +26,9 @@ const holder = (overrides) => ({
   date: '2026-09-20T12:00:00',
   isActive: true,
   startDate: '2026-07-02T12:00:00',
+  startDatePrecision: 'exact',
   endDate: '2026-09-20T12:00:00',
+  endDatePrecision: 'exact',
   startMatch: match(),
   endMatch: match({
     date: '2026-09-20T12:00:00',
@@ -137,32 +139,6 @@ test('penales perdidos: la tanda va en la perspectiva del poseedor', () => {
   )
 })
 
-test.each([
-  ['tanda sin registrar', { won: true, goalsFor: null, goalsAgainst: null }],
-  ['BE viejo con sólo won', { won: false }],
-])('penales sin resultado de la tanda (%s): "(pen.)"', (_, penalties) => {
-  render({
-    count: 9,
-    players: [
-      holder({
-        endMatch: match({
-          goalsFor: 2,
-          goalsAgainst: 2,
-          result: 'D',
-          penalties,
-        }),
-      }),
-    ],
-  })
-
-  const [, last] = container.querySelectorAll('[role="group"]')
-  expect(last.textContent).toContain('2-2 (pen.)')
-  expect(last.textContent).not.toContain('por penales')
-  expect(last.getAttribute('aria-label')).toContain(
-    '2 a 2 Santi, definido por penales',
-  )
-})
-
 test('racha cerrada: inicio y corte con el partido que la cortó', () => {
   render({
     count: 4,
@@ -208,12 +184,15 @@ test('corte sin fecha: "sin fecha"; inicio sin fecha en el rango', () => {
   expect(text).not.toMatch(/meses|días|mismo día/)
 })
 
-test('BE sin breakMatch: racha cerrada cae a inicio y fin', () => {
-  const legacy = holder({ isActive: false })
-  delete legacy.breakMatch
-  render({ count: 4, players: [legacy] })
+test('no vigente muestra el partido de corte con label Fin, no el último de la racha', () => {
+  render({ count: 4, players: [holder({ isActive: false, breakMatch })] })
 
   expect(labels()).toEqual(['Inicio', 'Fin'])
+  const [, cut] = container.querySelectorAll('[role="group"]')
+  expect(cut.textContent).toContain('vs Juan (Lanús)')
+  // El último partido de la racha (1-1 con tanda 4-3) no es el corte.
+  expect(cut.textContent).not.toContain('(4-3)')
+  expect(cut.getAttribute('aria-label')).not.toMatch(/^Partido final/)
 })
 
 test.each([
@@ -305,20 +284,6 @@ test('empate: partidos detrás de "Ver partidos"', () => {
   expect(
     secondPanel.querySelector('[aria-label^="Partido que cortó la racha"]'),
   ).not.toBeNull()
-})
-
-test('BE viejo: sólo valor y poseedores', () => {
-  render({
-    count: 5,
-    players: [{ id: 'p1', name: 'Nico', date: '2026-09-20T12:00:00' }],
-  })
-
-  const text = container.textContent
-  expect(text).toContain('5')
-  expect(text).toContain('Nico')
-  expect(text).not.toContain('Activa')
-  expect(container.querySelector('time')).toBeNull()
-  expect(container.querySelector('[role="group"]')).toBeNull()
 })
 
 test.each([
@@ -467,7 +432,7 @@ describe('ayuda en el título', () => {
   })
 })
 
-test('partidos de eliminación: tanda perdida sin resultado registrado', () => {
+test('partidos de eliminación: tanda perdida con su resultado', () => {
   render(
     {
       count: 3,
@@ -480,7 +445,7 @@ test('partidos de eliminación: tanda perdida sin resultado registrado', () => {
             goalsFor: 0,
             goalsAgainst: 0,
             result: 'L',
-            penalties: { won: false },
+            penalties: { won: false, goalsFor: 2, goalsAgainst: 4 },
           }),
         }),
       ],
@@ -489,9 +454,10 @@ test('partidos de eliminación: tanda perdida sin resultado registrado', () => {
   )
 
   const [, cut] = container.querySelectorAll('[role="group"]')
-  expect(cut.textContent).toContain('0-0 (pen.)')
+  expect(cut.textContent).toContain('0-0 (2-4)')
+  expect(cut.textContent).not.toContain('(pen.)')
   expect(cut.getAttribute('aria-label')).toContain(
-    '0 a 0 Santi, perdió por penales',
+    '0 a 0 Santi, perdió 2 a 4 en penales',
   )
 })
 
@@ -800,10 +766,8 @@ test('torneos sin startTournament ni breakTournament: degrada sin romper', () =>
     ],
   })
 
-  // Sin corte cae al torneo final.
-  expect(labels()).toEqual(['Fin'])
-  const [end] = container.querySelectorAll('[role="group"]')
-  expect(end.getAttribute('aria-label')).toMatch(/^Torneo final: Nico/)
+  expect(container.querySelector('[role="group"]')).toBeNull()
+  expect(container.textContent).toContain('Nico')
 
   renderTournament({
     count: 2,
@@ -975,14 +939,6 @@ describe('link del rango a /matches', () => {
     expect(links()).toHaveLength(0)
   })
 
-  test('BE viejo sin detalle: sin link', () => {
-    render({
-      count: 5,
-      players: [{ id: 'p1', name: 'Nico', date: '2026-09-20T12:00:00' }],
-    })
-    expect(links()).toHaveLength(0)
-  })
-
   test('semis consecutivas: type=playoff + playoffRound=semifinal, de la primera a la última semi', () => {
     renderTournament({
       count: 3,
@@ -1040,13 +996,16 @@ describe('link del rango a /matches', () => {
   })
 })
 
-test('precisión exacta explícita conserva la duración', () => {
+test('sin precisión no muestra duración', () => {
   render({
     count: 9,
     players: [
-      holder({ startDatePrecision: 'exact', endDatePrecision: 'exact' }),
+      holder({ startDatePrecision: undefined, endDatePrecision: undefined }),
     ],
   })
 
-  expect(container.textContent).toContain('2 meses y 18 días')
+  expect(container.textContent).toMatch(
+    /02\/07\/2026\s*→\s*hasta\s*20\/09\/2026/,
+  )
+  expect(container.textContent).not.toMatch(/años|meses|días|mismo día/)
 })

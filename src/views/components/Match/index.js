@@ -2,7 +2,6 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
 import IconButton from '@mui/material/IconButton'
 import { apiClient } from 'api/axiosConfig'
-import { sameTeamId } from 'utils/teamRef'
 import { useState } from 'react'
 import {
   InputContainer,
@@ -23,11 +22,7 @@ import {
 import { api, database } from 'api'
 import { confirmDialog, toast } from 'utils/notifications'
 import { formatDateTime } from 'utils/dates'
-import {
-  formatPlayedAt,
-  getPlayedAt,
-  getPlayedAtPrecision,
-} from 'utils/playedAt'
+import { formatPlayedAt } from 'utils/playedAt'
 import { useParams, useSearchParams } from 'react-router-dom'
 
 const Match = ({ canMutate, match, getFixtureData, teamStats }) => {
@@ -46,7 +41,7 @@ const Match = ({ canMutate, match, getFixtureData, teamStats }) => {
     teamP1,
     teamP2,
   } = match
-  const playedAt = getPlayedAt(match)
+  const { playedAt, playedAtPrecision } = match
   const [matchScore, setMatchScore] = useState({
     scoreP1: scoreP1,
     scoreP2: scoreP2,
@@ -132,7 +127,7 @@ const Match = ({ canMutate, match, getFixtureData, teamStats }) => {
 
   const getPlayedMatches = (teamId) => {
     if (!teamStats) return null
-    const stats = teamStats.find((stat) => sameTeamId(stat.teamId, teamId))
+    const stats = teamStats.find((stat) => stat.teamId === teamId)
     return stats ? `${stats.playedMatches}/${stats.totalMatches}` : null
   }
 
@@ -216,7 +211,7 @@ const Match = ({ canMutate, match, getFixtureData, teamStats }) => {
       </MatchView>
       {played && playedAt ? (
         <MatchDate>
-          {formatPlayedAt(playedAt, getPlayedAtPrecision(match)) ||
+          {formatPlayedAt(playedAt, playedAtPrecision) ||
             formatDateTime(playedAt)}{' '}
         </MatchDate>
       ) : (

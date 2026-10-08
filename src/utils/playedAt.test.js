@@ -1,51 +1,16 @@
 /* eslint-env jest */
-import {
-  formatPlayedAt,
-  getPlayedAt,
-  getPlayedAtPrecision,
-  isExactPrecision,
-} from './playedAt'
+import { formatPlayedAt, isExactPrecision } from './playedAt'
 
 // Mediodía UTC: el día local es el mismo en cualquier zona razonable.
 const NOV_30_2021 = '2021-11-30T15:00:00.000Z'
 const NOV_15_2022 = '2022-11-15T15:00:00.000Z'
 const JUL_09_2019 = '2019-07-09T15:00:00.000Z'
 
-describe('getPlayedAt', () => {
-  it('prefers playedAt and falls back to updatedAt', () => {
-    expect(getPlayedAt({ playedAt: NOV_30_2021, updatedAt: NOV_15_2022 })).toBe(
-      NOV_30_2021,
-    )
-    expect(getPlayedAt({ updatedAt: NOV_15_2022 })).toBe(NOV_15_2022)
-    expect(getPlayedAt({})).toBeNull()
-    expect(getPlayedAt(null)).toBeNull()
-  })
-})
-
-describe('getPlayedAtPrecision', () => {
-  it('defaults to exact and only applies with playedAt', () => {
-    expect(
-      getPlayedAtPrecision({
-        playedAt: JUL_09_2019,
-        playedAtPrecision: 'year',
-      }),
-    ).toBe('year')
-    expect(getPlayedAtPrecision({ playedAt: JUL_09_2019 })).toBe('exact')
-    expect(
-      getPlayedAtPrecision({
-        updatedAt: NOV_15_2022,
-        playedAtPrecision: 'year',
-      }),
-    ).toBe('exact')
-    expect(getPlayedAtPrecision({})).toBeNull()
-  })
-})
-
 describe('isExactPrecision', () => {
-  it('treats a missing precision as exact', () => {
-    expect(isExactPrecision(undefined)).toBe(true)
-    expect(isExactPrecision(null)).toBe(true)
+  it('is true only for an explicit exact precision', () => {
     expect(isExactPrecision('exact')).toBe(true)
+    expect(isExactPrecision(undefined)).toBe(false)
+    expect(isExactPrecision(null)).toBe(false)
     expect(isExactPrecision('day')).toBe(false)
     expect(isExactPrecision('approx')).toBe(false)
   })

@@ -142,7 +142,6 @@ const PlayerStatsTable = ({ stats }) => {
                             playerP2,
                             teamP2,
                             scoreP2,
-                            date,
                             playedAt,
                             datePrecision,
                           },
@@ -157,7 +156,6 @@ const PlayerStatsTable = ({ stats }) => {
                             playerP2={playerP2}
                             teamP2={teamP2}
                             scoreP2={scoreP2}
-                            date={date}
                             playedAt={playedAt}
                             datePrecision={datePrecision}
                           />

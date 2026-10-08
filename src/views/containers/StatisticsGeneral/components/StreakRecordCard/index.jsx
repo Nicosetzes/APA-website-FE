@@ -2,12 +2,9 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
 import StreakMatchSummary from '../StreakMatchSummary'
 import StreakTournamentSummary from '../StreakTournamentSummary'
 import Tooltip from 'views/components/Tooltip'
-import {
-  EmptyMessage,
-  HolderBadge,
-  RecordHolders,
-  RecordTitle,
-} from '../../styled'
+import { formatDate } from 'utils/dates'
+import { formatPlayedAt } from 'utils/playedAt'
+import { useState } from 'react'
 import {
   CategoryTag,
   DurationText,
@@ -28,20 +25,15 @@ import {
   ValueUnit,
   VisuallyHidden,
 } from './styled'
-import { formatDate } from 'utils/dates'
-import { formatPlayedAt, isExactPrecision } from 'utils/playedAt'
+import { EmptyMessage, HolderBadge, RecordTitle } from '../../styled'
 import {
   buildStreakMatchesLink,
   formatStreakDuration,
   getCountUnit,
 } from 'utils/streaks'
-import { useState } from 'react'
 
 // Un solo partido no es racha.
 export const MIN_STREAK = 2
-
-// Un BE viejo manda sólo `{ id, name, date }` por poseedor.
-const hasDetails = (holder) => typeof holder?.isActive === 'boolean'
 
 const DateText = ({ value, precision }) => (
   <time dateTime={value}>
@@ -183,7 +175,6 @@ const ITEMS = {
       start: 'Partido de inicio',
       last: 'Último partido',
       cut: 'Partido que cortó la racha',
-      end: 'Partido final',
     },
     toggle: ['Ver partidos', 'Ocultar partidos'],
     idSuffix: 'partidos',
@@ -198,7 +189,6 @@ const ITEMS = {
       start: 'Torneo de inicio',
       last: 'Último torneo',
       cut: 'Torneo que cortó la racha',
-      end: 'Torneo final',
     },
     toggle: ['Ver torneos', 'Ocultar torneos'],
     idSuffix: 'torneos',
@@ -214,7 +204,6 @@ const UNITS = {
 }
 
 // Segunda mini-tarjeta: vigente → último ítem; cerrada → el que la cortó.
-// Sin corte (BE viejo) se cae al ítem final.
 const getSecondItem = (holder, { keys, descriptions }) => {
   if (holder.isActive) {
     return {
@@ -223,15 +212,12 @@ const getSecondItem = (holder, { keys, descriptions }) => {
       item: holder[keys.end],
     }
   }
-  if (holder[keys.cut]) {
-    return {
-      label: 'Fin',
-      description: descriptions.cut,
-      item: holder[keys.cut],
-      isBreak: true,
-    }
+  return {
+    label: 'Fin',
+    description: descriptions.cut,
+    item: holder[keys.cut],
+    isBreak: true,
   }
-  return { label: 'Fin', description: descriptions.end, item: holder[keys.end] }
 }
 
 const StreakItemSummary = ({ variant, item, ...props }) =>
@@ -272,14 +258,8 @@ const StreakItems = ({ holder, variant, id, hidden }) => {
   )
 }
 
-// Con una punta no exacta (p. ej. sólo el año) la duración sería inventada.
-// En torneos no se asume exacta una precisión que falta.
-const hasExactRange = (holder, variant) =>
-  variant === 'tournament'
-    ? holder.startDatePrecision === 'exact' &&
-      holder.endDatePrecision === 'exact'
-    : isExactPrecision(holder.startDatePrecision) &&
-      isExactPrecision(holder.endDatePrecision)
+const hasExactRange = (holder) =>
+  holder.startDatePrecision === 'exact' && holder.endDatePrecision === 'exact'
 
 const HolderRow = ({
   holder,
@@ -296,7 +276,7 @@ const HolderRow = ({
   const ongoing = getOngoing(holder, variant)
   // Racha todavía abierta: la duración cambiaría con cada partido del torneo.
   const duration =
-    !ongoing.start && !ongoing.end && hasExactRange(holder, variant)
+    !ongoing.start && !ongoing.end && hasExactRange(holder)
       ? formatStreakDuration({
           startDate: holder.startDate,
           endDate: holder.endDate,
@@ -368,7 +348,6 @@ const StreakRecordCard = ({
   const holders = record?.players || []
   const count = record?.count
   const isEmpty = !(count >= MIN_STREAK) || holders.length === 0
-  const detailed = holders.some(hasDetails)
   // Con empate, una fila compacta por poseedor y los ítems detrás de un botón.
   const collapsible = holders.length > 1
   const unit = getCountUnit(
@@ -389,39 +368,21 @@ const StreakRecordCard = ({
             <StreakValue $tone={tone}>{count}</StreakValue>
             <ValueUnit>{unit}</ValueUnit>
           </ValueBlock>
-          {detailed ? (
-            <HolderList>
-              {holders.map((holder) =>
-                hasDetails(holder) ? (
-                  <HolderRow
-                    key={holder.id}
-                    holder={holder}
-                    recordKey={recordKey}
-                    count={count}
-                    collapsible={collapsible}
-                    showActive={showActive}
-                    isRecord={isRecord}
-                    variant={variant}
-                    itemsId={`${idPrefix}-${recordKey}-${holder.id}-${idSuffix}`}
-                  />
-                ) : (
-                  <HolderItem key={holder.id}>
-                    <HolderLine>
-                      <HolderBadge>{holder.name}</HolderBadge>
-                      {isRecord && <Status variant="record" />}
-                    </HolderLine>
-                  </HolderItem>
-                ),
-              )}
-            </HolderList>
-          ) : (
-            <RecordHolders>
-              {holders.map((holder) => (
-                <HolderBadge key={holder.id}>{holder.name}</HolderBadge>
-              ))}
-              {isRecord && <Status variant="record" />}
-            </RecordHolders>
-          )}
+          <HolderList>
+            {holders.map((holder) => (
+              <HolderRow
+                key={holder.id}
+                holder={holder}
+                recordKey={recordKey}
+                count={count}
+                collapsible={collapsible}
+                showActive={showActive}
+                isRecord={isRecord}
+                variant={variant}
+                itemsId={`${idPrefix}-${recordKey}-${holder.id}-${idSuffix}`}
+              />
+            ))}
+          </HolderList>
         </>
       )}
     </StyledStreakCard>

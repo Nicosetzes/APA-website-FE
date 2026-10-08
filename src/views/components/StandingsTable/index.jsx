@@ -198,7 +198,6 @@ const StandingsTable = ({
                                 playerP2,
                                 teamP2,
                                 scoreP2,
-                                date,
                                 playedAt,
                                 datePrecision,
                               },
@@ -213,7 +212,6 @@ const StandingsTable = ({
                                 playerP2={playerP2}
                                 teamP2={teamP2}
                                 scoreP2={scoreP2}
-                                date={date}
                                 playedAt={playedAt}
                                 datePrecision={datePrecision}
                               />

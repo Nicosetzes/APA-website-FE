@@ -10,10 +10,10 @@ const championsMatches = [1, 2].map((playoffId) => ({
   _id: `m${playoffId}`,
   playoff_id: playoffId,
   playerP1: ref('p1', 'Nico'),
-  teamP1: ref('a', 'Boca'),
+  teamP1: ref(10, 'Boca'),
   seedP1: 'A',
   playerP2: ref('p2', 'Santi'),
-  teamP2: ref('b', 'River'),
+  teamP2: ref(9, 'River'),
   seedP2: 'B',
   played: false,
 }))

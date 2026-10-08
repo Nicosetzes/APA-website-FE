@@ -279,14 +279,6 @@ export const RecordDetail = styled.div`
   text-align: center;
 `
 
-export const RecordHolders = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  justify-content: center;
-  margin-top: 0.5rem;
-`
-
 export const HolderBadge = styled.div`
   background: ${(props) =>
     props.$isActive ? 'rgba(24, 137, 14, 0.12)' : 'rgba(0, 0, 0, 0.1)'};

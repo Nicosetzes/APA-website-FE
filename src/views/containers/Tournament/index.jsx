@@ -1,5 +1,7 @@
 import { Image } from 'cloudinary-react'
 import StarIcon from '@mui/icons-material/Star'
+import { formatDateTime } from 'utils/dates'
+import { formatPlayedAt } from 'utils/playedAt'
 import { motion } from 'framer-motion'
 import { useMediaQuery } from 'react-responsive'
 import {
@@ -39,12 +41,6 @@ import { PageLoader, PrimaryLink } from 'views/components'
 import { apiClient, getApiErrorMessage } from 'api/axiosConfig'
 import { cloudName, database } from 'api'
 import { confirmDialog, toast } from 'utils/notifications'
-import { formatDateTime } from 'utils/dates'
-import {
-  formatPlayedAt,
-  getPlayedAt,
-  getPlayedAtPrecision,
-} from 'utils/playedAt'
 import { useCallback, useEffect, useState } from 'react'
 import { useOutletContext, useParams } from 'react-router-dom'
 
@@ -298,10 +294,8 @@ const Tournament = () => {
                     </MatchTeam>
                   </MatchContainer>
                   <MatchDate>
-                    {formatPlayedAt(
-                      getPlayedAt(match),
-                      getPlayedAtPrecision(match),
-                    ) || formatDateTime(getPlayedAt(match))}
+                    {formatPlayedAt(match.playedAt, match.playedAtPrecision) ||
+                      formatDateTime(match.playedAt)}
                   </MatchDate>
                 </MatchCard>
               ))}

@@ -86,7 +86,7 @@ const getTieName = (tiesCount) => {
 
 const teamsKey = ({ teamP1, teamP2 }) =>
   teamP1?.id && teamP2?.id
-    ? [String(teamP1.id), String(teamP2.id)].sort().join('|')
+    ? [teamP1.id, teamP2.id].sort((a, b) => a - b).join('|')
     : null
 
 const groupIntoTies = (matches, legs) => {
@@ -167,10 +167,7 @@ export const buildRounds = (
   }
 
   const matchById = new Map(
-    (Array.isArray(matches) ? matches : []).map((m) => [
-      Number(m.playoff_id),
-      m,
-    ]),
+    (Array.isArray(matches) ? matches : []).map((m) => [m.playoff_id, m]),
   )
   const isTwoLegged = TWO_LEGGED_FORMATS.includes(format)
 

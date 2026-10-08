@@ -7,7 +7,7 @@ export const getLegLabel = ({ format, playoffMode, playoffId, leg }) => {
   if (format !== 'playoff') return null
   if (
     normalizePlayoffMode({ playoffMode }) !== 'two_legged' ||
-    Number(playoffId) === 31
+    playoffId === 31
   ) {
     return 'Partido único'
   }
@@ -30,7 +30,7 @@ export const groupPlayoffSeries = (matches = [], tournamentId = '') => {
     if (!groups.has(key)) {
       groups.set(key, {
         key,
-        playoffId: Number(match.playoff_id),
+        playoffId: match.playoff_id,
         matches: [],
       })
     }

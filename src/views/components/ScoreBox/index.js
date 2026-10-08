@@ -14,17 +14,12 @@ const ScoreBox = ({
   playerP2,
   teamP2,
   scoreP2,
-  date,
   playedAt,
   datePrecision,
 }) => {
-  // Fecha no exacta: etiqueta de precisión; exacta: DD/MM/YYYY HH:mm. El
-  // texto legacy del BE (`toLocaleString` del servidor, puede venir con
-  // AM/PM) queda sólo para un BE viejo sin `playedAt`.
-  const dateLabel =
-    (playedAt &&
-      (formatPlayedAt(playedAt, datePrecision) || formatDateTime(playedAt))) ||
-    date
+  const dateLabel = playedAt
+    ? formatPlayedAt(playedAt, datePrecision) || formatDateTime(playedAt)
+    : null
 
   if (result == 'w')
     return (

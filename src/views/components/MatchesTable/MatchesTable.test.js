@@ -5,19 +5,31 @@ import MatchesTable from '.'
 
 const match = {
   _id: '507f1f77bcf86cd799439011',
-  updatedAt: '2025-01-01T12:00:00.000Z',
+  playedAt: '2025-01-01T12:00:00.000Z',
+  playedAtPrecision: 'exact',
   tournament: { id: 't', name: 'Copa' },
   type: 'playoff',
   playoff_id: 1,
   leg: 2,
   playerP1: { id: 'p1', name: 'Nico' },
-  teamP1: { id: 'a', name: 'Boca' },
+  teamP1: { id: 10, name: 'Boca' },
   scoreP1: 1,
   playerP2: { id: 'p2', name: 'Santi' },
-  teamP2: { id: 'b', name: 'River' },
+  teamP2: { id: 11, name: 'River' },
   scoreP2: 0,
-  outcome: { teamThatWon: { id: 'a' } },
+  outcome: { teamThatWon: { id: 10 } },
 }
+
+const renderTable = (matches) => {
+  const container = document.createElement('div')
+  act(() => {
+    ReactDOM.render(<MatchesTable matches={matches} />, container)
+  })
+  return container
+}
+
+const teamBlocks = (container) =>
+  container.querySelectorAll('tbody td')[3].firstChild.children
 
 test('shows one physical row without a leg label', () => {
   const container = document.createElement('div')
@@ -85,17 +97,79 @@ test('shows exact dates as DD/MM/YYYY and the time in 24h without seconds', () =
   ReactDOM.unmountComponentAtNode(container)
 })
 
-test('shows "-" when the date cannot be parsed', () => {
-  const container = document.createElement('div')
-  act(() => {
-    ReactDOM.render(
-      <MatchesTable
-        matches={[{ ...match, updatedAt: 'not-a-date', playedAt: undefined }]}
-      />,
-      container,
-    )
-  })
+test('shows date and time from playedAt and ignores updatedAt', () => {
+  const container = renderTable([
+    {
+      ...match,
+      playedAt: new Date(2024, 6, 8, 21, 15).toISOString(),
+      updatedAt: new Date(2025, 0, 2, 10, 30).toISOString(),
+    },
+  ])
+  expect(container.querySelector('tbody td').textContent).toBe(
+    '08/07/202421:15 hs',
+  )
+  ReactDOM.unmountComponentAtNode(container)
+})
+
+test('shows "-" without time when the match has no playedAt', () => {
+  const container = renderTable([
+    {
+      ...match,
+      playedAt: undefined,
+      playedAtPrecision: undefined,
+      updatedAt: '2025-01-01T12:00:00.000Z',
+    },
+  ])
+  const cell = container.querySelector('tbody td')
+  expect(cell.textContent).toBe('-')
+  expect(cell.querySelector('span')).toBeNull()
+  ReactDOM.unmountComponentAtNode(container)
+})
+
+test('shows "-" when playedAt cannot be parsed', () => {
+  const container = renderTable([{ ...match, playedAt: 'not-a-date' }])
   expect(container.querySelector('tbody td').textContent).toBe('-')
+  ReactDOM.unmountComponentAtNode(container)
+})
+
+test('highlights the winner comparing numeric team ids', () => {
+  const container = renderTable([match])
+  const [p1Block, , p2Block] = teamBlocks(container)
+  expect(window.getComputedStyle(p1Block).fontWeight).toBe('700')
+  expect(window.getComputedStyle(p2Block).fontWeight).toBe('400')
+  ReactDOM.unmountComponentAtNode(container)
+})
+
+test('does not highlight a side without team id', () => {
+  const container = renderTable([
+    {
+      ...match,
+      teamP1: { name: 'Boca' },
+      outcome: { teamThatWon: {} },
+    },
+  ])
+  const [p1Block, , p2Block] = teamBlocks(container)
+  expect(window.getComputedStyle(p1Block).fontWeight).toBe('400')
+  expect(window.getComputedStyle(p2Block).fontWeight).toBe('400')
+  ReactDOM.unmountComponentAtNode(container)
+})
+
+test('orders the penalty scores by the numeric winner id', () => {
+  const container = renderTable([
+    {
+      ...match,
+      scoreP1: 1,
+      scoreP2: 1,
+      outcome: {
+        penalties: true,
+        teamThatWon: { id: 11 },
+        scoreFromTeamThatWon: 5,
+        scoreFromTeamThatLost: 4,
+      },
+    },
+  ])
+  const badge = teamBlocks(container)[1]
+  expect(badge.getAttribute('title')).toBe('Penales: 4 - 5')
   ReactDOM.unmountComponentAtNode(container)
 })
 

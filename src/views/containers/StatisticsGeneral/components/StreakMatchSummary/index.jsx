@@ -15,22 +15,12 @@ import {
 const RESULT_LABELS = { W: 'V', D: 'E', L: 'D' }
 const TYPE_LABELS = { playin: 'Playin', playoff: 'Playoff' }
 
-const isScore = (value) => value !== null && value !== undefined
-
-// Tanda en la perspectiva del poseedor. Partidos viejos (o un BE que sólo
-// manda `{ won }`) no traen el resultado de la tanda.
 const getShootout = (penalties) => {
   if (!penalties) return null
-  const hasScores =
-    isScore(penalties.goalsFor) && isScore(penalties.goalsAgainst)
+  const { goalsFor, goalsAgainst } = penalties
   return {
-    hasScores,
-    text: hasScores
-      ? `(${penalties.goalsFor}-${penalties.goalsAgainst})`
-      : '(pen.)',
-    spoken: hasScores
-      ? `${penalties.goalsFor} a ${penalties.goalsAgainst} en penales`
-      : 'definido por penales',
+    text: `(${goalsFor}-${goalsAgainst})`,
+    spoken: `${goalsFor} a ${goalsAgainst} en penales`,
   }
 }
 
@@ -38,10 +28,7 @@ const KNOCKOUT_VERBS = { W: 'ganó', L: 'perdió' }
 
 const getSpokenShootout = (shootout, match, isKnockout) => {
   const verb = isKnockout && KNOCKOUT_VERBS[match.result]
-  if (!verb) return shootout.spoken
-  return shootout.hasScores
-    ? `${verb} ${shootout.spoken}`
-    : `${verb} por penales`
+  return verb ? `${verb} ${shootout.spoken}` : shootout.spoken
 }
 
 const buildAriaLabel = ({

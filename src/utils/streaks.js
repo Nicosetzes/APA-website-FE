@@ -154,10 +154,11 @@ const TOURNAMENT_STREAK_ROUNDS = {
 }
 
 // Rachas por torneo: del primer partido del jugador en la ronda en el torneo
-// de inicio al último en esa ronda en el torneo final. Sin esa fecha cae al
-// primer/último partido de playoff del jugador y, con un BE sin esos campos,
-// a las fechas del poseedor (cierre de cada torneo), que puede dejar afuera
-// la ronda del primer torneo.
+// de inicio al último en esa ronda en el torneo final. Un jugador puede no
+// tener partido válido en la ronda (p. ej. una final `valid: false`): ahí cae
+// al primer/último partido de playoff del jugador y, si tampoco hay, a las
+// fechas del poseedor (cierre de cada torneo), que puede dejar afuera la
+// ronda del primer torneo.
 const getTournamentRange = (holder, round) => {
   const start = holder.startTournament
   const end = holder.endTournament

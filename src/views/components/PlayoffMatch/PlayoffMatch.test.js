@@ -19,10 +19,10 @@ const baseProps = {
   canDelete: true,
   id: 'match',
   playerP1: ref('p1', 'Nico'),
-  teamP1: ref('a', 'Boca'),
+  teamP1: ref(1, 'Boca'),
   seedP1: '1A',
   playerP2: ref('p2', 'Santi'),
-  teamP2: ref('b', 'River'),
+  teamP2: ref(2, 'River'),
   seedP2: '1B',
   played: false,
   getData: jest.fn(() => Promise.resolve()),
@@ -226,5 +226,51 @@ test('renders penalty scores as compact superscripts inside each team score', ()
   expect(teamScores[0].querySelector('sup.penalty-score').textContent).toBe('5')
   expect(teamScores[1].querySelector('sup.penalty-score').textContent).toBe('4')
   expect(container.querySelector('.team-penalties')).toBeNull()
+  ReactDOM.unmountComponentAtNode(container)
+})
+
+test('marks the series winner from a numeric winnerTeamId', () => {
+  const container = document.createElement('div')
+  renderMatch(container, {
+    played: true,
+    scoreP1: 0,
+    scoreP2: 2,
+    outcome: {},
+    series: { ...baseProps.series, status: 'decided', winnerTeamId: 2 },
+  })
+
+  const rows = container.querySelectorAll('[data-series-winner="true"]')
+  expect(rows).toHaveLength(1)
+  expect(rows[0].textContent).toContain('River')
+  ReactDOM.unmountComponentAtNode(container)
+
+  renderMatch(container, {
+    series: { ...baseProps.series, winnerTeamId: null },
+  })
+  expect(container.querySelector('[data-series-winner="true"]')).toBeNull()
+  ReactDOM.unmountComponentAtNode(container)
+})
+
+test('shows the W/O badge only next to the numeric winner of an invalid match', () => {
+  const container = document.createElement('div')
+  renderMatch(container, {
+    played: true,
+    valid: false,
+    outcome: { teamThatWon: ref(2, 'River') },
+  })
+
+  const teamScores = container.querySelectorAll('.team-score')
+  expect(teamScores[0].querySelector('.team-walkover')).toBeNull()
+  expect(teamScores[1].querySelector('.team-walkover')).not.toBeNull()
+  ReactDOM.unmountComponentAtNode(container)
+
+  // Sin equipo cargado no hay ganador que marcar.
+  renderMatch(container, {
+    played: true,
+    valid: false,
+    teamP1: { name: 'Boca' },
+    outcome: { teamThatWon: {} },
+  })
+  expect(container.querySelector('.team-walkover')).toBeNull()
   ReactDOM.unmountComponentAtNode(container)
 })

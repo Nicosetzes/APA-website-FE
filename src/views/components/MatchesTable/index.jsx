@@ -1,4 +1,5 @@
 import { database } from 'api'
+import { formatPlayedAt } from 'utils/playedAt'
 import {
   CustomTable,
   DateText,
@@ -12,12 +13,6 @@ import {
   TypeBadge,
 } from './styled'
 import { formatDate, formatTime } from 'utils/dates'
-import {
-  formatPlayedAt,
-  getPlayedAt,
-  getPlayedAtPrecision,
-} from 'utils/playedAt'
-import { sameTeamId } from 'utils/teamRef'
 
 const TYPE_LABELS = {
   regular: 'Reg',
@@ -28,7 +23,7 @@ const TYPE_LABELS = {
 const getPenaltyScores = (outcome, teamP1) => {
   if (!outcome?.penalties || !outcome.teamThatWon) return null
 
-  const p1Won = String(outcome.teamThatWon.id) === String(teamP1?.id)
+  const p1Won = outcome.teamThatWon.id === teamP1?.id
   return {
     p1: p1Won ? outcome.scoreFromTeamThatWon : outcome.scoreFromTeamThatLost,
     p2: p1Won ? outcome.scoreFromTeamThatLost : outcome.scoreFromTeamThatWon,
@@ -36,25 +31,12 @@ const getPenaltyScores = (outcome, teamP1) => {
 }
 
 const MatchesTable = ({ matches }) => {
-  const getDateParts = (dateString, id) => {
-    try {
-      const isBadDate =
-        !dateString ||
-        dateString === '2023-03-30T23:22:00.005Z' ||
-        dateString === '2023-03-30T23:21:44.961Z' ||
-        dateString === '2023-03-30T22:51:17.806Z'
-
-      const dateObj = isBadDate
-        ? new Date(parseInt(id.substring(0, 8), 16) * 1000)
-        : new Date(dateString)
-
-      const date = formatDate(dateObj)
-      return date
-        ? { date, time: formatTime(dateObj) }
-        : { date: '-', time: null }
-    } catch {
-      return { date: '-', time: null }
-    }
+  // Sin fecha (partido no jugado) o fecha inválida: '-' sin hora.
+  const getDateParts = (playedAt) => {
+    const date = formatDate(playedAt)
+    return date
+      ? { date, time: formatTime(playedAt) }
+      : { date: '-', time: null }
   }
 
   return (
@@ -82,20 +64,23 @@ const MatchesTable = ({ matches }) => {
               type,
               outcome,
               group,
+              playedAt,
+              playedAtPrecision,
             } = match
 
             // Fecha no exacta: sólo la etiqueta, sin hora.
-            const inexactDate = formatPlayedAt(
-              getPlayedAt(match),
-              getPlayedAtPrecision(match),
-            )
+            const inexactDate = formatPlayedAt(playedAt, playedAtPrecision)
             const { date, time } = inexactDate
               ? { date: inexactDate, time: null }
-              : getDateParts(getPlayedAt(match), _id)
+              : getDateParts(playedAt)
             const isP1Winner =
-              sameTeamId(outcome?.teamThatWon?.id, teamP1?.id) && !outcome?.draw
+              teamP1?.id != null &&
+              outcome?.teamThatWon?.id === teamP1.id &&
+              !outcome?.draw
             const isP2Winner =
-              sameTeamId(outcome?.teamThatWon?.id, teamP2?.id) && !outcome?.draw
+              teamP2?.id != null &&
+              outcome?.teamThatWon?.id === teamP2.id &&
+              !outcome?.draw
             const penalties = getPenaltyScores(outcome, teamP1)
 
             return (

@@ -17,13 +17,14 @@ const local = (...args) => new Date(...args).toISOString()
 const match = (overrides) => ({
   _id: 'm1',
   createdAt: local(2024, 6, 1, 10, 0),
-  updatedAt: local(2024, 6, 8, 21, 15, 42),
+  playedAt: local(2024, 6, 8, 21, 15, 42),
+  playedAtPrecision: 'exact',
   group: 'A',
   played: true,
   playerP1: { id: 'p1', name: 'Nico' },
   playerP2: { id: 'p2', name: 'Santi' },
-  teamP1: { id: 'a', name: 'Boca' },
-  teamP2: { id: 'b', name: 'River' },
+  teamP1: { id: 10, name: 'Boca' },
+  teamP2: { id: 11, name: 'River' },
   scoreP1: 1,
   scoreP2: 0,
   ...overrides,
@@ -76,6 +77,32 @@ test('muestra playedAt y no la última edición (updatedAt)', () => {
 
   expect(container.textContent).toContain('08/07/2024 21:15')
   expect(container.textContent).not.toContain('03/10/2024')
+})
+
+test('sin playedAt no cae a updatedAt: mensaje de no jugado', () => {
+  render({
+    match: match({
+      playedAt: undefined,
+      playedAtPrecision: undefined,
+      updatedAt: local(2024, 9, 3, 18, 40),
+    }),
+  })
+
+  expect(container.textContent).toContain('El partido aún no se ha jugado')
+  expect(container.textContent).not.toContain('03/10/2024')
+})
+
+test('partidos jugados por equipo: compara ids numéricos', () => {
+  render({
+    match: match(),
+    teamStats: [
+      { teamId: 10, playedMatches: 3, totalMatches: 6 },
+      { teamId: 11, playedMatches: 2, totalMatches: 6 },
+    ],
+  })
+
+  expect(container.textContent).toContain('3/6')
+  expect(container.textContent).toContain('2/6')
 })
 
 test('fecha aproximada: sin hora', () => {

@@ -1,4 +1,6 @@
 import { database } from 'api'
+import { formatDate } from 'utils/dates'
+import { formatPlayedAt } from 'utils/playedAt'
 import { useSearchParams } from 'react-router-dom'
 import {
   MatchDate,
@@ -7,12 +9,6 @@ import {
   OutcomeTag,
   StyledMatchBox,
 } from './styled'
-import { formatDate } from 'utils/dates'
-import {
-  formatPlayedAt,
-  getPlayedAt,
-  getPlayedAtPrecision,
-} from 'utils/playedAt'
 
 const OUTCOME_COLORS = { win: '#22c55e', draw: '#eab308', loss: '#ef4444' }
 const OUTCOME_LABELS = { win: 'V', draw: 'E', loss: 'D' }
@@ -25,15 +21,12 @@ const MatchBox = ({
   teamP2,
   scoreP1,
   scoreP2,
-  updatedAt,
   playedAt,
   playedAtPrecision,
 }) => {
   const [searchParams] = useSearchParams()
-  const match = { playedAt, playedAtPrecision, updatedAt }
-  const date = getPlayedAt(match)
   const dateLabel =
-    formatPlayedAt(date, getPlayedAtPrecision(match)) || formatDate(date)
+    formatPlayedAt(playedAt, playedAtPrecision) || formatDate(playedAt)
 
   const getOutcomeKey = () => {
     const player = searchParams.get('player')

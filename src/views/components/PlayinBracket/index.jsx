@@ -83,10 +83,7 @@ const Qualified = ({ match, label, edge }) => {
 const PlayinBracket = ({ canMutate, cloudinaryId, getData, matches = [] }) => {
   const dragScrollRef = useDragScroll()
   const matchById = new Map(
-    (Array.isArray(matches) ? matches : []).map((m) => [
-      Number(m.playoff_id),
-      m,
-    ]),
+    (Array.isArray(matches) ? matches : []).map((m) => [m.playoff_id, m]),
   )
   const getMatch = (id) => matchById.get(id) || buildPlaceholder(id)
 

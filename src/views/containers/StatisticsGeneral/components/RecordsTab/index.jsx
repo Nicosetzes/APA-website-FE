@@ -105,8 +105,8 @@ const isCurrentRecord = (active, record) =>
 
 const StreakCards = ({ view, streaks, records }) => {
   const { emptyCard, emptyAll } = STREAK_VIEWS[view]
-  // `null` es "sin racha" y muestra la tarjeta vacía; una clave ausente (BE
-  // viejo) no se muestra.
+  // Si el BE no puede leer los torneos omite las rachas de fase de torneo
+  // (semis, finales, títulos), así que sólo se muestran las claves presentes.
   const keys = STREAK_KEYS.filter(([key]) => streaks && key in streaks)
 
   if (keys.length === 0) return <EmptyMessage>{emptyAll}</EmptyMessage>
@@ -135,15 +135,13 @@ const StreakCards = ({ view, streaks, records }) => {
   )
 }
 
-const StreakPanel = ({ view, streaks, records, tabbed, hidden = false }) => (
+const StreakPanel = ({ view, streaks, records, hidden = false }) => (
   <StreakPanelBox
     hidden={hidden}
-    {...(tabbed && {
-      role: 'tabpanel',
-      id: getPanelId('rachas', view),
-      'aria-labelledby': getTabId('rachas', view),
-      tabIndex: 0,
-    })}
+    role="tabpanel"
+    id={getPanelId('rachas', view)}
+    aria-labelledby={getTabId('rachas', view)}
+    tabIndex={0}
   >
     <StreakPanelDescription>
       {STREAK_VIEWS[view].description}
@@ -155,8 +153,6 @@ const StreakPanel = ({ view, streaks, records, tabbed, hidden = false }) => (
 const RecordsTab = ({ records, activeStreaks }) => {
   const [view, setView] = useState('historicas')
   const matchRecordKeys = MATCH_RECORD_KEYS.filter((key) => records?.[key])
-  // Un BE viejo no manda `activeStreaks`: sólo la vista histórica, sin tabs.
-  const hasActual = Boolean(activeStreaks)
   const streaksByView = { historicas: records, actuales: activeStreaks }
 
   return (
@@ -205,16 +201,12 @@ const RecordsTab = ({ records, activeStreaks }) => {
                       >
                         {record.match.tournament}
                       </div>
-                      {/* 880 partidos del histórico no tienen fecha: sin
-                          fecha no se muestra la línea. */}
-                      {record.match.date && (
-                        <div style={{ fontSize: '0.8rem', opacity: 0.7 }}>
-                          {formatPlayedAt(
-                            record.match.date,
-                            record.match.datePrecision,
-                          ) || formatDate(record.match.date)}
-                        </div>
-                      )}
+                      <div style={{ fontSize: '0.8rem', opacity: 0.7 }}>
+                        {formatPlayedAt(
+                          record.match.date,
+                          record.match.datePrecision,
+                        ) || formatDate(record.match.date)}
+                      </div>
                     </RecordDetail>
                   )}
                 </RecordCard>
@@ -226,34 +218,27 @@ const RecordsTab = ({ records, activeStreaks }) => {
 
       <Section>
         <SectionTitle>Récords de Rachas</SectionTitle>
-        {hasActual ? (
-          <>
-            <StreakTabs
-              idPrefix="rachas"
-              label="Tipo de rachas"
-              tabs={Object.entries(STREAK_VIEWS).map(([id, { label }]) => ({
-                id,
-                label,
-              }))}
-              selected={view}
-              onSelect={setView}
-            />
-            {/* Los dos paneles quedan en el DOM para que `aria-controls`
-                apunte a algo; el inactivo va con `hidden`. */}
-            {Object.keys(STREAK_VIEWS).map((id) => (
-              <StreakPanel
-                key={id}
-                view={id}
-                streaks={streaksByView[id]}
-                records={records}
-                tabbed
-                hidden={view !== id}
-              />
-            ))}
-          </>
-        ) : (
-          <StreakPanel view="historicas" streaks={records} records={records} />
-        )}
+        <StreakTabs
+          idPrefix="rachas"
+          label="Tipo de rachas"
+          tabs={Object.entries(STREAK_VIEWS).map(([id, { label }]) => ({
+            id,
+            label,
+          }))}
+          selected={view}
+          onSelect={setView}
+        />
+        {/* Los dos paneles quedan en el DOM para que `aria-controls`
+            apunte a algo; el inactivo va con `hidden`. */}
+        {Object.keys(STREAK_VIEWS).map((id) => (
+          <StreakPanel
+            key={id}
+            view={id}
+            streaks={streaksByView[id]}
+            records={records}
+            hidden={view !== id}
+          />
+        ))}
       </Section>
     </>
   )

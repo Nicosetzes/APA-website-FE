@@ -37,6 +37,14 @@ test('derives labels for managed playoffs and final', () => {
       format: 'playoff',
       playoffMode: 'two_legged',
       playoffId: 31,
+      leg: 2,
+    }),
+  ).toBe('Vuelta')
+  expect(
+    getLegLabel({
+      format: 'playoff',
+      playoffMode: 'single',
+      playoffId: 31,
       leg: 1,
     }),
   ).toBe('Partido único')

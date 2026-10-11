@@ -3,12 +3,9 @@ export const normalizePlayoffMode = (tournament = {}) =>
 
 export const normalizeLeg = (match = {}) => match.leg || 1
 
-export const getLegLabel = ({ format, playoffMode, playoffId, leg }) => {
+export const getLegLabel = ({ format, playoffMode, leg }) => {
   if (format !== 'playoff') return null
-  if (
-    normalizePlayoffMode({ playoffMode }) !== 'two_legged' ||
-    playoffId === 31
-  ) {
+  if (normalizePlayoffMode({ playoffMode }) !== 'two_legged') {
     return 'Partido único'
   }
   return { 1: 'Ida', 2: 'Vuelta', 3: 'Desempate' }[Number(leg)] || null

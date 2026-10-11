@@ -192,8 +192,46 @@ const splitInHalves = (ties) => {
   return [ties.slice(0, half), ties.slice(half)]
 }
 
-const Champion = ({ finalMatch, cloudinaryId }) => {
-  const winner = finalMatch?.outcome?.teamThatWon
+const findSide = (matches, teamId) => {
+  for (const match of matches) {
+    if (match.teamP1?.id === teamId) {
+      return { team: match.teamP1, player: match.playerP1 }
+    }
+    if (match.teamP2?.id === teamId) {
+      return { team: match.teamP2, player: match.playerP2 }
+    }
+  }
+  return null
+}
+
+export const getFinalResult = (tie) => {
+  const matches = tie?.matches || []
+  const series = matches[0]?.series
+
+  if (series) {
+    if (series.status !== 'decided') return null
+    if (series.winnerTeamId != null) {
+      const winner = findSide(matches, series.winnerTeamId)
+      const loserTeam = matches
+        .flatMap(({ teamP1, teamP2 }) => [teamP1, teamP2])
+        .find((team) => team?.id != null && team.id !== series.winnerTeamId)
+      const loser = loserTeam && findSide(matches, loserTeam.id)
+      return winner && loser ? { winner, loser } : null
+    }
+  } else if (matches.length !== 1) {
+    return null
+  }
+
+  const outcome = [...matches].reverse().find(({ played }) => played)?.outcome
+  if (!outcome?.teamThatWon) return null
+  return {
+    winner: { team: outcome.teamThatWon, player: outcome.playerThatWon },
+    loser: { team: outcome.teamThatLost, player: outcome.playerThatLost },
+  }
+}
+
+const Champion = ({ result, cloudinaryId }) => {
+  const winner = result?.winner.team
 
   return (
     <Podium>
@@ -214,15 +252,15 @@ const Champion = ({ finalMatch, cloudinaryId }) => {
           <PodiumTitle>
             Campeón <StarIcon htmlColor="#ffc30b" fontSize="small" />
           </PodiumTitle>
-          <PodiumPlayer>{finalMatch.outcome.playerThatWon?.name}</PodiumPlayer>
+          <PodiumPlayer>{result.winner.player?.name}</PodiumPlayer>
         </>
       )}
     </Podium>
   )
 }
 
-const Finalist = ({ finalMatch }) => {
-  const loser = finalMatch?.outcome?.teamThatLost
+const Finalist = ({ result }) => {
+  const loser = result?.loser.team
   if (!loser) return null
 
   return (
@@ -236,9 +274,7 @@ const Finalist = ({ finalMatch }) => {
           alt={loser.name || 'Finalista'}
         />
       </PodiumCircle>
-      <PodiumPlayer $silver>
-        {finalMatch.outcome.playerThatLost?.name}
-      </PodiumPlayer>
+      <PodiumPlayer $silver>{result.loser.player?.name}</PodiumPlayer>
     </Podium>
   )
 }
@@ -259,7 +295,7 @@ const PlayoffBracket = ({
   )
   const finalRound = rounds[rounds.length - 1]
   const sideRounds = rounds.slice(0, -1)
-  const finalMatch = finalRound?.ties[0]?.matches[0]
+  const finalResult = getFinalResult(finalRound?.ties[0])
 
   const getHalf = (round, side) => {
     const [leftTies, rightTies] = splitInHalves(round.ties)
@@ -311,18 +347,16 @@ const PlayoffBracket = ({
       <BracketArea>
         {renderSide('left')}
         <PlayoffRound
+          above={<Champion result={finalResult} cloudinaryId={cloudinaryId} />}
+          below={<Finalist result={finalResult} />}
           canMutate={canMutate}
           getData={getData}
-          name={finalRound.name}
-          ties={finalRound.ties}
-          side="center"
           hasIncoming={rounds.length > 1}
           incomingDone={finalIncomingDone}
           isThisTheFinal
-          above={
-            <Champion finalMatch={finalMatch} cloudinaryId={cloudinaryId} />
-          }
-          below={<Finalist finalMatch={finalMatch} />}
+          name={finalRound.name}
+          side="center"
+          ties={finalRound.ties}
         />
         {renderSide('right')}
       </BracketArea>

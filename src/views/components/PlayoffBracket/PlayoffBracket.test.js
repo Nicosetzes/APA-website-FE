@@ -3,7 +3,7 @@ jest.mock('views/components', () => ({ Loader: () => null }))
 import ReactDOM from 'react-dom'
 import { act } from 'react-dom/test-utils'
 import { MemoryRouter } from 'react-router-dom'
-import PlayoffBracket, { buildRounds } from '.'
+import PlayoffBracket, { buildRounds, getFinalResult } from '.'
 
 const reference = (id, name) => ({ id, name })
 const series = {
@@ -99,6 +99,79 @@ test('does not render aggregate labels before either leg is played', () => {
   })
   expect(container.textContent).not.toContain('Global')
   ReactDOM.unmountComponentAtNode(container)
+})
+
+const finalLeg = (leg, played, finalSeries, outcome) => ({
+  _id: `final-${leg}`,
+  playoff_id: 31,
+  leg,
+  playerP1: reference(leg === 2 ? 'p2' : 'p1', leg === 2 ? 'Santi' : 'Nico'),
+  teamP1: leg === 2 ? reference(2, 'River') : reference(1, 'Boca'),
+  seedP1: 'A',
+  playerP2: reference(leg === 2 ? 'p1' : 'p2', leg === 2 ? 'Nico' : 'Santi'),
+  teamP2: leg === 2 ? reference(1, 'Boca') : reference(2, 'River'),
+  seedP2: 'B',
+  played,
+  outcome,
+  series: { ...series, key: 't:31', ...finalSeries },
+})
+
+const renderFinal = (finalMatches) => {
+  const container = document.createElement('div')
+  act(() => {
+    ReactDOM.render(
+      <MemoryRouter>
+        <PlayoffBracket
+          format="playoff"
+          playoffMode="two_legged"
+          tournamentId="t"
+          matches={finalMatches}
+          getData={jest.fn()}
+        />
+      </MemoryRouter>,
+      container,
+    )
+  })
+  return container
+}
+
+test('two-legged final shows no champion or finalist after the first leg', () => {
+  const container = renderFinal([
+    finalLeg(
+      1,
+      true,
+      { status: 'awaiting_leg2' },
+      {
+        teamThatWon: reference(1, 'Boca'),
+        playerThatWon: reference('p1', 'Nico'),
+        teamThatLost: reference(2, 'River'),
+        playerThatLost: reference('p2', 'Santi'),
+      },
+    ),
+    finalLeg(2, false, { status: 'awaiting_leg2' }),
+  ])
+  expect(container.textContent).not.toContain('Campeón')
+  expect(container.textContent).not.toContain('Finalista')
+  ReactDOM.unmountComponentAtNode(container)
+})
+
+test('two-legged final shows champion and finalist from the series winner', () => {
+  const decided = { status: 'decided', winnerTeamId: 2 }
+  const container = renderFinal([
+    finalLeg(1, true, decided),
+    finalLeg(2, true, decided),
+  ])
+  expect(container.textContent).toContain('Campeón')
+  expect(container.textContent).toContain('Finalista')
+  ReactDOM.unmountComponentAtNode(container)
+
+  const result = getFinalResult({
+    matches: [finalLeg(1, true, decided), finalLeg(2, true, decided)],
+  })
+  expect(result.winner.team.name).toBe('River')
+  expect(result.winner.player.name).toBe('Santi')
+  expect(result.loser.team.name).toBe('Boca')
+  expect(result.loser.player.name).toBe('Nico')
 })
 
 test('groups both legs of a tie by their numeric team ids', () => {

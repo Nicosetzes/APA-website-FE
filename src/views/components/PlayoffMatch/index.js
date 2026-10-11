@@ -8,9 +8,9 @@ import { StyledPlayoffMatch } from './styled'
 import Tooltip from '../Tooltip'
 import { apiClient } from 'api/axiosConfig'
 import { useParams } from 'react-router-dom'
-import { useState } from 'react'
 import { api, database } from 'api'
 import { confirmDialog, toast } from 'utils/notifications'
+import { useEffect, useState } from 'react'
 
 const PlayoffMatch = ({
   canMutate,
@@ -33,13 +33,21 @@ const PlayoffMatch = ({
   getData,
   valid,
   isThisTheFinal,
+  tieDecided = true,
   side = 'left',
   align = 'center',
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showAnimation, setShowAnimation] = useState(false)
+  const [celebrationRequested, setCelebrationRequested] = useState(false)
   const [matchScore, setMatchScore] = useState({})
   const { tournament } = useParams()
+
+  useEffect(() => {
+    if (!celebrationRequested) return
+    if (tieDecided) setShowAnimation(true)
+    setCelebrationRequested(false)
+  }, [celebrationRequested, tieDecided])
 
   const hasCompetitors = Boolean(
     teamP1 &&
@@ -138,7 +146,7 @@ const PlayoffMatch = ({
         update,
       )
       await getData()
-      if (isThisTheFinal) setShowAnimation(true)
+      if (isThisTheFinal) setCelebrationRequested(true)
       toast.success({ title: 'Resultado cargado con éxito' })
     } catch (error) {
       if (error.response?.status === 409) {

@@ -84,6 +84,7 @@ const PlayoffRound = ({
             getData={getData}
             valid={valid}
             isThisTheFinal={isThisTheFinal}
+            tieDecided={isTieDecided(tie)}
             side={side === 'right' ? 'right' : 'left'}
             align={align}
           />

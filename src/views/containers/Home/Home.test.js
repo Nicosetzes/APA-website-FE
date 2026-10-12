@@ -43,12 +43,46 @@ const finalized = [
   },
 ]
 
+const recaps = {
+  '2026-10-11': {
+    date: '2026-10-11',
+    matchCount: 3,
+    recap: 'Resumen del 11',
+  },
+  '2026-10-10': {
+    date: '2026-10-10',
+    matchCount: 1,
+    recap: 'Resumen del 10',
+  },
+}
+
+const recapNotFound = () =>
+  Promise.reject({ response: { status: 404, data: { success: false } } })
+
 let container
 
 beforeEach(() => {
-  axios.get.mockImplementation((url, { params }) =>
-    Promise.resolve({ data: params.status === 'finalized' ? finalized : [] }),
-  )
+  axios.get.mockImplementation((url, config) => {
+    if (url === 'http://api/recaps/dates') {
+      return Promise.resolve({
+        data: { success: true, data: Object.keys(recaps) },
+      })
+    }
+    if (url === 'http://api/recaps/latest') {
+      return Promise.resolve({
+        data: { success: true, data: recaps['2026-10-11'] },
+      })
+    }
+    if (url.startsWith('http://api/recaps/')) {
+      const recap = recaps[url.split('/').pop()]
+      return recap
+        ? Promise.resolve({ data: { success: true, data: recap } })
+        : recapNotFound()
+    }
+    return Promise.resolve({
+      data: config.params.status === 'finalized' ? finalized : [],
+    })
+  })
   container = document.createElement('div')
   document.body.appendChild(container)
 })
@@ -59,8 +93,8 @@ afterEach(() => {
   jest.clearAllMocks()
 })
 
-test('el campeón vigente sale del torneo con el closedAt más reciente, ignorando updatedAt', async () => {
-  await act(async () => {
+const renderHome = () =>
+  act(async () => {
     ReactDOM.render(
       <MemoryRouter>
         <Home />
@@ -69,10 +103,67 @@ test('el campeón vigente sale del torneo con el closedAt más reciente, ignoran
     )
   })
 
+test('el campeón vigente sale del torneo con el closedAt más reciente, ignorando updatedAt', async () => {
+  await renderHome()
+
   expect(container.querySelector('.champion-tournament').textContent).toBe(
     'Copa Nueva',
   )
   expect(container.querySelector('.champion-player').textContent).toBe(
     'Santi - 01/08/2024',
+  )
+})
+
+test('muestra por defecto el recap más reciente y lista las fechas disponibles', async () => {
+  await renderHome()
+
+  expect(axios.get).toHaveBeenCalledWith('http://api/recaps/latest')
+  expect(container.querySelector('.recap-text').textContent).toBe(
+    'Resumen del 11',
+  )
+  expect(container.querySelector('.recap-meta').textContent).toBe(
+    '11/10/2026 · 3 partidos',
+  )
+  const select = container.querySelector('.recap-select')
+  expect(select.value).toBe('2026-10-11')
+  expect(Array.from(select.options).map((o) => o.value)).toEqual([
+    '2026-10-11',
+    '2026-10-10',
+  ])
+})
+
+test('al elegir una fecha pide el recap de ese día', async () => {
+  await renderHome()
+
+  const select = container.querySelector('.recap-select')
+  await act(async () => {
+    select.value = '2026-10-10'
+    select.dispatchEvent(new Event('change', { bubbles: true }))
+  })
+
+  expect(axios.get).toHaveBeenCalledWith('http://api/recaps/2026-10-10')
+  expect(container.querySelector('.recap-text').textContent).toBe(
+    'Resumen del 10',
+  )
+  expect(container.querySelector('.recap-meta').textContent).toBe(
+    '10/10/2026 · 1 partido',
+  )
+})
+
+test('sin recaps guardados muestra un mensaje y no un error', async () => {
+  const base = axios.get.getMockImplementation()
+  axios.get.mockImplementation((url, config) => {
+    if (url === 'http://api/recaps/latest') return recapNotFound()
+    if (url === 'http://api/recaps/dates') {
+      return Promise.resolve({ data: { success: true, data: [] } })
+    }
+    return base(url, config)
+  })
+
+  await renderHome()
+
+  expect(container.querySelector('.recap-select')).toBeNull()
+  expect(container.querySelector('.recap-status').textContent).toBe(
+    'No hay resúmenes disponibles',
   )
 })

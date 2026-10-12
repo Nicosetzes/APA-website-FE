@@ -139,6 +139,56 @@ export const StyledHome = styled.div`
       }
     }
   }
+  .container__recap {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 2rem 1rem;
+    .recap-title {
+      color: var(--blue-900);
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .recap-select {
+      background: none;
+      border: var(--orange-900) 2px solid;
+      border-radius: 5px;
+      color: var(--blue-900);
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 700;
+      padding: 0.5rem 1rem;
+    }
+    .recap-status {
+      color: var(--blue-900);
+      display: flex;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .recap-status--error {
+      color: crimson;
+    }
+    .recap-card {
+      border: var(--blue-900) 2px solid;
+      border-radius: 5px;
+      max-width: 700px;
+      padding: 1.25rem;
+      width: 100%;
+    }
+    .recap-meta {
+      color: var(--orange-900);
+      font-size: 0.875rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+    }
+    .recap-text {
+      color: var(--blue-900);
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+    }
+  }
   .container__tournament {
     align-items: center;
     display: flex;

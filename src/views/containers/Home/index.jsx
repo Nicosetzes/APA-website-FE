@@ -9,9 +9,16 @@ import { useMediaQuery } from 'react-responsive'
 import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api, cloudName, database } from 'api'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 const getClosedAt = (tournament) => tournament?.closedAt ?? null
+
+const formatRecapDate = (date) => {
+  const [year, month, day] = String(date).split('-')
+  return year && month && day ? `${day}/${month}/${year}` : date
+}
+
+const isRecapNotFound = (err) => err?.response?.status === 404
 
 const Home = () => {
   const isM = useMediaQuery({ query: '(min-width: 768px)' })
@@ -56,6 +63,67 @@ const Home = () => {
   useEffect(() => {
     fetchTournaments()
   }, [])
+
+  const [recap, setRecap] = useState(null)
+  const [recapDates, setRecapDates] = useState([])
+  const [selectedRecapDate, setSelectedRecapDate] = useState('')
+  const [recapLoading, setRecapLoading] = useState(true)
+  const [recapError, setRecapError] = useState(null)
+  const recapRequestId = useRef(0)
+
+  useEffect(() => {
+    const requestId = ++recapRequestId.current
+    const isStale = () => requestId !== recapRequestId.current
+
+    const fetchInitialRecap = async () => {
+      const [latestRes, datesRes] = await Promise.allSettled([
+        axios.get(`${api}/recaps/latest`),
+        axios.get(`${api}/recaps/dates`),
+      ])
+      if (isStale()) return
+
+      if (datesRes.status === 'fulfilled') {
+        setRecapDates(datesRes.value.data?.data || [])
+      }
+
+      if (latestRes.status === 'fulfilled') {
+        const latest = latestRes.value.data?.data
+        setRecap(latest || null)
+        setSelectedRecapDate(latest?.date || '')
+      } else if (!isRecapNotFound(latestRes.reason)) {
+        console.error(latestRes.reason)
+        setRecapError('No se pudo cargar el resumen del día')
+      }
+      setRecapLoading(false)
+    }
+
+    fetchInitialRecap()
+    return () => {
+      recapRequestId.current += 1
+    }
+  }, [])
+
+  const handleRecapDateChange = async (event) => {
+    const date = event.target.value
+    const requestId = ++recapRequestId.current
+    setSelectedRecapDate(date)
+    setRecapLoading(true)
+    setRecapError(null)
+    try {
+      const res = await axios.get(`${api}/recaps/${date}`)
+      if (requestId !== recapRequestId.current) return
+      setRecap(res.data?.data || null)
+    } catch (err) {
+      if (requestId !== recapRequestId.current) return
+      setRecap(null)
+      if (!isRecapNotFound(err)) {
+        console.error(err)
+        setRecapError('No se pudo cargar el resumen del día')
+      }
+    } finally {
+      if (requestId === recapRequestId.current) setRecapLoading(false)
+    }
+  }
 
   const lastTournament = useMemo(() => {
     if (finalizedTournaments.length === 0) return null
@@ -128,6 +196,41 @@ const Home = () => {
               SALÓN DE LA FAMA
             </button>
           </div>
+        </div>
+        <div className="container__recap">
+          <div className="recap-title">RESUMEN DEL DÍA</div>
+          {recapDates.length > 0 && (
+            <select
+              aria-label="Fecha del resumen"
+              className="recap-select"
+              disabled={recapLoading}
+              value={selectedRecapDate}
+              onChange={handleRecapDateChange}
+            >
+              {recapDates.map((date) => (
+                <option key={date} value={date}>
+                  {formatRecapDate(date)}
+                </option>
+              ))}
+            </select>
+          )}
+          {recapLoading ? (
+            <div className="recap-status">
+              <Loader />
+            </div>
+          ) : recapError ? (
+            <div className="recap-status recap-status--error">{recapError}</div>
+          ) : !recap ? (
+            <div className="recap-status">No hay resúmenes disponibles</div>
+          ) : (
+            <div className="recap-card">
+              <div className="recap-meta">
+                {formatRecapDate(recap.date)} · {recap.matchCount}{' '}
+                {recap.matchCount === 1 ? 'partido' : 'partidos'}
+              </div>
+              <div className="recap-text">{recap.recap}</div>
+            </div>
+          )}
         </div>
         <div className="container__tournament">
           <div

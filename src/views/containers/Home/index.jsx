@@ -1,5 +1,6 @@
 import { Image } from 'cloudinary-react'
 import { Loader } from 'views/components'
+import Markdown from 'markdown-to-jsx'
 import { StyledHome } from './styled'
 import axios from 'axios'
 import { formatDate } from 'utils/dates'
@@ -228,7 +229,12 @@ const Home = () => {
                 {formatRecapDate(recap.date)} · {recap.matchCount}{' '}
                 {recap.matchCount === 1 ? 'partido' : 'partidos'}
               </div>
-              <div className="recap-text">{recap.recap}</div>
+              <Markdown
+                className="recap-text"
+                options={{ disableParsingRawHTML: true, forceBlock: true }}
+              >
+                {recap.recap}
+              </Markdown>
             </div>
           )}
         </div>

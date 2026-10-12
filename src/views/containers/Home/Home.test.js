@@ -150,6 +150,37 @@ test('al elegir una fecha pide el recap de ese día', async () => {
   )
 })
 
+test('renderiza el recap como markdown', async () => {
+  const base = axios.get.getMockImplementation()
+  axios.get.mockImplementation((url, config) =>
+    url === 'http://api/recaps/latest'
+      ? Promise.resolve({
+          data: {
+            success: true,
+            data: {
+              date: '2026-10-11',
+              matchCount: 10,
+              recap:
+                '# Día de goleadas\n\nAyer se jugaron **10 partidos**.\n\n---\n\n## Copa del Mundo 2026\n**Etapa: playoff**\n\n<script>alert(1)</script>',
+            },
+          },
+        })
+      : base(url, config),
+  )
+
+  await renderHome()
+
+  const text = container.querySelector('.recap-text')
+  expect(text.querySelector('h1').textContent).toBe('Día de goleadas')
+  expect(text.querySelector('h2').textContent).toBe('Copa del Mundo 2026')
+  expect(text.querySelector('hr')).not.toBeNull()
+  expect(
+    Array.from(text.querySelectorAll('strong')).map((n) => n.textContent),
+  ).toEqual(['10 partidos', 'Etapa: playoff'])
+  expect(text.textContent).not.toContain('**')
+  expect(text.querySelector('script')).toBeNull()
+})
+
 test('sin recaps guardados muestra un mensaje y no un error', async () => {
   const base = axios.get.getMockImplementation()
   axios.get.mockImplementation((url, config) => {

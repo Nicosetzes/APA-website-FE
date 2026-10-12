@@ -19,6 +19,7 @@
     "cloudinary-react": "^1.8.1",
     "date-fns": "^4.1.0",
     "framer-motion": "^6.5.1",
+    "markdown-to-jsx": "^7.7.17",
     "randomcolor": "^0.6.2",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",

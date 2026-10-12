@@ -186,7 +186,35 @@ export const StyledHome = styled.div`
       color: var(--blue-900);
       line-height: 1.5;
       overflow-wrap: anywhere;
-      white-space: pre-wrap;
+      h1,
+      h2,
+      h3 {
+        line-height: 1.25;
+        margin: 1.25rem 0 0.5rem;
+      }
+      h1 {
+        font-size: 1.5rem;
+        margin-top: 0;
+      }
+      h2 {
+        font-size: 1.25rem;
+      }
+      h3 {
+        font-size: 1.05rem;
+      }
+      p {
+        margin: 0.5rem 0;
+      }
+      ul,
+      ol {
+        margin: 0.5rem 0;
+        padding-left: 1.5rem;
+      }
+      hr {
+        border: 0;
+        border-top: var(--orange-900) 1px solid;
+        margin: 1rem 0;
+      }
     }
   }
   .container__tournament {

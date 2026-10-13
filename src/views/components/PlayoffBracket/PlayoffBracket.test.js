@@ -198,3 +198,59 @@ test('groups both legs of a tie by their numeric team ids', () => {
     'otra-vuelta',
   ])
 })
+
+const renderSingleLeg = (singleLegMatches) => {
+  const container = document.createElement('div')
+  act(() => {
+    ReactDOM.render(
+      <MemoryRouter>
+        <PlayoffBracket
+          format="world_cup_2026"
+          tournamentId="t"
+          matches={singleLegMatches}
+          getData={jest.fn()}
+        />
+      </MemoryRouter>,
+      container,
+    )
+  })
+  return container
+}
+
+const singleLegMatch = (prediction) => ({
+  _id: 'single',
+  playoff_id: 1,
+  playerP1: reference('p1', 'Nico'),
+  teamP1: reference(1, 'Boca'),
+  seedP1: '1A',
+  playerP2: reference('p2', 'Santi'),
+  teamP2: reference(2, 'River'),
+  seedP2: '1B',
+  played: false,
+  prediction,
+})
+
+test('passes the prediction of each match down to its chips', () => {
+  const container = renderSingleLeg([
+    singleLegMatch({
+      p1: 0.71,
+      p2: 0.29,
+      basis: 'current',
+      teamAdjusted: true,
+      provisional: false,
+      ratingVersion: '2.0',
+    }),
+  ])
+  const chips = container.querySelectorAll('.team-prediction')
+  expect(Array.from(chips).map((chip) => chip.textContent)).toEqual([
+    '71%',
+    '29%',
+  ])
+  ReactDOM.unmountComponentAtNode(container)
+})
+
+test('shows no chips for matches without prediction or placeholders', () => {
+  const container = renderSingleLeg([singleLegMatch(null)])
+  expect(container.querySelectorAll('.team-prediction')).toHaveLength(0)
+  ReactDOM.unmountComponentAtNode(container)
+})

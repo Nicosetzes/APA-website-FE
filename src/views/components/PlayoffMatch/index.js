@@ -10,7 +10,10 @@ import { apiClient } from 'api/axiosConfig'
 import { useParams } from 'react-router-dom'
 import { api, database } from 'api'
 import { confirmDialog, toast } from 'utils/notifications'
+import { formatPrediction, getUpsetSide } from 'utils/predictions'
 import { useEffect, useState } from 'react'
+
+const PREDICTION_HELP = 'Prob. de éxito según Rating APA 2.0.'
 
 const PlayoffMatch = ({
   canMutate,
@@ -30,6 +33,7 @@ const PlayoffMatch = ({
   scoreP2,
   played,
   outcome,
+  prediction,
   getData,
   valid,
   isThisTheFinal,
@@ -86,6 +90,36 @@ const PlayoffMatch = ({
   }
   const penaltyScoreP1 = getPenaltyScore(teamP1?.id)
   const penaltyScoreP2 = getPenaltyScore(teamP2?.id)
+
+  const predictionPct = valid === false ? null : formatPrediction(prediction)
+  const upsetSide = getUpsetSide({
+    prediction,
+    played,
+    valid,
+    outcome,
+    teamP1,
+    teamP2,
+    playerP1,
+    playerP2,
+  })
+  const renderPredictionChip = (side) => {
+    if (!predictionPct) return null
+    const pct = side === 'p1' ? predictionPct.p1Pct : predictionPct.p2Pct
+    const isUpset = upsetSide === side
+    return (
+      <Tooltip title={`${PREDICTION_HELP}`} describeChild>
+        <span
+          className="team-prediction"
+          role="img"
+          tabIndex={0}
+          aria-label={`Probabilidad de éxito ${pct}%`}
+          data-upset={isUpset || undefined}
+        >
+          {pct}%
+        </span>
+      </Tooltip>
+    )
+  }
 
   const onHandleChange = (event) => {
     const { name, value } = event.target
@@ -194,6 +228,7 @@ const PlayoffMatch = ({
         isThisTheFinal={isThisTheFinal}
         $side={side}
         $align={align}
+        $hasPrediction={Boolean(predictionPct)}
         data-leg={leg}
       >
         <div style={{ display: 'flex' }}>
@@ -232,6 +267,7 @@ const PlayoffMatch = ({
                   </>
                 )}
               </div>
+              {renderPredictionChip('p1')}
               {played ? (
                 <div className="team-score">
                   {valid === false &&
@@ -316,6 +352,7 @@ const PlayoffMatch = ({
                   </>
                 )}
               </div>
+              {renderPredictionChip('p2')}
               {played ? (
                 <div className="team-score">
                   {valid === false &&

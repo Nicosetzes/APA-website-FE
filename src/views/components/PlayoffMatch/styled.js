@@ -20,7 +20,7 @@ export const StyledPlayoffMatch = styled.div`
   justify-content: ${(props) =>
     props.$align === 'start' ? 'flex-start' : 'center'};
   padding: 0 0.5rem;
-  width: 300px;
+  width: 330px;
   .container__team {
     align-items: center;
     display: flex;
@@ -36,7 +36,7 @@ export const StyledPlayoffMatch = styled.div`
       font-weight: 700;
       height: 40px;
       justify-content: center;
-      margin: 0.5rem;
+      margin: ${(props) => (props.$hasPrediction ? '0.5rem 0.3rem' : '0.5rem')};
       width: 20px;
     }
     .team-logo {
@@ -48,13 +48,36 @@ export const StyledPlayoffMatch = styled.div`
       align-items: center;
       color: #fff;
       display: flex;
-      font-size: 0.8rem;
+      font-size: ${(props) => (props.$hasPrediction ? '0.75rem' : '0.8rem')};
       height: 40px;
       justify-content: ${(props) =>
         props.$side === 'right' ? 'flex-end' : 'flex-start'};
-      margin: 0 0.4rem;
+      margin: ${(props) => (props.$hasPrediction ? '0 0.3rem' : '0 0.4rem')};
+      overflow-wrap: ${(props) =>
+        props.$hasPrediction ? 'anywhere' : 'normal'};
       text-align: ${(props) => (props.$side === 'right' ? 'right' : 'left')};
-      width: 105px;
+      width: ${(props) => (props.$hasPrediction ? '100px' : '105px')};
+    }
+    .team-prediction {
+      background-color: rgba(255, 255, 255, 0.08);
+      border-radius: 999px;
+      box-sizing: border-box;
+      color: #cbd5e1;
+      cursor: help;
+      flex-shrink: 0;
+      font-size: 0.7rem;
+      font-weight: 700;
+      line-height: 1.4;
+      text-align: center;
+      width: 2.2rem;
+      &:focus-visible {
+        outline: 2px solid var(--orange-900);
+        outline-offset: 1px;
+      }
+      &[data-upset] {
+        background-color: rgba(255, 140, 26, 0.2);
+        color: var(--orange-900);
+      }
     }
     .team-user {
       align-items: center;

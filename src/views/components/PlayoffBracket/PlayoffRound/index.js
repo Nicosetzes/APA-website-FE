@@ -58,6 +58,7 @@ const PlayoffRound = ({
           leg,
           series,
           mutation,
+          prediction,
         }) => (
           <PlayoffMatch
             canMutate={canMutate}
@@ -81,6 +82,7 @@ const PlayoffRound = ({
             scoreP2={scoreP2}
             played={played}
             outcome={outcome}
+            prediction={prediction}
             getData={getData}
             valid={valid}
             isThisTheFinal={isThisTheFinal}

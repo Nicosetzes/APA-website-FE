@@ -274,3 +274,162 @@ test('shows the W/O badge only next to the numeric winner of an invalid match', 
   expect(container.querySelector('.team-walkover')).toBeNull()
   ReactDOM.unmountComponentAtNode(container)
 })
+
+const PREDICTION = {
+  p1: 0.623,
+  p2: 0.377,
+  basis: 'current',
+  teamAdjusted: true,
+  provisional: false,
+  ratingVersion: '2.0',
+}
+
+const chipsOf = (container) =>
+  Array.from(container.querySelectorAll('.team-prediction'))
+
+test('shows one prediction chip per row with an accessible label', () => {
+  const container = document.createElement('div')
+  renderMatch(container, { prediction: PREDICTION })
+
+  const chips = chipsOf(container)
+  expect(chips.map((chip) => chip.textContent)).toEqual(['62%', '38%'])
+  expect(chips[0].getAttribute('aria-label')).toBe('Probabilidad de éxito 62%')
+  expect(chips[1].getAttribute('aria-label')).toBe('Probabilidad de éxito 38%')
+  // Una por fila, cada una dentro de su equipo.
+  const rows = container.querySelectorAll('.container__team')
+  expect(rows[0].contains(chips[0])).toBe(true)
+  expect(rows[1].contains(chips[1])).toBe(true)
+  ReactDOM.unmountComponentAtNode(container)
+})
+
+test('renders no chip when the prediction is null or missing', () => {
+  const container = document.createElement('div')
+  for (const prediction of [null, undefined, {}, { p1: 'x' }]) {
+    renderMatch(container, { prediction })
+    expect(chipsOf(container)).toHaveLength(0)
+    ReactDOM.unmountComponentAtNode(container)
+  }
+})
+
+test('renders no chip for an invalid (SIM or W/O) played match', () => {
+  const container = document.createElement('div')
+  renderMatch(container, {
+    prediction: PREDICTION,
+    played: true,
+    valid: false,
+    outcome: { teamThatWon: ref(2, 'River') },
+  })
+  expect(chipsOf(container)).toHaveLength(0)
+  ReactDOM.unmountComponentAtNode(container)
+})
+
+test('puts the chip between the team name and the score on both sides', () => {
+  const container = document.createElement('div')
+  for (const side of ['left', 'right']) {
+    renderMatch(container, {
+      prediction: PREDICTION,
+      side,
+      played: true,
+      scoreP1: 1,
+      scoreP2: 0,
+      outcome: { teamThatWon: ref(1, 'Boca') },
+    })
+    expect(chipsOf(container)).toHaveLength(2)
+    container.querySelectorAll('.container__team').forEach((row) => {
+      const classes = Array.from(row.children).map((child) => child.className)
+      const name = classes.indexOf('team-name')
+      const chip = classes.indexOf('team-prediction')
+      const score = classes.indexOf('team-score')
+      expect(name).toBeGreaterThan(-1)
+      expect(chip).toBe(name + 1)
+      expect(score).toBe(chip + 1)
+    })
+    ReactDOM.unmountComponentAtNode(container)
+  }
+})
+
+test('keeps the DOM unchanged when there is no prediction', () => {
+  const withNull = document.createElement('div')
+  const without = document.createElement('div')
+  renderMatch(withNull, { prediction: null })
+  renderMatch(without, {})
+  expect(withNull.innerHTML).toBe(without.innerHTML)
+  ReactDOM.unmountComponentAtNode(withNull)
+  ReactDOM.unmountComponentAtNode(without)
+})
+
+test('does not highlight the chip of the favourite that advanced', () => {
+  const container = document.createElement('div')
+  renderMatch(container, {
+    prediction: PREDICTION,
+    played: true,
+    scoreP1: 2,
+    scoreP2: 1,
+    outcome: { teamThatWon: ref(1, 'Boca') },
+  })
+  expect(container.querySelector('[data-upset]')).toBeNull()
+  ReactDOM.unmountComponentAtNode(container)
+})
+
+test('highlights only the chip of the side that advanced against the odds', () => {
+  const container = document.createElement('div')
+  renderMatch(container, {
+    prediction: PREDICTION,
+    played: true,
+    scoreP1: 0,
+    scoreP2: 1,
+    outcome: { teamThatWon: ref(2, 'River') },
+  })
+  const upsets = container.querySelectorAll('[data-upset]')
+  expect(upsets).toHaveLength(1)
+  expect(upsets[0].textContent).toBe('38%')
+  ReactDOM.unmountComponentAtNode(container)
+})
+
+test('uses the outcome, not the score, when penalties leave the score tied', () => {
+  const container = document.createElement('div')
+  renderMatch(container, {
+    prediction: PREDICTION,
+    played: true,
+    scoreP1: 2,
+    scoreP2: 2,
+    outcome: {
+      penalties: true,
+      teamThatWon: ref(2, 'River'),
+      scoreFromTeamThatWon: 5,
+      scoreFromTeamThatLost: 4,
+    },
+  })
+  const upsets = container.querySelectorAll('[data-upset]')
+  expect(upsets).toHaveLength(1)
+  expect(upsets[0].textContent).toBe('38%')
+  ReactDOM.unmountComponentAtNode(container)
+})
+
+test('clamps extreme probabilities to 1% and 99%', () => {
+  const container = document.createElement('div')
+  renderMatch(container, {
+    prediction: { ...PREDICTION, p1: 0.999, p2: 0.001 },
+  })
+  expect(chipsOf(container).map((chip) => chip.textContent)).toEqual([
+    '99%',
+    '1%',
+  ])
+  ReactDOM.unmountComponentAtNode(container)
+})
+
+test('the chip coexists with the result inputs and confirmation buttons', () => {
+  const container = document.createElement('div')
+  renderMatch(container, { prediction: PREDICTION })
+
+  expect(chipsOf(container)).toHaveLength(2)
+  expect(container.querySelector('[name="scoreP1"]')).not.toBeNull()
+  expect(container.querySelector('[name="scoreP2"]')).not.toBeNull()
+  expect(
+    container.querySelector('[aria-label="Confirmar resultado"]'),
+  ).not.toBeNull()
+  expect(
+    container.querySelector('[aria-label="Confirmar resultado simulado"]'),
+  ).not.toBeNull()
+  ReactDOM.unmountComponentAtNode(container)
+})

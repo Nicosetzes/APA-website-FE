@@ -101,6 +101,7 @@ const PlayinBracket = ({ canMutate, cloudinaryId, getData, matches = [] }) => {
       scoreP2={match.scoreP2}
       played={match.played}
       outcome={match.outcome}
+      prediction={match.prediction}
       getData={getData}
       valid={match.valid}
       side={side}

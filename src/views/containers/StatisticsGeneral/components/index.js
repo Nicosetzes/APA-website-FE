@@ -1,3 +1,4 @@
+export { default as RatingsTable } from './RatingsTable'
 export { default as RecordsTab } from './RecordsTab'
 export { default as StreakMatchSummary } from './StreakMatchSummary'
 export { default as StreakRecordCard } from './StreakRecordCard'

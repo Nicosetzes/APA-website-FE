@@ -3,6 +3,7 @@ import { Loader } from 'views/components'
 import { apiClient } from 'api/axiosConfig'
 import { database } from 'api'
 import { formatDate } from 'utils/dates'
+import { formatPlayedAt } from 'utils/playedAt'
 import { motion } from 'framer-motion'
 import {
   EmptyMessage,
@@ -27,12 +28,20 @@ import {
   StreakBadge,
 } from './styled'
 import { PageLoader, Tabs, Tooltip } from 'views/components'
-import { RecordsTab } from './components'
-import { formatPlayedAt } from 'utils/playedAt'
+import { RatingsTable, RecordsTab } from './components'
+import {
+  formatRating,
+  indexRatingsByPlayer,
+  orderByRating,
+} from 'utils/ratings'
 import { useCallback, useEffect, useState } from 'react'
+
+const isAbortError = (err) =>
+  err?.name === 'CanceledError' || err?.name === 'AbortError'
 
 const StatisticsGeneral = () => {
   const [stats, setStats] = useState()
+  const [ratings, setRatings] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
@@ -40,14 +49,26 @@ const StatisticsGeneral = () => {
     const controller = new AbortController()
     setLoading(true)
     setError(null)
-    apiClient
-      .get('/statistics', { signal: controller.signal })
-      .then(({ data }) => {
+
+    const ratingsRequest = apiClient
+      .get('/ratings', { signal: controller.signal })
+      .then(({ data }) => data.data)
+      .catch((err) => {
+        if (!isAbortError(err)) console.error(err)
+        return null
+      })
+
+    Promise.all([
+      apiClient.get('/statistics', { signal: controller.signal }),
+      ratingsRequest,
+    ])
+      .then(([{ data }, ratingRows]) => {
         setStats(data)
+        setRatings(ratingRows)
         setLoading(false)
       })
       .catch((err) => {
-        if (err?.name === 'CanceledError' || err?.name === 'AbortError') return
+        if (isAbortError(err)) return
         console.error(err)
         setError('No se pudieron cargar las estadísticas')
         setLoading(false)
@@ -84,13 +105,33 @@ const StatisticsGeneral = () => {
     return labels[key] || key
   }
 
+  const ratingsByPlayer = indexRatingsByPlayer(ratings ?? [])
+  const orderedPlayers = orderByRating(stats?.players ?? [], ratings ?? [])
+
   const PlayersTab = () => (
     <Section>
+      {ratings === null ? (
+        <EmptyMessage style={{ marginBottom: '2rem' }}>
+          No se pudo cargar el ranking Elo.
+        </EmptyMessage>
+      ) : (
+        <RatingsTable ratings={ratings} />
+      )}
       <SectionTitle>Estadísticas por Jugador</SectionTitle>
       <PlayersGrid>
-        {stats?.players?.map((player) => (
+        {orderedPlayers.map((player) => (
           <PlayerCard key={player.player.id}>
             <PlayerName>{player.player.name}</PlayerName>
+            {ratingsByPlayer.has(String(player.player.id)) && (
+              <StatRow>
+                <StatLabel>Elo</StatLabel>
+                <StatValue>
+                  {formatRating(
+                    ratingsByPlayer.get(String(player.player.id)).rating,
+                  )}
+                </StatValue>
+              </StatRow>
+            )}
             <StatRow>
               <StatLabel>Partidos</StatLabel>
               <StatValue>{player.totalMatches}</StatValue>

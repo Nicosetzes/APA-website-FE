@@ -72,7 +72,7 @@ test('has an accessible table with its column headers', () => {
   render([row()])
 
   expect(container.querySelector('table').getAttribute('aria-label')).toBe(
-    'Ranking Elo de los jugadores',
+    'Rating APA 2.0 de los jugadores',
   )
   expect(
     [...container.querySelectorAll('thead th')].map((th) => th.textContent),

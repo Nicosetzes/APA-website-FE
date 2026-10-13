@@ -116,7 +116,7 @@ test('players tab shows the Elo ranking and orders the cards by it', async () =>
     '/ratings',
     expect.objectContaining({ signal: expect.anything() }),
   )
-  expect(container.textContent).toContain('Ranking Elo')
+  expect(container.textContent).toContain('Rating APA 2.0')
   expect(container.querySelectorAll('tbody tr')).toHaveLength(2)
   expect(container.querySelector('tbody').textContent).toContain('1632')
 

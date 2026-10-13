@@ -18,9 +18,25 @@ import {
 } from './styled'
 import { describeRatingChange, formatRating } from 'utils/ratings'
 
-const HELP_TEXT =
-  'ELO inicial = 1500. Ganar suma puntos y perder resta; cuanto más fuerte es el rival, más suma quien gana. ' +
-  'Máx: el rating más alto que alcanzó. Último cambio: lo que sumó o restó en su último partido.'
+const HELP_LIST_STYLE = { margin: '0.25rem 0 0', paddingLeft: '1.1rem' }
+
+const HELP_TEXT = (
+  <>
+    <strong>Rating APA 2.0</strong>
+    <ul style={HELP_LIST_STYLE}>
+      <li>Todos arrancan en 1500.</li>
+      <li>Ganar suma puntos y perder resta.</li>
+      <li>Cuanto más fuerte es el rival, más suma quien gana.</li>
+      <li>
+        También cuenta la fuerza de los equipos (overall de Sofifa de la edición
+        del torneo): ganar con un equipo más fuerte suma menos y con uno más
+        débil suma más.
+      </li>
+      <li>Máx: el rating más alto que alcanzó.</li>
+      <li>Último cambio: lo que sumó o restó en su último partido.</li>
+    </ul>
+  </>
+)
 
 const TREND_ICONS = {
   up: <ArrowDropUpIcon aria-hidden="true" />,
@@ -34,10 +50,10 @@ const RatingsTable = ({ ratings }) => {
   return (
     <RatingsCard>
       <RatingsTitle>
-        Ranking Elo
+        Rating APA 2.0
         <Tooltip title={HELP_TEXT}>
           <HelpOutlineIcon
-            aria-label="Cómo se calcula el Elo"
+            aria-label="Cómo se calcula el Rating APA 2.0"
             sx={{
               cursor: 'pointer',
               fontSize: '1rem',
@@ -49,7 +65,7 @@ const RatingsTable = ({ ratings }) => {
         </Tooltip>
       </RatingsTitle>
       <TableScroll>
-        <Table aria-label="Ranking Elo de los jugadores">
+        <Table aria-label="Rating APA 2.0 de los jugadores">
           <thead>
             <tr>
               <th scope="col">#</th>

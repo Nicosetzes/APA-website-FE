@@ -12,9 +12,14 @@ export const TableWrapper = styled.div`
 export const CustomTable = styled.table`
   width: 100%;
   border-collapse: collapse;
-  min-width: 650px;
+  min-width: 735px;
   color: #ffffff;
   font-family: system-ui, -apple-system, sans-serif;
+
+  th:nth-child(5),
+  td:nth-child(5) {
+    width: 90px;
+  }
 
   th {
     background: #001f35;
@@ -131,4 +136,36 @@ export const DateText = styled.div`
     font-size: 0.7rem;
     color: #64748b;
   }
+`
+
+export const EloChange = styled.span`
+  cursor: help;
+  display: inline-flex;
+  flex-direction: column;
+  font-size: 0.85rem;
+  font-weight: 500;
+  line-height: 1.35;
+  text-align: left;
+
+  &:focus-visible {
+    outline: 2px solid var(--orange-900);
+    outline-offset: 2px;
+  }
+`
+
+export const EloLine = styled.span`
+  color: #cbd5e1;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+
+  &[data-trend='up'] {
+    color: #4ade80;
+  }
+  &[data-trend='down'] {
+    color: #f87171;
+  }
+`
+
+export const EloEmpty = styled.span`
+  color: #64748b;
 `

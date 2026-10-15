@@ -13,7 +13,7 @@ export const describeRatingChange = (change) => {
     return { trend: 'flat', text: '-' }
   }
 
-  const rounded = Math.round(change * 10) / 10
+  const rounded = Math.sign(change) * (Math.round(Math.abs(change) * 10) / 10)
 
   if (rounded === 0) return { trend: 'flat', text: '0.0' }
 
@@ -49,3 +49,44 @@ export const orderByRating = (players = [], ratings = []) => {
 
 export const indexRatingsByPlayer = (ratings = []) =>
   new Map(ratings.map((row) => [String(row.player.id), row]))
+
+const isNumber = (value) => typeof value === 'number' && Number.isFinite(value)
+
+const TOOLTIP_MATCH_RATING = 'Rating APA 2.0'
+
+const playerTag = (name, fallback) =>
+  typeof name === 'string' && name.trim()
+    ? name.trim().substring(0, 3).toUpperCase()
+    : fallback
+
+export const describeMatchRatingChange = (
+  ratingChange,
+  { nameP1, nameP2, idP1, idP2, focusPlayerId } = {},
+) => {
+  if (!ratingChange || typeof ratingChange !== 'object') return null
+  const { p1, p2 } = ratingChange
+  if (!isNumber(p1) || !isNumber(p2)) return null
+
+  const same = (a, b) => a != null && b != null && String(a) === String(b)
+  const build = (side, value, name, fallback) => {
+    const { trend, text } = describeRatingChange(value)
+    const tag = playerTag(name, fallback)
+    return { side, tag, name: name || fallback, text: `${tag} ${text}`, trend }
+  }
+  const all = [build('p1', p1, nameP1, 'P1'), build('p2', p2, nameP2, 'P2')]
+
+  let lines = all
+  if (same(focusPlayerId, idP1)) lines = [all[0]]
+  else if (same(focusPlayerId, idP2)) lines = [all[1]]
+
+  const label = lines
+    .map((line) => `${line.name} ${line.text.slice(line.tag.length + 1)}`)
+    .join(', ')
+
+  return {
+    lines,
+    focused: lines.length === 1,
+    tooltip: TOOLTIP_MATCH_RATING,
+    label: `Variación de Elo: ${label}`,
+  }
+}

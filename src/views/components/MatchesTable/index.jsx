@@ -1,8 +1,13 @@
 import { database } from 'api'
+import { describeMatchRatingChange } from 'utils/ratings'
 import { formatPlayedAt } from 'utils/playedAt'
+import Tooltip from '../Tooltip'
 import {
   CustomTable,
   DateText,
+  EloChange,
+  EloEmpty,
+  EloLine,
   PenaltyScore,
   PlayerTag,
   Scoreboard,
@@ -30,8 +35,7 @@ const getPenaltyScores = (outcome, teamP1) => {
   }
 }
 
-const MatchesTable = ({ matches }) => {
-  // Sin fecha (partido no jugado) o fecha inválida: '-' sin hora.
+const MatchesTable = ({ matches, focusPlayerId = '' }) => {
   const getDateParts = (playedAt) => {
     const date = formatDate(playedAt)
     return date
@@ -48,6 +52,7 @@ const MatchesTable = ({ matches }) => {
             <th>Torneo</th>
             <th>Tipo</th>
             <th>Partido</th>
+            <th>Elo</th>
           </tr>
         </thead>
         <tbody>
@@ -66,6 +71,7 @@ const MatchesTable = ({ matches }) => {
               group,
               playedAt,
               playedAtPrecision,
+              ratingChange,
             } = match
 
             // Fecha no exacta: sólo la etiqueta, sin hora.
@@ -82,6 +88,13 @@ const MatchesTable = ({ matches }) => {
               outcome?.teamThatWon?.id === teamP2.id &&
               !outcome?.draw
             const penalties = getPenaltyScores(outcome, teamP1)
+            const eloChange = describeMatchRatingChange(ratingChange, {
+              nameP1: playerP1?.name,
+              nameP2: playerP2?.name,
+              idP1: playerP1?.id,
+              idP2: playerP2?.id,
+              focusPlayerId,
+            })
 
             return (
               <tr key={_id}>
@@ -169,6 +182,30 @@ const MatchesTable = ({ matches }) => {
                       </span>
                     </TeamBlock>
                   </Scoreboard>
+                </td>
+                <td>
+                  {eloChange ? (
+                    <Tooltip title={eloChange.tooltip} describeChild>
+                      <EloChange
+                        role="img"
+                        tabIndex={0}
+                        aria-label={eloChange.label}
+                      >
+                        {eloChange.lines.map((line) => (
+                          <EloLine
+                            key={line.side}
+                            data-side={line.side}
+                            data-trend={line.trend}
+                            aria-hidden="true"
+                          >
+                            {line.text}
+                          </EloLine>
+                        ))}
+                      </EloChange>
+                    </Tooltip>
+                  ) : (
+                    <EloEmpty>-</EloEmpty>
+                  )}
                 </td>
               </tr>
             )

@@ -445,7 +445,10 @@ const MatchListing = () => {
                 Página {page} de {data?.totalPages || 1}
               </ResultsBadge>
             </ResultsHeader>
-            <MatchesTable matches={data?.matches || []} />
+            <MatchesTable
+              matches={data?.matches || []}
+              focusPlayerId={hasPlayer1 ? player1 : ''}
+            />
             <PaginationWrapper>
               <Pagination
                 count={data?.totalPages || 0}

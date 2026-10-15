@@ -85,7 +85,8 @@ export const InputContainer = styled.div`
 
 export const MatchDate = styled.div`
   display: flex;
-  font-size: 0.875rem;
+  font-style: italic;
+  font-size: 0.8rem;
   margin: 1rem 0 0 0;
 `
 
@@ -154,4 +155,40 @@ export const ScoreInput = styled.input`
 
 export const VersusSpan = styled.span`
   font-size: 1rem;
+`
+
+export const OutcomeChipsRow = styled.div`
+  align-items: flex-start;
+  display: flex;
+  justify-content: center;
+  margin-top: 0.75rem;
+`
+
+export const OutcomeChipCell = styled.div`
+  box-sizing: border-box;
+  display: flex;
+  flex: 0 0 ${({ $position }) => ($position === 'side' ? '100px' : 'auto')};
+  justify-content: center;
+  min-width: ${({ $position }) => ($position === 'side' ? '100px' : '5.5rem')};
+`
+
+export const OutcomeChip = styled.span`
+  background-color: rgba(0, 0, 0, 0.06);
+  border-radius: 999px;
+  box-sizing: border-box;
+  color: #4b5563;
+  cursor: help;
+  font-size: 0.7rem;
+  font-weight: 600;
+  line-height: 1.4;
+  padding: 0 0.5rem;
+  white-space: nowrap;
+  &:focus-visible {
+    outline: 2px solid var(--orange-900);
+    outline-offset: 1px;
+  }
+  &[data-upset] {
+    background-color: rgba(255, 140, 26, 0.18);
+    color: #b45309;
+  }
 `

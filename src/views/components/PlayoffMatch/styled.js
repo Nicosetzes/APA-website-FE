@@ -20,7 +20,7 @@ export const StyledPlayoffMatch = styled.div`
   justify-content: ${(props) =>
     props.$align === 'start' ? 'flex-start' : 'center'};
   padding: 0 0.5rem;
-  width: 330px;
+  width: 340px;
   .container__team {
     align-items: center;
     display: flex;
@@ -36,7 +36,7 @@ export const StyledPlayoffMatch = styled.div`
       font-weight: 700;
       height: 40px;
       justify-content: center;
-      margin: ${(props) => (props.$hasPrediction ? '0.5rem 0.3rem' : '0.5rem')};
+      margin: 0.5rem 0.3rem;
       width: 20px;
     }
     .team-logo {
@@ -48,28 +48,32 @@ export const StyledPlayoffMatch = styled.div`
       align-items: center;
       color: #fff;
       display: flex;
-      font-size: ${(props) => (props.$hasPrediction ? '0.75rem' : '0.8rem')};
+      font-size: 0.75rem;
       height: 40px;
       justify-content: ${(props) =>
         props.$side === 'right' ? 'flex-end' : 'flex-start'};
-      margin: ${(props) => (props.$hasPrediction ? '0 0.3rem' : '0 0.4rem')};
-      overflow-wrap: ${(props) =>
-        props.$hasPrediction ? 'anywhere' : 'normal'};
+      margin: 0 0.3rem;
+      overflow-wrap: anywhere;
       text-align: ${(props) => (props.$side === 'right' ? 'right' : 'left')};
-      width: ${(props) => (props.$hasPrediction ? '100px' : '105px')};
+      width: 100px;
+    }
+
+    .team-prediction,
+    .team-prediction-slot {
+      box-sizing: border-box;
+      flex-shrink: 0;
+      width: 3rem;
     }
     .team-prediction {
       background-color: rgba(255, 255, 255, 0.08);
+      border: 1px solid transparent;
       border-radius: 999px;
-      box-sizing: border-box;
       color: #cbd5e1;
       cursor: help;
-      flex-shrink: 0;
       font-size: 0.7rem;
       font-weight: 700;
       line-height: 1.4;
       text-align: center;
-      width: 2.2rem;
       &:focus-visible {
         outline: 2px solid var(--orange-900);
         outline-offset: 1px;
@@ -129,6 +133,37 @@ export const StyledPlayoffMatch = styled.div`
         text-align: center;
         width: 1.35rem;
       }
+    }
+  }
+
+  .team-draw-divider {
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    height: 0;
+    position: relative;
+  }
+  .team-draw {
+    background-color: rgb(0, 26, 42);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 999px;
+    box-sizing: border-box;
+    color: #cbd5e1;
+    cursor: help;
+    font-size: 0.7rem;
+    font-weight: 700;
+    line-height: 1.4;
+    position: absolute;
+    text-align: center;
+    top: 0;
+    white-space: nowrap;
+    width: 3rem;
+    z-index: 1;
+    ${(props) =>
+      props.$side === 'right'
+        ? 'left: 4.6rem; transform: translate(-50%, -50%);'
+        : 'right: 4.6rem; transform: translate(50%, -50%);'}
+    &:focus-visible {
+      outline: 2px solid var(--orange-900);
+      outline-offset: 1px;
     }
   }
   .match__deletion {

@@ -10,10 +10,17 @@ import { apiClient } from 'api/axiosConfig'
 import { useParams } from 'react-router-dom'
 import { api, database } from 'api'
 import { confirmDialog, toast } from 'utils/notifications'
-import { formatPrediction, getUpsetSide } from 'utils/predictions'
+import {
+  formatOutcomesPrediction,
+  formatPrediction,
+  getOutcomesUpsetSide,
+  getUpsetSide,
+} from 'utils/predictions'
 import { useEffect, useState } from 'react'
 
 const PREDICTION_HELP = 'Prob. de éxito según Rating APA 2.0.'
+const WIN_HELP = 'Prob. de victoria (Rating APA 2.0)'
+const DRAW_HELP = 'Prob. de empate (Rating APA 2.0)'
 
 const PlayoffMatch = ({
   canMutate,
@@ -102,8 +109,48 @@ const PlayoffMatch = ({
     playerP1,
     playerP2,
   })
+
+  const outcomesPct =
+    valid === false ? null : formatOutcomesPrediction(prediction)
+  const outcomesUpsetSide = getOutcomesUpsetSide({
+    prediction,
+    played,
+    valid,
+    scoreP1,
+    scoreP2,
+  })
+  const nameOf = (side) =>
+    side === 'p1'
+      ? playerP1?.name ?? teamP1?.name
+      : playerP2?.name ?? teamP2?.name
   const renderPredictionChip = (side) => {
-    if (!predictionPct) return null
+    if (outcomesPct) {
+      const pct = side === 'p1' ? outcomesPct.p1Pct : outcomesPct.p2Pct
+      const isUpset = outcomesUpsetSide === side
+      return (
+        <Tooltip title={WIN_HELP} describeChild>
+          <span
+            className="team-prediction"
+            role="img"
+            tabIndex={0}
+            aria-label={`Probabilidad de que gane ${
+              nameOf(side) || (side === 'p1' ? 'P1' : 'P2')
+            }: ${pct}%${
+              isUpset ? '. Ganó quien tenía menos probabilidad.' : ''
+            }`}
+            data-outcome={side === 'p1' ? 'p1Win' : 'p2Win'}
+            data-upset={isUpset || undefined}
+          >
+            V {pct}%
+          </span>
+        </Tooltip>
+      )
+    }
+    // Sin predicción (mismo jugador en ambos lados, partido simulado, lado vacío,
+    // etc.) se deja el lugar del chip vacío para que el resto no se corra.
+    if (!predictionPct) {
+      return <span className="team-prediction-slot" aria-hidden="true" />
+    }
     const pct = side === 'p1' ? predictionPct.p1Pct : predictionPct.p2Pct
     const isUpset = upsetSide === side
     return (
@@ -118,6 +165,25 @@ const PlayoffMatch = ({
           {pct}%
         </span>
       </Tooltip>
+    )
+  }
+
+  const renderDrawDivider = () => {
+    if (!outcomesPct) return null
+    return (
+      <div className="team-draw-divider">
+        <Tooltip title={DRAW_HELP} describeChild>
+          <span
+            className="team-draw"
+            role="img"
+            tabIndex={0}
+            aria-label={`Probabilidad de empate: ${outcomesPct.drawPct}%`}
+            data-outcome="draw"
+          >
+            E {outcomesPct.drawPct}%
+          </span>
+        </Tooltip>
+      </div>
     )
   }
 
@@ -228,7 +294,6 @@ const PlayoffMatch = ({
         isThisTheFinal={isThisTheFinal}
         $side={side}
         $align={align}
-        $hasPrediction={Boolean(predictionPct)}
         data-leg={leg}
       >
         <div style={{ display: 'flex' }}>
@@ -318,6 +383,7 @@ const PlayoffMatch = ({
                 <div className="team-score">-</div>
               )}
             </div>
+            {renderDrawDivider()}
             <div
               className="container__team"
               data-series-winner={p2IsSeriesWinner || undefined}

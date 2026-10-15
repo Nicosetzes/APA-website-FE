@@ -19,6 +19,7 @@ import {
   TeamTextarea,
   VersusSpan,
 } from './styled'
+import OutcomeChips, { getOutcomeChips } from './OutcomeChip'
 import { api, database } from 'api'
 import { confirmDialog, toast } from 'utils/notifications'
 import { formatDateTime } from 'utils/dates'
@@ -131,6 +132,16 @@ const Match = ({ canMutate, match, getFixtureData, teamStats }) => {
     return stats ? `${stats.playedMatches}/${stats.totalMatches}` : null
   }
 
+  const outcomes = getOutcomeChips({
+    prediction: match.prediction,
+    played,
+    valid: match.valid,
+    scoreP1,
+    scoreP2,
+    nameP1: playerP1?.name ?? teamP1?.name,
+    nameP2: playerP2?.name ?? teamP2?.name,
+  })
+
   return (
     <StyledMatch
       onSubmit={(e) => {
@@ -209,6 +220,7 @@ const Match = ({ canMutate, match, getFixtureData, teamStats }) => {
           <PlayerInput name="playerP2" value={playerP2.name} readOnly />
         </MatchInfo>
       </MatchView>
+      <OutcomeChips outcomes={outcomes} />
       {played && playedAt ? (
         <MatchDate>
           {formatPlayedAt(playedAt, playedAtPrecision) ||

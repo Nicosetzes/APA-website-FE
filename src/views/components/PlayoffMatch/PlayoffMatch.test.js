@@ -433,3 +433,188 @@ test('the chip coexists with the result inputs and confirmation buttons', () => 
   ).not.toBeNull()
   ReactDOM.unmountComponentAtNode(container)
 })
+
+const OUTCOMES = {
+  kind: 'outcomes',
+  p1Win: 0.5,
+  draw: 0.2,
+  p2Win: 0.3,
+  basis: 'current',
+  teamAdjusted: true,
+  provisional: false,
+  ratingVersion: '2.0',
+  drawModelVersion: 'draw-1',
+}
+
+const outcomeChipOf = (container, outcome) =>
+  container.querySelector(`[data-outcome="${outcome}"]`)
+
+test('outcomes shape (two-legged legs): one win chip per row and the draw chip on the divider', () => {
+  const container = document.createElement('div')
+  renderMatch(container, { prediction: OUTCOMES })
+
+  const rows = container.querySelectorAll('.container__team')
+  expect(rows).toHaveLength(2)
+  expect(chipsOf(container).map((chip) => chip.textContent)).toEqual([
+    'V 50%',
+    'V 30%',
+  ])
+  // Un chip por fila, en su lado.
+  expect(rows[0].contains(outcomeChipOf(container, 'p1Win'))).toBe(true)
+  expect(rows[1].contains(outcomeChipOf(container, 'p2Win'))).toBe(true)
+
+  // El empate va en el divisor entre las dos filas y no dentro de ninguna.
+  const draw = outcomeChipOf(container, 'draw')
+  expect(draw.textContent).toBe('E 20%')
+  const divider = draw.closest('.team-draw-divider')
+  expect(divider).not.toBeNull()
+  expect(divider.previousElementSibling).toBe(rows[0])
+  expect(divider.nextElementSibling).toBe(rows[1])
+  rows.forEach((row) => expect(row.contains(draw)).toBe(false))
+  ReactDOM.unmountComponentAtNode(container)
+})
+
+test('outcomes shape: victory tooltip on the sides, draw tooltip on the divider, Spanish aria-labels', () => {
+  const container = document.createElement('div')
+  renderMatch(container, { prediction: OUTCOMES })
+  ;['p1Win', 'p2Win'].forEach((outcome) => {
+    expect(outcomeChipOf(container, outcome).getAttribute('title')).toBe(
+      'Prob. de victoria (Rating APA 2.0)',
+    )
+  })
+  expect(outcomeChipOf(container, 'draw').getAttribute('title')).toBe(
+    'Prob. de empate (Rating APA 2.0)',
+  )
+  expect(outcomeChipOf(container, 'p1Win').getAttribute('aria-label')).toBe(
+    'Probabilidad de que gane Nico: 50%',
+  )
+  expect(outcomeChipOf(container, 'draw').getAttribute('aria-label')).toBe(
+    'Probabilidad de empate: 20%',
+  )
+  expect(outcomeChipOf(container, 'p2Win').getAttribute('aria-label')).toBe(
+    'Probabilidad de que gane Santi: 30%',
+  )
+  ReactDOM.unmountComponentAtNode(container)
+})
+
+test('outcomes shape: marks only the winner who had fewer odds (draws are not upsets)', () => {
+  const container = document.createElement('div')
+  renderMatch(container, {
+    prediction: OUTCOMES,
+    played: true,
+    scoreP1: 0,
+    scoreP2: 1,
+    outcome: { teamThatWon: ref(2, 'River') },
+  })
+  expect(outcomeChipOf(container, 'p2Win').hasAttribute('data-upset')).toBe(
+    true,
+  )
+  expect(outcomeChipOf(container, 'p1Win').hasAttribute('data-upset')).toBe(
+    false,
+  )
+  expect(outcomeChipOf(container, 'draw').hasAttribute('data-upset')).toBe(
+    false,
+  )
+  // El tooltip no cambia: el aviso se marca con el color (y en el aria-label).
+  expect(outcomeChipOf(container, 'p2Win').getAttribute('title')).toBe(
+    'Prob. de victoria (Rating APA 2.0)',
+  )
+  ReactDOM.unmountComponentAtNode(container)
+
+  const drawn = document.createElement('div')
+  renderMatch(drawn, {
+    prediction: OUTCOMES,
+    played: true,
+    scoreP1: 1,
+    scoreP2: 1,
+    outcome: { draw: true },
+  })
+  expect(drawn.querySelector('[data-upset]')).toBeNull()
+  ReactDOM.unmountComponentAtNode(drawn)
+
+  const favourite = document.createElement('div')
+  renderMatch(favourite, {
+    prediction: OUTCOMES,
+    played: true,
+    scoreP1: 2,
+    scoreP2: 0,
+    outcome: { teamThatWon: ref(1, 'Boca') },
+  })
+  expect(favourite.querySelector('[data-upset]')).toBeNull()
+  ReactDOM.unmountComponentAtNode(favourite)
+})
+
+test('outcomes shape: no chips for invalid matches, null or malformed predictions', () => {
+  for (const extra of [
+    { prediction: OUTCOMES, valid: false },
+    { prediction: null },
+    { prediction: { ...OUTCOMES, p1Win: 'x' } },
+    { prediction: { ...OUTCOMES, kind: 'advance' } },
+  ]) {
+    const container = document.createElement('div')
+    renderMatch(container, extra)
+    expect(chipsOf(container)).toHaveLength(0)
+    expect(container.querySelector('.team-draw-divider')).toBeNull()
+    expect(container.querySelector('[data-outcome]')).toBeNull()
+    ReactDOM.unmountComponentAtNode(container)
+  }
+})
+
+test('outcomes shape: keeps the score inputs and the confirm buttons', () => {
+  const container = document.createElement('div')
+  renderMatch(container, { prediction: OUTCOMES })
+
+  expect(container.querySelector('[name="scoreP1"]')).not.toBeNull()
+  expect(container.querySelector('[name="scoreP2"]')).not.toBeNull()
+  expect(
+    container.querySelector('[aria-label="Confirmar resultado"]'),
+  ).not.toBeNull()
+  ReactDOM.unmountComponentAtNode(container)
+})
+
+test('renders the same DOM with a null prediction as with none (no divider added)', () => {
+  const withNull = document.createElement('div')
+  const without = document.createElement('div')
+  renderMatch(withNull, { prediction: null })
+  renderMatch(without, {})
+  expect(withNull.innerHTML).toBe(without.innerHTML)
+  expect(withNull.querySelector('.team-draw-divider')).toBeNull()
+  ReactDOM.unmountComponentAtNode(withNull)
+  ReactDOM.unmountComponentAtNode(without)
+})
+
+test('without a prediction each row keeps an empty slot where the chip would go', () => {
+  for (const extra of [
+    { prediction: null },
+    {},
+    { prediction: OUTCOMES, valid: false },
+  ]) {
+    const container = document.createElement('div')
+    renderMatch(container, extra)
+    container.querySelectorAll('.container__team').forEach((row) => {
+      const classes = Array.from(row.children).map((child) => child.className)
+      const slot = classes.indexOf('team-prediction-slot')
+      expect(slot).toBeGreaterThan(-1)
+      // Entre el nombre y el marcador (o los inputs), igual que un chip.
+      expect(classes[slot - 1]).toBe('team-name')
+      expect(classes[slot + 1]).toBe('team-inputs')
+      const element = row.children[slot]
+      expect(element.getAttribute('aria-hidden')).toBe('true')
+      expect(element.textContent).toBe('')
+    })
+    ReactDOM.unmountComponentAtNode(container)
+  }
+})
+
+test('with a prediction the chip takes the place of the slot, same position in the row', () => {
+  const container = document.createElement('div')
+  renderMatch(container, { prediction: OUTCOMES })
+  container.querySelectorAll('.container__team').forEach((row) => {
+    const classes = Array.from(row.children).map((child) => child.className)
+    expect(classes).not.toContain('team-prediction-slot')
+    const chip = classes.indexOf('team-prediction')
+    expect(classes[chip - 1]).toBe('team-name')
+    expect(classes[chip + 1]).toBe('team-inputs')
+  })
+  ReactDOM.unmountComponentAtNode(container)
+})

@@ -276,3 +276,64 @@ export const OutcomeHeader = styled.div`
   justify-content: ${(props) => (props.$centered ? 'center' : 'start')};
   margin: 0 0 1rem 0;
 `
+
+export const RecapSection = styled.section`
+  background: #fff;
+  border: var(--blue-900) 2px solid;
+  border-radius: 0.5rem;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  margin: 0 auto;
+  max-width: 800px;
+  padding: 1.5rem;
+  width: 100%;
+`
+export const RecapTitle = styled.h2`
+  color: var(--blue-900);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+`
+export const RecapHeadline = styled.p`
+  color: var(--orange-900);
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 1rem 0;
+`
+export const RecapStatus = styled.p`
+  color: crimson;
+  margin: 0;
+`
+export const RecapText = styled.div`
+  color: var(--blue-900);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  h1,
+  h2,
+  h3 {
+    line-height: 1.25;
+    margin: 1.25rem 0 0.5rem;
+  }
+  h1 {
+    font-size: 1.5rem;
+    margin-top: 0;
+  }
+  h2 {
+    font-size: 1.25rem;
+  }
+  h3 {
+    font-size: 1.05rem;
+  }
+  p {
+    margin: 0.5rem 0;
+  }
+  ul,
+  ol {
+    margin: 0.5rem 0;
+    padding-left: 1.5rem;
+  }
+  hr {
+    border: 0;
+    border-top: var(--orange-900) 1px solid;
+    margin: 1rem 0;
+  }
+`

@@ -1,4 +1,5 @@
 import { Image } from 'cloudinary-react'
+import Markdown from 'markdown-to-jsx'
 import StarIcon from '@mui/icons-material/Star'
 import { formatDateTime } from 'utils/dates'
 import { formatPlayedAt } from 'utils/playedAt'
@@ -29,6 +30,11 @@ import {
   OutcomeWrapper,
   ParticipantsTable,
   PlayerName,
+  RecapHeadline,
+  RecapSection,
+  RecapStatus,
+  RecapText,
+  RecapTitle,
   RecentMatchesSection,
   TeamInfo,
   TeamLogo,
@@ -69,6 +75,32 @@ const Tournament = () => {
   useEffect(() => {
     fetchSummary()
   }, [fetchSummary])
+
+  const isOngoing = tournamentData?.ongoing
+  const [tournamentRecap, setTournamentRecap] = useState(null)
+  const [recapError, setRecapError] = useState(null)
+
+  useEffect(() => {
+    setTournamentRecap(null)
+    setRecapError(null)
+    if (isOngoing) return undefined
+
+    let cancelled = false
+    const fetchRecap = async () => {
+      try {
+        const { data } = await apiClient.get(`/tournaments/${tournament}/recap`)
+        if (!cancelled) setTournamentRecap(data?.data || null)
+      } catch (error) {
+        if (cancelled || error?.response?.status === 404) return
+        console.error(error)
+        setRecapError('No se pudo cargar la crónica del torneo')
+      }
+    }
+    fetchRecap()
+    return () => {
+      cancelled = true
+    }
+  }, [tournament, isOngoing])
 
   if (statsLoading) return <PageLoader />
   if (summaryError) {
@@ -139,7 +171,8 @@ const Tournament = () => {
   }
 
   const parseTournamentFormat = (format) => {
-    if (format === 'club_world_cup') return 'Mundial de clubes'
+    if (format === 'american_cup') return 'Copa América'
+    else if (format === 'club_world_cup') return 'Mundial de clubes'
     else if (format === 'league') return 'Torneo largo'
     else if (format === 'league_playin_playoff') return 'Superliga APA'
     else if (format === 'playoff') return 'Eliminatoria'
@@ -250,6 +283,28 @@ const Tournament = () => {
               </OutcomeContent>
             </OutcomeCard>
           </OutcomeWrapper>
+        )}
+
+        {!ongoing && (tournamentRecap || recapError) && (
+          <RecapSection aria-label="Crónica del torneo">
+            <RecapTitle>Crónica del torneo</RecapTitle>
+            {tournamentRecap ? (
+              <>
+                {tournamentRecap.headline && (
+                  <RecapHeadline>{tournamentRecap.headline}</RecapHeadline>
+                )}
+                <RecapText>
+                  <Markdown
+                    options={{ disableParsingRawHTML: true, forceBlock: true }}
+                  >
+                    {tournamentRecap.recap}
+                  </Markdown>
+                </RecapText>
+              </>
+            ) : (
+              <RecapStatus>{recapError}</RecapStatus>
+            )}
+          </RecapSection>
         )}
 
         {tournamentSummary?.matches?.recent?.length > 0 && (

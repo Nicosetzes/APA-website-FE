@@ -4,6 +4,7 @@ import { ROUTES } from '../routesConfig'
 import { TournamentLayout } from 'views/containers/Tournament/layout'
 import { Calculator, HallOfFame, Login, Simulator } from 'pages'
 import {
+  AssistantPage,
   EditListing,
   EditUpload,
   Home,
@@ -72,6 +73,14 @@ export const AnimatedRoutes = () => {
           </Route>
         </Route>
 
+        <Route
+          path={ROUTES.ASSISTANT.path}
+          element={
+            <ProtectedRoute>
+              <AssistantPage />
+            </ProtectedRoute>
+          }
+        />
         <Route path={ROUTES.MATCHES.path} element={<MatchListing />} />
         <Route path={ROUTES.STATISTICS.path} element={<StatisticsGeneral />} />
         <Route path={ROUTES.HALL_OF_FAME.path} element={<HallOfFame />} />

@@ -1,3 +1,5 @@
+export { default as AssistantChat } from './AssistantChat'
+export { default as AssistantLauncher } from './AssistantLauncher'
 export { default as BreadCrumbsMUI } from './BreadCrumbsMUI'
 export { default as Card } from './Card'
 export { default as CelebrationAnimation } from './CelebrationAnimation'

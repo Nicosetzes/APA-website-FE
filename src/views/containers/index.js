@@ -1,3 +1,4 @@
+export { default as AssistantPage } from './AssistantPage'
 export { default as EditListing } from './EditListing'
 export { default as EditUpload } from './EditUpload'
 export { default as Home } from './Home'

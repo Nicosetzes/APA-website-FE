@@ -1,21 +1,30 @@
 import './index.css'
 import AnimatedRoutes from 'routes/AnimatedRoutes'
+import { AssistantProvider } from 'context/AssistantContext'
 import { AuthProvider } from 'context/AuthContext'
 import { BrowserRouter } from 'react-router-dom'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import reportWebVitals from './reportWebVitals'
-import { Navbar, Footer, PageWrapper } from 'views/components'
+import {
+  AssistantLauncher,
+  Navbar,
+  Footer,
+  PageWrapper,
+} from 'views/components'
 
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
       <AuthProvider>
-        <Navbar />
-        <PageWrapper>
-          <AnimatedRoutes />
-        </PageWrapper>
-        <Footer />
+        <AssistantProvider>
+          <Navbar />
+          <PageWrapper>
+            <AnimatedRoutes />
+          </PageWrapper>
+          <Footer />
+          <AssistantLauncher />
+        </AssistantProvider>
       </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>,

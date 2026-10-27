@@ -44,6 +44,10 @@ export const ROUTES = {
     path: '/tournaments/:tournament/playoffs',
     isPublic: true,
   },
+  ASSISTANT: {
+    path: '/asistente',
+    isPublic: false,
+  },
   MATCHES: {
     path: '/matches',
     isPublic: true,

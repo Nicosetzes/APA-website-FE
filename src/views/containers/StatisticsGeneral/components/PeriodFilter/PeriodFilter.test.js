@@ -86,6 +86,8 @@ test('the year select lists the years and reports the chosen one', () => {
     '2023',
     '2022',
     '2021',
+    '2020',
+    '2019',
   ])
   expect(select.value).toBe('')
   const setter = Object.getOwnPropertyDescriptor(
@@ -107,6 +109,11 @@ test('a year shortcut is selected in the year select and no button is pressed', 
       (node) => node.getAttribute('aria-pressed') === 'true',
     ),
   ).toHaveLength(0)
+})
+
+test('the oldest year (2019) can be the active year', () => {
+  render({ slug: '2019', dateFrom: '2019-01-01', dateTo: '2019-12-31' })
+  expect(container.querySelector('select').value).toBe('2019')
 })
 
 test('shows the effective range in the date fields', () => {

@@ -238,6 +238,21 @@ describe('links de rachas: filtros precargados', () => {
     expect(field('dateTo').value).toBe('03/07/2022')
     expect(matchesRequests()).toEqual([`http://api/matches?${query}&page=1`])
   })
+
+  test('"Ver partido" del Rating APA: jugador, rival y equipos por nombre', async () => {
+    // Mismo link que arma buildUpsetMatchesLink (nombres con tilde).
+    const query =
+      'player1=p1&player1Team=Lan%C3%BAs&player2=p2&opponentTeam=Racing&dateFrom=2026-10-11&dateTo=2026-10-11'
+    await navigateTo(`/matches?${query}`)
+
+    expect(field('player1').value).toBe('p1')
+    expect(field('player2').value).toBe('p2')
+    expect(field('player1Team').value).toBe('Lanús')
+    expect(field('opponentTeam').value).toBe('Racing')
+    expect(field('dateFrom').value).toBe('11/10/2026')
+    expect(field('dateTo').value).toBe('11/10/2026')
+    expect(matchesRequests()).toEqual([`http://api/matches?${query}&page=1`])
+  })
 })
 
 test('"Victoria (incl. penales)" va justo después de "Victoria"', async () => {

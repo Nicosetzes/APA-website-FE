@@ -161,8 +161,16 @@ test('shows each player upsets with a link to the match', () => {
     a.getAttribute('href'),
   )
   expect(hrefs).toEqual([
-    '/matches?player1=n&player2=s&dateFrom=2026-10-10&dateTo=2026-10-10',
-    '/matches?player1=n&player2=s&dateFrom=2026-10-11&dateTo=2026-10-11',
+    '/matches?player1=n&player1Team=Boca&player2=s&opponentTeam=River&dateFrom=2026-10-10&dateTo=2026-10-10',
+    '/matches?player1=n&player1Team=Lan%C3%BAs&player2=s&opponentTeam=Racing&dateFrom=2026-10-11&dateTo=2026-10-11',
+  ])
+  // Santi juega el mismo partido desde el otro lado: él es player1.
+  const santiHrefs = [
+    ...container.querySelectorAll('h4')[1].parentElement.querySelectorAll('a'),
+  ].map((a) => a.getAttribute('href'))
+  expect(santiHrefs).toEqual([
+    '/matches?player1=s&player1Team=Racing&player2=n&opponentTeam=Lan%C3%BAs&dateFrom=2026-10-11&dateTo=2026-10-11',
+    '/matches?player1=s&player1Team=River&player2=n&opponentTeam=Boca&dateFrom=2026-10-10&dateTo=2026-10-10',
   ])
 })
 
@@ -479,7 +487,13 @@ test('still works with an older BE that sends no teams at all', () => {
   expect(nico.textContent).toContain(
     'Tenía 34% de chances de ganar · +10.0 ELO · 10/10/2026',
   )
-  expect(nico.querySelectorAll('a')).toHaveLength(2)
+  // Sin equipos el link queda como antes, sin params de equipo vacíos.
+  expect(
+    [...nico.querySelectorAll('a')].map((a) => a.getAttribute('href')),
+  ).toEqual([
+    '/matches?player1=n&player2=s&dateFrom=2026-10-10&dateTo=2026-10-10',
+    '/matches?player1=n&player2=s&dateFrom=2026-10-11&dateTo=2026-10-11',
+  ])
 })
 
 test('derives the signed Elo change from ratingSwing with an older BE', () => {

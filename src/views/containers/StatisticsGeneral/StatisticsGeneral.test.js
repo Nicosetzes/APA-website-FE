@@ -234,7 +234,7 @@ test('an invalid tab falls back to Rating APA', async () => {
 test('changing tab writes tab and clears the Rating APA params', async () => {
   mockApi({ ratings: () => Promise.resolve({ data: ratingsResponse }) })
   await render(
-    '/statistics?period=2025&dateFrom=2025-01-01&dateTo=2025-02-01&players=n&other=1',
+    '/statistics?dateFrom=2025-01-01&dateTo=2025-02-01&players=n&other=1',
   )
 
   clickTab('Jugadores')

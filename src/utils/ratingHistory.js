@@ -8,17 +8,19 @@ export const REFERENCE_RATING = 1500
 
 // Params de la URL de la pestaña "Rating APA" (StatisticsGeneral los limpia
 // al cambiar de pestaña).
-export const RATING_TAB_PARAMS = ['period', 'dateFrom', 'dateTo', 'players']
+export const RATING_TAB_PARAMS = ['dateFrom', 'dateTo', 'players']
 
-export const HISTORY_START_DATE = '2019-01-01'
+// Año del primer evento de rating. Fija el inicio de "Todo el historial" y el
+// año más antiguo del selector de años: un solo valor para que no se desfasen.
+export const FIRST_RATING_YEAR = 2019
+export const HISTORY_START_DATE = `${FIRST_RATING_YEAR}-01-01`
 
 export const DEFAULT_PERIOD = 'ultimo-anio'
 export const MAX_DEFAULT_PLAYERS = 8
 export const MAX_AXIS_TICKS = 8
 
-// Año más antiguo con atajo propio y año más nuevo que siempre se ofrece
-// (después se suma el año actual hacia arriba, si corresponde).
-const OLDEST_YEAR_SHORTCUT = 2021
+// Año más nuevo que siempre se ofrece (después se suma el año actual hacia
+// arriba, si corresponde). Los años bajan hasta `FIRST_RATING_YEAR`.
 const NEWEST_FIXED_YEAR = 2026
 
 const MONTH_LABELS = [
@@ -130,7 +132,7 @@ export const getPeriodOptions = (today) => {
   const years = []
   for (
     let year = Math.max(currentYear, NEWEST_FIXED_YEAR);
-    year >= OLDEST_YEAR_SHORTCUT;
+    year >= FIRST_RATING_YEAR;
     year -= 1
   ) {
     years.push({
@@ -148,23 +150,29 @@ const findShortcut = (slug, today) => {
   return [...shortcuts, ...years].find((option) => option.slug === slug)
 }
 
+export const getShortcutRange = (slug, today) => {
+  const shortcut = findShortcut(slug, today)
+  return shortcut
+    ? { dateFrom: shortcut.dateFrom, dateTo: shortcut.dateTo }
+    : null
+}
+
+export const detectShortcut = (dateFrom, dateTo, today) => {
+  const { shortcuts, years } = getPeriodOptions(today)
+  const match = [...shortcuts, ...years].find(
+    (option) => option.dateFrom === dateFrom && option.dateTo === dateTo,
+  )
+  return match ? match.slug : null
+}
+
 /**
- * Período efectivo a partir de los params de la URL. Gana un atajo válido
- * (`period`); si no, un rango libre (`dateFrom` y `dateTo`); si no hay nada,
- * "Último año". `status`: `ok`, `incomplete` (falta una fecha o es inválida) o
- * `inverted` (`dateFrom` posterior a `dateTo`). Solo con `ok` se pide al BE.
+ * Período efectivo a partir de `dateFrom` y `dateTo` de la URL. Con las dos
+ * fechas, el rango libre; sin ninguna, "Último año" (se aplica sin escribirlo
+ * en la URL). `slug` es el atajo cuyo rango coincide hoy (o `null`). `status`:
+ * `ok`, `incomplete` (falta una fecha o es inválida) o `inverted`
+ * (`dateFrom` posterior a `dateTo`). Solo con `ok` se pide al BE.
  */
-export const resolvePeriod = ({ period, dateFrom, dateTo } = {}, today) => {
-  const shortcut = period ? findShortcut(period, today) : undefined
-  if (shortcut) {
-    return {
-      status: 'ok',
-      slug: shortcut.slug,
-      dateFrom: shortcut.dateFrom,
-      dateTo: shortcut.dateTo,
-      message: null,
-    }
-  }
+export const resolvePeriod = ({ dateFrom, dateTo } = {}, today) => {
   if (!dateFrom && !dateTo) {
     const fallback = findShortcut(DEFAULT_PERIOD, today)
     return {
@@ -195,7 +203,13 @@ export const resolvePeriod = ({ period, dateFrom, dateTo } = {}, today) => {
       message: 'La fecha de inicio no puede ser posterior a la de fin.',
     }
   }
-  return { status: 'ok', slug: null, dateFrom: from, dateTo: to, message: null }
+  return {
+    status: 'ok',
+    slug: detectShortcut(from, to, today),
+    dateFrom: from,
+    dateTo: to,
+    message: null,
+  }
 }
 
 // Paleta estable (inspirada en Okabe-Ito). Todos los colores tienen al menos
@@ -410,21 +424,32 @@ export const buildPeriodRanking = (players = []) => {
   })
 }
 
+// Largo máximo de un filtro de equipo de /matches (`teamNameFilter` del BE).
+const MAX_TEAM_FILTER_LENGTH = 100
+
 /**
- * Link a /matches con el partido de un upset: los dos jugadores y el día
- * argentino del partido (mismos params que lee MatchListing). `null` si falta
- * algún dato.
+ * Link a /matches con el partido de un upset: los dos jugadores, el nombre de
+ * cada equipo y el día argentino del partido (mismos params que lee
+ * MatchListing). `player1Team` es el equipo del jugador dueño y `opponentTeam`
+ * el del rival; /matches los filtra por nombre (coincidencia parcial, sin
+ * importar el lado en que jugó cada uno), así que se manda el nombre completo.
+ * Un equipo sin nombre se omite. `null` si falta algún otro dato.
  */
 export const buildUpsetMatchesLink = (playerId, upset) => {
   const day = toArgentinaDay(upset?.t)
   if (!playerId || !upset?.opponent?.id || !day) return null
-  const params = new URLSearchParams({
-    player1: String(playerId),
-    player2: String(upset.opponent.id),
-    dateFrom: day,
-    dateTo: day,
-  })
-  return `/matches?${params.toString()}`
+  const teams = readTeams(upset.teams)
+  const teamParam = (team) =>
+    team?.name ? team.name.slice(0, MAX_TEAM_FILTER_LENGTH).trim() : null
+  const entries = [
+    ['player1', String(playerId)],
+    ['player1Team', teamParam(teams.for)],
+    ['player2', String(upset.opponent.id)],
+    ['opponentTeam', teamParam(teams.against)],
+    ['dateFrom', day],
+    ['dateTo', day],
+  ].filter(([, value]) => value)
+  return `/matches?${new URLSearchParams(entries).toString()}`
 }
 
 const isFiniteNumber = (value) =>

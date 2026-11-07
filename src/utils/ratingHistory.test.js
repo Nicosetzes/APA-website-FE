@@ -1,5 +1,6 @@
 /* eslint-env jest */
 import {
+  FIRST_RATING_YEAR,
   HISTORY_START_DATE,
   PLAYER_PALETTE,
   buildAxisTicks,
@@ -17,6 +18,7 @@ import {
   formatDay,
   getDefaultSelection,
   getPeriodOptions,
+  getShortcutRange,
   getTodayArgentina,
   parseDay,
   parsePlayersParam,
@@ -119,7 +121,7 @@ describe('getPeriodOptions', () => {
     ])
   })
 
-  test('years go from the newest down to 2021 with the full calendar year', () => {
+  test('years go from the newest down to 2019 with the full calendar year', () => {
     const { years } = getPeriodOptions(today)
     expect(years.map((y) => y.slug)).toEqual([
       '2026',
@@ -128,17 +130,34 @@ describe('getPeriodOptions', () => {
       '2023',
       '2022',
       '2021',
+      '2020',
+      '2019',
     ])
     expect(years[0]).toMatchObject({
       dateFrom: '2026-01-01',
       dateTo: '2026-12-31',
     })
+    expect(years[years.length - 1]).toMatchObject({
+      slug: '2019',
+      dateFrom: '2019-01-01',
+      dateTo: '2019-12-31',
+    })
+  })
+
+  test('the oldest year and "Todo el historial" share FIRST_RATING_YEAR', () => {
+    const { shortcuts, years } = getPeriodOptions(today)
+    const oldest = years[years.length - 1]
+    expect(oldest.slug).toBe(String(FIRST_RATING_YEAR))
+    expect(shortcuts.find((o) => o.slug === 'todo').dateFrom).toBe(
+      oldest.dateFrom,
+    )
+    expect(HISTORY_START_DATE).toBe(`${FIRST_RATING_YEAR}-01-01`)
   })
 
   test('a newer current year is added on top', () => {
     const { years } = getPeriodOptions('2027-03-01')
     expect(years[0].slug).toBe('2027')
-    expect(years).toHaveLength(7)
+    expect(years).toHaveLength(9)
   })
 
   test('an older current year never drops 2026', () => {
@@ -150,6 +169,8 @@ describe('getPeriodOptions', () => {
       '2023',
       '2022',
       '2021',
+      '2020',
+      '2019',
     ])
   })
 })
@@ -166,37 +187,62 @@ describe('resolvePeriod', () => {
     })
   })
 
-  test('a valid shortcut wins over dates', () => {
+  test('ignores a period param: only the dates define the range', () => {
+    expect(resolvePeriod({ period: '2024' }, today).slug).toBe('ultimo-anio')
     expect(
       resolvePeriod(
         { period: '2024', dateFrom: '2026-01-01', dateTo: '2026-02-01' },
         today,
       ),
-    ).toMatchObject({
-      slug: '2024',
-      dateFrom: '2024-01-01',
-      dateTo: '2024-12-31',
-    })
+    ).toMatchObject({ slug: null, dateFrom: '2026-01-01' })
   })
 
-  test('an unknown shortcut falls back to the free range or the default', () => {
-    expect(
-      resolvePeriod(
-        { period: 'nope', dateFrom: '2026-01-01', dateTo: '2026-02-01' },
-        today,
-      ),
-    ).toMatchObject({ status: 'ok', slug: null, dateFrom: '2026-01-01' })
-    expect(resolvePeriod({ period: 'nope' }, today).slug).toBe('ultimo-anio')
-  })
-
-  test('free ranges resolve to themselves', () => {
+  test('free ranges resolve to themselves and have no active shortcut', () => {
     expect(
       resolvePeriod({ dateFrom: '2026-01-01', dateTo: '2026-01-01' }, today),
     ).toMatchObject({
       status: 'ok',
+      slug: null,
       dateFrom: '2026-01-01',
       dateTo: '2026-01-01',
     })
+  })
+
+  test('dates equal to the range of a shortcut today activate that shortcut', () => {
+    const slugOf = (dateFrom, dateTo) =>
+      resolvePeriod({ dateFrom, dateTo }, today).slug
+    expect(slugOf('2026-10-27', '2026-10-27')).toBe('hoy')
+    expect(slugOf('2026-10-21', '2026-10-27')).toBe('ultima-semana')
+    expect(slugOf('2026-09-27', '2026-10-27')).toBe('ultimo-mes')
+    expect(slugOf('2026-07-27', '2026-10-27')).toBe('ultimos-3-meses')
+    expect(slugOf('2026-04-27', '2026-10-27')).toBe('ultimos-6-meses')
+    expect(slugOf('2025-10-27', '2026-10-27')).toBe('ultimo-anio')
+    expect(slugOf('2019-01-01', '2026-10-27')).toBe('todo')
+    expect(slugOf('2024-01-01', '2024-12-31')).toBe('2024')
+    expect(slugOf('2026-01-01', '2026-12-31')).toBe('2026')
+    expect(slugOf('2019-01-01', '2019-12-31')).toBe('2019')
+  })
+
+  test('a rolling range chosen another day is a free range', () => {
+    // "Últimos 3 meses" elegido el 27/10 ya no coincide el 28/10.
+    expect(
+      resolvePeriod(
+        { dateFrom: '2026-07-27', dateTo: '2026-10-27' },
+        '2026-10-28',
+      ),
+    ).toMatchObject({
+      status: 'ok',
+      slug: null,
+      dateFrom: '2026-07-27',
+      dateTo: '2026-10-27',
+    })
+    // Un año completo coincide siempre.
+    expect(
+      resolvePeriod(
+        { dateFrom: '2025-01-01', dateTo: '2025-12-31' },
+        '2027-02-01',
+      ).slug,
+    ).toBe('2025')
   })
 
   test('a single or invalid date is incomplete and keeps the valid one', () => {
@@ -221,6 +267,30 @@ describe('resolvePeriod', () => {
     )
     expect(result.status).toBe('inverted')
     expect(result.message).toMatch(/inicio/)
+  })
+})
+
+describe('getShortcutRange', () => {
+  const today = '2026-10-27'
+
+  test('returns the range a shortcut produces today', () => {
+    expect(getShortcutRange('ultimos-3-meses', today)).toEqual({
+      dateFrom: '2026-07-27',
+      dateTo: '2026-10-27',
+    })
+    expect(getShortcutRange('2023', today)).toEqual({
+      dateFrom: '2023-01-01',
+      dateTo: '2023-12-31',
+    })
+    expect(getShortcutRange('todo', today)).toEqual({
+      dateFrom: HISTORY_START_DATE,
+      dateTo: today,
+    })
+  })
+
+  test('is null for an unknown shortcut', () => {
+    expect(getShortcutRange('nope', today)).toBeNull()
+    expect(getShortcutRange('', today)).toBeNull()
   })
 })
 
@@ -550,6 +620,117 @@ describe('buildUpsetMatchesLink', () => {
       // 02:00Z todavía es el día anterior en Argentina.
       dateFrom: '2026-10-10',
       dateTo: '2026-10-10',
+    })
+  })
+
+  describe('with team names', () => {
+    const T = '2026-10-11T15:00:00.000Z'
+    const upsetOf = (teams) => ({
+      t: T,
+      opponent: { id: 'p2', name: 'Santi' },
+      teams,
+    })
+
+    test('exact URL with the owner as player1 (stable param order)', () => {
+      expect(
+        buildUpsetMatchesLink(
+          'p1',
+          upsetOf({
+            for: { id: 1, name: 'Boca' },
+            against: { id: 2, name: 'River' },
+          }),
+        ),
+      ).toBe(
+        '/matches?player1=p1&player1Team=Boca&player2=p2&opponentTeam=River&dateFrom=2026-10-11&dateTo=2026-10-11',
+      )
+    })
+
+    test('exact URL with the owner on the other side (he was P2 in the match)', () => {
+      // `teams` viene desde el dueño del upset: el link no depende del lado.
+      expect(
+        buildUpsetMatchesLink('p2', {
+          t: T,
+          opponent: { id: 'p1', name: 'Nico' },
+          teams: {
+            for: { id: 2, name: 'River' },
+            against: { id: 1, name: 'Boca' },
+          },
+        }),
+      ).toBe(
+        '/matches?player1=p2&player1Team=River&player2=p1&opponentTeam=Boca&dateFrom=2026-10-11&dateTo=2026-10-11',
+      )
+    })
+
+    test('encodes spaces, accents and ñ', () => {
+      const link = buildUpsetMatchesLink(
+        'p1',
+        upsetOf({
+          for: { id: 3, name: 'Real Madrid' },
+          against: { id: 4, name: 'Peñarol Lanús' },
+        }),
+      )
+      expect(link).toBe(
+        '/matches?player1=p1&player1Team=Real+Madrid&player2=p2&opponentTeam=Pe%C3%B1arol+Lan%C3%BAs&dateFrom=2026-10-11&dateTo=2026-10-11',
+      )
+      const params = new URL(link, 'http://x').searchParams
+      expect(params.get('player1Team')).toBe('Real Madrid')
+      expect(params.get('opponentTeam')).toBe('Peñarol Lanús')
+    })
+
+    test('omits a side without name and sends only the other one', () => {
+      expect(
+        buildUpsetMatchesLink(
+          'p1',
+          upsetOf({ for: { id: 1, name: 'Boca' }, against: null }),
+        ),
+      ).toBe(
+        '/matches?player1=p1&player1Team=Boca&player2=p2&dateFrom=2026-10-11&dateTo=2026-10-11',
+      )
+      expect(
+        buildUpsetMatchesLink(
+          'p1',
+          upsetOf({
+            for: { id: 1, name: null },
+            against: { id: 2, name: 'River' },
+          }),
+        ),
+      ).toBe(
+        '/matches?player1=p1&player2=p2&opponentTeam=River&dateFrom=2026-10-11&dateTo=2026-10-11',
+      )
+    })
+
+    test('without teams (older BE) the link is the one without team params', () => {
+      const expected =
+        '/matches?player1=p1&player2=p2&dateFrom=2026-10-11&dateTo=2026-10-11'
+      expect(buildUpsetMatchesLink('p1', upsetOf(undefined))).toBe(expected)
+      expect(buildUpsetMatchesLink('p1', upsetOf(null))).toBe(expected)
+      expect(
+        buildUpsetMatchesLink('p1', upsetOf({ for: null, against: null })),
+      ).toBe(expected)
+      expect(expected).not.toMatch(/undefined|null|=&|=$/)
+    })
+
+    test('accepts the names as text (intermediate BE) and trims them', () => {
+      expect(
+        buildUpsetMatchesLink(
+          'p1',
+          upsetOf({ for: '  Boca ', against: 'River' }),
+        ),
+      ).toBe(
+        '/matches?player1=p1&player1Team=Boca&player2=p2&opponentTeam=River&dateFrom=2026-10-11&dateTo=2026-10-11',
+      )
+    })
+
+    test('cuts names longer than the 100 characters /matches accepts', () => {
+      const long = 'A'.repeat(130)
+      const params = new URL(
+        buildUpsetMatchesLink(
+          'p1',
+          upsetOf({ for: { id: 1, name: long }, against: null }),
+        ),
+        'http://x',
+      ).searchParams
+      expect(params.get('player1Team')).toBe('A'.repeat(100))
     })
   })
 

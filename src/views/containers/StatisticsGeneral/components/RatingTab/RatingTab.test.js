@@ -161,16 +161,63 @@ test('shows a loading message while the history loads', async () => {
   expect(container.querySelector('[data-testid="chart"]')).toBeNull()
 })
 
-test('a shortcut writes period to the URL and asks for the new range', async () => {
+const pressedButtons = () =>
+  [...container.querySelectorAll('button[aria-pressed="true"]')].map(
+    (node) => node.textContent,
+  )
+const selectYear = async (year) => {
+  const select = container.querySelector('select')
+  const setter = Object.getOwnPropertyDescriptor(
+    window.HTMLSelectElement.prototype,
+    'value',
+  ).set
+  await act(async () => {
+    setter.call(select, year)
+    select.dispatchEvent(new Event('change', { bubbles: true }))
+  })
+  await settle()
+}
+
+test('a shortcut writes dateFrom/dateTo and asks for the new range', async () => {
   await render('/statistics?dateFrom=2026-01-01&dateTo=2026-02-01')
   expect(requests()).toEqual([{ dateFrom: '2026-01-01', dateTo: '2026-02-01' }])
+  expect(pressedButtons()).toEqual([])
 
   await click(buttonByText('Último mes'))
-  expect(location.search).toBe('?period=ultimo-mes')
+  expect(location.search).toBe('?dateFrom=2026-09-27&dateTo=2026-10-27')
   expect(requests()[1]).toEqual({
     dateFrom: '2026-09-27',
     dateTo: '2026-10-27',
   })
+  expect(pressedButtons()).toEqual(['Último mes'])
+})
+
+test('the default range is applied without writing it to the URL', async () => {
+  await render()
+  expect(location.search).toBe('')
+  expect(pressedButtons()).toEqual(['Último año'])
+})
+
+test('the active shortcut is detected from the dates in the URL', async () => {
+  await render('/statistics?dateFrom=2026-07-27&dateTo=2026-10-27')
+  expect(pressedButtons()).toEqual(['Últimos 3 meses'])
+})
+
+test('a rolling range from another day is shown as a free range', async () => {
+  await render('/statistics?dateFrom=2026-07-26&dateTo=2026-10-26')
+  expect(pressedButtons()).toEqual([])
+  expect(requests()).toEqual([{ dateFrom: '2026-07-26', dateTo: '2026-10-26' }])
+  expect(container.textContent).toContain(
+    'Mostrando del 26/07/2026 al 26/10/2026.',
+  )
+})
+
+test('a ?period= param without dates is ignored: default period, URL untouched', async () => {
+  await render('/statistics?players=s&period=ultimos-3-meses')
+  expect(location.search).toBe('?players=s&period=ultimos-3-meses')
+  expect(requests()).toEqual([{ dateFrom: '2025-10-27', dateTo: '2026-10-27' }])
+  expect(pressedButtons()).toEqual(['Último año'])
+  expect(chartText().endsWith('|s')).toBe(true)
 })
 
 test('every shortcut asks for its own range', async () => {
@@ -190,30 +237,32 @@ test('every shortcut asks for its own range', async () => {
 
 test('the year select asks for the whole calendar year', async () => {
   await render()
-  const select = container.querySelector('select')
-  const setter = Object.getOwnPropertyDescriptor(
-    window.HTMLSelectElement.prototype,
-    'value',
-  ).set
-  await act(async () => {
-    setter.call(select, '2024')
-    select.dispatchEvent(new Event('change', { bubbles: true }))
-  })
-  await settle()
-  expect(location.search).toBe('?period=2024')
+  await selectYear('2024')
+  expect(location.search).toBe('?dateFrom=2024-01-01&dateTo=2024-12-31')
   expect(requests()[1]).toEqual({
     dateFrom: '2024-01-01',
     dateTo: '2024-12-31',
   })
+  expect(container.querySelector('select').value).toBe('2024')
 })
 
-test('editing a date switches to a free range and drops period', async () => {
-  await render('/statistics?period=2025')
+test('the year select reaches 2019, the first year with matches', async () => {
+  await render()
+  await selectYear('2019')
+  expect(location.search).toBe('?dateFrom=2019-01-01&dateTo=2019-12-31')
+  expect(requests()[1]).toEqual({
+    dateFrom: '2019-01-01',
+    dateTo: '2019-12-31',
+  })
+  expect(container.querySelector('select').value).toBe('2019')
+})
+
+test('editing a date from a year keeps a free range', async () => {
+  await render('/statistics?dateFrom=2025-01-01&dateTo=2025-12-31')
   expect(requests()).toEqual([{ dateFrom: '2025-01-01', dateTo: '2025-12-31' }])
 
   await type('#rating-dateFrom', '2025-03-01')
   const params = new URLSearchParams(location.search)
-  expect(params.has('period')).toBe(false)
   // La otra fecha se completa con la del período que se estaba viendo.
   expect(params.get('dateFrom')).toBe('2025-03-01')
   expect(params.get('dateTo')).toBe('2025-12-31')
@@ -315,7 +364,7 @@ test('shows an empty state when the period has no matches', async () => {
       matchesTimeline: [],
     }),
   })
-  await render('/statistics?period=hoy')
+  await render('/statistics?dateFrom=2026-10-27&dateTo=2026-10-27')
   expect(container.textContent).toContain('No hay partidos en este período.')
   expect(container.querySelector('[data-testid="chart"]')).toBeNull()
   // El filtro sigue disponible para cambiar de período.

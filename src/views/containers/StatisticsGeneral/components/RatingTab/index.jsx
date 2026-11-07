@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 import useRatingHistory from 'hooks/useRatingHistory'
 import {
   buildPlayerColors,
+  getShortcutRange,
   getTodayArgentina,
   parsePlayersParam,
   resolvePeriod,
@@ -26,7 +27,6 @@ const RatingTab = ({ ratings }) => {
   const today = getTodayArgentina()
   const period = resolvePeriod(
     {
-      period: searchParams.get('period') || '',
       dateFrom: searchParams.get('dateFrom') || '',
       dateTo: searchParams.get('dateTo') || '',
     },
@@ -69,10 +69,11 @@ const RatingTab = ({ ratings }) => {
   )
 
   const selectShortcut = (slug) => {
+    const range = getShortcutRange(slug, today)
+    if (!range) return
     const params = new URLSearchParams(searchParams)
-    params.set('period', slug)
-    params.delete('dateFrom')
-    params.delete('dateTo')
+    params.set('dateFrom', range.dateFrom)
+    params.set('dateTo', range.dateTo)
     setSearchParams(params)
   }
 
@@ -83,7 +84,6 @@ const RatingTab = ({ ratings }) => {
       [key]: value,
     }
     const params = new URLSearchParams(searchParams)
-    params.delete('period')
     ;['dateFrom', 'dateTo'].forEach((name) => {
       if (range[name]) params.set(name, range[name])
       else params.delete(name)

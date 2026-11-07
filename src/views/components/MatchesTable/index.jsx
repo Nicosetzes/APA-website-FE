@@ -1,4 +1,4 @@
-import { database } from 'api'
+import { teamAbbreviation, teamLogoUrl } from 'utils/teams'
 import { describeMatchRatingChange } from 'utils/ratings'
 import { formatPlayedAt } from 'utils/playedAt'
 import Tooltip from '../Tooltip'
@@ -132,16 +132,14 @@ const MatchesTable = ({ matches, focusPlayerId = '' }) => {
                   <Scoreboard>
                     <TeamBlock align="right" isWinner={isP1Winner}>
                       <span>
-                        {teamP1?.name
-                          ? teamP1.name.substring(0, 3).toUpperCase()
-                          : 'P1'}{' '}
+                        {teamP1?.name ? teamAbbreviation(teamP1.name) : 'P1'}{' '}
                         <PlayerTag>
                           {playerP1?.name?.substring(0, 3).toUpperCase()}
                         </PlayerTag>
                       </span>
                       {teamP1?.id && (
                         <img
-                          src={`${database}/logos/${teamP1.id}`}
+                          src={teamLogoUrl(teamP1.id)}
                           alt={teamP1.name}
                           onError={(e) => (e.target.style.display = 'none')}
                         />
@@ -167,7 +165,7 @@ const MatchesTable = ({ matches, focusPlayerId = '' }) => {
                     <TeamBlock align="left" isWinner={isP2Winner}>
                       {teamP2?.id && (
                         <img
-                          src={`${database}/logos/${teamP2.id}`}
+                          src={teamLogoUrl(teamP2.id)}
                           alt={teamP2.name}
                           onError={(e) => (e.target.style.display = 'none')}
                         />
@@ -176,9 +174,7 @@ const MatchesTable = ({ matches, focusPlayerId = '' }) => {
                         <PlayerTag>
                           {playerP2?.name?.substring(0, 3).toUpperCase()}
                         </PlayerTag>{' '}
-                        {teamP2?.name
-                          ? teamP2.name.substring(0, 3).toUpperCase()
-                          : 'P2'}
+                        {teamP2?.name ? teamAbbreviation(teamP2.name) : 'P2'}
                       </span>
                     </TeamBlock>
                   </Scoreboard>

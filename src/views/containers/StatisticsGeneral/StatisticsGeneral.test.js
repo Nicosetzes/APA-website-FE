@@ -4,22 +4,37 @@ jest.mock('api/axiosConfig', () => ({ apiClient: { get: jest.fn() } }))
 jest.mock('framer-motion', () => ({
   motion: { div: ({ children }) => <div>{children}</div> },
 }))
-// Sólo se muestra la pestaña por defecto ("Jugadores"), que es la que se prueba.
+// Sólo se muestra la pestaña activa; los botones permiten cambiarla.
 jest.mock('views/components', () => ({
   Loader: () => <div>cargando</div>,
   PageLoader: () => <div>cargando</div>,
   Tooltip: ({ children }) => children,
-  Tabs: ({ tabs, defaultTab }) => (
-    <div>{tabs.find(({ id }) => id === defaultTab).content}</div>
+  Tabs: ({ tabs, defaultTab, activeTab, onChange }) => (
+    <div>
+      {tabs.map(({ id, label }) => (
+        <button key={id} type="button" onClick={() => onChange(id)}>
+          {`tab:${label}`}
+        </button>
+      ))}
+      <div data-testid="default-tab">{defaultTab}</div>
+      <div data-testid="active-tab">{activeTab}</div>
+      {tabs.find(({ id }) => id === (activeTab ?? defaultTab)).content}
+    </div>
   ),
 }))
 jest.mock('./components', () => ({
   ...jest.requireActual('./components'),
+  RatingTab: ({ ratings }) => (
+    <div data-testid="rating-tab">
+      {ratings === null ? 'ratings:null' : `ratings:${ratings.length}`}
+    </div>
+  ),
   RecordsTab: () => null,
 }))
 
 import ReactDOM from 'react-dom'
 import { act } from 'react-dom/test-utils'
+import { MemoryRouter, useLocation } from 'react-router-dom'
 import { apiClient } from 'api/axiosConfig'
 import StatisticsGeneral from '.'
 
@@ -82,12 +97,34 @@ const mockApi = ({ ratings }) => {
 
 const flush = () => act(() => new Promise((resolve) => setTimeout(resolve, 0)))
 
-const render = async () => {
+let location
+const LocationProbe = () => {
+  location = useLocation()
+  return null
+}
+// Los tests de tarjetas miran la pestaña "Jugadores".
+const render = async (url = '/statistics?tab=players') => {
   await act(async () => {
-    ReactDOM.render(<StatisticsGeneral />, container)
+    ReactDOM.render(
+      <MemoryRouter initialEntries={[url]}>
+        <StatisticsGeneral />
+        <LocationProbe />
+      </MemoryRouter>,
+      container,
+    )
   })
   await flush()
 }
+const clickTab = (label) => {
+  const button = [...container.querySelectorAll('button')].find(
+    (node) => node.textContent === `tab:${label}`,
+  )
+  act(() => {
+    button.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+  })
+}
+const activeTab = () =>
+  container.querySelector('[data-testid="active-tab"]').textContent
 
 beforeEach(() => {
   container = document.createElement('div')
@@ -107,7 +144,7 @@ const cardNames = () =>
     .map((heading) => heading.textContent)
     .filter((text) => text === 'Nico' || text === 'Santi')
 
-test('players tab shows the Elo ranking and orders the cards by it', async () => {
+test('players tab orders the cards by Elo and no longer shows the Elo table', async () => {
   mockApi({ ratings: () => Promise.resolve({ data: ratingsResponse }) })
 
   await render()
@@ -116,9 +153,9 @@ test('players tab shows the Elo ranking and orders the cards by it', async () =>
     '/ratings',
     expect.objectContaining({ signal: expect.anything() }),
   )
-  expect(container.textContent).toContain('Rating APA 2.0')
-  expect(container.querySelectorAll('tbody tr')).toHaveLength(2)
-  expect(container.querySelector('tbody').textContent).toContain('1632')
+  // La tabla "Rating APA 2.0" pasó a la pestaña "Rating APA".
+  expect(container.querySelector('table')).toBeNull()
+  expect(container.textContent).not.toContain('Rating APA 2.0')
 
   // Las tarjetas siguen el ranking, no el orden de /statistics.
   expect(cardNames()).toEqual(['Nico', 'Santi'])
@@ -131,7 +168,6 @@ test('players tab still works when the Elo ranking fails to load', async () => {
 
   await render()
 
-  expect(container.textContent).toContain('No se pudo cargar el ranking Elo.')
   expect(container.querySelector('table')).toBeNull()
   // Sin ranking se conserva el orden original y no se muestra el Elo.
   expect(cardNames()).toEqual(['Santi', 'Nico'])
@@ -139,7 +175,7 @@ test('players tab still works when the Elo ranking fails to load', async () => {
   expect(container.textContent).not.toContain('No se pudieron cargar')
 })
 
-test('players tab shows no Elo section when nobody is rated yet', async () => {
+test('players tab shows no Elo when nobody is rated yet', async () => {
   mockApi({
     ratings: () => Promise.resolve({ data: { success: true, data: [] } }),
   })
@@ -147,8 +183,67 @@ test('players tab shows no Elo section when nobody is rated yet', async () => {
   await render()
 
   expect(container.querySelector('table')).toBeNull()
-  expect(container.textContent).not.toContain('No se pudo cargar el ranking Elo')
   expect(cardNames()).toEqual(['Santi', 'Nico'])
+  expect(container.textContent).not.toContain('Elo1')
+})
+
+test('opens on the Rating APA tab by default and passes it the ratings', async () => {
+  mockApi({ ratings: () => Promise.resolve({ data: ratingsResponse }) })
+
+  await render('/statistics')
+
+  expect(
+    container.querySelector('[data-testid="default-tab"]').textContent,
+  ).toBe('rating')
+  expect(activeTab()).toBe('rating')
+  expect(
+    container.querySelector('[data-testid="rating-tab"]').textContent,
+  ).toBe('ratings:2')
+  expect(cardNames()).toEqual([])
+  // "Rating APA" es la primera pestaña.
+  expect(container.querySelector('button').textContent).toBe('tab:Rating APA')
+})
+
+test('the Rating APA tab gets null ratings when /ratings fails', async () => {
+  mockApi({ ratings: () => Promise.reject(new Error('boom')) })
+
+  await render('/statistics')
+
+  expect(
+    container.querySelector('[data-testid="rating-tab"]').textContent,
+  ).toBe('ratings:null')
+})
+
+test('tab=players shows the player cards', async () => {
+  mockApi({ ratings: () => Promise.resolve({ data: ratingsResponse }) })
+
+  await render('/statistics?tab=players')
+
+  expect(activeTab()).toBe('players')
+  expect(cardNames()).toEqual(['Nico', 'Santi'])
+})
+
+test('an invalid tab falls back to Rating APA', async () => {
+  mockApi({ ratings: () => Promise.resolve({ data: ratingsResponse }) })
+
+  await render('/statistics?tab=nope')
+
+  expect(activeTab()).toBe('rating')
+})
+
+test('changing tab writes tab and clears the Rating APA params', async () => {
+  mockApi({ ratings: () => Promise.resolve({ data: ratingsResponse }) })
+  await render(
+    '/statistics?period=2025&dateFrom=2025-01-01&dateTo=2025-02-01&players=n&other=1',
+  )
+
+  clickTab('Jugadores')
+  expect(location.search).toBe('?other=1&tab=players')
+  expect(activeTab()).toBe('players')
+
+  clickTab('Rating APA')
+  expect(location.search).toBe('?other=1')
+  expect(activeTab()).toBe('rating')
 })
 
 test('a failure loading the statistics still shows the page error', async () => {
@@ -160,5 +255,7 @@ test('a failure loading the statistics still shows the page error', async () => 
 
   await render()
 
-  expect(container.textContent).toContain('No se pudieron cargar las estadísticas')
+  expect(container.textContent).toContain(
+    'No se pudieron cargar las estadísticas',
+  )
 })

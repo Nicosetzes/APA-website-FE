@@ -30,6 +30,7 @@
     "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.1",
     "react-use": "^17.5.1",
+    "recharts": "2.15.4",
     "styled-components": "^5.3.5",
     "sweetalert2": "^11.4.32",
     "web-vitals": "^2.1.4"

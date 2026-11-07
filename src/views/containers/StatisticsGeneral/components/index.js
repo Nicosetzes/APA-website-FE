@@ -1,3 +1,7 @@
+export { default as PeriodFilter } from './PeriodFilter'
+export { default as PeriodSummary } from './PeriodSummary'
+export { default as PlayerPicker } from './PlayerPicker'
+export { default as RatingTab } from './RatingTab'
 export { default as RatingsTable } from './RatingsTable'
 export { default as RecordsTab } from './RecordsTab'
 export { default as StreakMatchSummary } from './StreakMatchSummary'

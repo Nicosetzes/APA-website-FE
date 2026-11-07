@@ -28,13 +28,18 @@ import {
   StreakBadge,
 } from './styled'
 import { PageLoader, Tabs, Tooltip } from 'views/components'
-import { RatingsTable, RecordsTab } from './components'
+import { RatingTab, RecordsTab } from './components'
 import {
   formatRating,
   indexRatingsByPlayer,
   orderByRating,
 } from 'utils/ratings'
+import { RATING_TAB_PARAMS } from 'utils/ratingHistory'
 import { useCallback, useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
+
+const DEFAULT_TAB = 'rating'
+const TAB_IDS = [DEFAULT_TAB, 'players', 'decisive', 'leaderboards', 'records']
 
 const isAbortError = (err) =>
   err?.name === 'CanceledError' || err?.name === 'AbortError'
@@ -44,6 +49,20 @@ const StatisticsGeneral = () => {
   const [ratings, setRatings] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  const tabParam = searchParams.get('tab')
+  const activeTab = TAB_IDS.includes(tabParam) ? tabParam : DEFAULT_TAB
+
+  // La pestaña activa vive en la URL (`tab`; ausente = Rating APA). Al
+  // cambiar de pestaña se descartan los filtros de la de Rating APA.
+  const handleTabChange = (id) => {
+    const params = new URLSearchParams(searchParams)
+    RATING_TAB_PARAMS.forEach((name) => params.delete(name))
+    if (id === DEFAULT_TAB) params.delete('tab')
+    else params.set('tab', id)
+    setSearchParams(params)
+  }
 
   const getStatistics = useCallback(() => {
     const controller = new AbortController()
@@ -110,13 +129,6 @@ const StatisticsGeneral = () => {
 
   const PlayersTab = () => (
     <Section>
-      {ratings === null ? (
-        <EmptyMessage style={{ marginBottom: '2rem' }}>
-          No se pudo cargar el ranking Elo.
-        </EmptyMessage>
-      ) : (
-        <RatingsTable ratings={ratings} />
-      )}
       <SectionTitle>Estadísticas por Jugador</SectionTitle>
       <PlayersGrid>
         {orderedPlayers.map((player) => (
@@ -416,6 +428,11 @@ const StatisticsGeneral = () => {
   if (stats) {
     const tabs = [
       {
+        id: DEFAULT_TAB,
+        label: 'Rating APA',
+        content: <RatingTab ratings={ratings} />,
+      },
+      {
         id: 'players',
         label: 'Jugadores',
         content: <PlayersTab />,
@@ -448,7 +465,12 @@ const StatisticsGeneral = () => {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
-        <Tabs tabs={tabs} defaultTab="players" />
+        <Tabs
+          tabs={tabs}
+          defaultTab={DEFAULT_TAB}
+          activeTab={activeTab}
+          onChange={handleTabChange}
+        />
       </motion.div>
     )
   } else {

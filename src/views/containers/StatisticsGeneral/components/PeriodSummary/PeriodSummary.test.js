@@ -27,11 +27,11 @@ afterEach(() => {
   container.remove()
 })
 
-const render = (players) => {
+const render = (players, mode) => {
   act(() => {
     ReactDOM.render(
       <MemoryRouter>
-        <PeriodSummary players={players} colors={colors} />
+        <PeriodSummary players={players} colors={colors} mode={mode} />
       </MemoryRouter>,
       container,
     )
@@ -515,5 +515,69 @@ test('derives the signed Elo change from ratingSwing with an older BE', () => {
   ).toEqual([
     ['+10.0 ELO', 'up'],
     ['-7.0 ELO', 'down'],
+  ])
+})
+
+const inTournament = (entry) => ({
+  ...entry,
+  summary: {
+    ...entry.summary,
+    position: null,
+    previousPosition: null,
+    positionChange: null,
+  },
+})
+const headers = () =>
+  [...container.querySelectorAll('thead th')].map((th) => th.textContent)
+
+test('period mode shows a dash instead of null° when there is no position', () => {
+  render([inTournament(NICO), SANTI])
+  expect(container.textContent).not.toContain('null')
+  const [first, second] = rows()
+  expect(first[first.length - 1]).toBe('—')
+  expect(second[second.length - 1]).toBe('2°1')
+  expect(headers()).toContain('Posición')
+})
+
+test('tournament mode: titles of the tournament, no Posición column, no null°', () => {
+  render([inTournament(NICO), inTournament(SANTI)], 'tournament')
+  expect(container.textContent).toContain('Ranking del torneo')
+  expect(container.textContent).toContain('Upsets del torneo')
+  expect(container.textContent).not.toContain('Ranking del período')
+  expect(container.textContent).not.toContain('Upsets del período')
+  expect(container.textContent).not.toContain('null')
+  expect(headers()).toEqual([
+    '#',
+    'Jugador',
+    'Elo inicial',
+    'Elo final',
+    'Variación',
+    'Mín.',
+    'Máx.',
+    'V/E/D',
+  ])
+  const [first] = rows()
+  expect(first).toHaveLength(8)
+  expect(first.slice(0, 2)).toEqual(['1', 'Nico2 partidos'])
+  expect(container.querySelector('table').getAttribute('aria-label')).toBe(
+    'Ranking de jugadores por variación de Elo en el torneo',
+  )
+})
+
+test('tournament mode: the empty upsets say torneo and Ver partido still works', () => {
+  render(
+    [
+      {
+        ...inTournament(NICO),
+        summary: { ...inTournament(NICO).summary, worstUpsetLost: null },
+      },
+    ],
+    'tournament',
+  )
+  const [nico] = upsetCards()
+  expect(nico.textContent).toContain('Sin upsets en el torneo')
+  expect(nico.textContent).not.toContain('Sin upsets en el período')
+  expect([...nico.querySelectorAll('a')].map((a) => a.textContent)).toEqual([
+    'Ver partido',
   ])
 })

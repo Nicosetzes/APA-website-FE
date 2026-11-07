@@ -56,14 +56,14 @@ const describePositionChange = (change) => {
   }
 }
 
-const Upset = ({ kind, playerId, playerName, upset }) => {
+const Upset = ({ kind, playerId, playerName, upset, scopeLabel }) => {
   const won = kind === 'won'
   const label = won ? 'Mayor upset' : 'Peor upset'
   if (!upset) {
     return (
       <UpsetBlock $kind={kind}>
         <UpsetLabel>{label}</UpsetLabel>
-        <UpsetEmpty>Sin upsets en el período</UpsetEmpty>
+        <UpsetEmpty>Sin upsets en el {scopeLabel}</UpsetEmpty>
       </UpsetBlock>
     )
   }
@@ -97,16 +97,23 @@ const Upset = ({ kind, playerId, playerName, upset }) => {
   )
 }
 
-const PeriodSummary = ({ players, colors }) => {
+const formatPosition = (position) =>
+  typeof position === 'number' ? `${position}°` : '—'
+
+const PeriodSummary = ({ players, colors, mode = 'period' }) => {
   const ranking = buildPeriodRanking(players)
   if (ranking.length === 0) return null
+  const isTournament = mode === 'tournament'
+  const scopeLabel = isTournament ? 'torneo' : 'período'
 
   return (
     <>
       <SummaryCard>
-        <SummaryTitle>Ranking del período</SummaryTitle>
+        <SummaryTitle>Ranking del {scopeLabel}</SummaryTitle>
         <TableScroll>
-          <Table aria-label="Ranking de jugadores por variación de Elo en el período">
+          <Table
+            aria-label={`Ranking de jugadores por variación de Elo en el ${scopeLabel}`}
+          >
             <thead>
               <tr>
                 <th scope="col">#</th>
@@ -119,7 +126,7 @@ const PeriodSummary = ({ players, colors }) => {
                 <th scope="col">Mín.</th>
                 <th scope="col">Máx.</th>
                 <th scope="col">V/E/D</th>
-                <th scope="col">Posición</th>
+                {!isTournament && <th scope="col">Posición</th>}
               </tr>
             </thead>
             <tbody>
@@ -184,21 +191,25 @@ const PeriodSummary = ({ players, colors }) => {
                     <td>
                       <PeakValue>{`${wins}/${draws}/${losses}`}</PeakValue>
                     </td>
-                    <td>
-                      <PositionCell>
-                        <PeakValue>{row.summary.position}°</PeakValue>
-                        {position && (
-                          <ChangeValue
-                            $trend={position.trend}
-                            aria-label={position.label}
-                            title={position.label}
-                          >
-                            {ARROW_ICONS[position.trend]}
-                            {position.value}
-                          </ChangeValue>
-                        )}
-                      </PositionCell>
-                    </td>
+                    {!isTournament && (
+                      <td>
+                        <PositionCell>
+                          <PeakValue>
+                            {formatPosition(row.summary.position)}
+                          </PeakValue>
+                          {position && (
+                            <ChangeValue
+                              $trend={position.trend}
+                              aria-label={position.label}
+                              title={position.label}
+                            >
+                              {ARROW_ICONS[position.trend]}
+                              {position.value}
+                            </ChangeValue>
+                          )}
+                        </PositionCell>
+                      </td>
+                    )}
                   </tr>
                 )
               })}
@@ -207,7 +218,7 @@ const PeriodSummary = ({ players, colors }) => {
         </TableScroll>
       </SummaryCard>
       <SummaryCard>
-        <SummaryTitle>Upsets del período</SummaryTitle>
+        <SummaryTitle>Upsets del {scopeLabel}</SummaryTitle>
         <UpsetGrid>
           {ranking.map((row) => (
             <UpsetCard key={row.player.id}>
@@ -223,12 +234,14 @@ const PeriodSummary = ({ players, colors }) => {
                 playerId={row.player.id}
                 playerName={row.player.name}
                 upset={row.summary.biggestUpsetWon}
+                scopeLabel={scopeLabel}
               />
               <Upset
                 kind="lost"
                 playerId={row.player.id}
                 playerName={row.player.name}
                 upset={row.summary.worstUpsetLost}
+                scopeLabel={scopeLabel}
               />
             </UpsetCard>
           ))}

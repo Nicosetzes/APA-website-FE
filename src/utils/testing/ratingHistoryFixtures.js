@@ -13,6 +13,17 @@ const T1 = '2026-10-10T15:00:00.000Z'
 const T2 = '2026-10-10T16:00:00.000Z'
 const T3 = '2026-10-11T15:00:00.000Z'
 
+// Torneos: ids hex de 24 como los de Mongo. Solo LIGA_ID y COPA_ID están en la
+// lista de activos (`GET /tournaments?legacy=false`); VIEJO_ID no.
+export const LIGA_ID = '0123456789abcdef01234567'
+export const COPA_ID = '76543210fedcba9876543210'
+export const VIEJO_ID = 'aaaaaaaaaaaaaaaaaaaaaaaa'
+
+export const ACTIVE_TOURNAMENTS = [
+  { _id: COPA_ID, name: 'Copa APA' },
+  { _id: LIGA_ID, name: 'Liga APA' },
+]
+
 export const TIMELINE = [
   { x: 1, seq: 101, t: T1 },
   { x: 2, seq: 102, t: T2 },
@@ -164,6 +175,29 @@ export const SANTI = {
   ],
 }
 
+// `data.tournaments` de un período: la Liga (partidos 1 a 3) y un torneo que ya
+// no está entre los activos.
+export const TOURNAMENT_MARKS = [
+  {
+    id: LIGA_ID,
+    name: 'Liga APA',
+    fromX: 1,
+    toX: 3,
+    matches: 3,
+    fromT: T1,
+    toT: T3,
+  },
+  {
+    id: VIEJO_ID,
+    name: 'Torneo viejo',
+    fromX: 2,
+    toX: 2,
+    matches: 1,
+    fromT: T2,
+    toT: T2,
+  },
+]
+
 /** Respuesta de `/ratings/history` (el cuerpo completo, con `data`). */
 export const historyResponse = (overrides = {}) => ({
   success: true,
@@ -175,6 +209,37 @@ export const historyResponse = (overrides = {}) => ({
     players: [NICO, SANTI],
     matchesTimeline: TIMELINE,
     highlights: { biggestUpset: null },
+    tournaments: TOURNAMENT_MARKS,
+    ...overrides,
+  },
+})
+
+// En modo torneo el BE no manda posición (viene `null`).
+const withoutPosition = (entry) => ({
+  ...entry,
+  summary: {
+    ...entry.summary,
+    position: null,
+    previousPosition: null,
+    positionChange: null,
+  },
+})
+
+/**
+ * Respuesta de `/ratings/history?tournamentId=<LIGA_ID>`: mismos partidos que
+ * `historyResponse`, con `scope` de torneo, rango del torneo y sin posiciones.
+ */
+export const tournamentResponse = (overrides = {}) => ({
+  success: true,
+  dateFrom: '2026-10-10',
+  dateTo: '2026-10-11',
+  scope: { type: 'tournament', tournament: { id: LIGA_ID, name: 'Liga APA' } },
+  data: {
+    matchesInPeriod: 3,
+    players: [withoutPosition(NICO), withoutPosition(SANTI)],
+    matchesTimeline: TIMELINE,
+    highlights: { biggestUpset: null },
+    tournaments: [TOURNAMENT_MARKS[0]],
     ...overrides,
   },
 })

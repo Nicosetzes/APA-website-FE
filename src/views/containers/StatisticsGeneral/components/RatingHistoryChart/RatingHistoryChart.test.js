@@ -31,13 +31,14 @@ afterEach(() => {
   restoreResizeObserver()
 })
 
-const render = (selectedIds, data = historyData()) => {
+const render = (selectedIds, data = historyData(), extra = {}) => {
   act(() => {
     ReactDOM.render(
       <RatingHistoryChart
         data={data}
         selectedIds={selectedIds}
         colors={colors}
+        {...extra}
       />,
       container,
     )
@@ -112,6 +113,181 @@ describe('RatingHistoryChart', () => {
     render([])
     expect(container.querySelector('svg')).toBeNull()
     expect(container.textContent).toContain('Elegí al menos un jugador')
+  })
+
+  test('without marks it draws no tournament marks', () => {
+    render(['n', 's'])
+    expect(container.querySelector('.tournament-marks')).toBeNull()
+    expect(container.querySelector('.recharts-customized-wrapper')).toBeNull()
+    expect(
+      container.querySelector('[role="img"]').getAttribute('aria-label'),
+    ).not.toContain('Torneos marcados')
+  })
+
+  test('the x axis says "Partidos del período" by default and "Partidos del torneo" in tournament mode', () => {
+    render(['n', 's'])
+    expect(container.textContent).toContain('Partidos del período')
+    render(['n', 's'], historyData(), { mode: 'tournament' })
+    expect(container.textContent).toContain('Partidos del torneo')
+    expect(container.textContent).not.toContain('Partidos del período')
+  })
+})
+
+describe('RatingHistoryChart tournament marks', () => {
+  const MARK_A = {
+    id: 'a',
+    name: 'Liga APA',
+    fromX: 1,
+    toX: 2,
+    matches: 2,
+    fromT: '2026-10-10T15:00:00.000Z',
+    toT: '2026-10-10T16:00:00.000Z',
+    color: '#64748B',
+  }
+  // Simultánea con la anterior: comparte partidos, necesita otro carril.
+  const MARK_B = {
+    id: 'b',
+    name: 'Copa del Sur',
+    fromX: 2,
+    toX: 3,
+    matches: 2,
+    fromT: '2026-10-10T16:00:00.000Z',
+    toT: '2026-10-11T15:00:00.000Z',
+    color: '#0F766E',
+  }
+  // Un solo partido.
+  const MARK_C = {
+    id: 'c',
+    name: 'Supercopa',
+    fromX: 3,
+    toX: 3,
+    matches: 1,
+    fromT: '2026-10-11T15:00:00.000Z',
+    toT: '2026-10-11T15:00:00.000Z',
+    color: '#B45309',
+  }
+  const bars = () => [...container.querySelectorAll('.tournament-mark-bar')]
+  const titles = () =>
+    [...container.querySelectorAll('.tournament-mark title')].map(
+      (node) => node.textContent,
+    )
+  const markLines = (index) => {
+    const marks = container.querySelectorAll('.tournament-mark')
+    return marks[index].querySelectorAll('line')
+  }
+
+  test('draws one bar with a title per tournament, simultaneous ones in different lanes', () => {
+    render(['n', 's'], historyData(), { marks: [MARK_A, MARK_B, MARK_C] })
+    expect(bars()).toHaveLength(3)
+    expect(titles()).toEqual([
+      'Liga APA: el 10/10/2026, 2 partidos',
+      'Copa del Sur: del 10/10/2026 al 11/10/2026, 2 partidos',
+      'Supercopa: el 11/10/2026, 1 partido',
+    ])
+    const [barA, barB, barC] = bars()
+    // A y B se solapan (carriles 0 y 1); el carril 0 queda libre porque A
+    // termina en el partido 2 y C empieza en el 3.
+    expect(barA.getAttribute('y')).not.toBe(barB.getAttribute('y'))
+    expect(barC.getAttribute('y')).toBe(barA.getAttribute('y'))
+  })
+
+  test('start and end lines per tournament; a one-match tournament has a single line', () => {
+    render(['n', 's'], historyData(), { marks: [MARK_A, MARK_B, MARK_C] })
+    expect(markLines(0)).toHaveLength(2)
+    expect(markLines(1)).toHaveLength(2)
+    expect(markLines(2)).toHaveLength(1)
+    const [start, end] = markLines(0)
+    expect(start.getAttribute('stroke-dasharray')).toBe('4 3')
+    expect(end.getAttribute('stroke-dasharray')).toBe('1.5 3')
+    expect(start.getAttribute('stroke')).toBe('#64748B')
+    expect(start.getAttribute('stroke-width')).toBe('1')
+  })
+
+  test('uses the color of each mark and does not use ReferenceLine', () => {
+    render(['n', 's'], historyData(), { marks: [MARK_A, MARK_B] })
+    expect(bars().map((bar) => bar.getAttribute('fill'))).toEqual([
+      '#64748B',
+      '#0F766E',
+    ])
+    expect(container.querySelectorAll('.recharts-reference-line')).toHaveLength(
+      1,
+    )
+  })
+
+  test('reserves vertical space for the lanes without touching the plot height', () => {
+    render(['n', 's'])
+    const plain = container.querySelector('[role="img"]')
+    const plainClass = plain.className
+    render(['n', 's'], historyData(), { marks: [MARK_A, MARK_B] })
+    const withMarks = container.querySelector('[role="img"]')
+    const css = [...document.querySelectorAll('style')]
+      .map((style) => style.textContent)
+      .join('')
+    const heightOf = (className) => {
+      const match = new RegExp(
+        `\\.${className.split(' ').pop()}\\{[^}]*height:(\\d+)px`,
+      ).exec(css.replace(/\s+/g, ''))
+      return match && Number(match[1])
+    }
+    expect(heightOf(plainClass)).toBe(380)
+    expect(heightOf(withMarks.className)).toBe(380 + 2 * 16)
+  })
+
+  test('writes a label inside the bar when it is wide enough', () => {
+    render(['n', 's'], historyData(), { marks: [MARK_A] })
+    const labels = [...container.querySelectorAll('.tournament-mark text')]
+    expect(labels).toHaveLength(1)
+    expect(labels[0].textContent.length).toBeGreaterThanOrEqual(4)
+    expect(labels[0].textContent.startsWith('Liga')).toBe(true)
+  })
+
+  test('a one-match tournament has a minimal bar without text but keeps its title', () => {
+    render(['n', 's'], historyData(), { marks: [MARK_C] })
+    expect(bars()).toHaveLength(1)
+    expect(container.querySelectorAll('.tournament-mark text')).toHaveLength(0)
+    expect(titles()).toEqual(['Supercopa: el 11/10/2026, 1 partido'])
+  })
+
+  test('never hides a mark: those beyond 4 lanes get lines and a minimal bar', () => {
+    const overlapping = Array.from({ length: 6 }, (_, index) => ({
+      ...MARK_A,
+      id: `m${index}`,
+      name: `Torneo ${index}`,
+      fromX: 1,
+      toX: 3,
+      matches: 3,
+    }))
+    render(['n', 's'], historyData(), { marks: overlapping })
+    expect(container.querySelectorAll('.tournament-mark')).toHaveLength(6)
+    expect(bars()).toHaveLength(6)
+    expect(container.querySelectorAll('.tournament-mark text')).toHaveLength(4)
+    expect(titles()).toHaveLength(6)
+    const lastBars = bars().slice(4)
+    lastBars.forEach((bar) => {
+      expect(bar.getAttribute('height')).toBe('4')
+    })
+  })
+
+  test('the screen reader summary lists the tournaments', () => {
+    render(['n', 's'], historyData(), { marks: [MARK_A, MARK_C] })
+    const label = container
+      .querySelector('[role="img"]')
+      .getAttribute('aria-label')
+    expect(label).toContain(
+      'Torneos marcados: Liga APA: el 10/10/2026, 2 partidos; Supercopa: el 11/10/2026, 1 partido.',
+    )
+    expect(label).toContain('Nico: de 1500 a 1503')
+  })
+
+  test('tournament mode names the tournament in the summary', () => {
+    const data = {
+      ...historyData(),
+      scope: { type: 'tournament', tournament: { id: 'a', name: 'Liga APA' } },
+    }
+    render(['n', 's'], data, { mode: 'tournament' })
+    expect(
+      container.querySelector('[role="img"]').getAttribute('aria-label'),
+    ).toContain('Rating APA 2.0 del torneo Liga APA del 10/10/2026')
   })
 })
 

@@ -246,6 +246,17 @@ test('changing tab writes tab and clears the Rating APA params', async () => {
   expect(activeTab()).toBe('rating')
 })
 
+test('changing tab also clears tournamentId', async () => {
+  mockApi({ ratings: () => Promise.resolve({ data: ratingsResponse }) })
+  await render(
+    '/statistics?tournamentId=0123456789abcdef01234567&players=n&other=1',
+  )
+
+  clickTab('Jugadores')
+  expect(location.search).toBe('?other=1&tab=players')
+  expect(activeTab()).toBe('players')
+})
+
 test('a failure loading the statistics still shows the page error', async () => {
   apiClient.get.mockImplementation((url) =>
     url === '/ratings'

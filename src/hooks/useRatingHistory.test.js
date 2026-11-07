@@ -127,6 +127,70 @@ test('keeps the previous data while the next period loads', async () => {
   expect(latest.data.matchesInPeriod).toBe(5)
 })
 
+test('exposes the scope of the response', async () => {
+  apiClient.get.mockResolvedValue({
+    data: {
+      success: true,
+      scope: { type: 'period', tournament: null },
+      data: { matchesInPeriod: 1, players: [] },
+    },
+  })
+  await render({ dateFrom: '2026-01-01', dateTo: '2026-12-31' })
+  expect(latest.data.scope).toEqual({ type: 'period', tournament: null })
+})
+
+test('with a tournament it asks only for tournamentId and takes the range from the response', async () => {
+  apiClient.get.mockResolvedValue({
+    data: {
+      success: true,
+      dateFrom: '2026-10-07',
+      dateTo: '2026-10-15',
+      scope: { type: 'tournament', tournament: { id: 't1', name: 'Liga' } },
+      data: { matchesInPeriod: 4, players: [] },
+    },
+  })
+  await render({ dateFrom: '', dateTo: '', tournamentId: 't1' })
+  expect(apiClient.get).toHaveBeenCalledWith(
+    '/ratings/history',
+    expect.objectContaining({
+      params: { tournamentId: 't1' },
+      signal: expect.anything(),
+    }),
+  )
+  expect(latest.data).toMatchObject({
+    matchesInPeriod: 4,
+    dateFrom: '2026-10-07',
+    dateTo: '2026-10-15',
+    scope: { type: 'tournament', tournament: { id: 't1', name: 'Liga' } },
+  })
+})
+
+test('a tournament without matches comes back with null dates', async () => {
+  apiClient.get.mockResolvedValue({
+    data: {
+      success: true,
+      dateFrom: null,
+      dateTo: null,
+      scope: { type: 'tournament', tournament: { id: 't1', name: null } },
+      data: { matchesInPeriod: 0, players: [] },
+    },
+  })
+  await render({ dateFrom: '', dateTo: '', tournamentId: 't1' })
+  expect(latest.data.dateFrom).toBeFalsy()
+  expect(latest.data.dateTo).toBeFalsy()
+  expect(latest.data.matchesInPeriod).toBe(0)
+})
+
+test('changing the tournament asks again; ignores the dates while a tournament is set', async () => {
+  apiClient.get.mockResolvedValue(body(1))
+  await render({ dateFrom: '', dateTo: '', tournamentId: 't1' })
+  await render({ dateFrom: '', dateTo: '', tournamentId: 't2' })
+  expect(apiClient.get.mock.calls.map(([, config]) => config.params)).toEqual([
+    { tournamentId: 't1' },
+    { tournamentId: 't2' },
+  ])
+})
+
 test('does not call the API without both dates', async () => {
   await render({ dateFrom: '2026-01-01', dateTo: '' })
   await render({ dateFrom: '', dateTo: '' })

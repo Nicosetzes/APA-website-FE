@@ -2,7 +2,13 @@
 import {
   FIRST_RATING_YEAR,
   HISTORY_START_DATE,
+  MARK_LANE_HEIGHT,
+  MAX_MARK_LANES,
   PLAYER_PALETTE,
+  RATING_TAB_PARAMS,
+  TOURNAMENT_MARK_COLORS,
+  assignMarkLanes,
+  buildActiveMarks,
   buildAxisTicks,
   buildChartRows,
   buildPeriodRanking,
@@ -11,10 +17,12 @@ import {
   computeYDomain,
   daysBetween,
   describeChartForScreenReaders,
+  describeMarkTitle,
   describeMatchResult,
   describePointProbability,
   describeUpsetProbability,
   formatChance,
+  fitMarkLabel,
   formatDay,
   getDefaultSelection,
   getPeriodOptions,
@@ -22,6 +30,7 @@ import {
   getTodayArgentina,
   parseDay,
   parsePlayersParam,
+  parseTournamentParam,
   playerKey,
   readPenalties,
   readTeams,
@@ -782,6 +791,286 @@ describe('describeChartForScreenReaders', () => {
         matchesInPeriod: 1,
       }),
     ).toContain('No hay jugadores seleccionados.')
+  })
+})
+
+describe('describeChartForScreenReaders with tournaments', () => {
+  const marks = [
+    {
+      name: 'Liga APA',
+      matches: 12,
+      fromT: '2026-10-10T15:00:00.000Z',
+      toT: '2026-10-15T15:00:00.000Z',
+    },
+    {
+      name: 'Copa',
+      matches: 1,
+      fromT: '2026-10-11T15:00:00.000Z',
+      toT: '2026-10-11T15:00:00.000Z',
+    },
+  ]
+
+  test('lists the marked tournaments with their dates', () => {
+    const text = describeChartForScreenReaders({
+      players: [],
+      dateFrom: '2026-10-01',
+      dateTo: '2026-10-31',
+      matchesInPeriod: 13,
+      marks,
+    })
+    expect(text).toContain(
+      'Torneos marcados: Liga APA: del 10/10/2026 al 15/10/2026, 12 partidos; Copa: el 11/10/2026, 1 partido.',
+    )
+  })
+
+  test('names the tournament in tournament mode', () => {
+    const text = describeChartForScreenReaders({
+      players: [
+        {
+          player: { name: 'Lalo' },
+          start: null,
+          end: { rating: 1490 },
+          summary: { ratingChange: -10 },
+        },
+      ],
+      dateFrom: '2026-10-10',
+      dateTo: '2026-10-15',
+      matchesInPeriod: 12,
+      tournamentName: 'Liga APA',
+    })
+    expect(text).toContain(
+      'Rating APA 2.0 del torneo Liga APA del 10/10/2026 al 15/10/2026, en 12 partidos.',
+    )
+    expect(text).toContain('Lalo: debutó en el torneo y terminó en 1490')
+  })
+
+  test('works without dates (tournament without matches)', () => {
+    expect(
+      describeChartForScreenReaders({
+        players: [],
+        dateFrom: null,
+        dateTo: null,
+        matchesInPeriod: 0,
+        tournamentName: 'Liga APA',
+      }),
+    ).toBe(
+      'Gráfico de líneas con la evolución del Rating APA 2.0 del torneo Liga APA en 0 partidos. No hay jugadores seleccionados.',
+    )
+  })
+})
+
+describe('parseTournamentParam', () => {
+  test('accepts a 24-char hex id and lowercases it', () => {
+    expect(parseTournamentParam('0123456789abcdef01234567')).toBe(
+      '0123456789abcdef01234567',
+    )
+    expect(parseTournamentParam('0123456789ABCDEF01234567')).toBe(
+      '0123456789abcdef01234567',
+    )
+  })
+
+  test.each([
+    [''],
+    ['all'],
+    ['abc'],
+    ['0123456789abcdef0123456'],
+    ['g'.repeat(24)],
+  ])('treats %p as no tournament', (value) => {
+    expect(parseTournamentParam(value)).toBe('')
+  })
+
+  test('treats a missing param as no tournament', () => {
+    expect(parseTournamentParam(null)).toBe('')
+    expect(parseTournamentParam(undefined)).toBe('')
+  })
+
+  test('tournamentId is cleaned when leaving the tab', () => {
+    expect(RATING_TAB_PARAMS).toContain('tournamentId')
+  })
+})
+
+describe('buildActiveMarks', () => {
+  const mark = (id, fromX, toX, extra = {}) => ({
+    id,
+    name: `Backend ${id}`,
+    fromX,
+    toX,
+    matches: toX - fromX + 1,
+    fromT: '2026-10-10T15:00:00.000Z',
+    toT: '2026-10-11T15:00:00.000Z',
+    ...extra,
+  })
+  const active = [
+    { _id: 'a', name: 'Liga A' },
+    { _id: 'b', name: 'Liga B' },
+    { _id: 'c', name: 'Liga C' },
+  ]
+
+  test('keeps only the tournaments in the active list, in BE order', () => {
+    const result = buildActiveMarks(
+      [mark('b', 1, 5), mark('legacy', 2, 3), mark('a', 4, 9)],
+      active,
+    )
+    expect(result.map(({ id }) => id)).toEqual(['b', 'a'])
+  })
+
+  test('uses the name from the active list', () => {
+    const [result] = buildActiveMarks([mark('a', 1, 2)], active)
+    expect(result.name).toBe('Liga A')
+    expect(result).toMatchObject({ fromX: 1, toX: 2, matches: 2 })
+  })
+
+  test('compares ids as strings', () => {
+    const result = buildActiveMarks(
+      [mark(7, 1, 2)],
+      [{ _id: '7', name: 'Siete' }],
+    )
+    expect(result).toHaveLength(1)
+  })
+
+  test('colors cycle by order and contiguous marks never share a color', () => {
+    const many = Array.from({ length: 8 }, (_, index) => `t${index}`)
+    const result = buildActiveMarks(
+      many.map((id, index) => mark(id, index + 1, index + 1)),
+      many.map((id) => ({ _id: id, name: id })),
+    )
+    expect(result[0].color).toBe(TOURNAMENT_MARK_COLORS[0])
+    expect(result[TOURNAMENT_MARK_COLORS.length].color).toBe(
+      TOURNAMENT_MARK_COLORS[0],
+    )
+    result.slice(1).forEach(({ color }, index) => {
+      expect(color).not.toBe(result[index].color)
+    })
+  })
+
+  test('mark colors are not player colors', () => {
+    TOURNAMENT_MARK_COLORS.forEach((hex) => {
+      expect(PLAYER_PALETTE).not.toContain(hex)
+    })
+    expect(new Set(TOURNAMENT_MARK_COLORS).size).toBe(
+      TOURNAMENT_MARK_COLORS.length,
+    )
+  })
+
+  test('returns nothing when either list is not an array', () => {
+    expect(buildActiveMarks(undefined, active)).toEqual([])
+    expect(buildActiveMarks('x', active)).toEqual([])
+    expect(buildActiveMarks([mark('a', 1, 2)], null)).toEqual([])
+    expect(buildActiveMarks([mark('a', 1, 2)], [])).toEqual([])
+  })
+})
+
+describe('assignMarkLanes', () => {
+  const span = (fromX, toX) => ({ fromX, toX })
+
+  test('no marks, no lanes', () => {
+    expect(assignMarkLanes([])).toEqual({ marks: [], lanes: 0 })
+  })
+
+  test('consecutive tournaments share the first lane', () => {
+    const { marks, lanes } = assignMarkLanes([span(1, 10), span(11, 20)])
+    expect(marks.map(({ lane }) => lane)).toEqual([0, 0])
+    expect(lanes).toBe(1)
+  })
+
+  test('a tournament starting on the last match of the previous one needs another lane', () => {
+    const { marks, lanes } = assignMarkLanes([span(1, 10), span(10, 20)])
+    expect(marks.map(({ lane }) => lane)).toEqual([0, 1])
+    expect(lanes).toBe(2)
+  })
+
+  test('simultaneous tournaments use different lanes and lanes are reused', () => {
+    const { marks, lanes } = assignMarkLanes([
+      span(1, 30),
+      span(5, 20),
+      span(22, 28),
+      span(31, 40),
+    ])
+    expect(marks.map(({ lane }) => lane)).toEqual([0, 1, 1, 0])
+    expect(lanes).toBe(2)
+  })
+
+  test('a single-match tournament takes a lane like any other', () => {
+    const { marks } = assignMarkLanes([span(1, 10), span(5, 5)])
+    expect(marks.map(({ lane }) => lane)).toEqual([0, 1])
+  })
+
+  test('more than the maximum overlapping leaves the extra ones without lane', () => {
+    const overlapping = Array.from({ length: MAX_MARK_LANES + 2 }, () =>
+      span(1, 50),
+    )
+    const { marks, lanes } = assignMarkLanes(overlapping)
+    expect(lanes).toBe(MAX_MARK_LANES)
+    expect(marks).toHaveLength(MAX_MARK_LANES + 2)
+    expect(marks.slice(0, MAX_MARK_LANES).map(({ lane }) => lane)).toEqual([
+      0, 1, 2, 3,
+    ])
+    expect(marks.slice(MAX_MARK_LANES).map(({ lane }) => lane)).toEqual([
+      null,
+      null,
+    ])
+  })
+
+  test('keeps the rest of each mark and does not mutate the input', () => {
+    const input = [{ id: 'a', fromX: 1, toX: 2 }]
+    const { marks } = assignMarkLanes(input)
+    expect(marks[0]).toEqual({ id: 'a', fromX: 1, toX: 2, lane: 0 })
+    expect(input[0]).toEqual({ id: 'a', fromX: 1, toX: 2 })
+  })
+
+  test('lane height is 16 px', () => {
+    expect(MARK_LANE_HEIGHT).toBe(16)
+  })
+})
+
+describe('fitMarkLabel', () => {
+  test('returns the whole name when it fits (about 6 px per char)', () => {
+    expect(fitMarkLabel('Liga APA', 60)).toBe('Liga APA')
+  })
+
+  test('truncates with an ellipsis', () => {
+    expect(fitMarkLabel('Liga APA 2026', 60)).toBe('Liga APA…')
+    expect(fitMarkLabel('Liga APA 2026', 60).length).toBeLessThanOrEqual(10)
+  })
+
+  test('returns nothing when fewer than 4 characters fit', () => {
+    expect(fitMarkLabel('Liga APA', 23)).toBe('')
+    expect(fitMarkLabel('Liga APA', 0)).toBe('')
+    expect(fitMarkLabel('Liga APA', -10)).toBe('')
+    expect(fitMarkLabel('Liga APA', NaN)).toBe('')
+  })
+
+  test('shows at least 4 characters when they fit', () => {
+    expect(fitMarkLabel('Liga APA', 24)).toBe('Lig…')
+  })
+
+  test('ignores empty names', () => {
+    expect(fitMarkLabel('', 200)).toBe('')
+    expect(fitMarkLabel(null, 200)).toBe('')
+  })
+})
+
+describe('describeMarkTitle', () => {
+  test('gives the name, the dates and the number of matches', () => {
+    expect(
+      describeMarkTitle({
+        name: 'Liga APA',
+        matches: 12,
+        fromT: '2026-10-10T15:00:00.000Z',
+        toT: '2026-10-15T15:00:00.000Z',
+      }),
+    ).toBe('Liga APA: del 10/10/2026 al 15/10/2026, 12 partidos')
+  })
+
+  test('uses the Argentina day, not the UTC day', () => {
+    expect(
+      describeMarkTitle({
+        name: 'Copa',
+        matches: 1,
+        fromT: '2026-10-11T02:00:00.000Z',
+        toT: '2026-10-11T02:00:00.000Z',
+      }),
+    ).toBe('Copa: el 10/10/2026, 1 partido')
   })
 })
 

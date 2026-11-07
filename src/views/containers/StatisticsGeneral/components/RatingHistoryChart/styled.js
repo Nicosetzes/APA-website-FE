@@ -8,11 +8,11 @@ export const ChartCard = styled(Card)`
 `
 
 export const ChartBox = styled.div`
-  height: 380px;
+  height: ${({ $extraHeight = 0 }) => 380 + $extraHeight}px;
   width: 100%;
 
   @media (max-width: 480px) {
-    height: 300px;
+    height: ${({ $extraHeight = 0 }) => 300 + $extraHeight}px;
   }
 `
 

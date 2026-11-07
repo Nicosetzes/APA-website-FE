@@ -32,3 +32,21 @@ export const RetryButton = styled.button`
     outline-offset: 2px;
   }
 `
+
+export const TournamentHeading = styled.div`
+  margin: 0 auto 1rem auto;
+  max-width: 900px;
+`
+
+export const TournamentTitle = styled.h3`
+  color: var(--blue-900);
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0;
+`
+
+export const TournamentMeta = styled.p`
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 0.85rem;
+  margin: 0.25rem 0 0 0;
+`

@@ -8,7 +8,24 @@ export const REFERENCE_RATING = 1500
 
 // Params de la URL de la pestaña "Rating APA" (StatisticsGeneral los limpia
 // al cambiar de pestaña).
-export const RATING_TAB_PARAMS = ['dateFrom', 'dateTo', 'players']
+export const RATING_TAB_PARAMS = [
+  'dateFrom',
+  'dateTo',
+  'players',
+  'tournamentId',
+]
+
+// Id de torneo del BE: ObjectId en hex de 24 caracteres.
+const TOURNAMENT_ID_PATTERN = /^[a-f\d]{24}$/i
+
+/**
+ * Param `tournamentId` de la URL -> el id en minúsculas si es un hex de 24
+ * caracteres, o `''` (sin torneo: modo período) si falta o no es válido.
+ */
+export const parseTournamentParam = (value) => {
+  const id = typeof value === 'string' ? value.trim() : ''
+  return TOURNAMENT_ID_PATTERN.test(id) ? id.toLowerCase() : ''
+}
 
 // Año del primer evento de rating. Fija el inicio de "Todo el historial" y el
 // año más antiguo del selector de años: un solo valor para que no se desfasen.
@@ -585,28 +602,128 @@ export const describeMatchResult = ({
 /** Fecha corta "27/10/2026" (día argentino) de un instante ISO. */
 export const formatMatchDay = (value) => formatDay(toArgentinaDay(value))
 
+// Colores de las marcas de torneo: tonos apagados que no se usan para jugadores
+// (un test lo asegura), con contraste suficiente para texto blanco encima.
+export const TOURNAMENT_MARK_COLORS = [
+  '#64748B',
+  '#0F766E',
+  '#B45309',
+  '#BE185D',
+  '#4D7C0F',
+  '#6D28D9',
+]
+
+// Carriles de marcas encima del gráfico: cantidad máxima y alto de cada uno (px).
+export const MAX_MARK_LANES = 4
+export const MARK_LANE_HEIGHT = 16
+
+// Ancho aproximado de un carácter (px) con la fuente de 11 px de las barras.
+const MARK_CHAR_WIDTH = 6
+const MIN_MARK_LABEL_CHARS = 4
+
+/**
+ * Marcas de torneo a dibujar: los torneos de `data.tournaments` (BE) que están
+ * en la lista de activos (`GET /tournaments?legacy=false`). Se cruzan por id
+ * (como texto), con el nombre de la lista y el orden del BE. El color se
+ * asigna cíclicamente por orden, así dos marcas contiguas nunca comparten
+ * color. Si alguna de las dos listas no es un array, no hay marcas.
+ */
+export const buildActiveMarks = (dataTournaments, activeTournaments) => {
+  if (!Array.isArray(dataTournaments) || !Array.isArray(activeTournaments)) {
+    return []
+  }
+  const names = new Map(
+    activeTournaments.map((tournament) => [
+      String(tournament._id),
+      tournament.name,
+    ]),
+  )
+  return dataTournaments
+    .filter((mark) => names.has(String(mark.id)))
+    .map((mark, index) => ({
+      ...mark,
+      name: names.get(String(mark.id)) || mark.name || 'Torneo',
+      color: TOURNAMENT_MARK_COLORS[index % TOURNAMENT_MARK_COLORS.length],
+    }))
+}
+
+/**
+ * Reparte las marcas en carriles (greedy, en unidades de X): una marca usa el
+ * primer carril cuyo último torneo terminó antes de que ella empiece. Con más
+ * de `MAX_MARK_LANES` carriles necesarios, la marca queda con `lane: null` (se
+ * dibuja sin barra de texto, nunca se oculta). Devuelve las marcas con su
+ * `lane` y la cantidad de carriles usados.
+ */
+export const assignMarkLanes = (marks = []) => {
+  const laneEnds = []
+  const placed = marks.map((mark) => {
+    let lane = laneEnds.findIndex((end) => end < mark.fromX)
+    if (lane === -1 && laneEnds.length < MAX_MARK_LANES) {
+      lane = laneEnds.length
+      laneEnds.push(0)
+    }
+    if (lane === -1) return { ...mark, lane: null }
+    laneEnds[lane] = mark.toX
+    return { ...mark, lane }
+  })
+  return { marks: placed, lanes: laneEnds.length }
+}
+
+/**
+ * Nombre recortado con "…" para que entre en `widthPx`. Devuelve `''` si en
+ * ese ancho caben menos de 4 caracteres (no vale la pena escribir texto).
+ */
+export const fitMarkLabel = (name, widthPx) => {
+  const text = typeof name === 'string' ? name.trim() : ''
+  const maxChars = Math.floor(widthPx / MARK_CHAR_WIDTH)
+  if (!text || !(maxChars >= MIN_MARK_LABEL_CHARS)) return ''
+  if (text.length <= maxChars) return text
+  return `${text.slice(0, maxChars - 1).trimEnd()}…`
+}
+
+const countMatches = (count) =>
+  `${count} ${count === 1 ? 'partido' : 'partidos'}`
+
+export const describeMarkTitle = (mark) => {
+  const from = formatMatchDay(mark.fromT)
+  const to = formatMatchDay(mark.toT)
+  const range = from === to ? `el ${from}` : `del ${from} al ${to}`
+  return `${mark.name}: ${range}, ${countMatches(mark.matches)}`
+}
+
 /** Texto para lectores de pantalla que resume lo que muestra el gráfico. */
 export const describeChartForScreenReaders = ({
   players = [],
   dateFrom,
   dateTo,
   matchesInPeriod = 0,
+  marks = [],
+  tournamentName = null,
 }) => {
-  const intro = `Gráfico de líneas con la evolución del Rating APA 2.0 del ${formatDay(
-    dateFrom,
-  )} al ${formatDay(dateTo)}, en ${matchesInPeriod} ${
-    matchesInPeriod === 1 ? 'partido' : 'partidos'
-  }.`
-  if (players.length === 0) return `${intro} No hay jugadores seleccionados.`
+  const scope = tournamentName ? ` del torneo ${tournamentName}` : ''
+  const range =
+    dateFrom && dateTo
+      ? ` del ${formatDay(dateFrom)} al ${formatDay(dateTo)},`
+      : ''
+  const intro = `Gráfico de líneas con la evolución del Rating APA 2.0${scope}${range} en ${countMatches(
+    matchesInPeriod,
+  )}.`
+  const tournaments =
+    marks.length > 0
+      ? ` Torneos marcados: ${marks.map(describeMarkTitle).join('; ')}.`
+      : ''
+  if (players.length === 0) {
+    return `${intro}${tournaments} No hay jugadores seleccionados.`
+  }
   const lines = players.map(({ player, start, end, summary }) => {
     const change = describeRatingChange(summary.ratingChange).text
     return start
       ? `${player.name}: de ${formatRating(start.rating)} a ${formatRating(
           end.rating,
         )} (${change}).`
-      : `${player.name}: debutó en el período y terminó en ${formatRating(
-          end.rating,
-        )} (${change}).`
+      : `${player.name}: debutó en el ${
+          tournamentName ? 'torneo' : 'período'
+        } y terminó en ${formatRating(end.rating)} (${change}).`
   })
-  return `${intro} ${lines.join(' ')}`
+  return `${intro}${tournaments} ${lines.join(' ')}`
 }

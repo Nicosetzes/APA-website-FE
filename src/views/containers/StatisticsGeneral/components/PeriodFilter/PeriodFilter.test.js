@@ -147,3 +147,87 @@ test('typing a date reports the change with the YYYY-MM-DD value', () => {
   })
   expect(onDateChange).toHaveBeenCalledWith('dateTo', '2026-02-25')
 })
+
+const NOTE =
+  'El período no aplica mientras hay un torneo elegido. Elegí un período para volver.'
+const ERROR =
+  'No se pudo cargar la lista de torneos; el filtro por torneo no está disponible.'
+const pressed = () =>
+  shortcutButtons().filter(
+    (node) => node.getAttribute('aria-pressed') === 'true',
+  )
+
+test('by default it is not dimmed, has no tournament select and no notes', () => {
+  render()
+  expect(container.textContent).not.toContain('El período no aplica')
+  expect(container.textContent).not.toContain('No se pudo cargar la lista')
+  expect(container.querySelector('#tournament')).toBeNull()
+  expect(container.textContent).toContain(
+    'Mostrando del 27/10/2025 al 27/10/2026.',
+  )
+})
+
+test('dimmed shows the explanation instead of the range and keeps everything clickable', () => {
+  const { onShortcut, onDateChange } = render({
+    dimmed: true,
+    dimmedNote: NOTE,
+    slug: '',
+    dateFrom: '',
+    dateTo: '',
+  })
+  expect(container.textContent).toContain(NOTE)
+  expect(container.textContent).not.toContain('Mostrando del')
+  expect(pressed()).toHaveLength(0)
+  expect(container.querySelector('#rating-dateFrom').value).toBe('')
+  expect(container.querySelector('#rating-dateTo').value).toBe('')
+  expect(shortcutButtons().every((node) => !node.disabled)).toBe(true)
+  expect(container.querySelector('select').disabled).toBe(false)
+  click(shortcutButtons()[1])
+  expect(onShortcut).toHaveBeenCalledWith('ultima-semana')
+  expect(onDateChange).not.toHaveBeenCalled()
+})
+
+const stylesheet = () =>
+  [...document.querySelectorAll('style')]
+    .map((style) => style.textContent)
+    .join('')
+    .replace(/\s+/g, '')
+
+test('dimmed lowers the opacity of the shortcuts and the period fields only', () => {
+  render({
+    dimmed: true,
+    dimmedNote: NOTE,
+    tournamentSelect: <select id="tournament" />,
+  })
+  const css = stylesheet()
+  // Atajos: la fila lleva la opacidad.
+  const row = container.querySelector('[role="group"]')
+  const rowClass = [...row.classList].pop()
+  expect(css).toMatch(new RegExp('\\.' + rowClass + '\\{[^}]*opacity:0.55'))
+  // Campos: todos los hijos de la grilla menos la celda del torneo.
+  expect(css).toMatch(/>\*:not\(\.[^)]+\)\{opacity:0\.55/)
+  const cell = container.querySelector('#tournament').parentElement
+  const notDimmed = css.match(/>\*:not\(\.([^)]+)\)\{opacity:0\.55/)[1]
+  expect([...cell.classList]).toContain(notDimmed)
+})
+
+test('the tournament select is one more cell of the same grid as Año, Desde and Hasta', () => {
+  render({ tournamentSelect: <select id="tournament" /> })
+  const grid = container
+    .querySelector('#rating-year')
+    .closest('div').parentElement
+  const cells = [...grid.children]
+  expect(cells).toHaveLength(4)
+  expect(cells[cells.length - 1]).toBe(
+    container.querySelector('#tournament').parentElement,
+  )
+})
+
+test('renders the tournament select node and the load error', () => {
+  render({
+    tournamentSelect: <select id="tournament" />,
+    tournamentsError: ERROR,
+  })
+  expect(container.querySelector('#tournament')).not.toBeNull()
+  expect(container.textContent).toContain(ERROR)
+})

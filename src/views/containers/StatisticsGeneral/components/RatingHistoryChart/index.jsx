@@ -3,6 +3,7 @@
 // reexporta desde `components/index.js`, para que quede en un chunk aparte.
 import {
   CartesianGrid,
+  Customized,
   Line,
   LineChart,
   ReferenceLine,
@@ -14,12 +15,16 @@ import {
 import { useMemo } from 'react'
 import { formatRating } from 'utils/ratings'
 import {
+  MARK_LANE_HEIGHT,
   REFERENCE_RATING,
+  assignMarkLanes,
   buildAxisTicks,
   buildChartRows,
   computeYDomain,
   describeChartForScreenReaders,
+  describeMarkTitle,
   describePointProbability,
+  fitMarkLabel,
   formatMatchDay,
   playerKey,
 } from 'utils/ratingHistory'
@@ -38,7 +43,77 @@ import {
   TooltipTitle,
 } from './styled'
 
-export const RatingHistoryTooltip = ({ active, payload }) => {
+const MARGIN_TOP = 8
+const BAR_HEIGHT = MARK_LANE_HEIGHT - 2
+const MIN_BAR_WIDTH = 3
+const BAR_PADDING = 4
+const EMPTY_MARKS = []
+
+export const TournamentMarks = ({ tournamentMarks, xAxisMap, offset }) => {
+  const scale = xAxisMap && Object.values(xAxisMap)[0]?.scale
+  if (!scale || !offset || !tournamentMarks?.length) return null
+  const bottom = offset.top + offset.height
+
+  return (
+    <g className="tournament-marks">
+      {tournamentMarks.map((mark) => {
+        const startX = scale(mark.fromX)
+        const endX = scale(mark.toX)
+        const hasLane = mark.lane !== null
+        const barY = hasLane
+          ? MARGIN_TOP / 2 + mark.lane * MARK_LANE_HEIGHT
+          : offset.top - 6
+        const barHeight = hasLane ? BAR_HEIGHT : 4
+        const barWidth = Math.max(endX - startX, MIN_BAR_WIDTH)
+        const label = hasLane
+          ? fitMarkLabel(mark.name, barWidth - BAR_PADDING * 2)
+          : ''
+        const line = (x, dash) => (
+          <line
+            x1={x}
+            x2={x}
+            y1={barY + barHeight}
+            y2={bottom}
+            stroke={mark.color}
+            strokeWidth={1}
+            strokeOpacity={0.7}
+            strokeDasharray={dash}
+          />
+        )
+        return (
+          <g key={mark.id} className="tournament-mark">
+            <title>{describeMarkTitle(mark)}</title>
+            {line(startX, '4 3')}
+            {mark.toX !== mark.fromX && line(endX, '1.5 3')}
+            <rect
+              className="tournament-mark-bar"
+              x={startX}
+              y={barY}
+              width={barWidth}
+              height={barHeight}
+              rx={2}
+              fill={mark.color}
+              fillOpacity={0.9}
+            />
+            {label && (
+              <text
+                x={startX + BAR_PADDING}
+                y={barY + BAR_HEIGHT - 3.5}
+                fontSize={11}
+                fill="#fff"
+                pointerEvents="none"
+              >
+                {label}
+              </text>
+            )}
+          </g>
+        )
+      })}
+    </g>
+  )
+}
+
+export const RatingHistoryTooltip = ({ active, payload, mode }) => {
   if (!active || !payload?.length) return null
   const row = payload[0].payload
   const entries = payload
@@ -51,7 +126,7 @@ export const RatingHistoryTooltip = ({ active, payload }) => {
     <TooltipBox>
       <TooltipTitle>
         {row.x === 0
-          ? 'Inicio del período'
+          ? `Inicio del ${mode === 'tournament' ? 'torneo' : 'período'}`
           : `Partido ${row.x}${row.t ? ` · ${formatMatchDay(row.t)}` : ''}`}
       </TooltipTitle>
       {played.map((entry) => {
@@ -94,29 +169,44 @@ export const RatingHistoryTooltip = ({ active, payload }) => {
   )
 }
 
-const RatingHistoryChart = ({ data, selectedIds, colors }) => {
-  const { rows, ticks, domain, description, chosen } = useMemo(() => {
-    const chosenPlayers = data.players.filter(({ player }) =>
-      selectedIds.includes(String(player.id)),
-    )
-    const chartRows = buildChartRows({
-      timeline: data.matchesTimeline,
-      players: data.players,
-      selectedIds,
-    })
-    return {
-      chosen: chosenPlayers,
-      rows: chartRows,
-      ticks: buildAxisTicks(data.matchesTimeline, data),
-      domain: computeYDomain(chartRows, selectedIds),
-      description: describeChartForScreenReaders({
-        players: chosenPlayers,
-        dateFrom: data.dateFrom,
-        dateTo: data.dateTo,
-        matchesInPeriod: data.matchesInPeriod,
-      }),
-    }
-  }, [data, selectedIds])
+const RatingHistoryChart = ({
+  data,
+  selectedIds,
+  colors,
+  marks = EMPTY_MARKS,
+  mode = 'period',
+}) => {
+  const isTournament = mode === 'tournament'
+  const { rows, ticks, domain, description, chosen, laidOutMarks, lanes } =
+    useMemo(() => {
+      const chosenPlayers = data.players.filter(({ player }) =>
+        selectedIds.includes(String(player.id)),
+      )
+      const chartRows = buildChartRows({
+        timeline: data.matchesTimeline,
+        players: data.players,
+        selectedIds,
+      })
+      const placed = assignMarkLanes(marks)
+      return {
+        chosen: chosenPlayers,
+        rows: chartRows,
+        ticks: buildAxisTicks(data.matchesTimeline, data),
+        domain: computeYDomain(chartRows, selectedIds),
+        laidOutMarks: placed.marks,
+        lanes: placed.lanes,
+        description: describeChartForScreenReaders({
+          players: chosenPlayers,
+          dateFrom: data.dateFrom,
+          dateTo: data.dateTo,
+          matchesInPeriod: data.matchesInPeriod,
+          marks,
+          tournamentName: isTournament
+            ? data.scope?.tournament?.name ?? null
+            : null,
+        }),
+      }
+    }, [data, selectedIds, marks, isTournament])
 
   const labelsByX = new Map(ticks.map(({ x, label }) => [x, label]))
 
@@ -127,11 +217,20 @@ const RatingHistoryChart = ({ data, selectedIds, colors }) => {
           Elegí al menos un jugador para ver su evolución en el gráfico.
         </EmptyChart>
       ) : (
-        <ChartBox role="img" aria-label={description}>
+        <ChartBox
+          role="img"
+          aria-label={description}
+          $extraHeight={lanes * MARK_LANE_HEIGHT}
+        >
           <ResponsiveContainer width="100%" height="100%">
             <LineChart
               data={rows}
-              margin={{ top: 8, right: 16, bottom: 18, left: 0 }}
+              margin={{
+                top: MARGIN_TOP + lanes * MARK_LANE_HEIGHT,
+                right: 16,
+                bottom: 18,
+                left: 0,
+              }}
             >
               <CartesianGrid strokeDasharray="3 3" vertical={false} />
               <XAxis
@@ -144,7 +243,9 @@ const RatingHistoryChart = ({ data, selectedIds, colors }) => {
                 allowDecimals={false}
                 tick={{ fontSize: 12 }}
                 label={{
-                  value: 'Partidos del período',
+                  value: isTournament
+                    ? 'Partidos del torneo'
+                    : 'Partidos del período',
                   position: 'insideBottom',
                   offset: -12,
                   fontSize: 12,
@@ -161,7 +262,12 @@ const RatingHistoryChart = ({ data, selectedIds, colors }) => {
                 stroke="#6b7280"
                 strokeDasharray="6 4"
               />
-              <Tooltip content={<RatingHistoryTooltip />} />
+              {laidOutMarks.length > 0 && (
+                <Customized
+                  component={<TournamentMarks tournamentMarks={laidOutMarks} />}
+                />
+              )}
+              <Tooltip content={<RatingHistoryTooltip mode={mode} />} />
               {chosen.map(({ player }) => (
                 <Line
                   key={player.id}

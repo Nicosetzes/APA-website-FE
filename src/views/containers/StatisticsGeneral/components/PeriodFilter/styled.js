@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { Card } from '../../styled'
 
 export const FilterCard = styled(Card)`
@@ -17,10 +17,14 @@ export const FilterTitle = styled.h3`
   margin: 0;
 `
 
+const DIMMED_OPACITY = 0.55
+
 export const ShortcutRow = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
+  opacity: ${({ $dimmed }) => ($dimmed ? DIMMED_OPACITY : 1)};
+  transition: opacity 0.2s ease;
 `
 
 export const ShortcutButton = styled.button`
@@ -45,10 +49,24 @@ export const ShortcutButton = styled.button`
   }
 `
 
+export const TournamentField = styled.div``
+
 export const FieldsRow = styled.div`
   display: grid;
   gap: 0.75rem;
   grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
+
+  > * {
+    transition: opacity 0.2s ease;
+  }
+
+  ${({ $dimmed }) =>
+    $dimmed &&
+    css`
+      > *:not(${TournamentField}) {
+        opacity: ${DIMMED_OPACITY};
+      }
+    `}
 `
 
 export const FormGroup = styled.div`
@@ -84,4 +102,10 @@ export const PeriodNote = styled.p`
   color: rgba(0, 0, 0, 0.6);
   font-size: 0.85rem;
   margin: 0;
+`
+
+export const PeriodControls = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 `

@@ -11,14 +11,16 @@ const IDLE = { data: null, loading: false, error: null }
 /**
  * @returns {{ data: object|null, loading: boolean, error: string|null, retry: Function }}
  */
-const useRatingHistory = ({ dateFrom, dateTo }) => {
+const useRatingHistory = ({ dateFrom, dateTo, tournamentId = '' }) => {
   const [state, setState] = useState(IDLE)
   const [attempt, setAttempt] = useState(0)
 
   const retry = useCallback(() => setAttempt((value) => value + 1), [])
 
   useEffect(() => {
-    if (!dateFrom || !dateTo) {
+    // Con torneo el BE no recibe fechas (son excluyentes): devuelve el rango
+    // del torneo, que el hook expone como `dateFrom`/`dateTo`.
+    if (!tournamentId && (!dateFrom || !dateTo)) {
       setState(IDLE)
       return undefined
     }
@@ -28,13 +30,20 @@ const useRatingHistory = ({ dateFrom, dateTo }) => {
 
     apiClient
       .get('/ratings/history', {
-        params: { dateFrom, dateTo },
+        params: tournamentId ? { tournamentId } : { dateFrom, dateTo },
         signal: controller.signal,
       })
       .then(({ data: body }) => {
         if (controller.signal.aborted) return
         setState({
-          data: { ...body.data, dateFrom, dateTo },
+          data: tournamentId
+            ? {
+                ...body.data,
+                dateFrom: body.dateFrom ?? dateFrom,
+                dateTo: body.dateTo ?? dateTo,
+                scope: body.scope,
+              }
+            : { ...body.data, dateFrom, dateTo, scope: body.scope },
           loading: false,
           error: null,
         })
@@ -46,7 +55,7 @@ const useRatingHistory = ({ dateFrom, dateTo }) => {
       })
 
     return () => controller.abort()
-  }, [dateFrom, dateTo, attempt])
+  }, [dateFrom, dateTo, tournamentId, attempt])
 
   return { ...state, retry }
 }

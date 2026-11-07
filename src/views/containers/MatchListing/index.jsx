@@ -22,6 +22,7 @@ import {
   StyledSelect,
 } from './styled'
 import { MatchesTable, PageLoader } from 'views/components'
+import TournamentSelect from 'views/containers/TournamentSelect'
 import TeamAutocomplete, { normalizeTeamSearch } from './TeamAutocomplete'
 import { apiClient, getApiErrorMessage } from 'api/axiosConfig'
 import { useCallback, useEffect, useState } from 'react'
@@ -325,23 +326,13 @@ const MatchListing = () => {
           <FilterSection>
             <FilterSectionTitle>Partido</FilterSectionTitle>
             <FilterGrid>
-              <FormGroup>
-                <label htmlFor="tournamentFilter">Torneo</label>
-                <StyledSelect
-                  id="tournamentFilter"
-                  value={tournamentId}
-                  onChange={(e) =>
-                    updateFilters({ tournamentId: e.target.value })
-                  }
-                >
-                  <option value="all">Todos los torneos</option>
-                  {tournaments.map((t) => (
-                    <option key={t._id} value={t._id}>
-                      {t.name}
-                    </option>
-                  ))}
-                </StyledSelect>
-              </FormGroup>
+              <TournamentSelect
+                id="tournamentFilter"
+                label="Torneo"
+                value={tournamentId}
+                tournaments={tournaments}
+                onChange={(value) => updateFilters({ tournamentId: value })}
+              />
               <FormGroup>
                 <label htmlFor="typeFilter">Tipo de partido</label>
                 <StyledSelect

@@ -11,9 +11,10 @@ export class AssistantNotConfiguredError extends Error {
 }
 
 export class AssistantInvalidResponseError extends Error {
-  constructor() {
+  constructor(status) {
     super('La respuesta del asistente no es válida')
     this.name = 'AssistantInvalidResponseError'
+    this.status = status
   }
 }
 
@@ -27,7 +28,7 @@ export const sendAssistantMessage = async ({
 }) => {
   if (!assistantUrl) throw new AssistantNotConfiguredError()
 
-  const { data } = await axios.post(
+  const { data, status } = await axios.post(
     assistantUrl,
     { message, sessionId },
     {
@@ -38,7 +39,7 @@ export const sendAssistantMessage = async ({
   )
 
   if (typeof data?.reply !== 'string' || !data.reply.trim()) {
-    throw new AssistantInvalidResponseError()
+    throw new AssistantInvalidResponseError(status)
   }
 
   return data.reply
@@ -46,13 +47,33 @@ export const sendAssistantMessage = async ({
 
 const GENERIC_ERROR = 'No pude responder en este momento. Probá de nuevo.'
 
-// Mensaje para mostrar en el chat. Los 4xx/5xx de n8n traen un mensaje ya
-// pensado para el usuario en `error.message`; para el resto se usa uno propio.
-export const getAssistantErrorMessage = (error) => {
-  if (error instanceof AssistantNotConfiguredError) {
-    return 'El asistente no está disponible por ahora.'
+// Código corto para saber de dónde viene el error (el status HTTP y el código
+// de n8n, o el código de red de axios). Sirve para diagnosticar desde el
+// celular, donde no hay consola a mano.
+export const getAssistantErrorCode = (error) => {
+  if (error instanceof AssistantInvalidResponseError) {
+    return [error.status && `HTTP ${error.status}`, 'EMPTY_REPLY']
+      .filter(Boolean)
+      .join(' · ')
   }
 
+  const status = error?.response?.status
+  if (status) {
+    const serverCode = error.response.data?.error?.code
+    return [`HTTP ${status}`, typeof serverCode === 'string' && serverCode]
+      .filter(Boolean)
+      .join(' · ')
+  }
+
+  return typeof error?.code === 'string' && error.code
+    ? error.code
+    : 'NO_RESPONSE'
+}
+
+// Mensaje para el usuario, sin el código. Los 4xx/5xx de n8n traen un mensaje
+// ya pensado para el usuario en `error.message`; para el resto se usa uno
+// propio.
+const getUserMessage = (error) => {
   if (error instanceof AssistantInvalidResponseError) return GENERIC_ERROR
 
   const status = error?.response?.status
@@ -77,4 +98,27 @@ export const getAssistantErrorMessage = (error) => {
   }
 
   return GENERIC_ERROR
+}
+
+// Mensaje para mostrar en el chat, con el código del error al final.
+export const getAssistantErrorMessage = (error) => {
+  if (error instanceof AssistantNotConfiguredError) {
+    return 'El asistente no está disponible por ahora.'
+  }
+
+  const code = getAssistantErrorCode(error)
+
+  // eslint-disable-next-line no-console
+  console.error('assistant_error', {
+    code,
+    status: error?.response?.status,
+    axiosCode: error?.code,
+    body: String(
+      typeof error?.response?.data === 'string'
+        ? error.response.data
+        : JSON.stringify(error?.response?.data ?? null),
+    ).slice(0, 300),
+  })
+
+  return `${getUserMessage(error)} (${code})`
 }

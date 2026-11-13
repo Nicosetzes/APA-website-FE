@@ -393,7 +393,7 @@ describe('conversación', () => {
     await click(sendButton())
 
     expect($('[role="alert"]').textContent).toBe(
-      'El mensaje es demasiado largo',
+      'El mensaje es demasiado largo (HTTP 400)',
     )
   })
 })

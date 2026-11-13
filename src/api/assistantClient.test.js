@@ -70,9 +70,69 @@ test('rechaza una respuesta sin texto', async () => {
   }
 })
 
+test('una respuesta sin texto guarda el status HTTP', async () => {
+  axios.post.mockResolvedValue({ status: 200, data: {} })
+
+  await expect(
+    sendAssistantMessage({ message: 'hola', sessionId: 's', token: 't' }),
+  ).rejects.toMatchObject({ status: 200 })
+})
+
 describe('getAssistantErrorMessage', () => {
-  const http = (status, message) => ({
-    response: { status, data: message ? { error: { message } } : {} },
+  const http = (status, message, code) => ({
+    response: {
+      status,
+      data: message || code ? { error: { message, code } } : {},
+    },
+  })
+
+  beforeEach(() => {
+    jest.spyOn(console, 'error').mockImplementation(() => {})
+  })
+
+  afterEach(() => {
+    console.error.mockRestore()
+  })
+
+  test('agrega al final el código del error', () => {
+    expect(getAssistantErrorMessage(http(403))).toBe(
+      'No pude responder en este momento. Probá de nuevo. (HTTP 403)',
+    )
+    expect(
+      getAssistantErrorMessage(
+        http(500, 'No pude responder en este momento.', 'ASSISTANT_ERROR'),
+      ),
+    ).toBe('No pude responder en este momento. (HTTP 500 · ASSISTANT_ERROR)')
+    expect(
+      getAssistantErrorMessage(new AssistantInvalidResponseError(200)),
+    ).toBe(
+      'No pude responder en este momento. Probá de nuevo. (HTTP 200 · EMPTY_REPLY)',
+    )
+    expect(
+      getAssistantErrorMessage({ code: 'ERR_NETWORK', message: 'x' }),
+    ).toMatch(/conectarme.*\(ERR_NETWORK\)$/)
+    expect(getAssistantErrorMessage(new Error('Network Error'))).toMatch(
+      /\(NO_RESPONSE\)$/,
+    )
+  })
+
+  test('registra el detalle en la consola', () => {
+    getAssistantErrorMessage({ response: { status: 502, data: '<html>' } })
+
+    expect(console.error).toHaveBeenCalledWith(
+      'assistant_error',
+      expect.objectContaining({
+        code: 'HTTP 502',
+        status: 502,
+        body: '<html>',
+      }),
+    )
+  })
+
+  test('sin webhook configurado no agrega código', () => {
+    expect(getAssistantErrorMessage(new AssistantNotConfiguredError())).toBe(
+      'El asistente no está disponible por ahora.',
+    )
   })
 
   test('401 pide volver a iniciar sesión', () => {
@@ -85,11 +145,11 @@ describe('getAssistantErrorMessage', () => {
 
   test('usa el mensaje que manda el servidor para el usuario', () => {
     expect(getAssistantErrorMessage(http(400, 'Falta el mensaje'))).toBe(
-      'Falta el mensaje',
+      'Falta el mensaje (HTTP 400)',
     )
     expect(
       getAssistantErrorMessage(http(503, 'No pude verificar tu sesión')),
-    ).toBe('No pude verificar tu sesión')
+    ).toBe('No pude verificar tu sesión (HTTP 503)')
   })
 
   test('un error de servidor sin mensaje usa uno genérico', () => {

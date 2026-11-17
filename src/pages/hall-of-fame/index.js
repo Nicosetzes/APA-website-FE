@@ -7,6 +7,7 @@ import axios from 'axios'
 import { FaceToFaceTable, PrimaryLink } from 'views/components'
 import { apiClient, getApiErrorMessage } from 'api/axiosConfig'
 import { useState, useEffect } from 'react'
+import { StyledHallOfFame } from './styled'
 
 const Trophies = () => {
   const [tournamentsData, setTournamentsData] = useState(null)
@@ -70,11 +71,15 @@ const Trophies = () => {
   }, [])
 
   if (tournamentsError) {
-    return <div style={{ margin: '2rem auto' }}>{tournamentsError}</div>
+    return (
+      <StyledHallOfFame>
+        <div className="hall-of-fame__message">{tournamentsError}</div>
+      </StyledHallOfFame>
+    )
   }
 
   return (
-    <>
+    <StyledHallOfFame>
       {tournamentsData ? (
         <Showcase tournaments={tournamentsData} />
       ) : (
@@ -82,7 +87,7 @@ const Trophies = () => {
           <Loader />
         </div>
       )}
-      <Accolades tournaments={tournamentsData} />
+      {tournamentsData && <Accolades tournaments={tournamentsData} />}
       {teamsStatsButtonState && (
         <div
           style={{
@@ -149,7 +154,7 @@ const Trophies = () => {
         faceToFaceData.map(({ p1, p2 }, index) => (
           <FaceToFaceTable stats={[p1, p2]} key={index} />
         ))}
-    </>
+    </StyledHallOfFame>
   )
 }
 

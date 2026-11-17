@@ -3,6 +3,7 @@ import Markdown from 'markdown-to-jsx'
 import StarIcon from '@mui/icons-material/Star'
 import { formatDateTime } from 'utils/dates'
 import { formatPlayedAt } from 'utils/playedAt'
+import { getTournamentFormatLabel } from 'utils/tournamentFormat'
 import { motion } from 'framer-motion'
 import { useMediaQuery } from 'react-responsive'
 import {
@@ -170,19 +171,6 @@ const Tournament = () => {
     else return '-'
   }
 
-  const parseTournamentFormat = (format) => {
-    if (format === 'american_cup') return 'Copa América'
-    else if (format === 'club_world_cup') return 'Mundial de clubes'
-    else if (format === 'league') return 'Torneo largo'
-    else if (format === 'league_playin_playoff') return 'Superliga APA'
-    else if (format === 'playoff') return 'Eliminatoria'
-    else if (format === 'super_cup') return 'Supercopa APA'
-    else if (format === 'world_cup') return 'Copa del Mundo (formato clásico)'
-    else if (format === 'world_cup_2026')
-      return 'Copa del Mundo (formato nuevo)'
-    else return format
-  }
-
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -206,7 +194,7 @@ const Tournament = () => {
                 <strong>Nombre:</strong> {name}
               </InfoText>
               <InfoText>
-                <strong>Formato:</strong> {parseTournamentFormat(format)}
+                <strong>Formato:</strong> {getTournamentFormatLabel(format)}
               </InfoText>
               {!legacy && (
                 <InfoText>

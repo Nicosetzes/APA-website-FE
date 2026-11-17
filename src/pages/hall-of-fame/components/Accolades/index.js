@@ -28,13 +28,24 @@ const Accolades = ({ tournaments }) => {
   }, [playerTrophies])
 
   return (
-    <>
-      <StyledAccolades>
+    <StyledAccolades aria-labelledby="historic-champions-title">
+      <div className="accolades__intro">
+        <h2 id="historic-champions-title">
+          Campeones históricos
+          <img
+            className="section-title__logo"
+            src="/images/sitioapalogo-transparent.png"
+            alt=""
+          />
+        </h2>
+      </div>
+
+      <div className="accolades__grid">
         {sortedPlayers.map(({ player, trophies }) => (
           <PlayerBox key={player} player={player} trophies={trophies} />
         ))}
-      </StyledAccolades>
-    </>
+      </div>
+    </StyledAccolades>
   )
 }
 

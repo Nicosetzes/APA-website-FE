@@ -53,6 +53,12 @@ export const StyledPlayerBox = styled.div`
     overflow-wrap: anywhere;
   }
 
+  .player-box__badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+  }
+
   .player-box__championships {
     align-items: center;
     background: rgba(185, 144, 69, 0.15);
@@ -69,6 +75,16 @@ export const StyledPlayerBox = styled.div`
     svg {
       color: #ffc857;
       font-size: 1.05rem;
+    }
+  }
+
+  .player-box__championships--runner-up {
+    background: rgba(196, 204, 210, 0.1);
+    border-color: rgba(199, 205, 209, 0.38);
+    color: #c7cdd1;
+
+    svg {
+      color: #c7cdd1;
     }
   }
 

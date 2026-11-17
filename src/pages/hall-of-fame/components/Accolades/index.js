@@ -21,11 +21,26 @@ const Accolades = ({ tournaments }) => {
     return trophiesByPlayer
   }, [tournaments])
 
+  const runnerUpsByPlayer = useMemo(() => {
+    const counts = {}
+
+    ;(tournaments || []).forEach((tournament) => {
+      const playerName = tournament.outcome?.finalist?.player?.name
+      if (playerName) counts[playerName] = (counts[playerName] || 0) + 1
+    })
+
+    return counts
+  }, [tournaments])
+
   const sortedPlayers = useMemo(() => {
     return Object.entries(playerTrophies)
       .sort(([, a], [, b]) => b.length - a.length)
-      .map(([player, trophies]) => ({ player, trophies }))
-  }, [playerTrophies])
+      .map(([player, trophies]) => ({
+        player,
+        trophies,
+        runnerUps: runnerUpsByPlayer[player] || 0,
+      }))
+  }, [playerTrophies, runnerUpsByPlayer])
 
   return (
     <StyledAccolades aria-labelledby="historic-champions-title">
@@ -41,8 +56,13 @@ const Accolades = ({ tournaments }) => {
       </div>
 
       <div className="accolades__grid">
-        {sortedPlayers.map(({ player, trophies }) => (
-          <PlayerBox key={player} player={player} trophies={trophies} />
+        {sortedPlayers.map(({ player, trophies, runnerUps }) => (
+          <PlayerBox
+            key={player}
+            player={player}
+            trophies={trophies}
+            runnerUps={runnerUps}
+          />
         ))}
       </div>
     </StyledAccolades>

@@ -1,11 +1,13 @@
 import { Image } from 'cloudinary-react'
 import StarIcon from '@mui/icons-material/Star'
+import StarBorderIcon from '@mui/icons-material/StarBorder'
 import { StyledPlayerBox } from './styled'
 import { cloudName } from 'api'
 
-const PlayerBox = ({ player, trophies }) => {
+const PlayerBox = ({ player, trophies, runnerUps = 0 }) => {
   const trophyCount = trophies?.length || 0
   const championshipLabel = trophyCount === 1 ? 'CAMPEONATO' : 'CAMPEONATOS'
+  const runnerUpLabel = runnerUps === 1 ? 'SUBCAMPEONATO' : 'SUBCAMPEONATOS'
 
   return (
     <StyledPlayerBox>
@@ -13,14 +15,27 @@ const PlayerBox = ({ player, trophies }) => {
         <header className="player-box__header">
           <div className="player-box__identity">
             <h3 className="player-box__name">{player}</h3>
-            <div
-              className="player-box__championships"
-              aria-label={`${trophyCount} ${championshipLabel.toLowerCase()}`}
-            >
-              <StarIcon aria-hidden="true" />
-              <span>
-                {trophyCount} {championshipLabel}
-              </span>
+            <div className="player-box__badges">
+              <div
+                className="player-box__championships"
+                aria-label={`${trophyCount} ${championshipLabel.toLowerCase()}`}
+              >
+                <StarIcon aria-hidden="true" />
+                <span>
+                  {trophyCount} {championshipLabel}
+                </span>
+              </div>
+              {runnerUps > 0 && (
+                <div
+                  className="player-box__championships player-box__championships--runner-up"
+                  aria-label={`${runnerUps} ${runnerUpLabel.toLowerCase()}`}
+                >
+                  <StarBorderIcon aria-hidden="true" />
+                  <span>
+                    {runnerUps} {runnerUpLabel}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
         </header>

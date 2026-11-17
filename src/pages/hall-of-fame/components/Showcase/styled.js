@@ -13,6 +13,7 @@ export const StyledShowcase = styled.section`
       display: flex;
       gap: 0.6em;
       font-size: clamp(2rem, 5vw, 3.25rem);
+      justify-content: center;
       line-height: 1.05;
       margin: 0;
       text-transform: uppercase;
@@ -30,6 +31,7 @@ export const StyledShowcase = styled.section`
     display: grid;
     gap: 1.5rem;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr));
+    justify-items: center;
     margin: 0 auto;
     max-width: 1180px;
   }

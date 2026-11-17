@@ -14,6 +14,7 @@ export const StyledAccolades = styled.section`
       display: flex;
       gap: 0.6em;
       font-size: clamp(1.75rem, 4vw, 2.6rem);
+      justify-content: center;
       line-height: 1.1;
       margin: 0;
       text-transform: uppercase;

@@ -24,12 +24,14 @@ jest.mock('views/components', () => ({
 }))
 jest.mock('./components', () => ({
   ...jest.requireActual('./components'),
+  HeadToHeadTab: () => <div data-testid="head-to-head-tab" />,
   RatingTab: ({ ratings }) => (
     <div data-testid="rating-tab">
       {ratings === null ? 'ratings:null' : `ratings:${ratings.length}`}
     </div>
   ),
   RecordsTab: () => null,
+  TeamsTab: () => <div data-testid="teams-tab" />,
 }))
 
 import ReactDOM from 'react-dom'
@@ -89,7 +91,7 @@ let container
 
 const mockApi = ({ ratings }) => {
   apiClient.get.mockImplementation((url) => {
-    if (url === '/statistics') return Promise.resolve({ data: stats })
+    if (url === '/statistics/players') return Promise.resolve({ data: stats })
     if (url === '/ratings') return ratings()
     return Promise.reject(new Error(`unexpected ${url}`))
   })
@@ -202,6 +204,22 @@ test('opens on the Rating APA tab by default and passes it the ratings', async (
   expect(cardNames()).toEqual([])
   // "Rating APA" es la primera pestaña.
   expect(container.querySelector('button').textContent).toBe('tab:Rating APA')
+  expect(
+    [...container.querySelectorAll('button')].map((button) =>
+      button.textContent.replace('tab:', ''),
+    ),
+  ).toEqual([
+    'Rating APA',
+    'Mano a mano',
+    'Récords',
+    'Jugadores',
+    'Equipos',
+    'Clasificaciones',
+  ])
+  expect(apiClient.get).not.toHaveBeenCalledWith(
+    expect.stringMatching(/^\/statistics\//),
+    expect.anything(),
+  )
 })
 
 test('the Rating APA tab gets null ratings when /ratings fails', async () => {
@@ -214,13 +232,21 @@ test('the Rating APA tab gets null ratings when /ratings fails', async () => {
   ).toBe('ratings:null')
 })
 
-test('tab=players shows the player cards', async () => {
+test('tab=players combines general and elimination statistics', async () => {
   mockApi({ ratings: () => Promise.resolve({ data: ratingsResponse }) })
 
   await render('/statistics?tab=players')
 
   expect(activeTab()).toBe('players')
   expect(cardNames()).toEqual(['Nico', 'Santi'])
+  expect(container.textContent).toContain('Partidos de eliminación')
+  expect(container.textContent).not.toContain('tab:Partidos de eliminación')
+  expect(container.textContent).toContain('tab:Mano a mano')
+  expect(container.textContent).toContain('tab:Equipos')
+  expect(apiClient.get).toHaveBeenCalledWith(
+    '/statistics/players',
+    expect.objectContaining({ signal: expect.anything() }),
+  )
 })
 
 test('an invalid tab falls back to Rating APA', async () => {
@@ -255,6 +281,18 @@ test('changing tab also clears tournamentId', async () => {
   clickTab('Jugadores')
   expect(location.search).toBe('?other=1&tab=players')
   expect(activeTab()).toBe('players')
+})
+
+test('changing away from Mano a mano clears its URL parameters', async () => {
+  mockApi({ ratings: () => Promise.resolve({ data: ratingsResponse }) })
+  await render(
+    '/statistics?tab=head-to-head&playerA=1&playerB=2&h2hStage=playoff&h2hTournamentId=0123456789abcdef01234567&h2hPeriod=2026&h2hDateFrom=2026-01-01&h2hDateTo=2026-12-31&other=1',
+  )
+
+  clickTab('Jugadores')
+  await flush()
+
+  expect(location.search).toBe('?tab=players&other=1')
 })
 
 test('a failure loading the statistics still shows the page error', async () => {

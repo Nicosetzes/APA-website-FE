@@ -129,7 +129,6 @@ const buildRecords = () => ({
     },
   },
   highest_total_goals_match: null,
-  // Desordenadas a propósito: manda la whitelist.
   most_clean_sheets_in_a_row: streak(3, 'Fede'),
   most_losses_in_a_row: streak(5, 'Juan'),
   most_wins_in_a_row: streak(9, 'Nico', { isActive: true, breakMatch: null }),
@@ -139,13 +138,11 @@ const buildRecords = () => ({
   most_consecutive_matches_scoring_2_plus_goals: streak(6, 'Fede'),
   most_consecutive_matches_scoring_3_plus_goals: null,
   most_magic_in_a_row: streak(99, 'Desconocido'),
-  // Desordenadas también.
   most_consecutive_titles: tournamentStreak(2, 'Nico'),
   most_knockout_unbeaten_in_a_row: streak(7, 'Santi'),
   most_consecutive_semifinals: tournamentStreak(4, 'Juan'),
   most_knockout_wins_in_a_row: streak(5, 'Nico'),
   most_consecutive_finals: null,
-  // Tandas: el marcador empatado con la tanda entre paréntesis.
   most_penalty_shootout_wins_in_a_row: streak(3, 'Pedro', {
     startMatch: match({
       type: 'playoff',

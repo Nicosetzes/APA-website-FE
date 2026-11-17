@@ -1,161 +1,63 @@
 import Accolades from './components/Accolades'
-import { Loader } from 'views/components'
 import Showcase from './components/Showcase'
-import TeamRankings from './components/TeamRankings'
-import { api } from 'api'
-import axios from 'axios'
-import { FaceToFaceTable, PrimaryLink } from 'views/components'
+import { Loader } from 'views/components'
 import { apiClient, getApiErrorMessage } from 'api/axiosConfig'
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { StyledHallOfFame } from './styled'
 
-const Trophies = () => {
-  const [tournamentsData, setTournamentsData] = useState(null)
-  const [tournamentsError, setTournamentsError] = useState(null)
-  const [teamsData, setTeamsData] = useState(null)
-  const [faceToFaceData, setFaceToFaceData] = useState(null)
-  const [teamsStatsLoading, setTeamsStatsLoading] = useState(false)
-  const [faceToFaceLoading, setFaceToFaceLoading] = useState(false)
-  const [teamsStatsButtonState, setTeamsStatsButtonState] = useState(true)
-  const [faceToFaceButtonState, setFaceToFaceButtonState] = useState(true)
+const isAbortError = (error) =>
+  error?.name === 'CanceledError' || error?.name === 'AbortError'
 
-  const getTournamentsData = () => {
-    apiClient
-      .get('/tournaments', { params: { status: 'finalized' } })
-      .then((response) => {
-        setTournamentsData(response.data)
-        setTournamentsError(null)
-      })
-      .catch((error) => {
-        setTournamentsError(
-          getApiErrorMessage(error, 'No se pudieron cargar los torneos'),
-        )
-      })
-  }
-
-  const getTeamsStats = () => {
-    setTeamsStatsButtonState(false)
-    setTeamsStatsLoading(true)
-    axios
-      .get(`${api}/statistics/all-time/teams`)
-      .then((response) => {
-        setTeamsData(response.data) // Guardamos los datos de equipos
-        setTeamsStatsLoading(false) // Dejamos de mostrar el loading
-      })
-      .catch(() => {
-        setTeamsStatsLoading(false) // Si ocurre un error, dejamos de mostrar el loading
-        setTeamsStatsButtonState(true)
-      })
-  }
-
-  const getFaceToFaceStats = () => {
-    setFaceToFaceButtonState(false)
-    setFaceToFaceLoading(true)
-    axios
-      .get(`${api}/statistics/all-time/face-to-face`)
-      .then((response) => {
-        setFaceToFaceData(response.data) // Guardamos los datos de equipos
-        setFaceToFaceLoading(false) // Dejamos de mostrar el loading
-      })
-      .catch(() => {
-        setFaceToFaceLoading(false) // Si ocurre un error, dejamos de mostrar el loading
-        setFaceToFaceButtonState(true)
-      })
-  }
-
-  console.log(teamsData)
-  console.log(faceToFaceData)
+const HallOfFame = () => {
+  const [tournaments, setTournaments] = useState(null)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
-    getTournamentsData()
+    const controller = new AbortController()
+
+    apiClient
+      .get('/tournaments', {
+        params: { status: 'finalized' },
+        signal: controller.signal,
+      })
+      .then(({ data }) => {
+        setTournaments(data)
+        setError(null)
+      })
+      .catch((requestError) => {
+        if (isAbortError(requestError)) return
+        setError(
+          getApiErrorMessage(requestError, 'No se pudieron cargar los torneos'),
+        )
+      })
+
+    return () => controller.abort()
   }, [])
 
-  if (tournamentsError) {
+  if (error) {
     return (
       <StyledHallOfFame>
-        <div className="hall-of-fame__message">{tournamentsError}</div>
+        <div className="hall-of-fame__message">{error}</div>
+      </StyledHallOfFame>
+    )
+  }
+
+  if (!tournaments) {
+    return (
+      <StyledHallOfFame>
+        <div className="hall-of-fame__loader">
+          <Loader />
+        </div>
       </StyledHallOfFame>
     )
   }
 
   return (
     <StyledHallOfFame>
-      {tournamentsData ? (
-        <Showcase tournaments={tournamentsData} />
-      ) : (
-        <div style={{ margin: 'auto' }}>
-          <Loader />
-        </div>
-      )}
-      {tournamentsData && <Accolades tournaments={tournamentsData} />}
-      {teamsStatsButtonState && (
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            margin: '2rem 0 2.5rem 0',
-          }}
-        >
-          <PrimaryLink
-            asButton
-            text={'Mostrar stats históricas (equipos)'}
-            onClick={getTeamsStats}
-          />
-        </div>
-      )}
-      {teamsStatsLoading && (
-        <div style={{ margin: 'auto' }}>
-          <Loader />
-        </div>
-      )}
-      {teamsData && (
-        <div>
-          <div
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              justifyContent: 'center',
-            }}
-          >
-            <TeamRankings
-              title={'Mejores equipos históricos'}
-              subtitle={'Puntos totales'}
-              teams={teamsData.completeStatsByTotalPoints}
-            />
-            <TeamRankings
-              title={'Mejores equipos por torneo'}
-              subtitle={'% efectividad (mín. 10 partidos)'}
-              teams={teamsData.completeStatsByEffectiveness}
-            />
-          </div>
-        </div>
-      )}
-      {faceToFaceButtonState && (
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            margin: '2rem 0 2.5rem 0',
-          }}
-        >
-          <PrimaryLink
-            asButton
-            text={'Mostrar historial APA'}
-            onClick={getFaceToFaceStats}
-          />
-        </div>
-      )}
-      {faceToFaceLoading && (
-        <div style={{ margin: 'auto' }}>
-          <Loader />
-        </div>
-      )}
-      {faceToFaceData &&
-        faceToFaceData.map(({ p1, p2 }, index) => (
-          <FaceToFaceTable stats={[p1, p2]} key={index} />
-        ))}
+      <Showcase tournaments={tournaments} />
+      <Accolades tournaments={tournaments} />
     </StyledHallOfFame>
   )
 }
 
-export default Trophies
+export default HallOfFame

@@ -27,26 +27,50 @@ import {
   StatValue,
   StreakBadge,
 } from './styled'
-import { PageLoader, Tabs, Tooltip } from 'views/components'
-import { RatingTab, RecordsTab } from './components'
+import { Tabs, Tooltip } from 'views/components'
+import { HeadToHeadTab, RatingTab, RecordsTab, TeamsTab } from './components'
 import {
   formatRating,
   indexRatingsByPlayer,
   orderByRating,
 } from 'utils/ratings'
 import { RATING_TAB_PARAMS } from 'utils/ratingHistory'
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
 const DEFAULT_TAB = 'rating'
-const TAB_IDS = [DEFAULT_TAB, 'players', 'decisive', 'leaderboards', 'records']
+const TAB_IDS = [
+  DEFAULT_TAB,
+  'head-to-head',
+  'records',
+  'players',
+  'teams',
+  'leaderboards',
+]
+
+const HEAD_TO_HEAD_TAB_PARAMS = [
+  'playerA',
+  'playerB',
+  'h2hStage',
+  'h2hTournamentId',
+  'h2hPeriod',
+  'h2hDateFrom',
+  'h2hDateTo',
+]
+
+const STATISTICS_ENDPOINTS = {
+  players: '/statistics/players',
+  leaderboards: '/statistics/leaderboards',
+  records: '/statistics/records',
+}
 
 const isAbortError = (err) =>
   err?.name === 'CanceledError' || err?.name === 'AbortError'
 
 const StatisticsGeneral = () => {
-  const [stats, setStats] = useState()
-  const [ratings, setRatings] = useState([])
+  const [stats, setStats] = useState({})
+  const [loadedSections, setLoadedSections] = useState([])
+  const [ratings, setRatings] = useState()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [searchParams, setSearchParams] = useSearchParams()
@@ -59,46 +83,74 @@ const StatisticsGeneral = () => {
   const handleTabChange = (id) => {
     const params = new URLSearchParams(searchParams)
     RATING_TAB_PARAMS.forEach((name) => params.delete(name))
+    if (id !== 'head-to-head') {
+      HEAD_TO_HEAD_TAB_PARAMS.forEach((name) => params.delete(name))
+    }
     if (id === DEFAULT_TAB) params.delete('tab')
     else params.set('tab', id)
     setSearchParams(params)
   }
 
-  const getStatistics = useCallback(() => {
+  useEffect(() => {
+    const statsEndpoint = STATISTICS_ENDPOINTS[activeTab]
+    const needsRatings = activeTab === DEFAULT_TAB || activeTab === 'players'
+    const shouldLoadStats = statsEndpoint && !loadedSections.includes(activeTab)
+    const shouldLoadRatings = needsRatings && ratings === undefined
+    if (!shouldLoadStats && !shouldLoadRatings) {
+      setLoading(false)
+      return undefined
+    }
+
     const controller = new AbortController()
+    const requests = []
     setLoading(true)
     setError(null)
 
-    const ratingsRequest = apiClient
-      .get('/ratings', { signal: controller.signal })
-      .then(({ data }) => data.data)
-      .catch((err) => {
-        if (!isAbortError(err)) console.error(err)
-        return null
-      })
+    if (shouldLoadStats) {
+      requests.push(
+        apiClient
+          .get(statsEndpoint, { signal: controller.signal })
+          .then(({ data }) => ({ type: 'stats', section: activeTab, data })),
+      )
+    }
+    if (shouldLoadRatings) {
+      requests.push(
+        apiClient
+          .get('/ratings', { signal: controller.signal })
+          .then(({ data }) => ({ type: 'ratings', data: data.data }))
+          .catch((err) => {
+            if (isAbortError(err)) throw err
+            console.error(err)
+            return { type: 'ratings', data: null }
+          }),
+      )
+    }
 
-    Promise.all([
-      apiClient.get('/statistics', { signal: controller.signal }),
-      ratingsRequest,
-    ])
-      .then(([{ data }, ratingRows]) => {
-        setStats(data)
-        setRatings(ratingRows)
+    Promise.all(requests)
+      .then((results) => {
+        if (controller.signal.aborted) return
+        results.forEach((result) => {
+          if (result.type === 'stats') {
+            setStats((current) => ({ ...current, ...result.data }))
+            setLoadedSections((current) =>
+              current.includes(result.section)
+                ? current
+                : [...current, result.section],
+            )
+          }
+          if (result.type === 'ratings') setRatings(result.data)
+        })
         setLoading(false)
       })
       .catch((err) => {
-        if (isAbortError(err)) return
+        if (isAbortError(err) || controller.signal.aborted) return
         console.error(err)
         setError('No se pudieron cargar las estadísticas')
         setLoading(false)
       })
-    return () => controller.abort()
-  }, [])
 
-  useEffect(() => {
-    const cleanup = getStatistics()
-    return cleanup
-  }, [getStatistics])
+    return () => controller.abort()
+  }, [activeTab, loadedSections, ratings])
 
   const getStreakLabel = (type) => {
     if (type === 'W') return 'Victoria'
@@ -402,80 +454,98 @@ const StatisticsGeneral = () => {
     </Section>
   )
 
-  if (loading) {
-    return (
-      <SpinnerContainer>
-        <Loader />
-      </SpinnerContainer>
-    )
-  }
+  const loadingContent = (
+    <SpinnerContainer role="status" aria-label="Cargando estadísticas">
+      <Loader />
+    </SpinnerContainer>
+  )
+  const errorContent = (
+    <div
+      role="alert"
+      style={{
+        color: 'crimson',
+        display: 'flex',
+        justifyContent: 'center',
+        padding: '2rem',
+      }}
+    >
+      {error}
+    </div>
+  )
+  const withStats = (content, section) =>
+    loadedSections.includes(section)
+      ? content
+      : error
+      ? errorContent
+      : loadingContent
 
-  if (error) {
-    return (
-      <div
-        style={{
-          color: 'crimson',
-          display: 'flex',
-          justifyContent: 'center',
-          padding: '2rem',
-        }}
-      >
-        {error}
-      </div>
-    )
-  }
-
-  if (stats) {
-    const tabs = [
-      {
-        id: DEFAULT_TAB,
-        label: 'Rating APA',
-        content: <RatingTab ratings={ratings} />,
-      },
-      {
-        id: 'players',
-        label: 'Jugadores',
-        content: <PlayersTab />,
-      },
-      {
-        id: 'decisive',
-        label: 'Partidos de eliminación',
-        content: <DecisiveMatchesTab />,
-      },
-      {
-        id: 'leaderboards',
-        label: 'Clasificaciones',
-        content: <LeaderboardsTab />,
-      },
-      {
-        id: 'records',
-        label: 'Récords',
-        content: (
-          <RecordsTab
-            records={stats.records}
-            activeStreaks={stats.activeStreaks}
-          />
+  const tabs = [
+    {
+      id: DEFAULT_TAB,
+      label: 'Rating APA',
+      content:
+        ratings !== undefined ? (
+          <RatingTab ratings={ratings} />
+        ) : error ? (
+          errorContent
+        ) : (
+          loadingContent
         ),
-      },
-    ]
+    },
+    {
+      id: 'head-to-head',
+      label: 'Mano a mano',
+      content: <HeadToHeadTab />,
+    },
+    {
+      id: 'records',
+      label: 'Récords',
+      content: withStats(
+        <RecordsTab
+          records={stats?.records}
+          activeStreaks={stats?.activeStreaks}
+        />,
+        'records',
+      ),
+    },
+    {
+      id: 'players',
+      label: 'Jugadores',
+      content: withStats(
+        <>
+          <PlayersTab />
+          <DecisiveMatchesTab />
+        </>,
+        'players',
+      ),
+    },
+    {
+      id: 'teams',
+      label: 'Equipos',
+      content: <TeamsTab />,
+    },
+    {
+      id: 'leaderboards',
+      label: 'Clasificaciones',
+      content: withStats(<LeaderboardsTab />, 'leaderboards'),
+    },
+  ]
 
-    return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-      >
-        <Tabs
-          tabs={tabs}
-          defaultTab={DEFAULT_TAB}
-          activeTab={activeTab}
-          onChange={handleTabChange}
-        />
-      </motion.div>
-    )
-  } else {
-    return <PageLoader />
-  }
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      aria-busy={loading}
+    >
+      <Tabs
+        tabs={tabs}
+        defaultTab={DEFAULT_TAB}
+        activeTab={activeTab}
+        onChange={handleTabChange}
+      />
+    </motion.div>
+  )
 }
 
 export default StatisticsGeneral

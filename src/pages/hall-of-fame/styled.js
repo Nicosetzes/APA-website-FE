@@ -6,6 +6,13 @@ export const StyledHallOfFame = styled.main`
   min-height: 100vh;
   overflow: hidden;
 
+  .hall-of-fame__loader {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    min-height: 60vh;
+  }
+
   .hall-of-fame__message {
     color: #f5f0e6;
     margin: 0 auto;

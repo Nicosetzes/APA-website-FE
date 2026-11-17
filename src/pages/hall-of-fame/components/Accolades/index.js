@@ -25,8 +25,18 @@ const Accolades = ({ tournaments }) => {
     const counts = {}
 
     ;(tournaments || []).forEach((tournament) => {
-      const playerName = tournament.outcome?.finalist?.player?.name
-      if (playerName) counts[playerName] = (counts[playerName] || 0) + 1
+      const champion = tournament.outcome?.champion?.player
+      const finalist = tournament.outcome?.finalist?.player
+      if (!finalist?.name) return
+
+      const isSamePlayer =
+        champion &&
+        (champion.id !== undefined && finalist.id !== undefined
+          ? String(champion.id) === String(finalist.id)
+          : champion.name === finalist.name)
+      if (isSamePlayer) return
+
+      counts[finalist.name] = (counts[finalist.name] || 0) + 1
     })
 
     return counts

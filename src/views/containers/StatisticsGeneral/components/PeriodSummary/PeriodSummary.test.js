@@ -551,13 +551,14 @@ test('tournament mode: titles of the tournament, no Posición column, no null°'
     'Jugador',
     'Elo inicial',
     'Elo final',
-    'Variación',
+    'En el torneo',
+    'Fuera del torneo',
     'Mín.',
     'Máx.',
     'V/E/D',
   ])
   const [first] = rows()
-  expect(first).toHaveLength(8)
+  expect(first).toHaveLength(9)
   expect(first.slice(0, 2)).toEqual(['1', 'Nico2 partidos'])
   expect(container.querySelector('table').getAttribute('aria-label')).toBe(
     'Ranking de jugadores por variación de Elo en el torneo',
@@ -580,4 +581,52 @@ test('tournament mode: the empty upsets say torneo and Ver partido still works',
   expect([...nico.querySelectorAll('a')].map((a) => a.textContent)).toEqual([
     'Ver partido',
   ])
+})
+test('tournament mode: shows the Elo moved outside the tournament from the BE', () => {
+  render(
+    [
+      {
+        ...inTournament(NICO),
+        start: { rating: 1546, matches: 10 },
+        end: { rating: 1576, matches: 61 },
+        summary: {
+          ...inTournament(NICO).summary,
+          ratingChange: 58.2,
+          outsideChange: -28.4,
+        },
+      },
+    ],
+    'tournament',
+  )
+  const [nico] = rows()
+  expect(nico.slice(2, 6)).toEqual(['1546', '1576', '+58.2', '-28.4'])
+})
+test('tournament mode: derives the outside change with an older BE', () => {
+  render(
+    [
+      {
+        ...inTournament(NICO),
+        start: { rating: 1664, matches: 10 },
+        end: { rating: 1663, matches: 61 },
+        summary: { ...inTournament(NICO).summary, ratingChange: -18.6 },
+      },
+      {
+        ...inTournament(SANTI),
+        start: null,
+        end: { rating: 1490, matches: 2 },
+        summary: { ...inTournament(SANTI).summary, ratingChange: -10 },
+      },
+    ],
+    'tournament',
+  )
+  // El ranking ordena por variación: Santi (-10) va antes que Nico (-18.6).
+  const [santi, nico] = rows()
+  expect(nico.slice(4, 6)).toEqual(['-18.6', '+17.6'])
+  // Debuta: parte de 1500 y no jugó nada fuera del torneo.
+  expect(santi.slice(4, 6)).toEqual(['-10.0', '0.0'])
+})
+test('period mode keeps a single Variación column', () => {
+  render([NICO, SANTI])
+  expect(headers()).toContain('Variación')
+  expect(headers()).not.toContain('Fuera del torneo')
 })

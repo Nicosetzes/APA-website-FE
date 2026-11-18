@@ -97,6 +97,20 @@ const Upset = ({ kind, playerId, playerName, upset, scopeLabel }) => {
   )
 }
 
+const resolveOutsideChange = (row) => {
+  const { outsideChange, ratingChange } = row.summary
+  if (typeof outsideChange === 'number') return outsideChange
+  const start = row.start ? row.start.rating : REFERENCE_RATING
+  if (
+    ![start, row.end?.rating, ratingChange].every((value) =>
+      Number.isFinite(value),
+    )
+  ) {
+    return null
+  }
+  return row.end.rating - start - ratingChange
+}
+
 const formatPosition = (position) =>
   typeof position === 'number' ? `${position}°` : '—'
 
@@ -122,7 +136,24 @@ const PeriodSummary = ({ players, colors, mode = 'period' }) => {
                 </th>
                 <th scope="col">Elo inicial</th>
                 <th scope="col">Elo final</th>
-                <th scope="col">Variación</th>
+                {isTournament ? (
+                  <>
+                    <th
+                      scope="col"
+                      title="Elo que ganó o perdió en los partidos de este torneo"
+                    >
+                      En el torneo
+                    </th>
+                    <th
+                      scope="col"
+                      title="Elo que ganó o perdió en partidos de otros torneos jugados mientras se disputaba este. En el torneo + Fuera del torneo = Elo final - Elo inicial"
+                    >
+                      Fuera del torneo
+                    </th>
+                  </>
+                ) : (
+                  <th scope="col">Variación</th>
+                )}
                 <th scope="col">Mín.</th>
                 <th scope="col">Máx.</th>
                 <th scope="col">V/E/D</th>
@@ -132,6 +163,9 @@ const PeriodSummary = ({ players, colors, mode = 'period' }) => {
             <tbody>
               {ranking.map((row) => {
                 const change = describeRatingChange(row.summary.ratingChange)
+                const outside = isTournament
+                  ? describeRatingChange(resolveOutsideChange(row))
+                  : null
                 const position = describePositionChange(
                   row.summary.positionChange,
                 )
@@ -178,6 +212,14 @@ const PeriodSummary = ({ players, colors, mode = 'period' }) => {
                         {change.text}
                       </ChangeValue>
                     </td>
+                    {outside && (
+                      <td>
+                        <ChangeValue $trend={outside.trend}>
+                          {ARROW_ICONS[outside.trend]}
+                          {outside.text}
+                        </ChangeValue>
+                      </td>
+                    )}
                     <td>
                       <PeakValue>
                         {formatRating(row.summary.min.rating)}

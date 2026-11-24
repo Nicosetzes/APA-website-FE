@@ -23,6 +23,7 @@ import {
   PlayoffBracket,
 } from './steps'
 import { PageLoader, PrimaryLink } from 'views/components'
+import { DEFAULT_GAME_VERSION } from 'utils/gameVersions'
 
 const TournamentCreation = () => {
   const [currentStep, setCurrentStep] = useState(1)
@@ -37,6 +38,7 @@ const TournamentCreation = () => {
       tournamentName: '',
       format: {},
       playoffMode: 'single',
+      gameVersion: DEFAULT_GAME_VERSION,
       cloudinaryId: '',
       selectedPlayers: [],
       selectedLeagues: [],

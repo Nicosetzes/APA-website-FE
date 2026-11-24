@@ -4,6 +4,7 @@ import { act, Simulate } from 'react-dom/test-utils'
 import { FormProvider, useForm } from 'react-hook-form'
 import StepFormat from './steps/Format'
 import StepPlayoffBracket from './steps/PlayoffBracket'
+import { DEFAULT_GAME_VERSION, GAME_VERSIONS } from 'utils/gameVersions'
 
 const FormatHarness = () => {
   const methods = useForm({
@@ -47,6 +48,37 @@ test('format selection does not show the playoff mode yet', () => {
   )
   act(() => Simulate.click(title))
   expect(container.querySelectorAll('[name="playoffMode"]')).toHaveLength(0)
+  ReactDOM.unmountComponentAtNode(container)
+})
+
+test('game version select defaults to the newest version and can be changed', () => {
+  let values
+  const Harness = () => {
+    const methods = useForm({
+      defaultValues: { tournamentName: '', format: {}, cloudinaryId: '' },
+    })
+    values = methods.getValues
+    return (
+      <FormProvider {...methods}>
+        <StepFormat tournamentImages={[]} />
+      </FormProvider>
+    )
+  }
+  const container = document.createElement('div')
+  act(() => {
+    ReactDOM.render(<Harness />, container)
+  })
+  const select = container.querySelector('select[name="gameVersion"]')
+  expect([...select.options].map((option) => option.value)).toEqual(
+    GAME_VERSIONS,
+  )
+  expect(select.value).toBe('FC 27')
+  expect(values('gameVersion')).toBe(DEFAULT_GAME_VERSION)
+  act(() => {
+    select.value = 'FC 26'
+    Simulate.change(select)
+  })
+  expect(values('gameVersion')).toBe('FC 26')
   ReactDOM.unmountComponentAtNode(container)
 })
 

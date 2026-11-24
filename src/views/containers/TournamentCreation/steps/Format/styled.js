@@ -112,6 +112,25 @@ export const InputField = styled.input`
   }
 `
 
+export const SelectField = styled.select`
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: 2px solid ${({ $error }) => ($error ? '#d32f2f' : '#ddd')};
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:focus {
+    outline: none;
+    border-color: ${({ $error }) => ($error ? '#d32f2f' : 'var(--blue-900)')};
+    box-shadow: 0 0 0 3px
+      ${({ $error }) =>
+        $error ? 'rgba(211, 47, 47, 0.1)' : 'rgba(21, 101, 192, 0.1)'};
+  }
+`
+
 export const ImagesGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));

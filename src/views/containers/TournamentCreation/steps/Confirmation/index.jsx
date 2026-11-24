@@ -17,6 +17,7 @@ import {
   SubmitButton,
 } from './styled'
 import { api, database } from 'api'
+import { DEFAULT_GAME_VERSION } from 'utils/gameVersions'
 
 const BracketPreview = styled.div`
   display: flex;
@@ -117,6 +118,7 @@ const StepConfirmation = ({ format, players }) => {
   const teamAssignments = watch('teamAssignments') || []
   const playoffBracket = watch('playoffBracket') || []
   const playoffMode = watch('playoffMode') || 'single'
+  const gameVersion = watch('gameVersion') || DEFAULT_GAME_VERSION
 
   const groups = format.groups || []
   const hasGroups = groups.length > 0
@@ -211,6 +213,7 @@ const StepConfirmation = ({ format, players }) => {
         ...(cloudinaryId && { cloudinary_id: cloudinaryId }),
         format: format.id,
         ...(isPlayoffs && { playoffMode }),
+        gameVersion,
         name: tournamentName,
         players: tournamentPlayers,
         teams,
@@ -243,6 +246,10 @@ const StepConfirmation = ({ format, players }) => {
         <ConfirmationItem>
           <ConfirmationLabel>Formato:</ConfirmationLabel>
           <ConfirmationValue>{format.name}</ConfirmationValue>
+        </ConfirmationItem>
+        <ConfirmationItem>
+          <ConfirmationLabel>Versión del juego:</ConfirmationLabel>
+          <ConfirmationValue>{gameVersion}</ConfirmationValue>
         </ConfirmationItem>
 
         {isPlayoffs && (

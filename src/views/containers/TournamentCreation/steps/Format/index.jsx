@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { FORMATS } from '../../formats'
 import { database } from 'api'
 import { Controller, useFormContext } from 'react-hook-form'
+import { DEFAULT_GAME_VERSION, GAME_VERSIONS } from 'utils/gameVersions'
 import {
   ErrorMessage,
   FormatCard,
@@ -12,6 +13,7 @@ import {
   ImageCard,
   InputField,
   InputLabel,
+  SelectField,
   StepContainer,
   StepDescription,
   StepTitle,
@@ -51,7 +53,7 @@ const StepFormat = ({ tournamentImages }) => {
     <StepContainer>
       <StepTitle>Configuración Inicial</StepTitle>
       <StepDescription>
-        Elige el formato del torneo y asígnale un nombre
+        Elige el formato del torneo, la versión del juego y asígnale un nombre
       </StepDescription>
 
       <div style={{ marginBottom: '2rem' }}>
@@ -77,6 +79,32 @@ const StepFormat = ({ tournamentImages }) => {
         />
         {errors.tournamentName && (
           <ErrorMessage>{errors.tournamentName.message}</ErrorMessage>
+        )}
+      </div>
+
+      <div style={{ marginBottom: '2rem' }}>
+        <InputLabel htmlFor="gameVersion">Versión del juego *</InputLabel>
+        <Controller
+          name="gameVersion"
+          control={control}
+          defaultValue={DEFAULT_GAME_VERSION}
+          rules={{ required: 'Debes elegir la versión del juego' }}
+          render={({ field }) => (
+            <SelectField
+              {...field}
+              id="gameVersion"
+              $error={!!errors.gameVersion}
+            >
+              {GAME_VERSIONS.map((version) => (
+                <option key={version} value={version}>
+                  {version}
+                </option>
+              ))}
+            </SelectField>
+          )}
+        />
+        {errors.gameVersion && (
+          <ErrorMessage>{errors.gameVersion.message}</ErrorMessage>
         )}
       </div>
 

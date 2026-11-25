@@ -50,3 +50,18 @@ export const TournamentMeta = styled.p`
   font-size: 0.85rem;
   margin: 0.25rem 0 0 0;
 `
+
+export const ViewToggle = styled.div`
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin: 0 auto 0.75rem auto;
+`
+
+export const ViewToggleLabel = styled.span`
+  color: rgba(0, 0, 0, 0.65);
+  font-size: 0.85rem;
+  font-weight: 600;
+`

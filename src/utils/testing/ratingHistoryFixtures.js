@@ -297,3 +297,28 @@ export const withoutTeams = (entry) => {
     points: entry.points.map(stripPoint),
   }
 }
+
+export const NICO_POSITIONS = [
+  { x: 0, position: 2 },
+  { x: 1, position: 1 },
+]
+export const SANTI_POSITIONS = [
+  { x: 0, position: 1 },
+  { x: 1, position: 2 },
+]
+
+export const withPositions = (entry, positions, leaderMatches) => ({
+  ...entry,
+  summary: { ...entry.summary, leaderMatches },
+  positions,
+})
+
+/** `historyResponse` de un BE que manda posiciones y partidos en el #1. */
+export const positionHistoryResponse = (overrides = {}) =>
+  historyResponse({
+    players: [
+      withPositions(NICO, NICO_POSITIONS, 3),
+      withPositions(SANTI, SANTI_POSITIONS, 0),
+    ],
+    ...overrides,
+  })

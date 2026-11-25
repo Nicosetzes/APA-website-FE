@@ -13,7 +13,18 @@ export const RATING_TAB_PARAMS = [
   'dateTo',
   'players',
   'tournamentId',
+  'chart',
 ]
+
+export const CHART_VIEWS = { rating: 'rating', position: 'posicion' }
+
+export const parseChartParam = (value) =>
+  value === CHART_VIEWS.position ? CHART_VIEWS.position : CHART_VIEWS.rating
+
+export const hasPositionHistory = (data) =>
+  Array.isArray(data?.players) &&
+  data.players.length > 0 &&
+  data.players.every(({ positions }) => Array.isArray(positions))
 
 // Id de torneo del BE: ObjectId en hex de 24 caracteres.
 const TOURNAMENT_ID_PATTERN = /^[a-f\d]{24}$/i
@@ -313,6 +324,9 @@ export const resolveSelection = (requestedIds, players = []) => {
 /** Clave de la serie de un jugador en las filas del gráfico. */
 export const playerKey = (id) => `p_${id}`
 
+/** Clave de la posición de un jugador en las filas del gráfico. */
+export const positionKey = (id) => `pos_${id}`
+
 /**
  * Filas del gráfico: una fila inicial `x = 0` con el rating de arranque de
  * cada jugador y una fila por partido del período (`x = 1..N`, contando todos
@@ -332,11 +346,28 @@ export const buildChartRows = ({
     ({ points }) => new Map(points.map((point) => [point.x, point])),
   )
   const current = chosen.map(({ start }) => (start ? start.rating : null))
+  // Posiciones: el BE manda solo los cambios (`[{ x, position }]`), así que se
+  // arrastran igual que el rating. Sin `positions` no se agrega la clave.
+  const positionsByX = chosen.map(({ positions }) =>
+    Array.isArray(positions)
+      ? new Map(positions.map(({ x, position }) => [x, position]))
+      : null,
+  )
+  const currentPosition = chosen.map(() => null)
+  const setPositions = (row, x) => {
+    chosen.forEach(({ player }, index) => {
+      const changes = positionsByX[index]
+      if (!changes) return
+      if (changes.has(x)) currentPosition[index] = changes.get(x)
+      row[positionKey(player.id)] = currentPosition[index]
+    })
+  }
 
   const initialRow = { x: 0, seq: null, t: null, points: {} }
   chosen.forEach(({ player }, index) => {
     initialRow[playerKey(player.id)] = current[index]
   })
+  setPositions(initialRow, 0)
 
   const rows = [initialRow]
   timeline.forEach(({ x, seq, t }) => {
@@ -349,10 +380,31 @@ export const buildChartRows = ({
       }
       row[playerKey(player.id)] = current[index]
     })
+    setPositions(row, x)
     rows.push(row)
   })
   return rows
 }
+
+/**
+ * Posiciones del eje Y del gráfico de posiciones: de 1 a la peor posición que
+ * aparece en las filas para los jugadores elegidos (al menos 2).
+ */
+export const computePositionTicks = (rows = [], ids = []) => {
+  const keys = ids.map(positionKey)
+  let worst = 2
+  rows.forEach((row) => {
+    keys.forEach((key) => {
+      const value = row[key]
+      if (typeof value === 'number' && value > worst) worst = value
+    })
+  })
+  return Array.from({ length: worst }, (_, index) => index + 1)
+}
+
+/** "1°", "2°"... o "—" si no hay posición. */
+export const formatPosition = (position) =>
+  typeof position === 'number' ? `${position}°` : '—'
 
 const thinTicks = (ticks, maxTicks) => {
   if (ticks.length <= maxTicks) return ticks
@@ -699,13 +751,18 @@ export const describeChartForScreenReaders = ({
   matchesInPeriod = 0,
   marks = [],
   tournamentName = null,
+  view = CHART_VIEWS.rating,
 }) => {
+  const isPosition = view === CHART_VIEWS.position
   const scope = tournamentName ? ` del torneo ${tournamentName}` : ''
   const range =
     dateFrom && dateTo
       ? ` del ${formatDay(dateFrom)} al ${formatDay(dateTo)},`
       : ''
-  const intro = `Gráfico de líneas con la evolución del Rating APA 2.0${scope}${range} en ${countMatches(
+  const subject = isPosition
+    ? 'la posición en el ranking del Rating APA 2.0'
+    : 'la evolución del Rating APA 2.0'
+  const intro = `Gráfico de líneas con ${subject}${scope}${range} en ${countMatches(
     matchesInPeriod,
   )}.`
   const tournaments =
@@ -714,6 +771,19 @@ export const describeChartForScreenReaders = ({
       : ''
   if (players.length === 0) {
     return `${intro}${tournaments} No hay jugadores seleccionados.`
+  }
+  if (isPosition) {
+    const positionLines = players.map(({ player, summary }) =>
+      summary.previousPosition === null ||
+      summary.previousPosition === undefined
+        ? `${player.name}: debutó en el período y terminó ${formatPosition(
+            summary.position,
+          )}.`
+        : `${player.name}: de ${formatPosition(
+            summary.previousPosition,
+          )} a ${formatPosition(summary.position)}.`,
+    )
+    return `${intro}${tournaments} ${positionLines.join(' ')}`
   }
   const lines = players.map(({ player, start, end, summary }) => {
     const change = describeRatingChange(summary.ratingChange).text

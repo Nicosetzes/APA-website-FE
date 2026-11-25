@@ -1,6 +1,7 @@
 import StreakRecordCard, { MIN_STREAK } from '../StreakRecordCard'
 import StreakTabs, { getPanelId, getTabId } from '../StreakTabs'
 import { formatDate } from 'utils/dates'
+import { REIGN_RECORD_KEY, buildReignRecords } from 'utils/ratingReigns'
 import { formatPlayedAt } from 'utils/playedAt'
 import {
   EmptyMessage,
@@ -34,6 +35,7 @@ const RECORD_LABELS = {
   most_consecutive_semifinals: 'Semis consecutivas',
   most_consecutive_finals: 'Finales consecutivas',
   most_consecutive_titles: 'Campeonatos consecutivos',
+  [REIGN_RECORD_KEY]: 'En el #1 del Rating APA',
 }
 
 // Orden explícito: claves que no estén acá no se renderizan.
@@ -49,6 +51,7 @@ const STREAK_KEYS = [
   ['most_wins_in_a_row', 'Resultados'],
   ['most_draws_in_a_row', 'Resultados'],
   ['most_losses_in_a_row', 'Resultados'],
+  [REIGN_RECORD_KEY, 'Rating'],
   ['most_consecutive_matches_scoring_1_plus_goals', 'Goles'],
   ['most_consecutive_matches_scoring_2_plus_goals', 'Goles'],
   ['most_consecutive_matches_scoring_3_plus_goals', 'Goles'],
@@ -65,6 +68,8 @@ const KNOCKOUT_HELP = 'Partidos de eliminatoria (Playin / Playoffs)'
 const STREAK_TITLE_HELP = {
   most_knockout_unbeaten_in_a_row: KNOCKOUT_HELP,
   most_knockout_wins_in_a_row: KNOCKOUT_HELP,
+  [REIGN_RECORD_KEY]:
+    'Partidos APA (de cualquier jugador) en los que fue #1 del Rating APA sin interrupción.',
 }
 
 const STREAK_VARIANTS = {
@@ -74,6 +79,7 @@ const STREAK_VARIANTS = {
   most_consecutive_semifinals: 'tournament',
   most_consecutive_finals: 'tournament',
   most_consecutive_titles: 'tournament',
+  [REIGN_RECORD_KEY]: 'reign',
 }
 
 const STREAK_TONES = {
@@ -150,10 +156,27 @@ const StreakPanel = ({ view, streaks, records, hidden = false }) => (
   </StreakPanelBox>
 )
 
-const RecordsTab = ({ records, activeStreaks }) => {
+const withReign = (streaks, reign, hasReigns) =>
+  hasReigns ? { ...streaks, [REIGN_RECORD_KEY]: reign } : streaks
+
+const RecordsTab = ({ records, activeStreaks, reigns }) => {
   const [view, setView] = useState('historicas')
   const matchRecordKeys = MATCH_RECORD_KEYS.filter((key) => records?.[key])
-  const streaksByView = { historicas: records, actuales: activeStreaks }
+  const reignRecords = buildReignRecords(reigns)
+  const hasReigns = Boolean(reigns)
+  const historicStreaks = withReign(
+    records,
+    reignRecords.historic,
+    hasReigns && Boolean(records),
+  )
+  const streaksByView = {
+    historicas: historicStreaks,
+    actuales: withReign(
+      activeStreaks,
+      reignRecords.current,
+      hasReigns && Boolean(activeStreaks),
+    ),
+  }
 
   return (
     <>
@@ -235,7 +258,7 @@ const RecordsTab = ({ records, activeStreaks }) => {
             key={id}
             view={id}
             streaks={streaksByView[id]}
-            records={records}
+            records={historicStreaks}
             hidden={view !== id}
           />
         ))}

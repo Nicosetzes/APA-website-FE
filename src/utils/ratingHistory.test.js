@@ -1,5 +1,6 @@
 /* eslint-env jest */
 import {
+  CHART_VIEWS,
   FIRST_RATING_YEAR,
   HISTORY_START_DATE,
   MARK_LANE_HEIGHT,
@@ -14,6 +15,7 @@ import {
   buildPeriodRanking,
   buildPlayerColors,
   buildUpsetMatchesLink,
+  computePositionTicks,
   computeYDomain,
   daysBetween,
   describeChartForScreenReaders,
@@ -24,14 +26,18 @@ import {
   formatChance,
   fitMarkLabel,
   formatDay,
+  formatPosition,
   getDefaultSelection,
   getPeriodOptions,
   getShortcutRange,
   getTodayArgentina,
+  hasPositionHistory,
+  parseChartParam,
   parseDay,
   parsePlayersParam,
   parseTournamentParam,
   playerKey,
+  positionKey,
   readPenalties,
   readTeams,
   resolvePeriod,
@@ -1314,5 +1320,96 @@ describe('resolveUpsetRatingChange', () => {
   test('returns null without data', () => {
     expect(resolveUpsetRatingChange('won', {})).toBeNull()
     expect(resolveUpsetRatingChange('won', null)).toBeNull()
+  })
+})
+
+describe('position history', () => {
+  const timeline = [
+    { x: 1, seq: 101, t: '2026-10-01T15:00:00.000Z' },
+    { x: 2, seq: 102, t: '2026-10-01T15:00:00.000Z' },
+    { x: 3, seq: 103, t: '2026-10-02T15:00:00.000Z' },
+  ]
+  const withChanges = (id, positions) => ({
+    player: { id, name: id.toUpperCase() },
+    start: { rating: 1500, matches: 10 },
+    end: { rating: 1500, matches: 12 },
+    summary: { ratingChange: 0 },
+    points: [],
+    positions,
+  })
+
+  test('carries each position forward from its last change', () => {
+    const players = [
+      withChanges('a', [
+        { x: 0, position: 2 },
+        { x: 2, position: 1 },
+      ]),
+      // Debuta en el partido 3: sin posición hasta entonces.
+      withChanges('b', [
+        { x: 0, position: null },
+        { x: 3, position: 3 },
+      ]),
+    ]
+    const rows = buildChartRows({
+      timeline,
+      players,
+      selectedIds: ['a', 'b'],
+    })
+    expect(rows.map((row) => row[positionKey('a')])).toEqual([2, 2, 1, 1])
+    expect(rows.map((row) => row[positionKey('b')])).toEqual([
+      null,
+      null,
+      null,
+      3,
+    ])
+    expect(computePositionTicks(rows, ['a', 'b'])).toEqual([1, 2, 3])
+    expect(computePositionTicks(rows, ['a'])).toEqual([1, 2])
+  })
+
+  test('does not add position keys when the BE sends no positions', () => {
+    const player = { ...withChanges('a', null) }
+    delete player.positions
+    const rows = buildChartRows({
+      timeline,
+      players: [player],
+      selectedIds: ['a'],
+    })
+    expect(rows.every((row) => !(positionKey('a') in row))).toBe(true)
+    expect(hasPositionHistory({ players: [player] })).toBe(false)
+    expect(hasPositionHistory({ players: [withChanges('a', [])] })).toBe(true)
+    expect(hasPositionHistory({ players: [] })).toBe(false)
+    expect(hasPositionHistory(null)).toBe(false)
+  })
+
+  test('parses the chart param and formats positions', () => {
+    expect(parseChartParam('posicion')).toBe(CHART_VIEWS.position)
+    expect(parseChartParam('rating')).toBe(CHART_VIEWS.rating)
+    expect(parseChartParam(null)).toBe(CHART_VIEWS.rating)
+    expect(parseChartParam('otra')).toBe(CHART_VIEWS.rating)
+    expect(RATING_TAB_PARAMS).toContain('chart')
+    expect(formatPosition(1)).toBe('1°')
+    expect(formatPosition(null)).toBe('—')
+  })
+
+  test('describes the position chart for screen readers', () => {
+    const text = describeChartForScreenReaders({
+      players: [
+        {
+          player: { id: 'a', name: 'Ana' },
+          summary: { previousPosition: 2, position: 1 },
+        },
+        {
+          player: { id: 'b', name: 'Beto' },
+          summary: { previousPosition: null, position: 3 },
+        },
+      ],
+      dateFrom: '2026-10-01',
+      dateTo: '2026-10-02',
+      matchesInPeriod: 3,
+      view: CHART_VIEWS.position,
+    })
+    expect(text).toContain('la posición en el ranking del Rating APA 2.0')
+    expect(text).toContain('Ana: de 2° a 1°.')
+    expect(text).toContain('Beto: debutó en el período y terminó 3°.')
   })
 })

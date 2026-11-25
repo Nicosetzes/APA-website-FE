@@ -3,11 +3,14 @@ import { useSearchParams } from 'react-router-dom'
 import useActiveTournaments from 'hooks/useActiveTournaments'
 import useRatingHistory from 'hooks/useRatingHistory'
 import {
+  CHART_VIEWS,
   buildActiveMarks,
   buildPlayerColors,
   formatDay,
   getShortcutRange,
   getTodayArgentina,
+  hasPositionHistory,
+  parseChartParam,
   parsePlayersParam,
   parseTournamentParam,
   resolvePeriod,
@@ -25,6 +28,7 @@ import {
   SpinnerContainer,
 } from '../../styled'
 import PeriodFilter from '../PeriodFilter'
+import { ShortcutButton } from '../PeriodFilter/styled'
 import PeriodSummary from '../PeriodSummary'
 import PlayerPicker from '../PlayerPicker'
 import RatingsTable from '../RatingsTable'
@@ -35,6 +39,8 @@ import {
   TournamentHeading,
   TournamentMeta,
   TournamentTitle,
+  ViewToggle,
+  ViewToggleLabel,
 } from './styled'
 
 // El gráfico arrastra Recharts (~100 kB gzip): se carga recién al abrir la
@@ -48,12 +54,18 @@ const DIMMED_NOTE =
 const TOURNAMENTS_ERROR =
   'No se pudo cargar la lista de torneos; el filtro por torneo no está disponible.'
 
+const CHART_VIEW_OPTIONS = [
+  { id: CHART_VIEWS.rating, label: 'Rating' },
+  { id: CHART_VIEWS.position, label: 'Posición' },
+]
+
 const RatingTab = ({ ratings }) => {
   const [searchParams, setSearchParams] = useSearchParams()
 
   const tournamentId = parseTournamentParam(searchParams.get('tournamentId'))
   const isTournamentMode = tournamentId !== ''
   const mode = isTournamentMode ? 'tournament' : 'period'
+  const chartView = parseChartParam(searchParams.get('chart'))
 
   const today = getTodayArgentina()
   const period = resolvePeriod(
@@ -154,6 +166,12 @@ const RatingTab = ({ ratings }) => {
     })
   }
 
+  const changeChartView = (view) =>
+    updateParams((params) => {
+      if (view === CHART_VIEWS.position) params.set('chart', view)
+      else params.delete('chart')
+    })
+
   const changeSelection = (ids) => {
     const params = new URLSearchParams(searchParams)
     params.delete('players')
@@ -210,6 +228,27 @@ const RatingTab = ({ ratings }) => {
       />
     )
   }
+
+  // Vista del gráfico: solo en modo período y si el BE manda las posiciones.
+  const renderChartViewToggle = () => (
+    <ViewToggle role="group" aria-label="Qué muestra el gráfico">
+      <ViewToggleLabel aria-hidden="true">Ver:</ViewToggleLabel>
+      {CHART_VIEW_OPTIONS.map((option) => (
+        <ShortcutButton
+          key={option.id}
+          type="button"
+          $active={chartView === option.id}
+          aria-pressed={chartView === option.id}
+          onClick={() => changeChartView(option.id)}
+        >
+          {option.label}
+        </ShortcutButton>
+      ))}
+    </ViewToggle>
+  )
+
+  const showViewToggle =
+    !isTournamentMode && !isStale && hasPositionHistory(data)
 
   const renderTournamentHeading = () => {
     const matches = data.matchesInPeriod
@@ -273,6 +312,7 @@ const RatingTab = ({ ratings }) => {
           selectedIds={selectedIds}
           onChange={changeSelection}
         />
+        {showViewToggle && renderChartViewToggle()}
         <Suspense
           fallback={
             <SpinnerContainer role="status" aria-label="Cargando">
@@ -286,6 +326,7 @@ const RatingTab = ({ ratings }) => {
             colors={colors}
             marks={marks}
             mode={mode}
+            view={showViewToggle ? chartView : CHART_VIEWS.rating}
           />
         </Suspense>
         <PeriodSummary players={data.players} colors={colors} mode={mode} />

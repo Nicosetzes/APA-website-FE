@@ -8,6 +8,7 @@ import {
   RACING,
   RIVER,
   historyData,
+  positionHistoryResponse,
 } from 'utils/testing/ratingHistoryFixtures'
 import RatingHistoryChart, { RatingHistoryTooltip } from '.'
 
@@ -46,6 +47,26 @@ const render = (selectedIds, data = historyData(), extra = {}) => {
 }
 
 describe('RatingHistoryChart', () => {
+  test('the position view draws positions without the 1500 line', () => {
+    const data = {
+      ...positionHistoryResponse().data,
+      dateFrom: '2026-10-10',
+      dateTo: '2026-10-11',
+    }
+    render(['n', 's'], data, { view: 'posicion' })
+    expect(container.querySelectorAll('.recharts-line-curve')).toHaveLength(2)
+    expect(container.querySelectorAll('.recharts-reference-line')).toHaveLength(
+      0,
+    )
+    expect(
+      container.querySelector('[role="img"]').getAttribute('aria-label'),
+    ).toContain('Nico: de 2° a 1°.')
+    // En modo torneo no hay posiciones: vuelve al rating.
+    render(['n', 's'], data, { view: 'posicion', mode: 'tournament' })
+    expect(container.querySelectorAll('.recharts-reference-line')).toHaveLength(
+      1,
+    )
+  })
   test('draws one curve per selected player and the 1500 reference line', () => {
     render(['n', 's'])
     expect(container.querySelector('svg')).not.toBeNull()
@@ -349,6 +370,20 @@ describe('RatingHistoryTooltip', () => {
     expect(text).toContain('Liga APA')
     expect(text).toContain('Chances de avanzar: 62%')
     expect(text).not.toContain('Puntaje esperado')
+  })
+  test('in the position view lists the players by position with their rating', () => {
+    const positions = row({ p_n: 1503, p_s: 1497, pos_n: 2, pos_s: 1 })
+    renderTooltip({
+      active: true,
+      view: 'posicion',
+      payload: [
+        { dataKey: 'pos_n', name: 'Nico', value: 2, payload: positions },
+        { dataKey: 'pos_s', name: 'Santi', value: 1, payload: positions },
+      ],
+    })
+    const text = container.textContent
+    expect(text).toContain('2° Nico1503 (-7.0 ELO)')
+    expect(text).toContain('1° Santi1497')
   })
 
   test('colors the delta green or red like the upset cards', () => {

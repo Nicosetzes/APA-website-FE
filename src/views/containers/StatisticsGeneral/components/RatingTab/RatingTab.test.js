@@ -20,10 +20,11 @@ jest.mock('views/containers/MatchListing/DateFilter', () => ({
 // Recharts no se carga en este test: solo importa qué le llega al gráfico.
 jest.mock('../RatingHistoryChart', () => ({
   __esModule: true,
-  default: ({ data, selectedIds, marks, mode }) => (
+  default: ({ data, selectedIds, marks, mode, view }) => (
     <div
       data-testid="chart"
       data-mode={mode}
+      data-view={view}
       data-marks={marks.map((mark) => mark.name).join(',')}
     >
       {`${data.dateFrom}..${data.dateTo}|${selectedIds.join(',')}`}
@@ -41,6 +42,7 @@ import {
   LIGA_ID,
   VIEJO_ID,
   historyResponse,
+  positionHistoryResponse,
   tournamentResponse,
 } from 'utils/testing/ratingHistoryFixtures'
 import RatingTab from '.'
@@ -748,5 +750,58 @@ describe('tournament filter and marks', () => {
       { tournamentId: LIGA_ID },
     ])
     expect(container.textContent).toContain('Torneo: Liga APA')
+  })
+})
+
+describe('chart view (rating / position)', () => {
+  const chartView = () =>
+    container.querySelector('[data-testid="chart"]')?.dataset.view
+  const viewToggle = () =>
+    container.querySelector(
+      '[role="group"][aria-label="Qué muestra el gráfico"]',
+    )
+
+  beforeEach(() => {
+    routeApi({
+      history: (params) =>
+        Promise.resolve({
+          data: params.tournamentId
+            ? tournamentResponse()
+            : positionHistoryResponse(),
+        }),
+    })
+  })
+
+  test('a BE without positions shows no toggle and the rating chart', async () => {
+    routeApi()
+    await render()
+    expect(viewToggle()).toBeNull()
+    expect(chartView()).toBe('rating')
+  })
+
+  test('Posición writes chart=posicion without asking again, Rating removes it', async () => {
+    await render()
+    expect(viewToggle()).not.toBeNull()
+    expect(chartView()).toBe('rating')
+    const calls = requests().length
+    await click(buttonByText('Posición'))
+    expect(new URLSearchParams(location.search).get('chart')).toBe('posicion')
+    expect(chartView()).toBe('posicion')
+    expect(requests()).toHaveLength(calls)
+    await click(buttonByText('Rating'))
+    expect(new URLSearchParams(location.search).has('chart')).toBe(false)
+    expect(chartView()).toBe('rating')
+  })
+
+  test('chart=posicion in the URL opens the position chart', async () => {
+    await render('/statistics?chart=posicion')
+    expect(chartView()).toBe('posicion')
+    expect(buttonByText('Posición').getAttribute('aria-pressed')).toBe('true')
+  })
+
+  test('in tournament mode there is no toggle and the chart shows the rating', async () => {
+    await render(`/statistics?tournamentId=${LIGA_ID}&chart=posicion`)
+    expect(viewToggle()).toBeNull()
+    expect(chartView()).toBe('rating')
   })
 })

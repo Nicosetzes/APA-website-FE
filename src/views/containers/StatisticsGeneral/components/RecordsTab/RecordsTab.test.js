@@ -652,3 +652,175 @@ test('récord de partido con fecha no exacta muestra la etiqueta de precisión',
   // Exacta: el formato de siempre.
   expect(text).toContain('02/07/2026')
 })
+
+describe('reinado en el #1 del Rating APA', () => {
+  const REIGN_TITLE = 'En el #1 del Rating APA'
+  // La tarjeta va después de "Con derrota".
+  const WITH_REIGN = [
+    ...TITLES_IN_ORDER.slice(0, 4),
+    REIGN_TITLE,
+    ...TITLES_IN_ORDER.slice(4),
+  ]
+  const side = (id, name, team, score) => ({
+    id,
+    name,
+    team: { id: team.length, name: team },
+    score,
+  })
+  const reignMatch = (matchId, date, p1, p2, extra = {}) => ({
+    matchId,
+    date,
+    datePrecision: 'exact',
+    tournament: 'Liga APA',
+    type: 'regular',
+    p1,
+    p2,
+    penalties: null,
+    ...extra,
+  })
+  const reign = (id, name, matches, overrides = {}) => ({
+    player: { id, name },
+    matches,
+    startDate: '2019-06-01T15:00:00.000Z',
+    endDate: '2022-06-01T15:00:00.000Z',
+    isActive: false,
+    dethronedBy: { id: 'x', name: 'X' },
+    startMatch: reignMatch(
+      'm1',
+      '2019-06-01T15:00:00.000Z',
+      side(id, name, 'Boca', 2),
+      side('j', 'Juan', 'River', 0),
+      { datePrecision: 'year' },
+    ),
+    lastMatch: reignMatch(
+      'm2',
+      '2022-05-20T15:00:00.000Z',
+      side(id, name, 'Boca', 1),
+      side('j', 'Juan', 'River', 1),
+    ),
+    // Lo superan en un partido que no juega.
+    breakMatch: reignMatch(
+      'm3',
+      '2022-06-01T15:00:00.000Z',
+      side('x', 'X', 'Racing', 1),
+      side('j', 'Juan', 'River', 1),
+      { type: 'playoff', penalties: { p1: 4, p2: 3 } },
+    ),
+    ...overrides,
+  })
+  const current = reign('s', 'Santi', 40, {
+    startDate: '2026-02-01T15:00:00.000Z',
+    endDate: '2026-10-01T15:00:00.000Z',
+    isActive: true,
+    dethronedBy: null,
+    breakMatch: null,
+  })
+  const reigns = {
+    current,
+    longest: [reign('n', 'Nico', 234)],
+    reigns: [reign('n', 'Nico', 234), current],
+  }
+
+  test('históricas: el reinado más largo, primero, con años y partidos', () => {
+    render({
+      records: buildRecords(),
+      activeStreaks: buildActiveStreaks(),
+      reigns,
+    })
+    const panel = panelOf(tab('Rachas históricas'))
+    expect(cardTitles(panel)).toEqual(WITH_REIGN)
+    const card = cardByTitle(panel, REIGN_TITLE)
+    expect(card.textContent).toContain('Rating')
+    expect(card.textContent).toContain('234')
+    expect(card.textContent).toContain('partidos')
+    expect(card.textContent).toContain('Nico')
+    expect(card.textContent).toMatch(/2019 → .*2022/)
+    // Sin link a /matches: el reinado incluye partidos de otros jugadores.
+    expect(card.querySelector('a')).toBeNull()
+    expect(
+      card.querySelector('button[aria-label]').getAttribute('aria-label'),
+    ).toContain('en los que fue #1 del Rating APA sin interrupción')
+  })
+
+  test('muestra el partido que lo coronó y el que lo destronó, aunque no lo juegue', () => {
+    render({
+      records: buildRecords(),
+      activeStreaks: buildActiveStreaks(),
+      reigns,
+    })
+    const card = cardByTitle(panelOf(tab('Rachas históricas')), REIGN_TITLE)
+    const groups = [...card.querySelectorAll('[role="group"]')]
+    expect(groups.map((group) => group.getAttribute('aria-label'))).toEqual([
+      'Partido en que llegó al #1: Nico (Boca) 2 a 0 Juan (River), Liga APA, 2019',
+      'Partido en que lo superaron: X (Racing) 1 a 1 Juan (River), 4 a 3 en penales, Liga APA, 1 de junio de 2022',
+    ])
+    expect(groups[0].textContent).toContain('Inicio')
+    expect(groups[0].textContent).toContain('Nico (Boca) vs Juan (River)')
+    expect(groups[1].textContent).toContain('Fin')
+    expect(groups[1].textContent).toContain('1-1 (4-3)')
+    expect(groups[1].textContent).toContain('X (Racing) vs Juan (River)')
+    expect(groups[1].textContent).toContain('Playoff')
+  })
+
+  test('el reinado vigente muestra el último partido como #1', () => {
+    render({
+      records: buildRecords(),
+      activeStreaks: buildActiveStreaks(),
+      reigns,
+    })
+    const card = cardByTitle(panelOf(tab('Rachas actuales')), REIGN_TITLE)
+    const labels = [...card.querySelectorAll('[role="group"]')].map((group) =>
+      group.getAttribute('aria-label'),
+    )
+    expect(labels[1]).toMatch(/^Último partido como #1: /)
+  })
+
+  test('actuales: el reinado vigente, con un solo año si empieza y sigue en el mismo', () => {
+    render({
+      records: buildRecords(),
+      activeStreaks: buildActiveStreaks(),
+      reigns,
+    })
+    const card = cardByTitle(panelOf(tab('Rachas actuales')), REIGN_TITLE)
+    expect(card.textContent).toContain('40')
+    expect(card.textContent).toContain('Santi')
+    expect(card.textContent).toContain('2026')
+    expect(card.textContent).not.toContain('→')
+    expect(card.textContent).not.toContain('Récord')
+  })
+
+  test('actuales: "Récord" si el reinado vigente es el más largo', () => {
+    render({
+      records: buildRecords(),
+      activeStreaks: buildActiveStreaks(),
+      reigns: { current, longest: [current], reigns: [current] },
+    })
+    const historic = cardByTitle(panelOf(tab('Rachas históricas')), REIGN_TITLE)
+    expect(historic.textContent).toContain('Activa')
+    const active = cardByTitle(panelOf(tab('Rachas actuales')), REIGN_TITLE)
+    expect(active.textContent).toContain('Récord')
+  })
+
+  test('sin #1 vigente: la tarjeta de actuales queda vacía', () => {
+    render({
+      records: buildRecords(),
+      activeStreaks: buildActiveStreaks(),
+      reigns: { current: null, longest: [], reigns: [] },
+    })
+    expect(
+      cardByTitle(panelOf(tab('Rachas actuales')), REIGN_TITLE).textContent,
+    ).toContain('Nadie en racha')
+  })
+
+  test('si /ratings/reigns falló, no hay tarjeta y el resto sigue igual', () => {
+    render({
+      records: buildRecords(),
+      activeStreaks: buildActiveStreaks(),
+      reigns: null,
+    })
+    expect(cardTitles(panelOf(tab('Rachas históricas')))).toEqual(
+      TITLES_IN_ORDER,
+    )
+    expect(cardTitles(panelOf(tab('Rachas actuales')))).toEqual(TITLES_IN_ORDER)
+  })
+})

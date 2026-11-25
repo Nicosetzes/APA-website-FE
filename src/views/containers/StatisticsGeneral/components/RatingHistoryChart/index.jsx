@@ -15,18 +15,22 @@ import {
 import { useMemo } from 'react'
 import { formatRating } from 'utils/ratings'
 import {
+  CHART_VIEWS,
   MARK_LANE_HEIGHT,
   REFERENCE_RATING,
   assignMarkLanes,
   buildAxisTicks,
   buildChartRows,
+  computePositionTicks,
   computeYDomain,
   describeChartForScreenReaders,
   describeMarkTitle,
   describePointProbability,
   fitMarkLabel,
   formatMatchDay,
+  formatPosition,
   playerKey,
+  positionKey,
 } from 'utils/ratingHistory'
 import EloDelta from '../EloDelta'
 import MatchResult from '../MatchResult'
@@ -113,14 +117,26 @@ export const TournamentMarks = ({ tournamentMarks, xAxisMap, offset }) => {
   )
 }
 
-export const RatingHistoryTooltip = ({ active, payload, mode }) => {
+const idFromKey = (dataKey) => String(dataKey).replace(/^(p|pos)_/, '')
+
+export const RatingHistoryTooltip = ({
+  active,
+  payload,
+  mode,
+  view = CHART_VIEWS.rating,
+}) => {
   if (!active || !payload?.length) return null
   const row = payload[0].payload
+  const isPosition = view === CHART_VIEWS.position
   const entries = payload
     .filter((entry) => typeof entry.value === 'number')
-    .map((entry) => ({ ...entry, id: String(entry.dataKey).slice(2) }))
+    .map((entry) => ({ ...entry, id: idFromKey(entry.dataKey) }))
+  // En la vista de posiciones se listan de la mejor a la peor.
+  if (isPosition) entries.sort((a, b) => a.value - b.value)
   const played = entries.filter((entry) => row.points?.[entry.id])
   const others = entries.filter((entry) => !row.points?.[entry.id])
+  const positionPrefix = (entry) =>
+    isPosition ? `${formatPosition(row[positionKey(entry.id)])} ` : ''
 
   return (
     <TooltipBox>
@@ -135,7 +151,10 @@ export const RatingHistoryTooltip = ({ active, payload, mode }) => {
         return (
           <TooltipMatch key={entry.id}>
             <TooltipPlayer $color={entry.color}>
-              <span>{entry.name}</span>
+              <span>
+                {positionPrefix(entry)}
+                {entry.name}
+              </span>
               <span>
                 {formatRating(point.rating)} (<EloDelta change={point.delta} />)
               </span>
@@ -159,8 +178,15 @@ export const RatingHistoryTooltip = ({ active, payload, mode }) => {
         <TooltipOthers>
           {others.map((entry) => (
             <TooltipRow key={entry.id} $color={entry.color}>
-              <span>{entry.name}</span>
-              <span>{formatRating(entry.value)}</span>
+              <span>
+                {positionPrefix(entry)}
+                {entry.name}
+              </span>
+              <span>
+                {formatRating(
+                  isPosition ? row[playerKey(entry.id)] : entry.value,
+                )}
+              </span>
             </TooltipRow>
           ))}
         </TooltipOthers>
@@ -175,38 +201,51 @@ const RatingHistoryChart = ({
   colors,
   marks = EMPTY_MARKS,
   mode = 'period',
+  view = CHART_VIEWS.rating,
 }) => {
   const isTournament = mode === 'tournament'
-  const { rows, ticks, domain, description, chosen, laidOutMarks, lanes } =
-    useMemo(() => {
-      const chosenPlayers = data.players.filter(({ player }) =>
-        selectedIds.includes(String(player.id)),
-      )
-      const chartRows = buildChartRows({
-        timeline: data.matchesTimeline,
-        players: data.players,
-        selectedIds,
-      })
-      const placed = assignMarkLanes(marks)
-      return {
-        chosen: chosenPlayers,
-        rows: chartRows,
-        ticks: buildAxisTicks(data.matchesTimeline, data),
-        domain: computeYDomain(chartRows, selectedIds),
-        laidOutMarks: placed.marks,
-        lanes: placed.lanes,
-        description: describeChartForScreenReaders({
-          players: chosenPlayers,
-          dateFrom: data.dateFrom,
-          dateTo: data.dateTo,
-          matchesInPeriod: data.matchesInPeriod,
-          marks,
-          tournamentName: isTournament
-            ? data.scope?.tournament?.name ?? null
-            : null,
-        }),
-      }
-    }, [data, selectedIds, marks, isTournament])
+  // Las posiciones no existen en modo torneo (no hay un instante común).
+  const isPosition = view === CHART_VIEWS.position && !isTournament
+  const {
+    rows,
+    ticks,
+    domain,
+    positionTicks,
+    description,
+    chosen,
+    laidOutMarks,
+    lanes,
+  } = useMemo(() => {
+    const chosenPlayers = data.players.filter(({ player }) =>
+      selectedIds.includes(String(player.id)),
+    )
+    const chartRows = buildChartRows({
+      timeline: data.matchesTimeline,
+      players: data.players,
+      selectedIds,
+    })
+    const placed = assignMarkLanes(marks)
+    return {
+      chosen: chosenPlayers,
+      rows: chartRows,
+      ticks: buildAxisTicks(data.matchesTimeline, data),
+      domain: computeYDomain(chartRows, selectedIds),
+      positionTicks: computePositionTicks(chartRows, selectedIds),
+      laidOutMarks: placed.marks,
+      lanes: placed.lanes,
+      description: describeChartForScreenReaders({
+        players: chosenPlayers,
+        dateFrom: data.dateFrom,
+        dateTo: data.dateTo,
+        matchesInPeriod: data.matchesInPeriod,
+        marks,
+        tournamentName: isTournament
+          ? data.scope?.tournament?.name ?? null
+          : null,
+        view: isPosition ? CHART_VIEWS.position : CHART_VIEWS.rating,
+      }),
+    }
+  }, [data, selectedIds, marks, isTournament, isPosition])
 
   const labelsByX = new Map(ticks.map(({ x, label }) => [x, label]))
 
@@ -251,28 +290,54 @@ const RatingHistoryChart = ({
                   fontSize: 12,
                 }}
               />
-              <YAxis
-                domain={domain}
-                width={48}
-                tick={{ fontSize: 12 }}
-                allowDecimals={false}
-              />
-              <ReferenceLine
-                y={REFERENCE_RATING}
-                stroke="#6b7280"
-                strokeDasharray="6 4"
-              />
+              {isPosition ? (
+                <YAxis
+                  reversed
+                  domain={[1, positionTicks.length]}
+                  ticks={positionTicks}
+                  tickFormatter={formatPosition}
+                  interval={0}
+                  width={48}
+                  tick={{ fontSize: 12 }}
+                  allowDecimals={false}
+                />
+              ) : (
+                <YAxis
+                  domain={domain}
+                  width={48}
+                  tick={{ fontSize: 12 }}
+                  allowDecimals={false}
+                />
+              )}
+              {!isPosition && (
+                <ReferenceLine
+                  y={REFERENCE_RATING}
+                  stroke="#6b7280"
+                  strokeDasharray="6 4"
+                />
+              )}
               {laidOutMarks.length > 0 && (
                 <Customized
                   component={<TournamentMarks tournamentMarks={laidOutMarks} />}
                 />
               )}
-              <Tooltip content={<RatingHistoryTooltip mode={mode} />} />
+              <Tooltip
+                content={
+                  <RatingHistoryTooltip
+                    mode={mode}
+                    view={
+                      isPosition ? CHART_VIEWS.position : CHART_VIEWS.rating
+                    }
+                  />
+                }
+              />
               {chosen.map(({ player }) => (
                 <Line
                   key={player.id}
                   type="stepAfter"
-                  dataKey={playerKey(player.id)}
+                  dataKey={
+                    isPosition ? positionKey(player.id) : playerKey(player.id)
+                  }
                   name={player.name}
                   stroke={colors.get(String(player.id))}
                   strokeWidth={2}

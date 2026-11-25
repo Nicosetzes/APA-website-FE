@@ -1,4 +1,5 @@
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
+import ReignMatchSummary from '../ReignMatchSummary'
 import StreakMatchSummary from '../StreakMatchSummary'
 import StreakTournamentSummary from '../StreakTournamentSummary'
 import Tooltip from 'views/components/Tooltip'
@@ -132,6 +133,16 @@ const RangeContent = ({ holder, ongoing }) => {
 
   if (!startDate && !endDate) return 'Sin fechas registradas'
 
+  if (
+    startDate &&
+    endDate &&
+    startDatePrecision === 'year' &&
+    endDatePrecision === 'year' &&
+    formatPlayedAt(startDate, 'year') === formatPlayedAt(endDate, 'year')
+  ) {
+    return <DateText value={startDate} precision="year" />
+  }
+
   return (
     <>
       {startDate ? (
@@ -193,10 +204,19 @@ const ITEMS = {
     toggle: ['Ver torneos', 'Ocultar torneos'],
     idSuffix: 'torneos',
   },
+  reign: {
+    keys: { start: 'startMatch', end: 'endMatch', cut: 'breakMatch' },
+    descriptions: {
+      start: 'Partido en que llegó al #1',
+      last: 'Último partido como #1',
+      cut: 'Partido en que lo superaron',
+    },
+    toggle: ['Ver partidos', 'Ocultar partidos'],
+    idSuffix: 'partidos',
+  },
 }
 
-const getItems = (variant) =>
-  variant === 'tournament' ? ITEMS.tournament : ITEMS.match
+const getItems = (variant) => ITEMS[variant] || ITEMS.match
 
 const UNITS = {
   match: ['partido', 'partidos'],
@@ -220,16 +240,30 @@ const getSecondItem = (holder, { keys, descriptions }) => {
   }
 }
 
-const StreakItemSummary = ({ variant, item, ...props }) =>
-  variant === 'tournament' ? (
-    <StreakTournamentSummary tournament={item} {...props} />
-  ) : (
+const StreakItemSummary = ({ variant, item, holderId, ...props }) => {
+  if (variant === 'tournament') {
+    return <StreakTournamentSummary tournament={item} {...props} />
+  }
+  if (variant === 'reign') {
+    const { label, description, isBreak } = props
+    return (
+      <ReignMatchSummary
+        label={label}
+        description={description}
+        isBreak={isBreak}
+        holderId={holderId}
+        match={item}
+      />
+    )
+  }
+  return (
     <StreakMatchSummary
       match={item}
       isKnockout={variant === 'knockout'}
       {...props}
     />
   )
+}
 
 const StreakItems = ({ holder, variant, id, hidden }) => {
   const items = getItems(variant)
@@ -244,6 +278,7 @@ const StreakItems = ({ holder, variant, id, hidden }) => {
         label="Inicio"
         description={items.descriptions.start}
         holderName={holder.name}
+        holderId={holder.id}
         item={start}
       />
       <StreakItemSummary
@@ -251,6 +286,7 @@ const StreakItems = ({ holder, variant, id, hidden }) => {
         label={second.label}
         description={second.description}
         holderName={holder.name}
+        holderId={holder.id}
         item={second.item}
         isBreak={second.isBreak}
       />
@@ -324,8 +360,9 @@ const HolderRow = ({
  * - `category`: tag de la esquina (Resultados / Goles / Defensa / Penales /
  *   Partidos de eliminación / Eliminatorias).
  * - `variant`: `match` (por defecto), `knockout` (partidos con la tanda como
- *   victoria o derrota) o `tournament` (mini-tarjetas de torneo y unidad
- *   "torneos").
+ *   victoria o derrota), `tournament` (mini-tarjetas de torneo y unidad
+ *   "torneos") o `reign` (reinado en el #1: partidos sin perspectiva, que
+ *   pueden no involucrar al poseedor).
  * - `emptyMessage`: se muestra si no hay racha de al menos `MIN_STREAK`.
  * - `showActive`: pill "Activa" en los poseedores vigentes. En actuales todas
  *   son vigentes, así que se apaga.

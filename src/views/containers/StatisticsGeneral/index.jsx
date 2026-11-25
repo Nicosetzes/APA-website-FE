@@ -71,6 +71,9 @@ const StatisticsGeneral = () => {
   const [stats, setStats] = useState({})
   const [loadedSections, setLoadedSections] = useState([])
   const [ratings, setRatings] = useState()
+  // Reinados en el #1 (`/ratings/reigns`, pestaña Récords). `undefined`: sin
+  // pedir; `null`: falló (los récords se muestran igual, sin esa tarjeta).
+  const [reigns, setReigns] = useState()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [searchParams, setSearchParams] = useSearchParams()
@@ -96,7 +99,8 @@ const StatisticsGeneral = () => {
     const needsRatings = activeTab === DEFAULT_TAB || activeTab === 'players'
     const shouldLoadStats = statsEndpoint && !loadedSections.includes(activeTab)
     const shouldLoadRatings = needsRatings && ratings === undefined
-    if (!shouldLoadStats && !shouldLoadRatings) {
+    const shouldLoadReigns = activeTab === 'records' && reigns === undefined
+    if (!shouldLoadStats && !shouldLoadRatings && !shouldLoadReigns) {
       setLoading(false)
       return undefined
     }
@@ -126,6 +130,18 @@ const StatisticsGeneral = () => {
       )
     }
 
+    if (shouldLoadReigns) {
+      requests.push(
+        apiClient
+          .get('/ratings/reigns', { signal: controller.signal })
+          .then(({ data }) => ({ type: 'reigns', data: data.data ?? null }))
+          .catch((err) => {
+            if (isAbortError(err)) throw err
+            console.error(err)
+            return { type: 'reigns', data: null }
+          }),
+      )
+    }
     Promise.all(requests)
       .then((results) => {
         if (controller.signal.aborted) return
@@ -139,6 +155,7 @@ const StatisticsGeneral = () => {
             )
           }
           if (result.type === 'ratings') setRatings(result.data)
+          if (result.type === 'reigns') setReigns(result.data)
         })
         setLoading(false)
       })
@@ -150,7 +167,7 @@ const StatisticsGeneral = () => {
       })
 
     return () => controller.abort()
-  }, [activeTab, loadedSections, ratings])
+  }, [activeTab, loadedSections, ratings, reigns])
 
   const getStreakLabel = (type) => {
     if (type === 'W') return 'Victoria'
@@ -504,6 +521,7 @@ const StatisticsGeneral = () => {
         <RecordsTab
           records={stats?.records}
           activeStreaks={stats?.activeStreaks}
+          reigns={reigns}
         />,
         'records',
       ),

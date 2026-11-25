@@ -114,11 +114,21 @@ const resolveOutsideChange = (row) => {
 const formatPosition = (position) =>
   typeof position === 'number' ? `${position}°` : '—'
 
+const LEADER_HELP =
+  'Partidos del período después de los cuales fue #1 del Rating APA.'
+
+const formatLeaderMatches = (count) =>
+  typeof count === 'number' ? String(count) : '—'
+
 const PeriodSummary = ({ players, colors, mode = 'period' }) => {
   const ranking = buildPeriodRanking(players)
   if (ranking.length === 0) return null
   const isTournament = mode === 'tournament'
   const scopeLabel = isTournament ? 'torneo' : 'período'
+  // Un BE anterior no manda `leaderMatches`: sin el dato no hay columna.
+  const showLeader =
+    !isTournament &&
+    ranking.some((row) => typeof row.summary.leaderMatches === 'number')
 
   return (
     <>
@@ -158,6 +168,11 @@ const PeriodSummary = ({ players, colors, mode = 'period' }) => {
                 <th scope="col">Máx.</th>
                 <th scope="col">V/E/D</th>
                 {!isTournament && <th scope="col">Posición</th>}
+                {showLeader && (
+                  <th scope="col" title={LEADER_HELP}>
+                    En el #1
+                  </th>
+                )}
               </tr>
             </thead>
             <tbody>
@@ -250,6 +265,13 @@ const PeriodSummary = ({ players, colors, mode = 'period' }) => {
                             </ChangeValue>
                           )}
                         </PositionCell>
+                      </td>
+                    )}
+                    {showLeader && (
+                      <td>
+                        <PeakValue>
+                          {formatLeaderMatches(row.summary.leaderMatches)}
+                        </PeakValue>
                       </td>
                     )}
                   </tr>

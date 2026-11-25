@@ -4,8 +4,11 @@ import { act } from 'react-dom/test-utils'
 import { MemoryRouter } from 'react-router-dom'
 import {
   NICO,
+  NICO_POSITIONS,
   SANTI,
+  SANTI_POSITIONS,
   withNameOnlyTeams,
+  withPositions,
   withoutTeams,
 } from 'utils/testing/ratingHistoryFixtures'
 import PeriodSummary from '.'
@@ -629,4 +632,34 @@ test('period mode keeps a single Variación column', () => {
   render([NICO, SANTI])
   expect(headers()).toContain('Variación')
   expect(headers()).not.toContain('Fuera del torneo')
+})
+
+describe('En el #1 column', () => {
+  const headers = () =>
+    [...container.querySelectorAll('thead th')].map((th) => th.textContent)
+
+  test('shows the matches at #1 in the period when the BE sends them', () => {
+    render([
+      withPositions(NICO, NICO_POSITIONS, 3),
+      withPositions(SANTI, SANTI_POSITIONS, 0),
+    ])
+    expect(headers().at(-1)).toBe('En el #1')
+    expect(
+      container.querySelector('thead th:last-child').getAttribute('title'),
+    ).toContain('Partidos del período después de los cuales fue #1')
+    expect(rows().map((cells) => cells.at(-1))).toEqual(['3', '0'])
+  })
+
+  test('is hidden with a BE without the data and in tournament mode', () => {
+    render([NICO, SANTI])
+    expect(headers()).not.toContain('En el #1')
+    render(
+      [
+        withPositions(NICO, NICO_POSITIONS, null),
+        withPositions(SANTI, SANTI_POSITIONS, null),
+      ],
+      'tournament',
+    )
+    expect(headers()).not.toContain('En el #1')
+  })
 })

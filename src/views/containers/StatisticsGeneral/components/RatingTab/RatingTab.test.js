@@ -175,7 +175,32 @@ test('renders the Elo table, the picker, the chart and the period summary', asyn
   expect(container.textContent).toContain('Jugadores en el gráfico')
   expect(chartText()).toBe('2025-10-27..2026-10-27|n,s')
   expect(container.textContent).toContain('Ranking del período')
+  expect(container.textContent).toContain('Rendimiento frente al pronóstico')
   expect(container.textContent).toContain('Upsets del período')
+  expect(container.textContent.indexOf('Ranking del período')).toBeLessThan(
+    container.textContent.indexOf('Rendimiento frente al pronóstico'),
+  )
+  expect(
+    container.textContent.indexOf('Rendimiento frente al pronóstico'),
+  ).toBeLessThan(container.textContent.indexOf('Upsets del período'))
+})
+
+test('keeps the rating history usable with an older backend response', async () => {
+  const legacy = historyResponse()
+  legacy.data.players = legacy.data.players.map((row) => {
+    const summary = { ...row.summary }
+    delete summary.performanceVsExpected
+    return { ...row, summary }
+  })
+  routeApi({ history: () => Promise.resolve({ data: legacy }) })
+
+  await render()
+  expect(chartText()).toBe('2025-10-27..2026-10-27|n,s')
+  expect(container.textContent).toContain('Ranking del período')
+  expect(container.textContent).toContain('Upsets del período')
+  expect(container.textContent).not.toContain(
+    'Rendimiento frente al pronóstico',
+  )
 })
 
 test('shows the Elo ranking error when ratings could not be loaded', async () => {
@@ -195,9 +220,11 @@ test('shows the platform loader while the history loads', async () => {
 })
 
 const pressedButtons = () =>
-  [...container.querySelectorAll('button[aria-pressed="true"]')].map(
-    (node) => node.textContent,
-  )
+  [...container.querySelectorAll('button[aria-pressed="true"]')]
+    .filter(
+      (node) => node.closest('[aria-label="Partidos incluidos"]') === null,
+    )
+    .map((node) => node.textContent)
 const selectYear = async (year) => {
   const select = container.querySelector('select')
   const setter = Object.getOwnPropertyDescriptor(

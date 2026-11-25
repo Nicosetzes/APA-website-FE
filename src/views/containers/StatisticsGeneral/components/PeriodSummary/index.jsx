@@ -120,7 +120,12 @@ const LEADER_HELP =
 const formatLeaderMatches = (count) =>
   typeof count === 'number' ? String(count) : '—'
 
-const PeriodSummary = ({ players, colors, mode = 'period' }) => {
+const PeriodSummary = ({
+  players,
+  colors,
+  mode = 'period',
+  afterRanking = null,
+}) => {
   const ranking = buildPeriodRanking(players)
   if (ranking.length === 0) return null
   const isTournament = mode === 'tournament'
@@ -281,6 +286,7 @@ const PeriodSummary = ({ players, colors, mode = 'period' }) => {
           </Table>
         </TableScroll>
       </SummaryCard>
+      {afterRanking}
       <SummaryCard>
         <SummaryTitle>Upsets del {scopeLabel}</SummaryTitle>
         <UpsetGrid>

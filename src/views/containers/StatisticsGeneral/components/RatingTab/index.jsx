@@ -28,6 +28,7 @@ import {
   SpinnerContainer,
 } from '../../styled'
 import PeriodFilter from '../PeriodFilter'
+import PerformanceVsExpected from '../PerformanceVsExpected'
 import { ShortcutButton } from '../PeriodFilter/styled'
 import PeriodSummary from '../PeriodSummary'
 import PlayerPicker from '../PlayerPicker'
@@ -329,7 +330,14 @@ const RatingTab = ({ ratings }) => {
             view={showViewToggle ? chartView : CHART_VIEWS.rating}
           />
         </Suspense>
-        <PeriodSummary players={data.players} colors={colors} mode={mode} />
+        <PeriodSummary
+          players={data.players}
+          colors={colors}
+          mode={mode}
+          afterRanking={
+            <PerformanceVsExpected players={data.players} colors={colors} />
+          }
+        />
       </Content>
     )
   }

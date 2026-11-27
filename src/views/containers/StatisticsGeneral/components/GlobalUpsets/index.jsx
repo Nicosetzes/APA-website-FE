@@ -36,7 +36,8 @@ import {
   Table,
   TableContainer,
   TeamIdentity,
-  TournamentIdentity,
+  TournamentDetails,
+  TournamentVisual,
   UpsetsSection,
 } from './styled'
 
@@ -104,6 +105,13 @@ const GlobalUpsets = () => {
     () => parseUpsetsFilters(searchParams),
     [searchParams],
   )
+
+  useEffect(() => {
+    const normalized = updateUpsetsSearchParams(searchParams, {})
+    if (normalized.toString() !== searchParams.toString()) {
+      setSearchParams(normalized, { replace: true })
+    }
+  }, [searchParams, setSearchParams])
 
   const updateFilter = useCallback(
     (name, value) => {
@@ -173,8 +181,9 @@ const GlobalUpsets = () => {
     <UpsetsSection aria-labelledby="global-upsets-title">
       <SectionTitle id="global-upsets-title">Mayores sorpresas</SectionTitle>
       <Intro>
-        Victorias de quienes tenían menos chances previas, desde la más
-        improbable.
+        {filters.perspective === 'against'
+          ? 'Derrotas ante rivales que tenían menos chances previas, desde la más improbable.'
+          : 'Victorias de quienes tenían menos chances previas, desde la más improbable.'}
       </Intro>
 
       <Filters aria-label="Filtros de mayores sorpresas">
@@ -224,6 +233,19 @@ const GlobalUpsets = () => {
                 {player.name}
               </option>
             ))}
+          </select>
+        </FilterField>
+        <FilterField>
+          <span>Perspectiva</span>
+          <select
+            value={filters.perspective}
+            disabled={!filters.playerId}
+            onChange={(event) =>
+              updateFilter('perspective', event.target.value)
+            }
+          >
+            <option value="for">A favor</option>
+            <option value="against">En contra</option>
           </select>
         </FilterField>
         <FilterField>
@@ -344,8 +366,13 @@ const GlobalUpsets = () => {
                         </Score>
                       </td>
                       <td>
-                        <Probability>
-                          {describeGlobalUpsetProbability(upset)}
+                        <Probability
+                          $negative={filters.perspective === 'against'}
+                        >
+                          {describeGlobalUpsetProbability(
+                            upset,
+                            filters.perspective,
+                          )}
                         </Probability>
                       </td>
                       <td>
@@ -355,25 +382,27 @@ const GlobalUpsets = () => {
                       </td>
                       <td>
                         <ContextCell>
-                          <TournamentIdentity>
+                          <TournamentVisual>
                             <TournamentBadge
                               tournament={tournament}
                               name={tournamentName}
                             />
-                            <span>{tournamentName}</span>
-                          </TournamentIdentity>
-                          <span>{getUpsetTypeLabel(upset.type)}</span>
-                          <time dateTime={upset.playedAt || undefined}>
-                            {formatGlobalUpsetDate(upset)}
-                          </time>
-                          {matchLink && (
-                            <MatchLink
-                              to={matchLink}
-                              aria-label={`Ver el partido entre ${upset.winner.name} y ${upset.loser.name}`}
-                            >
-                              Ver partido
-                            </MatchLink>
-                          )}
+                          </TournamentVisual>
+                          <TournamentDetails>
+                            <strong>{tournamentName}</strong>
+                            <span>{getUpsetTypeLabel(upset.type)}</span>
+                            <time dateTime={upset.playedAt || undefined}>
+                              {formatGlobalUpsetDate(upset)}
+                            </time>
+                            {matchLink && (
+                              <MatchLink
+                                to={matchLink}
+                                aria-label={`Ver el partido entre ${upset.winner.name} y ${upset.loser.name}`}
+                              >
+                                Ver partido
+                              </MatchLink>
+                            )}
+                          </TournamentDetails>
                         </ContextCell>
                       </td>
                     </tr>

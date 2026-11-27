@@ -58,6 +58,13 @@ export const FilterField = styled.label`
     padding: 0.55rem 0.65rem;
   }
 
+  input:disabled,
+  select:disabled {
+    background: rgba(0, 0, 0, 0.05);
+    color: rgba(0, 0, 0, 0.45);
+    cursor: not-allowed;
+  }
+
   input:focus-visible,
   select:focus-visible {
     outline: 2px solid var(--blue-900);
@@ -231,7 +238,7 @@ export const Score = styled.strong`
 `
 
 export const Probability = styled.span`
-  color: #11610a;
+  color: ${({ $negative }) => ($negative ? '#9f1239' : '#11610a')};
   font-size: 0.82rem;
   font-weight: 700;
 `
@@ -244,27 +251,41 @@ export const RatingChange = styled.span`
 `
 
 export const ContextCell = styled.div`
-  align-items: flex-start;
-  display: flex;
-  flex-direction: column;
+  align-items: center;
+  display: grid;
   font-size: 0.72rem;
-  gap: 0.15rem;
-  min-width: 155px;
+  gap: 0.65rem;
+  grid-template-columns: 58px minmax(0, 1fr);
+  min-width: 190px;
 `
 
-export const TournamentIdentity = styled.span`
+export const TournamentVisual = styled.span`
   align-items: center;
-  color: var(--blue-900);
   display: flex;
-  font-weight: 700;
-  gap: 0.35rem;
+  height: 58px;
+  justify-content: center;
+  width: 58px;
 
   > img,
   > [role='img'] {
     flex: 0 0 auto;
-    height: 26px;
+    height: 58px;
     object-fit: contain;
-    width: 26px;
+    width: 58px;
+  }
+`
+
+export const TournamentDetails = styled.span`
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+
+  strong {
+    color: var(--blue-900);
+    font-size: 0.76rem;
+    overflow-wrap: anywhere;
   }
 `
 

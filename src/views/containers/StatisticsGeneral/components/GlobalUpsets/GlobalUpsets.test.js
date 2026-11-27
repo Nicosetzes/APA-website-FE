@@ -133,6 +133,7 @@ test('loads both bulk resources and renders an accessible leaderboard table', as
       dateTo: undefined,
       tournamentId: undefined,
       playerId: undefined,
+      perspective: 'for',
       type: undefined,
       penalties: 'all',
     },
@@ -259,8 +260,11 @@ test('writes only supported filters and never sends or preserves limit', async (
       label.textContent.startsWith('Cantidad'),
     ),
   ).toBe(false)
+  expect(field('Perspectiva').disabled).toBe(true)
   await change(field('Torneo'), TOURNAMENT_ID)
   await change(field('Jugador involucrado'), 'p1')
+  expect(field('Perspectiva').disabled).toBe(false)
+  await change(field('Perspectiva'), 'against')
   await change(field('Fase'), 'playoff')
   await change(field('Penales'), 'only')
   await change(field('Desde'), '2026-01-01')
@@ -271,6 +275,7 @@ test('writes only supported filters and never sends or preserves limit', async (
   expect(location.search).not.toContain('upsetsLimit')
   expect(location.search).toContain(`upsetsTournamentId=${TOURNAMENT_ID}`)
   expect(location.search).toContain('upsetsPlayerId=p1')
+  expect(location.search).toContain('upsetsPerspective=against')
   expect(location.search).toContain('upsetsType=playoff')
   expect(location.search).toContain('upsetsPenalties=only')
   expect(location.search).toContain('upsetsDateFrom=2026-01-01')
@@ -284,12 +289,80 @@ test('writes only supported filters and never sends or preserves limit', async (
     dateTo: '2026-12-31',
     tournamentId: TOURNAMENT_ID,
     playerId: 'p1',
+    perspective: 'against',
     type: 'playoff',
     penalties: 'only',
   })
   expect(
     apiClient.get.mock.calls.filter(([url]) => url === '/tournaments'),
   ).toHaveLength(1)
+
+  await change(field('Jugador involucrado'), '')
+  expect(field('Perspectiva').disabled).toBe(true)
+  expect(field('Perspectiva').value).toBe('for')
+  expect(location.search).not.toContain('upsetsPlayerId')
+  expect(location.search).not.toContain('upsetsPerspective')
+
+  const callsAfterClear = apiClient.get.mock.calls.filter(
+    ([url]) => url === '/ratings/upsets',
+  )
+  expect(callsAfterClear[callsAfterClear.length - 1][1].params).toEqual({
+    dateFrom: '2026-01-01',
+    dateTo: '2026-12-31',
+    tournamentId: TOURNAMENT_ID,
+    playerId: undefined,
+    perspective: 'for',
+    type: 'playoff',
+    penalties: 'only',
+  })
+})
+
+test('normalizes an against deep link without a selected player', async () => {
+  mockSuccess()
+
+  await render('/statistics?tab=surprises&upsetsPerspective=against&other=1')
+  await flush()
+
+  expect(field('Perspectiva').disabled).toBe(true)
+  expect(field('Perspectiva').value).toBe('for')
+  expect(location.search).toContain('other=1')
+  expect(location.search).not.toContain('upsetsPerspective')
+})
+
+test('renders the API row oriented for and against the selected player', async () => {
+  apiClient.get.mockImplementation((url, config) => {
+    if (url === '/tournaments') return Promise.resolve({ data: catalog })
+    const against = config.params.perspective === 'against'
+    return Promise.resolve({
+      data: payload([
+        upset({
+          matchId: against ? 'against' : 'for',
+          winner: against
+            ? { id: 'p2', name: 'Rival ganador' }
+            : { id: 'p1', name: 'Jugador ganador' },
+          loser: against
+            ? { id: 'p1', name: 'Jugador perdedor' }
+            : { id: 'p2', name: 'Rival perdedor' },
+        }),
+      ]),
+    })
+  })
+
+  await render('/statistics?tab=surprises&upsetsPlayerId=p1')
+  expect(container.querySelector('tbody').textContent).toContain(
+    'Jugador ganador',
+  )
+
+  await change(field('Perspectiva'), 'against')
+  expect(container.querySelector('tbody').textContent).toContain(
+    'Rival ganador',
+  )
+  expect(container.querySelector('tbody').textContent).toContain(
+    'Jugador perdedor',
+  )
+  expect(container.querySelector('tbody').textContent).toContain(
+    '16,7% de chances de quedar eliminado',
+  )
 })
 
 test('shows loading status and aborts both requests on unmount', async () => {

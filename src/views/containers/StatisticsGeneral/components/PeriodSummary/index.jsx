@@ -1,9 +1,6 @@
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp'
-import { Link } from 'react-router-dom'
 import { Rank } from '../../styled'
-import EloDelta from '../EloDelta'
-import MatchResult from '../MatchResult'
 import {
   ChangeValue,
   MatchesNote,
@@ -21,24 +18,9 @@ import {
   PositionCell,
   SummaryCard,
   SummaryTitle,
-  UpsetBlock,
-  UpsetCard,
-  UpsetEmpty,
-  UpsetGrid,
-  UpsetLabel,
-  UpsetLink,
-  UpsetMeta,
-  UpsetPlayer,
 } from './styled'
 import { describeRatingChange, formatRating } from 'utils/ratings'
-import {
-  REFERENCE_RATING,
-  buildPeriodRanking,
-  buildUpsetMatchesLink,
-  describeUpsetProbability,
-  formatMatchDay,
-  resolveUpsetRatingChange,
-} from 'utils/ratingHistory'
+import { REFERENCE_RATING, buildPeriodRanking } from 'utils/ratingHistory'
 
 const ARROW_ICONS = {
   up: <ArrowDropUpIcon aria-hidden="true" />,
@@ -54,47 +36,6 @@ const describePositionChange = (change) => {
       Math.abs(change) === 1 ? 'lugar' : 'lugares'
     } en el ranking`,
   }
-}
-
-const Upset = ({ kind, playerId, playerName, upset, scopeLabel }) => {
-  const won = kind === 'won'
-  const label = won ? 'Mayor upset' : 'Peor upset'
-  if (!upset) {
-    return (
-      <UpsetBlock $kind={kind}>
-        <UpsetLabel>{label}</UpsetLabel>
-        <UpsetEmpty>Sin upsets en el {scopeLabel}</UpsetEmpty>
-      </UpsetBlock>
-    )
-  }
-  const link = buildUpsetMatchesLink(playerId, upset)
-  const chance = describeUpsetProbability(kind, upset.probability)
-  const ratingChange = resolveUpsetRatingChange(kind, upset)
-  return (
-    <UpsetBlock $kind={kind}>
-      <UpsetLabel>{label}</UpsetLabel>
-      <MatchResult
-        playerName={playerName}
-        opponentName={upset.opponent.name}
-        score={upset.score}
-        teams={upset.teams}
-      />
-      <UpsetMeta>
-        {chance && `${chance} · `}
-        {ratingChange !== null && (
-          <>
-            <EloDelta change={ratingChange} /> ·{' '}
-          </>
-        )}
-        {formatMatchDay(upset.t)}
-      </UpsetMeta>
-      {link && (
-        <UpsetLink>
-          <Link to={link}>Ver partido</Link>
-        </UpsetLink>
-      )}
-    </UpsetBlock>
-  )
 }
 
 const resolveOutsideChange = (row) => {
@@ -287,36 +228,6 @@ const PeriodSummary = ({
         </TableScroll>
       </SummaryCard>
       {afterRanking}
-      <SummaryCard>
-        <SummaryTitle>Upsets del {scopeLabel}</SummaryTitle>
-        <UpsetGrid>
-          {ranking.map((row) => (
-            <UpsetCard key={row.player.id}>
-              <UpsetPlayer>
-                <ColorDot
-                  $color={colors.get(String(row.player.id))}
-                  aria-hidden="true"
-                />
-                {row.player.name}
-              </UpsetPlayer>
-              <Upset
-                kind="won"
-                playerId={row.player.id}
-                playerName={row.player.name}
-                upset={row.summary.biggestUpsetWon}
-                scopeLabel={scopeLabel}
-              />
-              <Upset
-                kind="lost"
-                playerId={row.player.id}
-                playerName={row.player.name}
-                upset={row.summary.worstUpsetLost}
-                scopeLabel={scopeLabel}
-              />
-            </UpsetCard>
-          ))}
-        </UpsetGrid>
-      </SummaryCard>
     </>
   )
 }

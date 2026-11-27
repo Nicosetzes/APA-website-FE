@@ -1,6 +1,7 @@
 /* eslint-env jest */
 import {
   DEFAULT_UPSETS_PENALTIES,
+  DEFAULT_UPSETS_PERSPECTIVE,
   OBSOLETE_UPSETS_TAB_PARAMS,
   UPSETS_TAB_PARAMS,
   buildGlobalUpsetMatchesLink,
@@ -30,6 +31,7 @@ describe('global upset URL filters', () => {
       dateTo: '',
       tournamentId: '',
       playerId: '',
+      perspective: DEFAULT_UPSETS_PERSPECTIVE,
       type: '',
       penalties: DEFAULT_UPSETS_PENALTIES,
     })
@@ -38,7 +40,7 @@ describe('global upset URL filters', () => {
   test('parses every section-specific filter', () => {
     const filters = parseUpsetsFilters(
       new URLSearchParams(
-        `upsetsDateFrom=2026-01-01&upsetsDateTo=2026-12-31&upsetsTournamentId=${TOURNAMENT_ID}&upsetsPlayerId=p1&upsetsType=playoff&upsetsPenalties=only&upsetsLimit=25`,
+        `upsetsDateFrom=2026-01-01&upsetsDateTo=2026-12-31&upsetsTournamentId=${TOURNAMENT_ID}&upsetsPlayerId=p1&upsetsPerspective=against&upsetsType=playoff&upsetsPenalties=only&upsetsLimit=25`,
       ),
     )
 
@@ -47,6 +49,7 @@ describe('global upset URL filters', () => {
       dateTo: '2026-12-31',
       tournamentId: TOURNAMENT_ID,
       playerId: 'p1',
+      perspective: 'against',
       type: 'playoff',
       penalties: 'only',
     })
@@ -55,6 +58,7 @@ describe('global upset URL filters', () => {
       dateTo: '2026-12-31',
       tournamentId: TOURNAMENT_ID,
       playerId: 'p1',
+      perspective: 'against',
       type: 'playoff',
       penalties: 'only',
     })
@@ -66,9 +70,30 @@ describe('global upset URL filters', () => {
       dateTo: undefined,
       tournamentId: undefined,
       playerId: undefined,
+      perspective: 'for',
       type: undefined,
       penalties: 'all',
     })
+  })
+
+  test('normalizes an against deep link without a player to the default', () => {
+    const original = new URLSearchParams(
+      'tab=surprises&upsetsPerspective=against&other=1',
+    )
+    const filters = parseUpsetsFilters(original)
+    const normalized = updateUpsetsSearchParams(original, {})
+
+    expect(filters.perspective).toBe(DEFAULT_UPSETS_PERSPECTIVE)
+    expect(normalized.toString()).toBe('tab=surprises&other=1')
+  })
+
+  test('clearing the player also clears the against perspective', () => {
+    const original = new URLSearchParams(
+      'tab=surprises&upsetsPlayerId=p1&upsetsPerspective=against',
+    )
+    const updated = updateUpsetsSearchParams(original, { playerId: '' })
+
+    expect(updated.toString()).toBe('tab=surprises')
   })
 
   test('updates only upset params and omits defaults from the URL', () => {
@@ -131,6 +156,15 @@ describe('global upset presentation', () => {
     expect(
       describeGlobalUpsetProbability({ probability: 0.301, kind: 'win' }),
     ).toBe('30,1% de chances de ganar')
+    expect(
+      describeGlobalUpsetProbability(
+        { probability: 0.301, kind: 'win' },
+        'against',
+      ),
+    ).toBe('30,1% de chances de perder')
+    expect(describeGlobalUpsetProbability(upset, 'against')).toBe(
+      '16,7% de chances de quedar eliminado',
+    )
     expect(describeGlobalUpsetProbability({ probability: 0.3 })).toBe('-')
   })
 

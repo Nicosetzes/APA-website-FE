@@ -362,13 +362,14 @@ test('opens Sorpresas from its own URL without loading unrelated endpoints', asy
 test('keeps the upset filters while Sorpresas remains active and cleans legacy limit', async () => {
   mockApi({ ratings: () => Promise.resolve({ data: ratingsResponse }) })
   await render(
-    '/statistics?tab=surprises&upsetsDateFrom=2026-01-01&upsetsDateTo=2026-12-31&upsetsTournamentId=0123456789abcdef01234567&upsetsPlayerId=n&upsetsType=playoff&upsetsPenalties=only&upsetsLimit=25&other=1',
+    '/statistics?tab=surprises&upsetsDateFrom=2026-01-01&upsetsDateTo=2026-12-31&upsetsTournamentId=0123456789abcdef01234567&upsetsPlayerId=n&upsetsPerspective=against&upsetsType=playoff&upsetsPenalties=only&upsetsLimit=25&other=1',
   )
 
   clickTab('Sorpresas')
 
   expect(location.search).toContain('upsetsDateFrom=2026-01-01')
   expect(location.search).toContain('upsetsPenalties=only')
+  expect(location.search).toContain('upsetsPerspective=against')
   expect(location.search).not.toContain('upsetsLimit')
   expect(location.search).toContain('other=1')
 })
@@ -376,7 +377,7 @@ test('keeps the upset filters while Sorpresas remains active and cleans legacy l
 test('leaving Sorpresas clears only its filters', async () => {
   mockApi({ ratings: () => Promise.resolve({ data: ratingsResponse }) })
   await render(
-    '/statistics?tab=surprises&upsetsDateFrom=2026-01-01&upsetsDateTo=2026-12-31&upsetsTournamentId=0123456789abcdef01234567&upsetsPlayerId=n&upsetsType=playoff&upsetsPenalties=only&upsetsLimit=25&other=1',
+    '/statistics?tab=surprises&upsetsDateFrom=2026-01-01&upsetsDateTo=2026-12-31&upsetsTournamentId=0123456789abcdef01234567&upsetsPlayerId=n&upsetsPerspective=against&upsetsType=playoff&upsetsPenalties=only&upsetsLimit=25&other=1',
   )
 
   clickTab('Jugadores')

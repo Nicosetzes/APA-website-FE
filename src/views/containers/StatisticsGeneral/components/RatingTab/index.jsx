@@ -29,6 +29,7 @@ import {
 } from '../../styled'
 import PeriodFilter from '../PeriodFilter'
 import PerformanceVsExpected from '../PerformanceVsExpected'
+import TeamImpact from '../TeamImpact'
 import { ShortcutButton } from '../PeriodFilter/styled'
 import PeriodSummary from '../PeriodSummary'
 import PlayerPicker from '../PlayerPicker'
@@ -335,7 +336,10 @@ const RatingTab = ({ ratings }) => {
           colors={colors}
           mode={mode}
           afterRanking={
-            <PerformanceVsExpected players={data.players} colors={colors} />
+            <>
+              <TeamImpact players={data.players} colors={colors} />
+              <PerformanceVsExpected players={data.players} colors={colors} />
+            </>
           }
         />
       </Content>

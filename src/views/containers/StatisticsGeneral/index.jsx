@@ -34,6 +34,7 @@ import {
   RecentFormTab,
   RecordsTab,
   TeamsTab,
+  TournamentsTab,
 } from './components'
 import {
   formatRating,
@@ -47,6 +48,7 @@ import { useSearchParams } from 'react-router-dom'
 const DEFAULT_TAB = 'rating'
 const TAB_IDS = [
   DEFAULT_TAB,
+  'tournaments',
   'recent-form',
   'head-to-head',
   'records',
@@ -515,6 +517,11 @@ const StatisticsGeneral = () => {
         ) : (
           loadingContent
         ),
+    },
+    {
+      id: 'tournaments',
+      label: 'Torneos',
+      content: <TournamentsTab />,
     },
     {
       id: 'recent-form',

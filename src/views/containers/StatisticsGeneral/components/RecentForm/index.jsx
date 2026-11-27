@@ -76,8 +76,7 @@ const RecentForm = ({ players, colors }) => {
       <SummaryTitle>Forma reciente</SummaryTitle>
       <Explanation>
         Compara lo obtenido con el pronóstico del Rating APA en los últimos
-        partidos rateables propios de cada jugador, sin filtros de fecha ni
-        torneo. La variación de rating se muestra como contexto.
+        partidos de cada jugador.
       </Explanation>
       <Toggle role="group" aria-label="Ventana de forma reciente">
         <ToggleLabel aria-hidden="true">Últimos:</ToggleLabel>

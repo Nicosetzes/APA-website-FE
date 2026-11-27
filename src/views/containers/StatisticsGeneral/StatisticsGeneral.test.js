@@ -33,6 +33,7 @@ jest.mock('./components', () => ({
   RecentFormTab: () => <div data-testid="recent-form-tab" />,
   RecordsTab: () => null,
   TeamsTab: () => <div data-testid="teams-tab" />,
+  TournamentsTab: () => <div data-testid="tournaments-tab" />,
 }))
 
 import ReactDOM from 'react-dom'
@@ -211,6 +212,7 @@ test('opens on the Rating APA tab by default and passes it the ratings', async (
     ),
   ).toEqual([
     'Rating APA',
+    'Torneos',
     'Forma reciente',
     'Mano a mano',
     'Récords',
@@ -222,6 +224,20 @@ test('opens on the Rating APA tab by default and passes it the ratings', async (
     expect.stringMatching(/^\/statistics\//),
     expect.anything(),
   )
+})
+
+test('opens Torneos from the URL without loading unrelated endpoints', async () => {
+  mockApi({ ratings: () => Promise.resolve({ data: ratingsResponse }) })
+
+  await render(
+    '/statistics?tab=tournaments&dateFrom=2025-01-01&tournamentId=0123456789abcdef01234567',
+  )
+
+  expect(activeTab()).toBe('tournaments')
+  expect(
+    container.querySelector('[data-testid="tournaments-tab"]'),
+  ).not.toBeNull()
+  expect(apiClient.get).not.toHaveBeenCalled()
 })
 
 test('opens Forma reciente as a principal tab without loading rating filters', async () => {
@@ -286,6 +302,17 @@ test('changing tab writes tab and clears the Rating APA params', async () => {
   clickTab('Rating APA')
   expect(location.search).toBe('?other=1')
   expect(activeTab()).toBe('rating')
+})
+
+test('changing to Torneos clears Rating APA params and preserves unrelated ones', async () => {
+  mockApi({ ratings: () => Promise.resolve({ data: ratingsResponse }) })
+  await render(
+    '/statistics?dateFrom=2025-01-01&dateTo=2025-02-01&tournamentId=0123456789abcdef01234567&players=n&other=1',
+  )
+
+  clickTab('Torneos')
+  expect(location.search).toBe('?other=1&tab=tournaments')
+  expect(activeTab()).toBe('tournaments')
 })
 
 test('changing tab also clears tournamentId', async () => {

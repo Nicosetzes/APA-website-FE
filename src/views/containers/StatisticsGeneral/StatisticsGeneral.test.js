@@ -31,7 +31,8 @@ jest.mock('./components', () => ({
     </div>
   ),
   RecentFormTab: () => <div data-testid="recent-form-tab" />,
-  RecordsTab: () => null,
+  RecordsTab: () => <div data-testid="records-tab" />,
+  SurprisesTab: () => <div data-testid="surprises-tab" />,
   TeamsTab: () => <div data-testid="teams-tab" />,
   TournamentsTab: () => <div data-testid="tournaments-tab" />,
 }))
@@ -94,6 +95,10 @@ let container
 const mockApi = ({ ratings }) => {
   apiClient.get.mockImplementation((url) => {
     if (url === '/statistics/players') return Promise.resolve({ data: stats })
+    if (url === '/statistics/records') return Promise.resolve({ data: stats })
+    if (url === '/ratings/reigns') {
+      return Promise.resolve({ data: { success: true, data: null } })
+    }
     if (url === '/ratings') return ratings()
     return Promise.reject(new Error(`unexpected ${url}`))
   })
@@ -215,6 +220,7 @@ test('opens on the Rating APA tab by default and passes it the ratings', async (
     'Torneos',
     'Forma reciente',
     'Mano a mano',
+    'Sorpresas',
     'Récords',
     'Jugadores',
     'Equipos',
@@ -330,6 +336,47 @@ test('changing away from Mano a mano clears its URL parameters', async () => {
   mockApi({ ratings: () => Promise.resolve({ data: ratingsResponse }) })
   await render(
     '/statistics?tab=head-to-head&playerA=1&playerB=2&h2hStage=playoff&h2hTournamentId=0123456789abcdef01234567&h2hPeriod=2026&h2hDateFrom=2026-01-01&h2hDateTo=2026-12-31&other=1',
+  )
+
+  clickTab('Jugadores')
+  await flush()
+
+  expect(location.search).toBe('?tab=players&other=1')
+})
+
+test('opens Sorpresas from its own URL without loading unrelated endpoints', async () => {
+  mockApi({ ratings: () => Promise.resolve({ data: ratingsResponse }) })
+
+  await render(
+    '/statistics?tab=surprises&upsetsDateFrom=2026-01-01&upsetsPenalties=only',
+  )
+
+  expect(activeTab()).toBe('surprises')
+  expect(
+    container.querySelector('[data-testid="surprises-tab"]'),
+  ).not.toBeNull()
+  expect(container.querySelector('[data-testid="records-tab"]')).toBeNull()
+  expect(apiClient.get).not.toHaveBeenCalled()
+})
+
+test('keeps the upset filters while Sorpresas remains active and cleans legacy limit', async () => {
+  mockApi({ ratings: () => Promise.resolve({ data: ratingsResponse }) })
+  await render(
+    '/statistics?tab=surprises&upsetsDateFrom=2026-01-01&upsetsDateTo=2026-12-31&upsetsTournamentId=0123456789abcdef01234567&upsetsPlayerId=n&upsetsType=playoff&upsetsPenalties=only&upsetsLimit=25&other=1',
+  )
+
+  clickTab('Sorpresas')
+
+  expect(location.search).toContain('upsetsDateFrom=2026-01-01')
+  expect(location.search).toContain('upsetsPenalties=only')
+  expect(location.search).not.toContain('upsetsLimit')
+  expect(location.search).toContain('other=1')
+})
+
+test('leaving Sorpresas clears only its filters', async () => {
+  mockApi({ ratings: () => Promise.resolve({ data: ratingsResponse }) })
+  await render(
+    '/statistics?tab=surprises&upsetsDateFrom=2026-01-01&upsetsDateTo=2026-12-31&upsetsTournamentId=0123456789abcdef01234567&upsetsPlayerId=n&upsetsType=playoff&upsetsPenalties=only&upsetsLimit=25&other=1',
   )
 
   clickTab('Jugadores')

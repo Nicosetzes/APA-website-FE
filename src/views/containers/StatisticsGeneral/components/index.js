@@ -1,3 +1,4 @@
+export { default as SurprisesTab } from './GlobalUpsets'
 export { default as HeadToHeadTab } from './HeadToHeadTab'
 export { default as PeriodFilter } from './PeriodFilter'
 export { default as PeriodSummary } from './PeriodSummary'

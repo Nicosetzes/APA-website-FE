@@ -33,6 +33,7 @@ import {
   RatingTab,
   RecentFormTab,
   RecordsTab,
+  SurprisesTab,
   TeamsTab,
   TournamentsTab,
 } from './components'
@@ -42,6 +43,10 @@ import {
   orderByRating,
 } from 'utils/ratings'
 import { RATING_TAB_PARAMS } from 'utils/ratingHistory'
+import {
+  OBSOLETE_UPSETS_TAB_PARAMS,
+  UPSETS_TAB_PARAMS,
+} from 'utils/ratingUpsets'
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
@@ -51,6 +56,7 @@ const TAB_IDS = [
   'tournaments',
   'recent-form',
   'head-to-head',
+  'surprises',
   'records',
   'players',
   'teams',
@@ -97,6 +103,10 @@ const StatisticsGeneral = () => {
     RATING_TAB_PARAMS.forEach((name) => params.delete(name))
     if (id !== 'head-to-head') {
       HEAD_TO_HEAD_TAB_PARAMS.forEach((name) => params.delete(name))
+    }
+    OBSOLETE_UPSETS_TAB_PARAMS.forEach((name) => params.delete(name))
+    if (id !== 'surprises') {
+      UPSETS_TAB_PARAMS.forEach((name) => params.delete(name))
     }
     if (id === DEFAULT_TAB) params.delete('tab')
     else params.set('tab', id)
@@ -532,6 +542,11 @@ const StatisticsGeneral = () => {
       id: 'head-to-head',
       label: 'Mano a mano',
       content: <HeadToHeadTab />,
+    },
+    {
+      id: 'surprises',
+      label: 'Sorpresas',
+      content: <SurprisesTab />,
     },
     {
       id: 'records',

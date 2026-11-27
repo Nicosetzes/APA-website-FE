@@ -1,5 +1,6 @@
 /* eslint-env jest */
 // Las fechas salen de utils/dates (JS puro): no hace falta mockear date-fns.
+
 import ReactDOM from 'react-dom'
 import { act } from 'react-dom/test-utils'
 import { MemoryRouter } from 'react-router-dom'
@@ -249,7 +250,7 @@ afterEach(() => {
   container.remove()
 })
 
-test('récords de partidos se mantienen arriba de las rachas', () => {
+test('récords contiene solo récords de partidos y rachas', () => {
   render({ records: buildRecords(), activeStreaks: buildActiveStreaks() })
 
   const text = container.textContent
@@ -257,6 +258,7 @@ test('récords de partidos se mantienen arriba de las rachas', () => {
   expect(text).toContain('Mayor diferencia de goles')
   expect(text).toContain('7-0')
   expect(text).not.toContain('Más goles en un partido')
+  expect(text).not.toContain('Mayores sorpresas')
   expect(text.indexOf('Récords de Partidos')).toBeLessThan(
     text.indexOf('Rachas históricas'),
   )

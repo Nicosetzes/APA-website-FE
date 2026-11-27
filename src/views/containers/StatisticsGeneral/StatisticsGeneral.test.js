@@ -30,6 +30,7 @@ jest.mock('./components', () => ({
       {ratings === null ? 'ratings:null' : `ratings:${ratings.length}`}
     </div>
   ),
+  RecentFormTab: () => <div data-testid="recent-form-tab" />,
   RecordsTab: () => null,
   TeamsTab: () => <div data-testid="teams-tab" />,
 }))
@@ -210,6 +211,7 @@ test('opens on the Rating APA tab by default and passes it the ratings', async (
     ),
   ).toEqual([
     'Rating APA',
+    'Forma reciente',
     'Mano a mano',
     'Récords',
     'Jugadores',
@@ -220,6 +222,20 @@ test('opens on the Rating APA tab by default and passes it the ratings', async (
     expect.stringMatching(/^\/statistics\//),
     expect.anything(),
   )
+})
+
+test('opens Forma reciente as a principal tab without loading rating filters', async () => {
+  mockApi({ ratings: () => Promise.resolve({ data: ratingsResponse }) })
+
+  await render(
+    '/statistics?tab=recent-form&dateFrom=2025-01-01&tournamentId=0123456789abcdef01234567',
+  )
+
+  expect(activeTab()).toBe('recent-form')
+  expect(
+    container.querySelector('[data-testid="recent-form-tab"]'),
+  ).not.toBeNull()
+  expect(apiClient.get).not.toHaveBeenCalled()
 })
 
 test('the Rating APA tab gets null ratings when /ratings fails', async () => {
@@ -263,9 +279,9 @@ test('changing tab writes tab and clears the Rating APA params', async () => {
     '/statistics?dateFrom=2025-01-01&dateTo=2025-02-01&players=n&other=1',
   )
 
-  clickTab('Jugadores')
-  expect(location.search).toBe('?other=1&tab=players')
-  expect(activeTab()).toBe('players')
+  clickTab('Forma reciente')
+  expect(location.search).toBe('?other=1&tab=recent-form')
+  expect(activeTab()).toBe('recent-form')
 
   clickTab('Rating APA')
   expect(location.search).toBe('?other=1')

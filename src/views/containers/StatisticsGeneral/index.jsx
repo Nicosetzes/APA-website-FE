@@ -28,7 +28,13 @@ import {
   StreakBadge,
 } from './styled'
 import { Tabs, Tooltip } from 'views/components'
-import { HeadToHeadTab, RatingTab, RecordsTab, TeamsTab } from './components'
+import {
+  HeadToHeadTab,
+  RatingTab,
+  RecentFormTab,
+  RecordsTab,
+  TeamsTab,
+} from './components'
 import {
   formatRating,
   indexRatingsByPlayer,
@@ -41,6 +47,7 @@ import { useSearchParams } from 'react-router-dom'
 const DEFAULT_TAB = 'rating'
 const TAB_IDS = [
   DEFAULT_TAB,
+  'recent-form',
   'head-to-head',
   'records',
   'players',
@@ -508,6 +515,11 @@ const StatisticsGeneral = () => {
         ) : (
           loadingContent
         ),
+    },
+    {
+      id: 'recent-form',
+      label: 'Forma reciente',
+      content: <RecentFormTab />,
     },
     {
       id: 'head-to-head',

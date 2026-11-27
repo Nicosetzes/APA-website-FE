@@ -181,6 +181,7 @@ test('renders the Elo table, the picker, the chart and the period summary', asyn
     ),
   ).toBe(true)
   expect(container.textContent).toContain('Rendimiento frente al pronóstico')
+  expect(container.textContent).not.toContain('Forma reciente')
   expect(container.textContent).toContain('Upsets del período')
   expect(container.textContent.indexOf('Ranking del período')).toBeLessThan(
     container.textContent.indexOf('Rendimiento frente al pronóstico'),
@@ -206,6 +207,7 @@ test('keeps the rating history usable with an older backend response', async () 
   expect(container.textContent).not.toContain(
     'Rendimiento frente al pronóstico',
   )
+  expect(container.textContent).not.toContain('Forma reciente')
 })
 
 test('shows the Elo ranking error when ratings could not be loaded', async () => {
@@ -226,9 +228,12 @@ test('shows the platform loader while the history loads', async () => {
 
 const pressedButtons = () =>
   [...container.querySelectorAll('button[aria-pressed="true"]')]
-    .filter(
-      (node) => node.closest('[aria-label="Partidos incluidos"]') === null,
-    )
+    .filter((node) => {
+      const group = node.closest('[role="group"]')
+      return !['Partidos incluidos', 'Ventana de forma reciente'].includes(
+        group?.getAttribute('aria-label'),
+      )
+    })
     .map((node) => node.textContent)
 const selectYear = async (year) => {
   const select = container.querySelector('select')
@@ -599,6 +604,12 @@ describe('tournament filter and marks', () => {
         (header) => header.textContent === 'Ajuste equipos',
       ),
     ).toBe(true)
+    expect(container.textContent).not.toContain('Forma reciente')
+    expect(
+      container.querySelector(
+        'table[aria-label="Forma reciente de los jugadores"]',
+      ),
+    ).toBeNull()
     expect(container.textContent).toContain('Upsets del torneo')
     expect(container.textContent).not.toContain('null')
     const headers = [...container.querySelectorAll('thead th')].map(

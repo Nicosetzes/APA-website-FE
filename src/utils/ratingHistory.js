@@ -321,6 +321,53 @@ export const resolveSelection = (requestedIds, players = []) => {
   return valid.length > 0 ? valid : getDefaultSelection(players)
 }
 
+export const buildRatingTransferMatrix = ({
+  players = [],
+  transfers = [],
+  selectedIds = [],
+} = {}) => {
+  const selected = new Set(selectedIds.map(String))
+  const chosen = players
+    .map(({ player }) => ({ ...player, id: String(player.id) }))
+    .filter((player) => selected.has(player.id))
+  const byPlayer = new Map()
+
+  transfers.forEach((transfer) => {
+    const from = String(transfer?.fromPlayerId ?? '')
+    const to = String(transfer?.toPlayerId ?? '')
+    if (
+      from === to ||
+      !selected.has(from) ||
+      !selected.has(to) ||
+      !Number.isFinite(transfer?.points) ||
+      !Number.isInteger(transfer?.matches) ||
+      transfer.matches < 1
+    ) {
+      return
+    }
+    if (!byPlayer.has(from)) byPlayer.set(from, new Map())
+    byPlayer.get(from).set(to, {
+      points: transfer.points,
+      matches: transfer.matches,
+    })
+  })
+
+  const rows = chosen.map((player) => ({
+    player,
+    cells: chosen.map((opponent) =>
+      player.id === opponent.id
+        ? null
+        : byPlayer.get(player.id)?.get(opponent.id) ?? undefined,
+    ),
+  }))
+
+  return {
+    players: chosen,
+    rows,
+    hasCrossings: rows.some(({ cells }) => cells.some(Boolean)),
+  }
+}
+
 /** Clave de la serie de un jugador en las filas del gráfico. */
 export const playerKey = (id) => `p_${id}`
 

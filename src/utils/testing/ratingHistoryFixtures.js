@@ -274,6 +274,11 @@ export const TOURNAMENT_MARKS = [
   },
 ]
 
+export const RATING_TRANSFERS = [
+  { fromPlayerId: 'n', toPlayerId: 's', points: 3, matches: 2 },
+  { fromPlayerId: 's', toPlayerId: 'n', points: -3, matches: 2 },
+]
+
 /** Respuesta de `/ratings/history` (el cuerpo completo, con `data`). */
 export const historyResponse = (overrides = {}) => ({
   success: true,
@@ -285,6 +290,7 @@ export const historyResponse = (overrides = {}) => ({
     players: [NICO, SANTI],
     matchesTimeline: TIMELINE,
     highlights: { biggestUpset: null },
+    ratingTransfers: RATING_TRANSFERS,
     tournaments: TOURNAMENT_MARKS,
     ...overrides,
   },
@@ -315,6 +321,7 @@ export const tournamentResponse = (overrides = {}) => ({
     players: [withoutPosition(NICO), withoutPosition(SANTI)],
     matchesTimeline: TIMELINE,
     highlights: { biggestUpset: null },
+    ratingTransfers: RATING_TRANSFERS,
     tournaments: [TOURNAMENT_MARKS[0]],
     ...overrides,
   },

@@ -33,6 +33,7 @@ import { ShortcutButton } from '../PeriodFilter/styled'
 import PeriodSummary from '../PeriodSummary'
 import PlayerPicker from '../PlayerPicker'
 import RatingsTable from '../RatingsTable'
+import RatingTransferMatrix from '../RatingTransferMatrix'
 import {
   Content,
   Notice,
@@ -337,6 +338,13 @@ const RatingTab = ({ ratings }) => {
           afterRanking={
             <PerformanceVsExpected players={data.players} colors={colors} />
           }
+        />
+        <RatingTransferMatrix
+          players={data.players}
+          transfers={data.ratingTransfers}
+          selectedIds={selectedIds}
+          colors={colors}
+          mode={mode}
         />
       </Content>
     )

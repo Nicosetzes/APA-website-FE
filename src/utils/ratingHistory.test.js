@@ -14,6 +14,7 @@ import {
   buildChartRows,
   buildPeriodRanking,
   buildPlayerColors,
+  buildRatingTransferMatrix,
   buildUpsetMatchesLink,
   computePositionTicks,
   computeYDomain,
@@ -403,6 +404,55 @@ describe('default selection', () => {
     expect(resolveSelection([], players)).toEqual([])
     expect(resolveSelection(['b', 'zzz'], players)).toEqual(['b'])
     expect(resolveSelection(['zzz'], players)).toEqual(['a', 'b'])
+  })
+})
+
+describe('rating transfer matrix', () => {
+  const players = ['a', 'b', 'c'].map((id) => ({
+    player: { id, name: id.toUpperCase() },
+  }))
+
+  test('maps directed balances, match counts and zero without changing signs', () => {
+    const matrix = buildRatingTransferMatrix({
+      players,
+      selectedIds: ['a', 'b', 'c'],
+      transfers: [
+        { fromPlayerId: 'a', toPlayerId: 'b', points: 4.2, matches: 3 },
+        { fromPlayerId: 'b', toPlayerId: 'a', points: -4.2, matches: 3 },
+        { fromPlayerId: 'a', toPlayerId: 'c', points: 0, matches: 2 },
+        { fromPlayerId: 'c', toPlayerId: 'a', points: 0, matches: 2 },
+      ],
+    })
+
+    expect(matrix.players.map(({ id }) => id)).toEqual(['a', 'b', 'c'])
+    expect(matrix.rows[0].cells).toEqual([
+      null,
+      { points: 4.2, matches: 3 },
+      { points: 0, matches: 2 },
+    ])
+    expect(matrix.rows[1].cells[0]).toEqual({ points: -4.2, matches: 3 })
+    expect(matrix.rows[2].cells[1]).toBeUndefined()
+    expect(matrix.hasCrossings).toBe(true)
+  })
+
+  test('keeps only selected players and reports an empty matrix without crossings', () => {
+    const matrix = buildRatingTransferMatrix({
+      players,
+      selectedIds: ['b', 'c'],
+      transfers: [
+        { fromPlayerId: 'a', toPlayerId: 'b', points: 4.2, matches: 3 },
+        { fromPlayerId: 'b', toPlayerId: 'a', points: -4.2, matches: 3 },
+      ],
+    })
+
+    expect(matrix.players.map(({ id }) => id)).toEqual(['b', 'c'])
+    expect(matrix.rows.map(({ cells }) => cells).flat()).toEqual([
+      null,
+      undefined,
+      undefined,
+      null,
+    ])
+    expect(matrix.hasCrossings).toBe(false)
   })
 })
 

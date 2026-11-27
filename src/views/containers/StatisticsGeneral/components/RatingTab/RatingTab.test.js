@@ -181,14 +181,17 @@ test('renders the Elo table, the picker, the chart and the period summary', asyn
     ),
   ).toBe(true)
   expect(container.textContent).toContain('Rendimiento frente al pronóstico')
+  expect(container.textContent).toContain('Matriz de transferencia de rating')
   expect(container.textContent).not.toContain('Forma reciente')
-  expect(container.textContent).toContain('Upsets del período')
+  expect(container.textContent).not.toContain('Upsets del período')
   expect(container.textContent.indexOf('Ranking del período')).toBeLessThan(
     container.textContent.indexOf('Rendimiento frente al pronóstico'),
   )
   expect(
     container.textContent.indexOf('Rendimiento frente al pronóstico'),
-  ).toBeLessThan(container.textContent.indexOf('Upsets del período'))
+  ).toBeLessThan(
+    container.textContent.indexOf('Matriz de transferencia de rating'),
+  )
 })
 
 test('keeps the rating history usable with an older backend response', async () => {
@@ -198,14 +201,18 @@ test('keeps the rating history usable with an older backend response', async () 
     delete summary.performanceVsExpected
     return { ...row, summary }
   })
+  delete legacy.data.ratingTransfers
   routeApi({ history: () => Promise.resolve({ data: legacy }) })
 
   await render()
   expect(chartText()).toBe('2025-10-27..2026-10-27|n,s')
   expect(container.textContent).toContain('Ranking del período')
-  expect(container.textContent).toContain('Upsets del período')
+  expect(container.textContent).not.toContain('Upsets del período')
   expect(container.textContent).not.toContain(
     'Rendimiento frente al pronóstico',
+  )
+  expect(container.textContent).not.toContain(
+    'Matriz de transferencia de rating',
   )
   expect(container.textContent).not.toContain('Forma reciente')
 })
@@ -368,11 +375,18 @@ test('unchecking a player edits players without asking again', async () => {
     ...container.querySelectorAll('input[type="checkbox"]'),
   ]
   expect(checkboxes()).toHaveLength(2)
+  expect(
+    container.querySelector('[data-testid="rating-transfer-scroll"]'),
+  ).not.toBeNull()
 
   await click(checkboxes()[0])
   expect(location.search).toBe('?players=s')
   expect(chartText()).toContain('|s')
   expect(requests()).toHaveLength(1)
+  expect(
+    container.querySelector('[data-testid="rating-transfer-scroll"]'),
+  ).toBeNull()
+  expect(container.textContent).toContain('Elegí al menos dos jugadores')
 })
 
 test('Ninguno writes players=none and Todos selects everyone again', async () => {
@@ -617,7 +631,9 @@ describe('tournament filter and marks', () => {
         'table[aria-label="Forma reciente de los jugadores"]',
       ),
     ).toBeNull()
-    expect(container.textContent).toContain('Upsets del torneo')
+    expect(container.textContent).toContain('Matriz de transferencia de rating')
+    expect(container.querySelector('caption').textContent).toContain('torneo')
+    expect(container.textContent).not.toContain('Upsets del torneo')
     expect(container.textContent).not.toContain('null')
     const headers = [...container.querySelectorAll('thead th')].map(
       (th) => th.textContent,

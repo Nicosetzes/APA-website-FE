@@ -47,21 +47,26 @@ const rows = () =>
 test('shows obtained, expected, signed difference and matches for every player', () => {
   render()
 
-  expect(container.textContent).toContain('Rendimiento frente al pronóstico')
-  expect(container.textContent).toContain(
-    'Compara los resultados obtenidos con lo que el Rating APA esperaba antes de cada partido',
-  )
-  expect(container.textContent).toContain(
-    'La diferencia muestra cuántos puntos porcentuales rindió cada jugador por encima o por debajo del pronóstico',
-  )
+  expect(
+    container.querySelector(
+      'table[aria-label="Resultados obtenidos comparados con lo esperado"]',
+    ),
+  ).not.toBeNull()
   expect(
     [...container.querySelectorAll('thead th')].map(
       (header) => header.textContent,
     ),
-  ).toEqual(['Jugador', 'Obtenido', 'Esperado', 'Diferencia', 'Partidos'])
+  ).toEqual([
+    'Jugador',
+    'Obtenido',
+    'Esperado',
+    'Ajuste equipos',
+    'Diferencia',
+    'Partidos',
+  ])
   expect(rows()).toEqual([
-    ['Nico', '50,0%', '53,5%', '-3,5 pp', '2'],
-    ['Santi', '50,0%', '46,5%', '+3,5 pp', '2'],
+    ['Nico', '50,0%', '53,5%', '+3,5 pp', '-3,5 pp', '2'],
+    ['Santi', '50,0%', '46,5%', '-3,5 pp', '+3,5 pp', '2'],
   ])
   expect(
     [...container.querySelectorAll('[data-trend]')].map(
@@ -78,8 +83,8 @@ test('switches locally to play-in and playoff matches without changing its input
   click(buttonByText('Eliminatorias'))
 
   expect(rows()).toEqual([
-    ['Nico', '0,0%', '62,0%', '-62,0 pp', '1'],
-    ['Santi', '100,0%', '38,0%', '+62,0 pp', '1'],
+    ['Nico', '0,0%', '62,0%', '+12,0 pp', '-62,0 pp', '1'],
+    ['Santi', '100,0%', '38,0%', '-12,0 pp', '+62,0 pp', '1'],
   ])
   expect(buttonByText('Eliminatorias').getAttribute('aria-pressed')).toBe(
     'true',
@@ -100,6 +105,7 @@ test('shows an empty knockout state when the selected scope has none', () => {
           matches: 0,
           actualPercentage: null,
           expectedPercentage: null,
+          teamAdjustmentPercentagePoints: null,
           differencePercentagePoints: null,
         },
       },
@@ -112,6 +118,57 @@ test('shows an empty knockout state when the selected scope has none', () => {
     'No hay partidos de eliminatorias en este ámbito.',
   )
   expect(container.querySelector('tbody')).toBeNull()
+})
+
+test('distinguishes missing team data from a neutral adjustment', () => {
+  const players = [NICO, SANTI].map((row, index) => ({
+    ...row,
+    summary: {
+      ...row.summary,
+      performanceVsExpected: {
+        ...row.summary.performanceVsExpected,
+        all: {
+          ...row.summary.performanceVsExpected.all,
+          teamAdjustmentPercentagePoints: index === 0 ? null : 0,
+        },
+      },
+    },
+  }))
+  render(players)
+
+  expect(
+    [...container.querySelectorAll('[data-metric="team-adjustment"]')].map(
+      (cell) => cell.textContent,
+    ),
+  ).toEqual(['—', '0,0 pp'])
+  expect(container.querySelectorAll('th[scope="col"]')).toHaveLength(6)
+  expect(container.querySelectorAll('th[scope="row"]')).toHaveLength(2)
+})
+
+test('keeps the existing table with a response that predates team adjustment', () => {
+  const legacyPlayers = [NICO, SANTI].map((row) => ({
+    ...row,
+    summary: {
+      ...row.summary,
+      performanceVsExpected: Object.fromEntries(
+        Object.entries(row.summary.performanceVsExpected).map(
+          ([key, metric]) => {
+            const legacyMetric = { ...metric }
+            delete legacyMetric.teamAdjustmentPercentagePoints
+            return [key, legacyMetric]
+          },
+        ),
+      ),
+    },
+  }))
+  render(legacyPlayers)
+
+  expect(container.querySelector('table')).not.toBeNull()
+  expect(
+    [...container.querySelectorAll('thead th')].map(
+      (header) => header.textContent,
+    ),
+  ).toEqual(['Jugador', 'Obtenido', 'Esperado', 'Diferencia', 'Partidos'])
 })
 
 test('stays hidden with a response from an older backend', () => {

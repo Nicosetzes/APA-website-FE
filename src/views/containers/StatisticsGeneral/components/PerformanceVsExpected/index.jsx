@@ -3,6 +3,7 @@ import { buildPeriodRanking } from 'utils/ratingHistory'
 import { ShortcutButton } from '../PeriodFilter/styled'
 import { ColorDot, SummaryCard, SummaryTitle } from '../PeriodSummary/styled'
 import {
+  AdjustmentValue,
   DifferenceBar,
   DifferenceCell,
   DifferenceFill,
@@ -65,6 +66,12 @@ const PerformanceVsExpected = ({ players, colors }) => {
       metric: row.summary?.performanceVsExpected?.[view],
     }))
     .filter((row) => isMetric(row.metric))
+  const showsTeamAdjustment = rows.some((row) =>
+    Object.prototype.hasOwnProperty.call(
+      row.metric,
+      'teamAdjustmentPercentagePoints',
+    ),
+  )
   const scale = Math.max(
     ...rows.map((row) => Math.abs(row.metric.differencePercentagePoints)),
     0,
@@ -77,9 +84,10 @@ const PerformanceVsExpected = ({ players, colors }) => {
       <SummaryTitle>Rendimiento frente al pronóstico</SummaryTitle>
       <Explanation>
         Compara los resultados obtenidos con lo que el Rating APA esperaba antes
-        de cada partido, según el nivel del rival y los equipos utilizados. La
-        diferencia muestra cuántos puntos porcentuales rindió cada jugador por
-        encima o por debajo del pronóstico.
+        de cada partido. El ajuste muestra cuánto cambió el pronóstico por los
+        equipos utilizados, frente a una expectativa basada solo en el rating de
+        los jugadores. La diferencia muestra cuántos puntos porcentuales rindió
+        cada jugador por encima o por debajo del pronóstico final.
       </Explanation>
       <Toggle role="group" aria-label="Partidos incluidos">
         <ToggleLabel aria-hidden="true">Ver:</ToggleLabel>
@@ -107,6 +115,7 @@ const PerformanceVsExpected = ({ players, colors }) => {
                 <th scope="col">Jugador</th>
                 <th scope="col">Obtenido</th>
                 <th scope="col">Esperado</th>
+                {showsTeamAdjustment && <th scope="col">Ajuste equipos</th>}
                 <th scope="col">Diferencia</th>
                 <th scope="col">Partidos</th>
               </tr>
@@ -135,6 +144,23 @@ const PerformanceVsExpected = ({ players, colors }) => {
                         {formatPercentage(row.metric.expectedPercentage)}
                       </MetricValue>
                     </td>
+                    {showsTeamAdjustment && (
+                      <td data-metric="team-adjustment">
+                        <AdjustmentValue
+                          $difference={
+                            row.metric.teamAdjustmentPercentagePoints
+                          }
+                        >
+                          {Number.isFinite(
+                            row.metric.teamAdjustmentPercentagePoints,
+                          )
+                            ? formatDifference(
+                                row.metric.teamAdjustmentPercentagePoints,
+                              )
+                            : '—'}
+                        </AdjustmentValue>
+                      </td>
+                    )}
                     <td>
                       <DifferenceCell>
                         <DifferenceValue

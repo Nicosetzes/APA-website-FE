@@ -176,10 +176,10 @@ test('renders the Elo table, the picker, the chart and the period summary', asyn
   expect(chartText()).toBe('2025-10-27..2026-10-27|n,s')
   expect(container.textContent).toContain('Ranking del período')
   expect(
-    container.querySelector(
-      'table[aria-label="Descomposición del impacto de los equipos"]',
+    [...container.querySelectorAll('thead th')].some(
+      (header) => header.textContent === 'Ajuste equipos',
     ),
-  ).not.toBeNull()
+  ).toBe(true)
   expect(container.textContent).toContain('Rendimiento frente al pronóstico')
   expect(container.textContent).toContain('Upsets del período')
   expect(container.textContent.indexOf('Ranking del período')).toBeLessThan(
@@ -195,7 +195,6 @@ test('keeps the rating history usable with an older backend response', async () 
   legacy.data.players = legacy.data.players.map((row) => {
     const summary = { ...row.summary }
     delete summary.performanceVsExpected
-    delete summary.teamImpact
     return { ...row, summary }
   })
   routeApi({ history: () => Promise.resolve({ data: legacy }) })
@@ -204,11 +203,6 @@ test('keeps the rating history usable with an older backend response', async () 
   expect(chartText()).toBe('2025-10-27..2026-10-27|n,s')
   expect(container.textContent).toContain('Ranking del período')
   expect(container.textContent).toContain('Upsets del período')
-  expect(
-    container.querySelector(
-      'table[aria-label="Descomposición del impacto de los equipos"]',
-    ),
-  ).toBeNull()
   expect(container.textContent).not.toContain(
     'Rendimiento frente al pronóstico',
   )
@@ -601,10 +595,10 @@ describe('tournament filter and marks', () => {
     expect(chartText()).toBe('2026-10-10..2026-10-11|n,s')
     expect(container.textContent).toContain('Ranking del torneo')
     expect(
-      container.querySelector(
-        'table[aria-label="Descomposición del impacto de los equipos"]',
+      [...container.querySelectorAll('thead th')].some(
+        (header) => header.textContent === 'Ajuste equipos',
       ),
-    ).not.toBeNull()
+    ).toBe(true)
     expect(container.textContent).toContain('Upsets del torneo')
     expect(container.textContent).not.toContain('null')
     const headers = [...container.querySelectorAll('thead th')].map(

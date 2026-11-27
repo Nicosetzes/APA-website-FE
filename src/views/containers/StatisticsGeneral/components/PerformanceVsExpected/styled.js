@@ -36,7 +36,7 @@ export const TableScroll = styled.div`
 
 export const PerformanceTable = styled.table`
   border-collapse: collapse;
-  min-width: 650px;
+  min-width: 700px;
   width: 100%;
 
   th,
@@ -72,9 +72,14 @@ export const MetricValue = styled.span`
   white-space: nowrap;
 `
 
+export const AdjustmentValue = styled(MetricValue)`
+  color: ${({ $difference }) => differenceColor($difference)};
+  font-weight: 700;
+`
+
 export const DifferenceCell = styled.div`
   margin: 0 auto;
-  min-width: 150px;
+  min-width: 130px;
   width: 100%;
 `
 

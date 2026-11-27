@@ -1,4 +1,5 @@
 /* eslint-env jest */
+import { getAllByRole, getByRole } from '@testing-library/dom'
 import ReactDOM from 'react-dom'
 import { act } from 'react-dom/test-utils'
 import { NICO, SANTI } from 'utils/testing/ratingHistoryFixtures'
@@ -44,6 +45,15 @@ const rows = () =>
     [...row.children].map((cell) => cell.textContent),
   )
 
+test('presents the explanation as a semantic list', () => {
+  render()
+
+  const explanation = getByRole(container, 'list')
+  const items = getAllByRole(explanation, 'listitem')
+  expect(items).toHaveLength(explanation.children.length)
+  expect(items.length).toBeGreaterThan(1)
+})
+
 test('shows obtained, expected, signed difference and matches for every player', () => {
   render()
 
@@ -76,6 +86,17 @@ test('shows obtained, expected, signed difference and matches for every player',
   expect(buttonByText('Todos los partidos').getAttribute('aria-pressed')).toBe(
     'true',
   )
+  expect(
+    [...container.querySelectorAll('[role="group"] button')].map(
+      (button) => button.textContent,
+    ),
+  ).toEqual([
+    'Todos los partidos',
+    'Eliminatorias',
+    'Favorito',
+    'Parejo',
+    'No favorito',
+  ])
 })
 
 test('switches locally to play-in and playoff matches without changing its inputs', () => {
@@ -92,6 +113,28 @@ test('switches locally to play-in and playoff matches without changing its input
   expect(buttonByText('Todos los partidos').getAttribute('aria-pressed')).toBe(
     'false',
   )
+})
+
+test('switches among expectation cohorts in the same table', () => {
+  render()
+
+  click(buttonByText('Favorito'))
+  expect(rows()).toEqual([
+    ['Nico', '0,0%', '62,0%', '+12,0 pp', '-62,0 pp', '1'],
+    ['Santi', '0,0%', '55,0%', '+5,0 pp', '-55,0 pp', '1'],
+  ])
+  expect(container.querySelectorAll('table')).toHaveLength(1)
+
+  click(buttonByText('No favorito'))
+  expect(rows()).toEqual([
+    ['Nico', '100,0%', '45,0%', '-5,0 pp', '+55,0 pp', '1'],
+    ['Santi', '100,0%', '38,0%', '-12,0 pp', '+62,0 pp', '1'],
+  ])
+  expect(buttonByText('No favorito').getAttribute('aria-pressed')).toBe('true')
+
+  click(buttonByText('Parejo'))
+  expect(container.querySelector('[role="status"]')).not.toBeNull()
+  expect(container.querySelector('table')).toBeNull()
 })
 
 test('shows an empty knockout state when the selected scope has none', () => {
@@ -114,9 +157,7 @@ test('shows an empty knockout state when the selected scope has none', () => {
   render(withoutKnockouts)
   click(buttonByText('Eliminatorias'))
 
-  expect(container.textContent).toContain(
-    'No hay partidos de eliminatorias en este ámbito.',
-  )
+  expect(container.querySelector('[role="status"]')).not.toBeNull()
   expect(container.querySelector('tbody')).toBeNull()
 })
 
@@ -169,6 +210,27 @@ test('keeps the existing table with a response that predates team adjustment', (
       (header) => header.textContent,
     ),
   ).toEqual(['Jugador', 'Obtenido', 'Esperado', 'Diferencia', 'Partidos'])
+})
+
+test('keeps the two existing views with a response that predates cohorts', () => {
+  const legacyPlayers = [NICO, SANTI].map((row) => {
+    const performanceVsExpected = {
+      all: row.summary.performanceVsExpected.all,
+      knockouts: row.summary.performanceVsExpected.knockouts,
+    }
+    return {
+      ...row,
+      summary: { ...row.summary, performanceVsExpected },
+    }
+  })
+  render(legacyPlayers)
+
+  expect(container.querySelector('table')).not.toBeNull()
+  expect(
+    [...container.querySelectorAll('[role="group"] button')].map(
+      (button) => button.textContent,
+    ),
+  ).toEqual(['Todos los partidos', 'Eliminatorias'])
 })
 
 test('stays hidden with a response from an older backend', () => {

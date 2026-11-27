@@ -599,6 +599,13 @@ describe('tournament filter and marks', () => {
     )
     expect(chartText()).toBe('2026-10-10..2026-10-11|n,s')
     expect(container.textContent).toContain('Ranking del torneo')
+    expect(buttonByText('Favorito')).not.toBeUndefined()
+    await click(buttonByText('Favorito'))
+    expect(
+      container.querySelector(
+        'table[aria-label="Resultados obtenidos comparados con lo esperado"]',
+      ),
+    ).not.toBeNull()
     expect(
       [...container.querySelectorAll('thead th')].some(
         (header) => header.textContent === 'Ajuste equipos',

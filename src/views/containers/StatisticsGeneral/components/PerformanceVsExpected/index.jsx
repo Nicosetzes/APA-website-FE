@@ -21,12 +21,20 @@ import {
 const VIEWS = {
   all: 'all',
   knockouts: 'knockouts',
+  favorite: 'favorite',
+  even: 'even',
+  underdog: 'underdog',
 }
 
 const OPTIONS = [
   { id: VIEWS.all, label: 'Todos los partidos' },
   { id: VIEWS.knockouts, label: 'Eliminatorias' },
+  { id: VIEWS.favorite, label: 'Favorito' },
+  { id: VIEWS.even, label: 'Parejo' },
+  { id: VIEWS.underdog, label: 'No favorito' },
 ]
+
+const EXPECTATION_VIEWS = [VIEWS.favorite, VIEWS.even, VIEWS.underdog]
 
 const isMetric = (metric) =>
   Number.isInteger(metric?.matches) &&
@@ -59,6 +67,13 @@ const PerformanceVsExpected = ({ players, colors }) => {
   const supportsPerformance = ranking.some(
     (row) => row.summary?.performanceVsExpected,
   )
+  const supportsExpectationViews = ranking.some((row) => {
+    const performance = row.summary?.performanceVsExpected
+    return EXPECTATION_VIEWS.every((key) =>
+      Object.prototype.hasOwnProperty.call(performance ?? {}, key),
+    )
+  })
+  const options = supportsExpectationViews ? OPTIONS : OPTIONS.slice(0, 2)
 
   const rows = ranking
     .map((row) => ({
@@ -83,15 +98,21 @@ const PerformanceVsExpected = ({ players, colors }) => {
     <SummaryCard>
       <SummaryTitle>Rendimiento frente al pronóstico</SummaryTitle>
       <Explanation>
-        Compara los resultados obtenidos con lo que el Rating APA esperaba antes
-        de cada partido. El ajuste muestra cuánto cambió el pronóstico por los
-        equipos utilizados, frente a una expectativa basada solo en el rating de
-        los jugadores. La diferencia muestra cuántos puntos porcentuales rindió
-        cada jugador por encima o por debajo del pronóstico final.
+        <li>
+          Compara los resultados obtenidos con lo que el Rating APA esperaba
+          antes de cada partido.
+        </li>
+        <li>Favorito = 55% prob. de victoria o más.</li>
+        <li>Parejo = 55% - 45% prob. de victoria</li>
+        <li>No favorito = 45% prob. de victoria o menos.</li>
+        <li>
+          Diferencia = cuántos puntos porcentuales rindió cada jugador por
+          encima o por debajo de lo esperado.
+        </li>
       </Explanation>
       <Toggle role="group" aria-label="Partidos incluidos">
         <ToggleLabel aria-hidden="true">Ver:</ToggleLabel>
-        {OPTIONS.map((option) => (
+        {options.map((option) => (
           <ShortcutButton
             key={option.id}
             type="button"
@@ -104,8 +125,8 @@ const PerformanceVsExpected = ({ players, colors }) => {
         ))}
       </Toggle>
       {rows.length === 0 ? (
-        <EmptyState>
-          No hay partidos de eliminatorias en este ámbito.
+        <EmptyState role="status">
+          No hay partidos para esta vista en este ámbito.
         </EmptyState>
       ) : (
         <TableScroll>

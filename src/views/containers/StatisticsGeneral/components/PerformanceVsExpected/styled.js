@@ -6,13 +6,18 @@ const differenceColor = (difference) => {
   return 'rgba(0, 0, 0, 0.65)'
 }
 
-export const Explanation = styled.p`
+export const Explanation = styled.ul`
   color: rgba(0, 0, 0, 0.68);
   font-size: 0.9rem;
   line-height: 1.45;
   margin: -0.25rem auto 1rem auto;
-  max-width: 680px;
-  text-align: center;
+  max-width: 700px;
+  padding-left: 1.25rem;
+  text-align: left;
+
+  li + li {
+    margin-top: 0.35rem;
+  }
 `
 
 export const Toggle = styled.div`

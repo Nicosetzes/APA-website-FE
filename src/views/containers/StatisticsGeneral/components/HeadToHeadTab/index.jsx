@@ -22,6 +22,10 @@ import {
   DetailPanel,
   EmptyState,
   ErrorState,
+  ExpectedComparison,
+  ExpectedGrid,
+  ExpectedMetric,
+  ExpectedPlayer,
   FilterBar,
   HeadToHeadSection,
   MatchItem,
@@ -133,6 +137,71 @@ const DetailBestWin = ({ player, win }) => (
     )}
   </BestWinCard>
 )
+
+const formatPercentage = (value) =>
+  Number.isFinite(value) ? `${value.toFixed(1).replace('.', ',')} %` : '—'
+
+const formatDifference = (value) =>
+  Number.isFinite(value)
+    ? `${value > 0 ? '+' : ''}${value.toFixed(1).replace('.', ',')} pp`
+    : '—'
+
+const ExpectedVsActual = ({ players, comparison, totalMatches }) => {
+  if (!comparison?.playerA || !comparison?.playerB) return null
+
+  const sides = [
+    { key: 'playerA', player: players.playerA },
+    { key: 'playerB', player: players.playerB },
+  ]
+
+  return (
+    <ExpectedComparison aria-labelledby="head-to-head-expected-title">
+      <h3 id="head-to-head-expected-title">Esperado contra real</h3>
+      <p>
+        Solo incluye partidos con evento de Rating APA disponible dentro de los
+        filtros elegidos.
+      </p>
+      <ExpectedGrid>
+        {sides.map(({ key, player }) => {
+          const performance = comparison[key]
+          return (
+            <ExpectedPlayer
+              as="article"
+              key={key}
+              aria-label={`Esperado contra real de ${player.name}`}
+            >
+              <h4>{player.name}</h4>
+              <dl>
+                <ExpectedMetric>
+                  <dt>Partidos evaluados</dt>
+                  <dd>
+                    {performance.matches} de {totalMatches}
+                  </dd>
+                </ExpectedMetric>
+                <ExpectedMetric>
+                  <dt>Obtenido</dt>
+                  <dd>{formatPercentage(performance.actualPercentage)}</dd>
+                </ExpectedMetric>
+                <ExpectedMetric>
+                  <dt>Esperado</dt>
+                  <dd>{formatPercentage(performance.expectedPercentage)}</dd>
+                </ExpectedMetric>
+                <ExpectedMetric
+                  $difference={performance.differencePercentagePoints}
+                >
+                  <dt>Diferencia</dt>
+                  <dd>
+                    {formatDifference(performance.differencePercentagePoints)}
+                  </dd>
+                </ExpectedMetric>
+              </dl>
+            </ExpectedPlayer>
+          )
+        })}
+      </ExpectedGrid>
+    </ExpectedComparison>
+  )
+}
 
 const HeadToHeadTab = () => {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -477,6 +546,12 @@ const HeadToHeadTab = () => {
                   </strong>
                 </Metric>
               </MetricsGrid>
+
+              <ExpectedVsActual
+                players={detail.players}
+                comparison={detail.ratingComparison}
+                totalMatches={detail.record.matches}
+              />
 
               <BestWins>
                 <DetailBestWin

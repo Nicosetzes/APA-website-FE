@@ -1,5 +1,11 @@
 import styled from 'styled-components'
 
+const differenceColor = ({ $difference }) => {
+  if (!Number.isFinite($difference) || $difference === 0)
+    return 'var(--blue-900)'
+  return $difference > 0 ? '#147a43' : '#b3261e'
+}
+
 export const HeadToHeadSection = styled.section`
   margin: 2rem auto;
   max-width: 1240px;
@@ -362,6 +368,82 @@ export const Metric = styled.div`
   strong {
     color: var(--blue-900);
     font-size: 1rem;
+  }
+`
+
+export const ExpectedComparison = styled.section`
+  background: linear-gradient(135deg, rgba(0, 74, 121, 0.06), #fff);
+  border: 1px solid rgba(0, 74, 121, 0.16);
+  border-radius: 12px;
+  margin: 0 auto 1.25rem;
+  max-width: 1000px;
+  padding: 1rem;
+
+  > h3 {
+    margin: 0;
+  }
+
+  > p {
+    color: rgba(0, 0, 0, 0.62);
+    font-size: 0.78rem;
+    margin: 0.4rem auto 1rem;
+  }
+`
+
+export const ExpectedGrid = styled.div`
+  display: grid;
+  gap: 0.85rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  @media (max-width: 650px) {
+    grid-template-columns: 1fr;
+  }
+`
+
+export const ExpectedPlayer = styled.div`
+  background: #fff;
+  border: 1px solid rgba(0, 74, 121, 0.14);
+  border-radius: 10px;
+  min-width: 0;
+  padding: 0.9rem;
+
+  h4 {
+    color: var(--blue-900);
+    font-size: 1rem;
+    margin: 0 0 0.75rem;
+    overflow-wrap: anywhere;
+  }
+
+  dl {
+    display: grid;
+    gap: 0.5rem;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin: 0;
+
+    @media (max-width: 900px) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+`
+
+export const ExpectedMetric = styled.div`
+  background: rgba(0, 74, 121, 0.035);
+  border-radius: 7px;
+  min-width: 0;
+  padding: 0.55rem 0.35rem;
+
+  dt {
+    color: rgba(0, 0, 0, 0.58);
+    font-size: 0.68rem;
+    margin-bottom: 0.25rem;
+  }
+
+  dd {
+    color: ${differenceColor};
+    font-size: 0.88rem;
+    font-weight: 800;
+    margin: 0;
+    overflow-wrap: anywhere;
   }
 `
 

@@ -61,6 +61,20 @@ const detail = {
   },
   firstMatchOn: '2020-01-01',
   lastMatchOn: '2025-01-01',
+  ratingComparison: {
+    playerA: {
+      matches: 2,
+      actualPercentage: 75,
+      expectedPercentage: 60,
+      differencePercentagePoints: 15,
+    },
+    playerB: {
+      matches: 2,
+      actualPercentage: 25,
+      expectedPercentage: 40,
+      differencePercentagePoints: -15,
+    },
+  },
   lastMatches: [],
 }
 
@@ -120,8 +134,59 @@ test('opens a rivalry card and renders its detailed record', async () => {
   expect(container.textContent).toContain('Nico: 2 victorias')
   expect(container.textContent).toContain('01-01-2020 / 01-01-2025')
   expect(container.textContent).toContain('Mayor victoria de Nico')
+  const expectedSection = container.querySelector(
+    '[aria-labelledby="head-to-head-expected-title"]',
+  )
+  expect(expectedSection).not.toBeNull()
+  expect(
+    expectedSection.querySelector(
+      '[aria-label="Esperado contra real de Nico"]',
+    ),
+  ).not.toBeNull()
+  expect(expectedSection.textContent).toContain('2 de 4')
+  expect(expectedSection.textContent).toContain('75,0 %')
+  expect(expectedSection.textContent).toContain('60,0 %')
+  expect(expectedSection.textContent).toContain('+15,0 pp')
+  expect(expectedSection.textContent).toContain('-15,0 pp')
   const periodSelect = [...container.querySelectorAll('select')].find(
     (select) => select.parentElement.textContent.includes('Período'),
   )
   expect(periodSelect.options[0].textContent).toBe('Todo el historial')
+})
+
+test('keeps the rivalry detail usable when rating data is absent', async () => {
+  apiClient.get.mockImplementation((url) => {
+    if (url === '/statistics/head-to-head')
+      return Promise.resolve({ data: summary })
+    if (url === '/tournaments') return Promise.resolve({ data: [] })
+    if (url === '/statistics/head-to-head/1/2') {
+      return Promise.resolve({
+        data: { ...detail, ratingComparison: undefined },
+      })
+    }
+    return Promise.reject(new Error(`unexpected ${url}`))
+  })
+
+  await act(async () => {
+    ReactDOM.render(
+      <MemoryRouter initialEntries={['/statistics?tab=head-to-head']}>
+        <HeadToHeadTab />
+      </MemoryRouter>,
+      container,
+    )
+  })
+  await flush()
+
+  const pair = [...container.querySelectorAll('button')].find((button) =>
+    button.textContent.includes('Nico'),
+  )
+  act(() => {
+    pair.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+  })
+  await flush()
+
+  expect(container.textContent).toContain('2victorias')
+  expect(
+    container.querySelector('[aria-labelledby="head-to-head-expected-title"]'),
+  ).toBeNull()
 })
